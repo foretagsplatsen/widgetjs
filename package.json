@@ -1,0 +1,41 @@
+{
+  "name": "WidgetJS",
+  "description": "A nice litle framework for widget based JS Apps.",
+  "version": "0.0.1",
+  "homepage": "http://github.com/foretagsplatsen/widgetjs",
+  "author": "Henrik Wallström",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/foretagsplatsen/widgetjs/blob/master/LICENSE"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/foretagsplatsen/widgetjs.git"
+  },
+  "keywords": [
+    "javascript",
+    "library",
+    "widget",
+    "events",
+    "routing",
+    "html",
+    "DSL"
+  ],
+  "dependencies": {},
+  "scripts": {
+    "build": "grunt build",
+    "test": "grunt qunit"
+  },
+  "devDependencies": {
+    "requirejs": "~2.1.0",
+    "phantomjs": "1.8.1-3",
+    "grunt": "~0.4.0",
+    "grunt-contrib-uglify": "~0.1.1",
+    "grunt-contrib-qunit": "~0.1.1",
+    "grunt-contrib-requirejs": "~0.4.0",
+    "grunt-contrib-jshint": "~0.1.1",
+    "grunt-contrib-watch": "~0.2.0"
+  }
+}
