@@ -1,26 +1,27 @@
 module.exports = function(grunt) {
 
-  // code to wrap around the start / end of the resulting build file
-  // the global variable used to expose the API is defined here
-  var wrap = {
-    start: "(function(global, define) {\n" +
-              // check for amd loader on global namespace
-           "  var globalDefine = global.define;\n",
+  // read almond from disk
+  var fs = require('fs');
+  var almondPath = require.resolve('almond').replace('.js', '');
+  var almond  = String(fs.readFileSync(almondPath + '.js'));
 
-    end:   "  var library = require('widgetjs');\n" +
-           "  if(typeof module !== 'undefined' && module.exports) {\n" +
-                // export library for node
-           "    module.exports = library;\n" +
-           "  } else if(globalDefine) {\n" +
-                // define library for global amd loader that is already present
-           "    (function (define) {\n" +
-           "      define(function () { return library; });\n" +
-           "    }(globalDefine));\n" +
-           "  } else {\n" +
-                // define library on global namespace for inline script loading
-           "    global['widgetjs'] = library;\n" +
-           "  }\n" +
-           "}(this));\n"
+  // create wrapper
+  var wrap = {
+    start:
+      "(function (root, factory) {" +
+      "if (typeof define === 'function' && define.amd) {" +
+      " define(['jquery'], factory);" +
+      " } else {" +
+      " root.widgetjs = factory(root.$);"+
+      " } " +
+      "}(this, function ($) {" + almond,
+
+    end:
+      "define('jquery', function () {" +
+      "   return $;" +
+      "});" +
+      "return require('core');" +
+      "}));"
   };
 
   // Project configuration.
@@ -29,12 +30,16 @@ module.exports = function(grunt) {
     requirejs: {
       std: {
         options: {
+          //almond: true,
           baseUrl: './src/',
-          include: ["core"],
           paths: {
             "jquery": "../components/requirejs/require"
           },
-          out: './dist/<%= pkg.name %>.min.js'
+          include: ["core"],
+          exclude: ['jquery'],
+          out: './dist/<%= pkg.name %>.min.js',
+          //optimize: "none", //'hybrid',
+          wrap : wrap
         }
       }
     },
@@ -70,6 +75,7 @@ module.exports = function(grunt) {
   // Load the plugin that provides the "uglify" task.
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-qunit');
+  //grunt.loadNpmTasks('grunt-requirejs');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
