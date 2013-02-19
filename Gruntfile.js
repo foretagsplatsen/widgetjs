@@ -1,5 +1,28 @@
 module.exports = function(grunt) {
 
+  // code to wrap around the start / end of the resulting build file
+  // the global variable used to expose the API is defined here
+  var wrap = {
+    start: "(function(global, define) {\n" +
+              // check for amd loader on global namespace
+           "  var globalDefine = global.define;\n",
+
+    end:   "  var library = require('widgetjs');\n" +
+           "  if(typeof module !== 'undefined' && module.exports) {\n" +
+                // export library for node
+           "    module.exports = library;\n" +
+           "  } else if(globalDefine) {\n" +
+                // define library for global amd loader that is already present
+           "    (function (define) {\n" +
+           "      define(function () { return library; });\n" +
+           "    }(globalDefine));\n" +
+           "  } else {\n" +
+                // define library on global namespace for inline script loading
+           "    global['widgetjs'] = library;\n" +
+           "  }\n" +
+           "}(this));\n"
+  };
+
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -7,9 +30,9 @@ module.exports = function(grunt) {
       std: {
         options: {
           baseUrl: './src/',
-          include: ["main"],
+          include: ["core"],
           paths: {
-            "jquery": "../vendor/require-jquery"
+            "jquery": "../components/requirejs/require"
           },
           out: './dist/<%= pkg.name %>.min.js'
         }
@@ -51,6 +74,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   // Default task(s).
-  grunt.registerTask('default', ['jshint']);
+  grunt.registerTask('default', ['jshint', 'qunit']);
   grunt.registerTask('dist', ['default', 'requirejs']);
 };
