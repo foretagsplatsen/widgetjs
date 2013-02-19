@@ -1,0 +1,35 @@
+<html>
+<head>
+	<title>Counter</title>
+</head>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="../../dist/WidgetJS.min.js"></script>
+
+<script type="text/javascript">
+
+var counterWidget = function () {
+	var that = widgetjs.widget();
+
+	var count = 0;
+
+	that.renderContentOn = function (html) {
+		html.div();
+		h1 = html.h1(count.toString());
+		html.button('+').click(function() { count++; that.update();});
+		html.button('-').click(function() { count--; that.update();});
+	};
+
+	return that;
+};
+
+jQuery(document).ready(function() {
+	counterWidget().appendTo('body');
+	counterWidget().appendTo('body');
+})
+
+</script>
+
+<body>
+</body>
+
+</html>
