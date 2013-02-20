@@ -3,7 +3,7 @@ Widget.JS
 
 ### Introduction
 
-Widget.JS is a framework that proviedes routing, events and widgets to JS Apps. 
+Widget.JS is a framework that provides routing, events and widgets to JS Apps. 
 
 
 ### Usage
@@ -31,18 +31,16 @@ See https://github.com/foretagsplatsen/widget-js/tree/master/sample
 
 ### Install
 
-Use bower 
-
+Use [bower](https://github.com/twitter/bower) 
 ```
 bower install widgetjs
 ```
 
+
 or copy  https://github.com/foretagsplatsen/widget-js/tree/master/dist/WidgetJS.min.js to your project
 
 
-
 Use with requirejs:
-
 ``` javascript
 requirejs.config({
 	baseUrl: '.',
@@ -52,7 +50,6 @@ requirejs.config({
 });
 ```
 or
-
 ``` javascript
 requirejs.config({
 	baseUrl: '.',
@@ -63,12 +60,9 @@ requirejs.config({
 ```
 
 ### CODE
-
 You need [npm](https://npmjs.org/), [bower](https://github.com/twitter/bower) and [grunt](http://gruntjs.com/)
 
-
 Install depedencies
-
 ```
 bower install
 ```
@@ -77,21 +71,18 @@ bower install
 npm install
 ```
 
-
 Lint + run tests :
-
 ```
 grunt 
 ```
 
 Build:
-
 ```
 grunt dist
 ```
 
 ### Credits
-Thanks a ton to @NicolasPetton for HtmlCanvas and tricking us into developing Widget.JS
+Thanks a ton to @NicolasPetton for HtmlCanvas and tricking us into developing and using Widget.JS at Företagsplatsen
 
 ### License
 Widget.JS is under the MIT-license, see file LICENSE
