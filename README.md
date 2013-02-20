@@ -3,10 +3,15 @@ Widget.JS
 
 ### Introduction
 
-Widget.JS is a framework that provied routing, events and a widget framework to JS Apps. 
+Widget.JS is a framework that proviedes routing, events and widgets to JS Apps. 
 
 
 ### Usage
+
+``` html
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="https://raw.github.com/foretagsplatsen/widget-js/master/dist/WidgetJS.min.js"></script>
+``` 
 
 A simple widget can look like:
 
@@ -22,45 +27,45 @@ var helloWidget = function() {
 }
 ```
 
-See samples for more examples
+See https://github.com/foretagsplatsen/widget-js/tree/master/sample
 
 ### Install
+
+Use bower 
 
 ```
 bower install widgetjs
 ```
 
-or copy [/dist/WidgetJS.min.js] to your project
+or copy  https://github.com/foretagsplatsen/widget-js/tree/master/dist/WidgetJS.min.js to your project
+
 
 
 Use with requirejs:
 
-```
+``` javascript
 requirejs.config({
 	baseUrl: '.',
 	paths: {
-		'widgetjs' : '{widget js path}>/src/'
+		'widgetjs' : '<widget js path>/src/WidgetJS.min.js'
 	}
 });
 ```
 or
 
-```
+``` javascript
 requirejs.config({
 	baseUrl: '.',
 	paths: {
-		'widgetjs' : '{widget js path}>/src/WidgetJS.min.js'
+		'widgetjs' : '<widget js path>/src/'
 	}
 });
-
-
-### Contributing
-
-You need npm and grunt
-
 ```
-npm install grunt-cli
-```
+
+### CODE
+
+You need [npm](https://npmjs.org/), [bower](https://github.com/twitter/bower) and [grunt](http://gruntjs.com/)
+
 
 Install depedencies
 
@@ -81,13 +86,12 @@ grunt
 
 Build:
 
-
 ```
 grunt dist
 ```
 
-```
-bower install widgetjs
-```
+### Credits
+Thanks a ton to @NicolasPetton for HtmlCanvas and tricking us into developing Widget.JS
 
-
+### License
+Widget.JS is under the MIT-license, see file LICENSE
