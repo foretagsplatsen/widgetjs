@@ -67,6 +67,11 @@ define([], function () {
                 return e;
             };
 
+            that.off = function(eventString, callback) {
+                ensureEventHolderFor(eventString);
+                that.bindings[eventString].remove(callback);
+            };
+
             /*
             * Similar to jQuery once() function.
             * Works like on(), except that the event will only be triggered once,
@@ -115,7 +120,8 @@ define([], function () {
             };
 
             that.remove = function (event) {
-                events.remove(event);
+                //events.remove(event);
+                for(i=0; i < events.length; i++) { if(event == events[i]) events.splice(i, 1); }
                 event.holder = undefined;
             };
 

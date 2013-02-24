@@ -1,5 +1,5 @@
 define(
-    ["widgetjs/router", "widgetjs/events"], 
+    ["widgetjs/router", "widgetjs/events"],
     function(router, events) {
 
         // helpers
@@ -11,16 +11,21 @@ define(
             equal(o, true);
         };
 
-        var route = function(path) {
-            router.router.setHash('!/'+ path);
+        function delayedAsyncTest(name, fn) {
+            asyncTest(name, function() {
+                expect(true);
+                setTimeout(fn, 0 /* Give some time to the router to initialize. */);
+            });
+        }
+
+        var redirectTo = window.redirectTo = function(path) {
+            router.router.redirectTo(path);
         };
 
-        window.route = route;
+        // setup router
         router.controller.register();
         router.router.start();
         
-        
-        // tests
         test("testing unique router", function() {
             equal(router.router, router.router);
         });
@@ -29,61 +34,58 @@ define(
             equal(router.controller, router.controller);
         });
 
-        test("test setting hash", function() {
-            route("hello");
-            equal("#!/hello", window.location.hash);
-        });
              
-        asyncTest("testing basic url handling", function() {
-            expect(true);
-        	
-            // Give some time to the router to initialize.
-            setTimeout(function() {
-                router.controller.on('foo', function() {
-                    ok(true);
-                    start();
-                });
-                route('foo');
-            }, 0);
+        delayedAsyncTest("basic route", function() {
+            router.controller.on('foo', function() {
+                ok(true);
+                start();
+            });
+
+            redirectTo('foo');
         });
 
-        asyncTest("testing regexp url handling 1", function() {
-            expect(true);
-        	
-            // Give some time to the router to initialize.
-            setTimeout(function() {
-                router.controller.on('some/#value', function(value) {
-                    ok(value === 'thing');
-                    start();
-                });
-                route('some/thing');
-            }, 0);
+        delayedAsyncTest("route with parameter", function() {
+            router.controller.on('some/#value', function(value) {
+                ok(value === 'thing');
+                start();
+            });
+            redirectTo('some/thing');
         });
 
-        asyncTest("testing regexp url handling 2", function() {
-            expect(true);
-        	
-            // Give some time to the router to initialize.
-            setTimeout(function() {
-                router.controller.on('any/.*', function() {
-                    ok(true);
-                    start();
-                });
-                route('any/thing');
-            }, 0);
+
+        delayedAsyncTest("route with multiple parameters", function() {
+            router.controller.on('some/#value/#anothervalue', function(value, anothervalue) {
+                ok(value === 'thing'&& anothervalue === 'thing2');
+                start();
+            });
+            redirectTo('some/thing/thing2');
         });
 
-        asyncTest("testing regexp url handling 3", function() {
-            expect(true);
-        	
-            // Give some time to the router to initialize.
-            setTimeout(function() {
-                router.controller.on('blah/.*', function() {
-                    ok(true);
-                    start();
-                });
-                route('blah/some/thing/bar/baz');
-            }, 0);
+        delayedAsyncTest("regexp route", function() {
+            router.controller.on('any/.*', function() {
+                ok(true);
+                start();
+            });
+            redirectTo('any/thing');
         });
+
+        delayedAsyncTest("regexp route with slashes", function() {
+            router.controller.on('blah/.*', function() {
+                ok(true);
+                start();
+            });
+            redirectTo('blah/some/thing/bar/baz');
+        });
+
+        delayedAsyncTest("notfound event triggered", function() {
+            events.at('routing').on('notfound', function(url) {
+                ok(true);
+                events.at('routing').off('notfound', this);
+                start();
+            });
+
+            redirectTo('APathNoyBoundToACallback');
+        });
+
     }
 );

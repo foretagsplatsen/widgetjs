@@ -78,11 +78,11 @@ define(
              */
 
             my.linkTo = function (path) {
-                return ('#!/' + path);
+                router.router.linkTo(path);
             };
 
             my.redirectTo = function (path) {
-                router.router.setHash(my.linkTo(path).slice(1));
+                router.router.redirectTo(path);
             };
 
             /*
