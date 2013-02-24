@@ -25,6 +25,8 @@ define(
         // setup router
         router.controller.register();
         router.router.start();
+
+        redirectTo('');
         
         test("testing unique router", function() {
             equal(router.router, router.router);
@@ -80,7 +82,7 @@ define(
         delayedAsyncTest("notfound event triggered", function() {
             events.at('routing').on('notfound', function(url) {
                 ok(true);
-                events.at('routing').off('notfound', this);
+                this.unbind(); // clean-up: unbound this event
                 start();
             });
 

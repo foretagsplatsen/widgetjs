@@ -8,64 +8,75 @@ define(["widgetjs/events"], function(manager) {
         equal(o, true);
     };
 
-
-    // tests
-    test("testing unique event manager", function() {
+    test("singleton event manager", function() {
         equal(manager, manager);
     });
 
     test("testing event names", function() {
         var triggered = false;
 
-        manager.on('foo', function() {triggered = true});
+        // callback should only be executed once triggered
+        manager.on('foo', function() { triggered = true; });
         deny(triggered);
 
+        // callback should not be executed on other events
         manager.trigger('bar');
         deny(triggered);
 
+        // callback should not be executed if an event
+        // with same name in nother category is triggered
         manager.at('2').trigger('foo');
         deny(triggered);
 
+        // callback should be executed when event triggered
         manager.trigger('foo');
         assert(triggered);
-
     });
 
-    test("testing default events holder", function() {
+    test("default event category", function() {
+        // should be able to attach callbacks to default
+        // category
         var triggered = false;
-        manager.on('foo', function() {triggered = true});
+        manager.on('foo', function() {triggered = true;});
 
+        // callback should not be executed without event triggered
         deny(triggered);
         
+        // callback should be executed when event triggered
         manager.trigger('foo');
         assert(triggered);
     });
 
-    test("testing holders", function() {
-       var triggered1 = false; 
-       var triggered2 = false; 
+    test("event categories", function() {
+       var triggered1 = false;
+       var triggered2 = false;
 
-        manager.at('1').on('foo', function() {
+        var firstFooEventBinding = manager.at('1').on('foo', function() {
             triggered1 = true;
         });
 
-        manager.at('2').on('foo', function() {
+        var secondFooEventBinding = manager.at('2').on('foo', function() {
             triggered2 = true;
         });
 
+        // callback should not be executed without event triggered
         deny(triggered1);
         deny(triggered2);
 
+        // callback should not be executed on other event
         manager.trigger('foo');
-
         deny(triggered1);
         deny(triggered2);
 
+
+        // callback should not be executed on other events in same category
         manager.at('2').trigger('bar');
         deny(triggered1);
         deny(triggered2);
 
 
+        // callback should be executed on named event
+        // but other events in same category should not be executed.
         manager.at('2').trigger('foo');
         deny(triggered1);
         assert(triggered2);
@@ -74,21 +85,29 @@ define(["widgetjs/events"], function(manager) {
         assert(triggered1);
         assert(triggered2);
 
-
+         // clean-up
+        firstFooEventBinding.unbind();
+        secondFooEventBinding.unbind();
     });
 
-    test("testing passing data", function() {
-        var data;
+    test("passing data", function() {
+        var params;
 
-        manager.on('foo', function(o) {
-            data = o;
+        var fooEvent = manager.on('foo', function() {
+            params = arguments;
         });
 
+        // should pass argument to callback
         manager.trigger('foo', {a: 1});
-        equal(data.a, 1);
+        equal(params[0].a, 1);
 
-        manager.trigger('foo', {a: 2});
-        equal(data.a, 2);
+        // should pass multiple arguments to callback
+        manager.trigger('foo', {a: 2}, {b: 3});
+        equal(params[0].a, 2);
+        equal(params[1].b, 3);
+
+        // clean-up
+        fooEvent.unbind();
     });
 
 });

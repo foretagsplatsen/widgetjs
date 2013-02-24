@@ -85,7 +85,7 @@ define(
 			that.resolveRoute = function (route) {
 				var params;
 				var numMatches = 0;
-				for (var path in handler.bindings) {
+				for (var path in handler.events) {
 					params = extractParameters(route, path);
 					if (params) {
 						numMatches++;

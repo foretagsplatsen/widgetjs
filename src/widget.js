@@ -78,7 +78,7 @@ define(
              */
 
             my.linkTo = function (path) {
-                router.router.linkTo(path);
+                return router.router.linkTo(path);
             };
 
             my.redirectTo = function (path) {
