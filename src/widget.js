@@ -1,3 +1,35 @@
+// Base for all widgets. A widget uses a HTML canvas (see [htmlCanvas.js](htmlCanvas.html)) to render itself using `renderContentOn()`.
+//
+// _Usage:_
+//
+//      var titleWidget = function(spec) {
+//          var that = widget(spec);
+//
+//          var title = spec.title;
+//
+//          that.renderContentOn = function(html) {
+//              html.h1('Hello World')
+//          }
+//          return that;
+//      }
+//
+//      var helloWorldWidget = titleWidget({title: 'Hello Widget!'});
+//
+//      $(document).ready(function() {
+//          helloWorldWidget.appendTo('BODY');
+//      });
+//
+// Widgets can also be rendered on a HTML canvas (since widget implements `appendToBrush()`). Eg.
+//
+//      html.div(helloWorldWidget)
+//
+// It is therefor easy to compose widgets from other widgets. 
+//
+// _Note:_ Widgets composed by other widgets must
+// expose sub widgets using `widgets()` to make it possible to traverse widget tree.
+//
+
+
 define(
     [
         './widget-extensions',
@@ -8,152 +40,139 @@ define(
 
     function (ext, router, events, htmlCanvas) {
 
-         /*
-          * A Widget uses an HTML canvas to render itself using renderContentOn()
-         */
+        // - - -
+
+        // ### Widget
+        // _Usage:_
+        //
+        //      widget();
+        //      widget({ id : 'unique_identifier'});
+        //
         var widget = function (spec, my) {
             my = my || {};
-            spec = spec || {};
+            spec = spec || {};
 
             var that = {};
 
-            /* Unique id identifying the widget */
+            // Unique **widget id**. Provided by id argument or auto generated.
             var id = spec.id || idGenerator.newId();
 
-            /* Mix in Events (See events.js)
-             *
-             * Trigger events using:
-             * that.trigger('event_id', event_data)
-             *
-             * Listen for events:
-             * that.on('event_id', function(event_data) { });
-             *
-             * or more commonly:
-             * var w = widget();
-             * w.on('event_id', function(event_data) { });
-             */
+            // #### Public/Protected API
+
+            // **Mix in Events** (See [events.js](events.html))
+            //
+            // Trigger events using:
+            //
+            //      that.trigger('event_id', event_data)
+            //
+            // Listen for events:
+            //
+            //      that.on('event_id', function(event_data) { });
+            //
+            // or more commonly:
+            //
+            //      var w = widget();
+            //      w.on('event_id', function(event_data) { });
+            //
             jQuery.extend(that, events.eventhandler());
 
-            /*
-             * Third party protected extensions added to my
-             *
-             * In your application include widget extensions:
-             * define(['canvas/'widget-extensions], function(ext) { ... });
-             *
-             * add properties to ext that you need in all widgets.
-             * ext.hello = function() { alert('hello world')};
-             *
-             * and use in all widgets:
-             * my.hello();
-             *
-             */
+            // **Third party protected extensions** added to `my`.
+            // See [widget-extensions.js](widget-extensions.html)
             for (var i in ext) {
                 my[i] = ext[i];
             }
 
-            /*
-             * Answer the (sub) widgets of the widget. Needed
-             * to traverse widget tree.
-             *
-             * Override in concrete widgets!
-             */
+            // Returns sub widgets of the widget. Needed
+            // to traverse widget tree. Override in concrete widgets!
             that.widgets = function () {
                 return [];
             };
-
-            /*
-             * Expose the id
-             */
+           
+            // Expose widget id
             that.getId = function() {
                 return id;
             };
-
             that.id = function() {
                 return id;
             };
 
+            
+            // #### Route / Controller extensions
 
-            /*
-             * Route / Controller extensions
-             */
-
+            // Returns link to route/path
             my.linkTo = function (path) {
                 return router.router.linkTo(path);
             };
 
+            // Redirects to route/path
             my.redirectTo = function (path) {
                 router.router.redirectTo(path);
             };
 
-            /*
-             * Render extensions
-            */
+            
+            // #### Render extensions
 
+            // Append widget to DOM-element matched by aJQuery
             that.appendTo = function (aJQuery) {
                 that.renderOn(htmlCanvas(aJQuery));
             };
 
+            // Same as `that.appendTo()` except it first empties the element.
             that.replace = function(aJQuery) {
                 var canvas = htmlCanvas(aJQuery);
                 canvas.root.asJQuery().empty();
                 that.renderOn(canvas);
             };
 
-            /* that.appendToBrush makes it possible
-               to append a widget to a brush eg.
-
-                html.div(widget);
-            */
+            // Implemention for `appendToBrush()` to allow a widget to be
+            // appended to a brush. See [htmlCanvas.js](htmlCanvas.html).
+            //
+            // Basicly it allows us to do:
+            //
+            //      html.div(widget);
+            //
             that.appendToBrush = function (aTagBrush) {
                 that.appendTo(aTagBrush.asJQuery());
             };
 
+            // Return JQuery that match root element (div).
             that.asJQuery = function() {
                 return jQuery('#' + that.getId());
             };
 
-            /*
-             * Update: makes it possible to do widget.update() to make it re-render.
-             *
-             * renderOn() wrapps content rendered by widget (renderContentOn) inside a
-             * root element (default a div).
-             *
-             * update() empties the root element and re-render content (renderContentOn)
-             *
-             *
-             * If you decide to override renderOn() you should also override isRendered and update().
-             * Also override asJQuery() if the root elements id is not the widget id.
-             */
+            // #### Update support
+            // makes it possible to do `widget.update()` to re-render widget.
+            //
+            // `renderOn()` wrapps content rendered by `renderContentOn()` inside a
+            // root element rendered by `renderRoot`.
+            //
+            // `update()` empties the root element and re-render content using `renderContentOn()`
+            //
+            // If you decide to override `renderOn()` you should also override `isRendered` and `update()`.
+            // Also override `asJQuery()` if the root elements id is not the widget id.
+            //
 
+            // True if widget have rendered content.
             that.isRendered = function() {
-                return that.asJQuery().length > 0; // TODO: correct way to check if rendered? maybe rendered but no content?
+                return that.asJQuery().length > 0;
             };
 
-            /*
-             * Render wrapper/root - a div as default
-             */
+            // Renders a wrapper/root for widget - a div as default
             my.renderRoot = function(html) {
                 return html.div().id(id);
             };
 
-            /*
-             * Renders the acctual content inside the wrapper div
-             * Override in concrete widgets!
-             */
+            // Renders the acctual content inside the wrapper div. Override in concrete widgets!
             that.renderContentOn = function (html) {
             };
 
-            /*
-             * Wraps renderContentOn() in a root element.
-             */
+            // Renders widget by wrapping `renderContentOn()` in a root element.
             that.renderOn = function (html) {
                 my.renderRoot(html).render(that.renderContentOn);
             };
 
-             /*
-             * update() is a general purpose function that will re-render the widget
-             * completely inside its root div.
-             */
+            // `update()` is a general purpose function that will re-render the widget
+            // completely inside its root div.
             that.update = function () {
                 if(!that.isRendered()) {
                     return;
@@ -168,12 +187,10 @@ define(
             return that;
         };
 
+        // - - -
 
-        /*
-         * The idGenerator is responsible for creating unique ids. ids are used by widgets to
-         * identify their root div.
-         */
-
+        // ### idGenerator
+        // Creates unique ids used by widgets to identify their root div.
         var idGenerator = (function () {
             var that = {};
             var id = 0;
@@ -187,6 +204,8 @@ define(
         })();
 
 
+        // ### Exports
+        // widget function
         return widget;
     }
 );
