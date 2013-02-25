@@ -51,7 +51,7 @@
 
 define(
 	[
-	'jquery'
+		'jquery'
 	],
 
 	function (jQuery) {
@@ -67,7 +67,7 @@ define(
 		//		var html = htmlCanvas($('BODY'));
 		//		html.div(html.h1('title'));
 		//
-		// The canvas is created on the first element matched by the aJQuery ($('BODY')). A brush for that element is created
+		// The canvas is created on the first element matched by aJQuery (eg. $('BODY') above). A brush for that element is created
 		// and set as the root object.
 		//
 		// All other brushes (eg. html.div() above) are added to that root brush. Brushes added as children of a
@@ -90,16 +90,11 @@ define(
 
 			// #### Public API
 
-			// The root object with element set to the first element matched by aJQuery
+			// The root object. It's element is set to first element matched by aJQuery
 			that.root = tagBrush({ canvas: that, jQuery: aJQuery });
 
 			// Creates a new tag brush and adds it to root brush. The element is a
 			// new element in partent brush element, created using the 'tag' (eg. H1).
-			//
-			// Method is used when we create 'Supported HTML tags' but can also
-			// be used to create custom tags. _Eg:_
-			//
-			//		html.tag('icalendar', html.tag('vcalendar'))
 			that.tag = function (tag, children) {
 				var t = tagBrush({ canvas: that, tag: tag, children: children });
 				that.root.addBrush(t);
@@ -107,7 +102,7 @@ define(
 			};
 
 			// Tag brush functions are added dynamically on object creation.
-			// Each 'tag' in tags is added as a public method on htmlCanvas
+			// Each 'tag' in Supported HTML 'tags' is added as a public method on htmlCanvas
 			//
 			// _Example:_
 			//
@@ -175,25 +170,27 @@ define(
 			var children = spec.children;
 			var canvas = spec.canvas;
 
-			// DOM element - Is set when initilized to first DOM element matched by
-			// 'jquery' or created as new from 'tag' if no jquery.
+			// DOM element - Is set on initilization to first DOM element matched by
+			// 'jquery'. if no jQuery is given, element is created from tag name.
 			var element;
 
-			// Returns a new HTML element for tagName
 			function createElement(tagName) {
 				return document.createElement(tagName);
 			}
 
-			// Append objects to the brush. A tag brush knows how to append:
+			// Appends objects to the brush element. A tag brush knows how to append:
 			//
 			// - strings
 			// - functions (that take a htmlCanvas as argument)
 			// - other brushes and widgets (that implements `appendToBrush()`)
-			// - Object literal with attributes
+			// - map / object literal with attributes (eg. {id: 'aId', 'class' : 'aClass'})
 			// - array of valid objects (see above)
 			//
+			// all other objects are appended using:
+			// `jQuery(element).append(object);`
+			//
 			function append(object) {
-				if(typeof(object) === 'undefined' || object === null) {
+				if (typeof(object) === 'undefined' || object === null) {
 					throw 'cannot append null or undefined to brush';
 				}
 
@@ -206,11 +203,14 @@ define(
 					appendString(object);
 				} else if (typeof object === "function") {
 					appendFunction(object);
-				} else if (object.appendToBrush /* eg. widget and tagBrush implement appendToBrush */) {
+				} else if (typeof object === "object" &&
+					object.appendToBrush /* eg. widget and tagBrush implement appendToBrush */) {
 					object.appendToBrush(that); // double dispatch
 				}
-				else {
+				else if (typeof object === "object") {
 					that.attr(object); // assume attributes if none of above
+				} else {
+					jQuery(element).append(object); // default to jquery
 				}
 			}
 
@@ -241,7 +241,6 @@ define(
 				fn(canvas);
 				canvas.root = root;
 			}
-
 
 			// #### Public API
 
@@ -278,7 +277,7 @@ define(
             //		var h1Brush = html.span('test');
             //      html.div(h1Brush);
             //
-			that.appendToBrush = function(aTagBrush) {
+			that.appendToBrush = function (aTagBrush) {
 				aTagBrush.addBrush(that);
 			};
 
@@ -394,14 +393,6 @@ define(
 				return that;
 			};
 
-			// Set content to object. Clears content of element
-			// and appends obj using `append()`.
-			that.contents = function (obj) {
-				that.asJQuery().empty().
-				append(obj);
-				return that;
-			};
-
 			// Returns jQuery that match element.
 			that.asJQuery = function () {
 				return jQuery(that.element());
@@ -414,15 +405,19 @@ define(
 				jquery = jQuery(jquery);
 			}
 			if (jquery) {
-				element = spec.jQuery.get(0);
+				element = jquery.get(0);
+				if (!element) {
+					throw 'jQuery did not match an element';
+				}
+			}
 
-			// if no jQuery was given, element is created
+			// If no jQuery was given, element is created
 			// from tag name.
-			} else {
+			else {
 				element = createElement(elementTagName);
 			}
 
-			// Append children to support nesting.Eg.:
+			// Append children to support nesting. _Eg.:_
 			//
 			//		html.ul(html.li(html.a({href: '#'}, 'home'));
 			if (children) {

@@ -44,31 +44,16 @@ module.exports = function(grunt) {
       }
     },
     jshint: {
-      options: {
-        curly: true,
-        eqeqeq: true,
-        immed: true,
-        latedef: true,
-        newcap: true,
-        noarg: true,
-        sub: true,
-        undef: true,
-        eqnull: true,
-        browser: true,
-        nomen: true,
-        globals: {
-          define: true,
-          jQuery: true
-        }
-      },
-      all: ['src/**/*.js']
+      src: ['src/**/*.js'],
+      test: ['test/**/*.js'],
+      sample: ['test/**/*.js']
     },
     qunit: {
       all: ['test/**/*.html']
     },
     watch: {
       files: ['<%= jshint.all %>'],
-      tasks: ['jshint', 'qunit']
+      tasks: ['jshint:src', 'qunit']
     }
   });
 
@@ -80,6 +65,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   // Default task(s).
-  grunt.registerTask('default', ['jshint', 'qunit']);
+  grunt.registerTask('default', ['jshint:src', 'qunit']);
   grunt.registerTask('dist', ['default', 'requirejs']);
 };

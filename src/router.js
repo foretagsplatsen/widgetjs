@@ -8,7 +8,7 @@
 //
 //		controller.on('/**bar**', function() { alert('bar'); });
 //
-// When the URL (hash fragment) change the router sends a 'resolveRoute' message with the new route to the controller that then triggers an
+// When the URL (hash fragment) change the router sends a `resolveRoute(route)` message with the new route to the controller that then triggers an
 // action.
 // - - -
 define(
@@ -71,7 +71,7 @@ define(
 
 			// #### Public API
 
-			// Binds a callback to a path.
+			// Binds a callback to a path. _Eg:_
 			//
 			//		myController.on('foo', function() {
 			//			alert('/#!/foo triggered!');
@@ -83,18 +83,22 @@ define(
 			// Tries to match registered bindings agains the new route
 			// from the router.
 			that.resolveRoute = function (route) {
-				var params;
-				var numMatches = 0;
-				for (var path in handler.events) {
-					params = extractParameters(route, path);
-					if (params) {
-						numMatches++;
-						handler.trigger.apply(this, [path].concat(params));
+				var params,
+					numMatches = 0,
+					bindings = handler.events;
+
+				for (var path in bindings) {
+					if (bindings.hasOwnProperty(path)) {
+						params = extractParameters(route, path);
+						if (params) {
+							numMatches++;
+							handler.trigger.apply(this, [path].concat(params));
+						}
 					}
 				}
 
 				// Trigger 'notfound' event (with route as argument) if no match
-				if(numMatches === 0) {
+				if (numMatches === 0) {
 					handler.trigger('notfound', route);
 				}
 			};
@@ -146,20 +150,17 @@ define(
 				previousFragment, // previously visited fragment
 				history = [], // history of visited fragments
 				timer,
-				iframe_src = spec.iframe_src || '/Client/ie_iframe.html', //TODO: how to do this?
+				iframe_src = (spec.iframe_src || /*jshint scripturl:true*/  'javascript:0'), /*jshint scripturl:false*/
 				controller;
 
 
 			// #### Initilize
 			
 			// Fallback only if no 'onhashchange' event
-			if('onhashchange' in window) { fallback = false; }
+			if ('onhashchange' in window) { fallback = false; }
 
 			// oldIE if IE < IE8
 			oldIE = jQuery.browser.msie && parseInt(jQuery.browser.version, 10) < 8;
-
-			// Set current fragment to route
-			fragment = route();
 
 			// #### Private methods
 
@@ -187,7 +188,7 @@ define(
 			// Setup the iframe for old versions of IE
 			function setupOldIE() {
 				var iDoc = jQuery("<iframe id='ie_history_iframe'" +
-					"src='"+ iframe_src + "'" +
+					"src='" + iframe_src + "'" +
 					"style='display: none'></iframe>").prependTo("body")[0];
 				var iframe = iDoc.contentWindow.document || iDoc.document;
 				if (window.location.hash) {
@@ -227,9 +228,9 @@ define(
 					pushToHistory(fragment);
 					resolveRoute();
 				} else {
-					if(oldIE) {
+					if (oldIE) {
 						var iframe = getIframe();
-						if(iframe.location.hash !== fragment) {
+						if (iframe.location.hash !== fragment) {
 							window.location.hash = iframe.location.hash;
 							fragment = getHash();
 							resolveRoute();
@@ -243,28 +244,28 @@ define(
 			// Return current route
 			that.route = route;
 
-			that.linkTo = function(path) {
+			that.linkTo = function (path) {
 				return ('#!/' + path);
 			};
 
-			that.redirectTo = function(path) {
+			that.redirectTo = function (path) {
 				setHash(that.linkTo(path));
 			};
 
 			// Navigate to previous fragment. Fallback to the
             // `fallback' url if the history is empty
-			that.back = function(spec) {
+			that.back = function (spec) {
                 spec = spec || {};
-				if(history.length > 1) {
+				if (history.length > 1) {
 					history.pop();
 					setHash(history.pop());
-				} else if(spec.fallback) {
+				} else if (spec.fallback) {
                     setHash(fallback);
                 }
 			};
 	
 			// **Force a check()**, wheither the fragment has changed or not.
-			that.forceCheck = function() {
+			that.forceCheck = function () {
 				resolveRoute();
 			};
 
@@ -280,6 +281,7 @@ define(
 			// In legacy browsers we instead pull for changes every 100 ms.
 			that.start = function () {
 				that.stop();
+				fragment = route();
 				if (fallback) {
 					if (oldIE) {
 						setupOldIE();

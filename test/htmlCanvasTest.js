@@ -1,14 +1,7 @@
 define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
 
-    // helper functions
-
-    var withDOMElement = function(callback) {
-        var id = "canvas_testing";
-        var h1 = htmlCanvas(jQuery('body')).h1("hello world").id(id);
-        callback(h1, id);
-        jQuery("#"+id).remove();
-    };
-
+    // Helper
+    
     var withCanvas = function(callback) {
         $("BODY").append("<div id='sandbox'></div>");
         var sandbox = jQuery('#sandbox');
@@ -27,7 +20,7 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
 
     test("can be created on a jQuery", function() {
         // Arrange: a canvas on BODY
-        var html = htmlCanvas($("BODY"));
+        var html = htmlCanvas("BODY");
 
         // Assert that:
         ok(html, 'canvas was created');
@@ -36,6 +29,12 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
         ok($("BODY").is(html.root.element()), 'element is BODY.');
     });
 
+    test("throws exception if jQuery dont match element", function() {
+        throws(
+            function() { htmlCanvas("#notfound"); },
+            'throws exception if no matching element'
+        );
+    });
 
     test("can render HTML tags", function() {
         withCanvas(function(html) {
@@ -81,7 +80,6 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
             equal(divEl.attr('special_attribute'), 'test', 'attribute special_attribute rendered');
         });
     });
-
 
     test("callbacks can be attached to events", function() {
         withCanvas(function(html) {
@@ -129,18 +127,20 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
         });
     });
 
-    test("parts can be assigned to variables", function() {
+    test("render() can append objects to brush", function() {
         withCanvas(function(html) {
-            // Arrange a button, assign to variable and then set class
-            var button = html.a('Home').id('test_button').href('/');
-            button.addClass('button');
-            
-            // Assert:
-            ok(jQuery("#test_button").get(0), 'button rendered');
-           equal(jQuery('#test_button').attr('class'), 'button', 'attribute class rendered');
+            // Arrange: a DIV
+            var div = html.div().id('aDiv');
 
+            // Act: render a SPAN in it
+            div.render(html.span('test').addClass('aSpan'));
+
+
+            // Assert:
+            ok(jQuery("#aDiv > .aSpan").get(0), 'SPAN rendered inside DIV');
         });
     });
+
 
     test("can render arrays", function() {
         withCanvas(function(html) {
@@ -152,6 +152,19 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
             // Assert:
             equal(jQuery("#test_div > SPAN").length, 10, 'div rendered with children from array');
 
+        });
+    });
+
+    test("throws error if object to append is null or undefined", function () {
+        withCanvas(function(html) {
+            throws(
+                function() { html.render(null); },
+                'throws error if null'
+            );
+            throws(
+                function() { html.render(undefined); },
+                'throws error if undefined'
+            );
         });
     });
 
@@ -171,6 +184,52 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
         });
     });
 
+    test("delegates rendering to objects implementing appendToBrush()", function() {
+        withCanvas(function(html) {
+            var appendableObject = function() {
+                var that = {};
+
+                that.appendToBrush = function(aTagBrush) {
+                    aTagBrush.render('<div id="aDiv">content</div>');
+                };
+
+                return that;
+           };
+
+           // Act: render object
+           html.render(appendableObject());
+
+           // Assert
+           ok(jQuery("#aDiv").get(0), 'div was rendered');
+        });
+    });
+
+    test("delegates rendering to widgets implementing appendToBrush()", function() {
+        withCanvas(function(html) {
+            // Arrange simplest possible widget that
+            // implements 'appendToBrush()' and renders a DIV
+            var simpleWidget = function() {
+                var that = {};
+
+                that.renderOn = function(html2) {
+                    html2.div('Test').id('aDiv');
+                };
+
+                that.appendToBrush = function(aTagBrush) {
+                    that.renderOn(htmlCanvas(aTagBrush.asJQuery()));
+                };
+
+                return that;
+           };
+
+           // Act: render widget
+           html.render(simpleWidget());
+
+           // Assert
+           ok(jQuery("#aDiv").get(0), 'div was rendered');
+        });
+    });
+
     test("element() returns brush element", function() {
         withCanvas(function(html) {
             // Arrange: a heading
@@ -180,14 +239,36 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
             equal(h1.element(), jQuery("#aHeading").get(0), 'element acessor returns correct element.');
         });
     });
+    
 
-    test("asJQuery() returns jQuery that match brush element", function() {
+    test("setAttribute() get/set style using key/value", function () {
+        withCanvas(function(html) {
+            // Arrange: a heading with id
+            var h1 = html.h1().setAttribute('id', 'aHeading');
+
+            // Assert: id set
+            equal(h1.asJQuery().attr('id'), ('aHeading'), 'attribute set');
+        });
+    });
+
+
+    test("css() get/set style", function () {
         withCanvas(function(html) {
             // Arrange: a heading
             var h1 = html.h1().id('aHeading');
 
-            // Assert
-            equal(h1.asJQuery().get(0), jQuery("#aHeading").get(0), 'asJQuery() acessor returns hquery that match element.');
+            h1.css('background-color', 'red');
+            equal(h1.asJQuery().css('background-color'), 'rgb(255, 0, 0)');
+        });
+    });
+
+    test("attr() get/set style", function () {
+        withCanvas(function(html) {
+            // Arrange: a heading with id (set using map)
+            var h1 = html.h1().attr({id : 'aHeading'});
+
+            // Assert: that id is set
+            equal(h1.asJQuery().attr("id"), 'aHeading', 'attribute set');
         });
     });
 
@@ -206,23 +287,29 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
         });
     });
 
-    test("css() get/set style", function () {
+    test("asJQuery() returns jQuery that match brush element", function() {
         withCanvas(function(html) {
             // Arrange: a heading
             var h1 = html.h1().id('aHeading');
 
-            h1.css('background-color', 'red');
-            equal(h1.asJQuery().css('background-color'), 'rgb(255, 0, 0)');
+            // Assert
+            equal(h1.asJQuery().get(0), jQuery("#aHeading").get(0), 'asJQuery() acessor returns hquery that match element.');
         });
     });
 
-    test("attr() get/set style", function () {
-        withCanvas(function(html) {
-            // Arrange: a heading
-            var h1 = html.h1().id('aHeading');
 
-            h1.title("foo");
-            equal(h1.asJQuery().attr("title"), ("foo"));
+    //TODO: allow or throw exception?
+    test("can render almost everything", function () {
+        withCanvas(function(html) {
+            html.render(0); // toString()
+            html.render(3.14159265359); // toString()
+            html.render('<div>test</div>'); // => DIV element
+            html.render(true); // => nothing
+            html.render(false); // => nothing
+            html.render({}); // as attributes but since it have no keys => nothing
+            html.render([]); // as array but since empty => nothing
+
+            ok(true);
         });
     });
 });

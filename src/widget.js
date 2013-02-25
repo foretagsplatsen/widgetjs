@@ -23,7 +23,7 @@
 //
 //      html.div(helloWorldWidget)
 //
-// It is therefor easy to compose widgets from other widgets. 
+// It is therefor easy to compose widgets from other widgets.
 //
 // _Note:_ Widgets composed by other widgets must
 // expose sub widgets using `widgets()` to make it possible to traverse widget tree.
@@ -35,10 +35,11 @@ define(
         './widget-extensions',
         './router',
         './events',
-        './htmlCanvas'
+        './htmlCanvas',
+        'jquery'
     ],
 
-    function (ext, router, events, htmlCanvas) {
+    function (ext, router, events, htmlCanvas, jQuery) {
 
         // - - -
 
@@ -78,8 +79,10 @@ define(
 
             // **Third party protected extensions** added to `my`.
             // See [widget-extensions.js](widget-extensions.html)
-            for (var i in ext) {
-                my[i] = ext[i];
+            for (var extProperty in ext) {
+                if (ext.hasOwnProperty(extProperty)) {
+                    my[extProperty] = ext[extProperty];
+                }
             }
 
             // Returns sub widgets of the widget. Needed
@@ -89,10 +92,10 @@ define(
             };
            
             // Expose widget id
-            that.getId = function() {
+            that.getId = function () {
                 return id;
             };
-            that.id = function() {
+            that.id = function () {
                 return id;
             };
 
@@ -118,7 +121,7 @@ define(
             };
 
             // Same as `that.appendTo()` except it first empties the element.
-            that.replace = function(aJQuery) {
+            that.replace = function (aJQuery) {
                 var canvas = htmlCanvas(aJQuery);
                 canvas.root.asJQuery().empty();
                 that.renderOn(canvas);
@@ -136,7 +139,7 @@ define(
             };
 
             // Return JQuery that match root element (div).
-            that.asJQuery = function() {
+            that.asJQuery = function () {
                 return jQuery('#' + that.getId());
             };
 
@@ -153,12 +156,12 @@ define(
             //
 
             // True if widget have rendered content.
-            that.isRendered = function() {
+            that.isRendered = function () {
                 return that.asJQuery().length > 0;
             };
 
             // Renders a wrapper/root for widget - a div as default
-            my.renderRoot = function(html) {
+            my.renderRoot = function (html) {
                 return html.div().id(id);
             };
 
@@ -174,7 +177,7 @@ define(
             // `update()` is a general purpose function that will re-render the widget
             // completely inside its root div.
             that.update = function () {
-                if(!that.isRendered()) {
+                if (!that.isRendered()) {
                     return;
                 }
 

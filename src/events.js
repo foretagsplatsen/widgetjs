@@ -34,6 +34,53 @@ define([], function () {
 
         // - - -
 
+        // ### Event
+        // Represents an event. Keeps a list of bindings/callbacks that can be added using **push()** and
+        // removed using **remove()**. *trigger()* executes all callbacks one by one in registration order.
+        var event = function () {
+            var that = {};
+
+            var bindings = [];
+
+            // #### Public API
+
+            // Add binding
+            that.push = function (binding) {
+                bindings.push(binding);
+                binding.event = that;
+            };
+
+            // Remove binding
+            that.remove = function (binding) {
+                if (!binding || !binding.event) {
+                    throw "not a binding for event";
+                }
+
+                for (var i = 0; i < bindings.length; i++) {
+                    if (binding === bindings[i]) {
+                        bindings.splice(i, 1);
+                    }
+                }
+                binding.event = null;
+            };
+
+            // Trigger event by executing all callbacks one by one in registration order.
+            // 'params' can be an object or an array, and will be passed as parameter to
+            // the callback functions of each binding.
+            that.trigger = function (params) {
+                if (params.constructor !== Array) {
+                    params = [params];
+                }
+                for (var i = 0; i < bindings.length; i++) {
+                    bindings[i].trigger(params);
+                }
+            };
+
+            return that;
+        };
+
+        // - - -
+
         // ### EventHandler
         // Keeps a list of named events. You may bind callbacks to an event with **on()**
         // or **onceOn()** and remove with **off()**. Use **trigger()** to execute all callbacks for an event.
@@ -61,7 +108,7 @@ define([], function () {
             };
 
             // Removed 'binding' attached to event.
-            that.off = function(name, binding) {
+            that.off = function (name, binding) {
                 ensureEventHolderFor(name);
                 that.events[name].remove(binding);
             };
@@ -86,50 +133,6 @@ define([], function () {
                 var params = Array.prototype.slice.call(arguments, 1);
                 if (that.events[name]) {
                     that.events[name].trigger(params);
-                }
-            };
-
-            return that;
-        };
-
-        // - - -
-
-        // ### Event
-        // Represents an event. Keeps a list of bindings/callbacks that can be added using **push()** and
-        // removed using **remove()**. *trigger()* executes all callbacks one by one in registration order.
-        var event = function () {
-            var that = {};
-
-            var bindings = [];
-
-            // #### Public API
-
-            // Add binding
-            that.push = function (binding) {
-                bindings.push(binding);
-                binding.event = that;
-            };
-
-            // Remove binding
-            that.remove = function (binding) {
-                if(!binding || !binding.event) {
-                    throw "not a binding for event";
-                }
-
-                //bindings.remove(binding);
-                for(i=0; i < bindings.length; i++) { if(binding == bindings[i]) bindings.splice(i, 1); }
-                binding.event = null;
-            };
-
-            // Trigger event by executing all callbacks one by one in registration order.
-            // 'params' can be an object or an array, and will be passed as parameter to
-            // the callback functions of each binding.
-            that.trigger = function (params) {
-                if (params.constructor !== Array) {
-                    params = [params];
-                }
-                for (var i = 0; i < bindings.length; i++) {
-                    bindings[i].trigger(params);
                 }
             };
 
