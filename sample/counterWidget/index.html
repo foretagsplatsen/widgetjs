@@ -13,8 +13,7 @@ var counterWidget = function () {
 	var count = 0;
 
 	that.renderContentOn = function (html) {
-		html.div();
-		h1 = html.h1(count.toString());
+		html.h1(count.toString());
 		html.button('+').click(function() { count++; that.update();});
 		html.button('-').click(function() { count--; that.update();});
 	};
