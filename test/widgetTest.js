@@ -1,4 +1,4 @@
-define(["widgetjs/widget"], function(widgetjswidget) {
+define(["widgetjs/widget", "jquery"], function(widgetjswidget, jQuery) {
 
     // helper functions
 
@@ -22,6 +22,9 @@ define(["widgetjs/widget"], function(widgetjswidget) {
     };
 
     // actual tests
+
+    module("widget");
+
 
     test("testing unique id generator", function() {
         withWidget(function(widget) {

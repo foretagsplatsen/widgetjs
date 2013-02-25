@@ -28,6 +28,9 @@ define(
 
         redirectTo('');
         
+
+        module("router");
+
         test("testing unique router", function() {
             equal(router.router, router.router);
         });

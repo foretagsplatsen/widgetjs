@@ -8,6 +8,9 @@ define(["widgetjs/events"], function(manager) {
         equal(o, true);
     };
 
+    module("events");
+
+
     test("singleton event manager", function() {
         equal(manager, manager);
     });
