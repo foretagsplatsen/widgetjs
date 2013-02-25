@@ -55,7 +55,7 @@ if(showAlert) {
 
 <span class="nx">define</span><span class="p">(</span>
   <span class="p">[</span>
-  <span class="s1">&#39;jquery&#39;</span>
+    <span class="s1">&#39;jquery&#39;</span>
   <span class="p">],</span>
 
   <span class="kd">function</span> <span class="p">(</span><span class="nx">jQuery</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <hr />             </td>             <td class="code">               <div class="highlight"><pre>    </pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <h3>htmlCanvas</h3>
@@ -159,7 +159,7 @@ be created from a 'tag' or an element matched using 'jQuery'.</p>
 
 <p>all other objects are appended using:
 <code>jQuery(element).append(object);</code></p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">function</span> <span class="nx">append</span><span class="p">(</span><span class="nx">object</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="nx">object</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">||</span> <span class="nx">object</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="nx">object</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">||</span> <span class="nx">object</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
           <span class="k">throw</span> <span class="s1">&#39;cannot append null or undefined to brush&#39;</span><span class="p">;</span>
         <span class="p">}</span>
 
@@ -176,7 +176,7 @@ be created from a 'tag' or an element matched using 'jQuery'.</p>
           <span class="nx">object</span><span class="p">.</span><span class="nx">appendToBrush</span> <span class="cm">/* eg. widget and tagBrush implement appendToBrush */</span><span class="p">)</span> <span class="p">{</span>
           <span class="nx">object</span><span class="p">.</span><span class="nx">appendToBrush</span><span class="p">(</span><span class="nx">that</span><span class="p">);</span> <span class="c1">// double dispatch</span>
         <span class="p">}</span>
-        <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">object</span> <span class="o">===</span> <span class="s2">&quot;object&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">object</span> <span class="o">===</span> <span class="s2">&quot;object&quot;</span><span class="p">)</span> <span class="p">{</span>
           <span class="nx">that</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="nx">object</span><span class="p">);</span> <span class="c1">// assume attributes if none of above</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
           <span class="nx">jQuery</span><span class="p">(</span><span class="nx">element</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">object</span><span class="p">);</span> <span class="c1">// default to jquery</span>
@@ -224,7 +224,7 @@ appended to another brush.</p>
 
 <pre><code>var h1Brush = html.span('test');
  html.div(h1Brush);
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">appendToBrush</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">aTagBrush</span><span class="p">)</span> <span class="p">{</span>
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">appendToBrush</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">aTagBrush</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">aTagBrush</span><span class="p">.</span><span class="nx">addBrush</span><span class="p">(</span><span class="nx">that</span><span class="p">);</span>
       <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-24">&#182;</a>               </div>               <p>Appends brush <code>element()</code> to this element.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">addBrush</span> <span class="o">=</span> <span class="nx">appendBrush</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-25">&#182;</a>               </div>               <p>Events are delegated to jQuery</p>
 
@@ -318,7 +318,7 @@ html.h1().css({'display' : 'block', 'color' : 'red'});
       <span class="p">}</span>
       <span class="k">if</span> <span class="p">(</span><span class="nx">jquery</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">element</span> <span class="o">=</span> <span class="nx">jquery</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
-        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
           <span class="k">throw</span> <span class="s1">&#39;jQuery did not match an element&#39;</span><span class="p">;</span>
         <span class="p">}</span>
       <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-36">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-36">&#182;</a>               </div>               <p>If no jQuery was given, element is created

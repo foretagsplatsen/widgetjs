@@ -51,6 +51,14 @@ module.exports = function(grunt) {
     qunit: {
       all: ['test/**/*.html']
     },
+    docco: {
+      src: {
+        src: ['src/**/*.js'],
+        options: {
+          output: 'docs/docco/'
+        }
+      }
+    },
     watch: {
       files: ['<%= jshint.all %>'],
       tasks: ['jshint:src', 'qunit']
@@ -62,9 +70,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-qunit');
   //grunt.loadNpmTasks('grunt-requirejs');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
+  grunt.loadNpmTasks('grunt-docco');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   // Default task(s).
   grunt.registerTask('default', ['jshint:src', 'qunit']);
-  grunt.registerTask('dist', ['default', 'requirejs']);
+  grunt.registerTask('dist', ['default', 'requirejs', 'docco']);
 };
