@@ -251,12 +251,16 @@ define(
 				setHash(that.linkTo(path));
 			};
 
-			// Navigate to previous fragment
-			that.back = function() {
-				if(history.length > 0) {
+			// Navigate to previous fragment. Fallback to the
+            // `fallback' url if the history is empty
+			that.back = function(spec) {
+                spec = spec || {};
+				if(history.length > 1) {
 					history.pop();
 					setHash(history.pop());
-				}
+				} else if(spec.fallback) {
+                    setHash(fallback);
+                }
 			};
 	
 			// **Force a check()**, wheither the fragment has changed or not.
