@@ -19,7 +19,7 @@ A simple widget can look like:
 var helloWidget = function() {
 	var that = widgetjs.widget();
 
-	that.onRenderContent = function(html) {
+	that.renderContentOn = function(html) {
 		html.h1('hello world');
 	}
 
