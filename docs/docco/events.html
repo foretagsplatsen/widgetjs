@@ -82,11 +82,11 @@ or <strong>onceOn()</strong> and remove with <strong>off()</strong>. Use <strong
                 <span class="kd">var</span> <span class="nx">onceEvent</span> <span class="o">=</span> <span class="nx">eventBinding</span><span class="p">({</span>
                     <span class="nx">callback</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
                         <span class="nx">that</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">remove</span><span class="p">(</span><span class="nx">onceEvent</span><span class="p">);</span>
-                        <span class="nx">callback</span><span class="p">(</span><span class="nx">arguments</span><span class="p">);</span>
+                        <span class="nx">callback</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">name</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">);</span>
                     <span class="p">}</span>
                 <span class="p">});</span>
 
-                <span class="nx">that</span><span class="p">.</span><span class="nx">bindings</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">onceEvent</span><span class="p">);</span>
+                <span class="nx">that</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">onceEvent</span><span class="p">);</span>
                 <span class="k">return</span> <span class="nx">onceEvent</span><span class="p">;</span>
             <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>Trigger all callbacks attached to event.
 Any arguments to trigger is sent as arguments to callback.</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">that</span><span class="p">.</span><span class="nx">trigger</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
@@ -141,12 +141,8 @@ not already registered.</p>             </td>             <td class="code">     
                 <span class="k">return</span> <span class="nx">that</span><span class="p">.</span><span class="nx">at</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">).</span><span class="nx">onceOn</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
             <span class="p">};</span>
 
-            <span class="nx">that</span><span class="p">.</span><span class="nx">off</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="nx">that</span><span class="p">.</span><span class="nx">at</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">).</span><span class="nx">off</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
-            <span class="p">};</span>
-
-            <span class="nx">that</span><span class="p">.</span><span class="nx">trigger</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">that</span><span class="p">.</span><span class="nx">at</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">).</span><span class="nx">trigger</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">params</span><span class="p">);</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">off</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">binding</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">that</span><span class="p">.</span><span class="nx">at</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">).</span><span class="nx">off</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">binding</span><span class="p">);</span>
             <span class="p">};</span>
 
             <span class="nx">that</span><span class="p">.</span><span class="nx">trigger</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>

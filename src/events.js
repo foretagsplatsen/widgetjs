@@ -119,11 +119,11 @@ define([], function () {
                 var onceEvent = eventBinding({
                     callback: function () {
                         that.events[name].remove(onceEvent);
-                        callback(arguments);
+                        callback.apply(that.events[name], arguments);
                     }
                 });
 
-                that.bindings[name].push(onceEvent);
+                that.events[name].push(onceEvent);
                 return onceEvent;
             };
 
@@ -219,12 +219,8 @@ define([], function () {
                 return that.at('default').onceOn(name, callback);
             };
 
-            that.off = function (name, callback) {
-                return that.at('default').off(name, callback);
-            };
-
-            that.trigger = function (name, params) {
-                that.at('default').trigger(name, params);
+            that.off = function (name, binding) {
+                return that.at('default').off(name, binding);
             };
 
             that.trigger = function (name) {
