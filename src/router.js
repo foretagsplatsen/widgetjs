@@ -77,6 +77,10 @@ define(
 			//			alert('/#!/foo triggered!');
 			//		});
 			that.on = function (path, callback) {
+				if (typeof(path) === 'undefined' || path === null || typeof path !== "string") {
+					throw 'accepts only string paths';
+				}
+
 				handler.on(path, callback);
 			};
 
@@ -103,11 +107,6 @@ define(
 				}
 			};
 
-			// Register this controller
-			that.register = function () {
-				current_router.register(that);
-			};
-
 			return that;
 		};
 
@@ -117,7 +116,8 @@ define(
 		// Listens for changes in the hash fragment of the URL. In modern browsers we use the 'hashchange' event.
 		// In legacy browsers we instead pull for changes using a timer/interval.
 		//
-		// In old IE (< IE 8) a hidden IFrame is created to allow the back button and hash-based history to work.
+		// In old IE (< IE 8) a hidden IFrame is created to allow the back button and hash-based history to work. 
+		// See `setupOldIE()` and `fixHistoryForIE()`.
 		//
 		// Usage:
 		//
@@ -146,9 +146,8 @@ define(
 
 			var fallback = true,
 				oldIE, // IE7 or older
-				fragment, // current fragment
-				previousFragment, // previously visited fragment
-				history = [], // history of visited fragments
+				fragment, // last hash fragment
+				history = [], // history of visited hash fragments
 				timer,
 				iframe_src = (spec.iframe_src || /*jshint scripturl:true*/  'javascript:0'), /*jshint scripturl:false*/
 				controller;
@@ -178,14 +177,7 @@ define(
 				window.location.hash = string;
 			}
 
-			// Delegates route resolving to the current controller, if any
-			function resolveRoute() {
-				if (controller) {
-					controller.resolveRoute(route());
-				}
-			}
-
-			// Setup the iframe for old versions of IE
+			// Setup IFrame for old versions of IE
 			function setupOldIE() {
 				var iDoc = jQuery("<iframe id='ie_history_iframe'" +
 					"src='" + iframe_src + "'" +
@@ -198,7 +190,8 @@ define(
 				iframe.location.title = window.title;
 			}
 
-			// Special hack for IE < 8. Else IE won't add an entry to the history
+			// Special hack for IE < 8 since hashchanges is not added to history. 
+			// IE will add a history entry when IFrame is opened/closed.
 			function fixHistoryForIE() {
 				var iframe = getIframe();
 				iframe.open();
@@ -218,23 +211,29 @@ define(
 				history.push(aFragment);
 			}
 
+			// Delegates route resolving to the current controller, if any
+			function resolveRoute() {
+				if (controller) {
+					controller.resolveRoute(route());
+				}
+			}
+
 			// Check if the url fragment has changed
 			// and resolve it if needed.
 			function check() {
-				fragment = getHash();
+				var newFragment = getHash();
 
-				if (fragment !== previousFragment) {
-					previousFragment = fragment;
+				if (fragment !== newFragment /* route changed */) {
+					fragment = newFragment;
 					pushToHistory(fragment);
 					resolveRoute();
-				} else {
-					if (oldIE) {
-						var iframe = getIframe();
-						if (iframe.location.hash !== fragment) {
-							window.location.hash = iframe.location.hash;
-							fragment = getHash();
-							resolveRoute();
-						}
+
+				} else if (oldIE) {
+					var iframe = getIframe();
+					if (iframe.location.hash !== newFragment) {
+						setHash(iframe.location.hash);
+						pushToHistory(fragment);
+						resolveRoute();
 					}
 				}
 			}
@@ -245,6 +244,10 @@ define(
 			that.route = route;
 
 			that.linkTo = function (path) {
+				if (typeof(path) === 'undefined' || path === null || typeof path !== "string") {
+					throw 'accepts only string paths';
+				}
+
 				return ('#!/' + path);
 			};
 
@@ -254,34 +257,37 @@ define(
 
 			// Navigate to previous fragment. Fallback to the
             // `fallback' url if the history is empty
-			that.back = function (spec) {
-                spec = spec || {};
+			that.back = function (fallback) {
 				if (history.length > 1) {
 					history.pop();
 					setHash(history.pop());
-				} else if (spec.fallback) {
-                    setHash(fallback);
-                }
+				} else if (fallback) {
+                    setHash(that.linkTo(fallback));
+                } 
 			};
 	
-			// **Force a check()**, wheither the fragment has changed or not.
-			that.forceCheck = function () {
-				resolveRoute();
-			};
+			// **Force a check()**, whether the fragment has changed or not.
+			that.forceCheck = resolveRoute;
 
 			// **Register a controller**
 			that.register = function (aController) {
 				// Only one controller can be registered at a time
 				controller = aController;
-				// also force a fragment check
-				resolveRoute();
+
+				// Also send controller route() if started
+				if(fragment !== undefined) { 
+					resolveRoute();
+				}
 			};
 
 			// **Start/stop** url changes check. If the browser supports it we bind 'check()' to the 'hashchange' event.
 			// In legacy browsers we instead pull for changes every 100 ms.
 			that.start = function () {
 				that.stop();
-				fragment = route();
+				
+				fragment = getHash();
+				history = [fragment];
+
 				if (fallback) {
 					if (oldIE) {
 						setupOldIE();
@@ -291,7 +297,7 @@ define(
 					jQuery(window).bind('hashchange', check);
 				}
 
-				resolveRoute();
+				resolveRoute(); //send controller our route()
 			};
 
 			that.stop = function () {
@@ -300,6 +306,7 @@ define(
 					timer = null;
 				}
 				jQuery(window).unbind('hashchange', check);
+				jQuery('#ie_history_iframe').remove(); // remove any IFRAME
 			};
 
 			return that;
@@ -309,6 +316,8 @@ define(
 		// Instances of default router and controller
 		var current_router = router();
 		var current_controller = controller();
+		current_router.register(current_controller);
+
 		return {
 			controller: current_controller,
 			router: current_router

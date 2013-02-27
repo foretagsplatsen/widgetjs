@@ -1,48 +1,49 @@
 define(
     ["widgetjs/router", "widgetjs/events"],
     function(router, events) {
-
-        // helpers
-        var deny = function(o) {
-            equal(o, false);
-        };
-
-        var assert = function(o) {
-            equal(o, true);
-        };
-
+       // helpers
+ 
         function delayedAsyncTest(name, fn) {
             asyncTest(name, function() {
                 expect(true);
-                setTimeout(fn, 0 /* Give some time to the router to initialize. */);
+                setTimeout(fn, 100 /* Give some time to the router to initialize. */);
             });
         }
 
-        var redirectTo = window.redirectTo = function(path) {
+        function delayedSteps() {
+            var steps = Array.prototype.slice.call(arguments);
+            function next() {
+                if (steps.length === 0) {
+                  return;
+                }
+                var fn = steps.shift();
+                setTimeout(function() {
+                    next(fn.apply(next, arguments));
+                }, 10);
+            }
+            next();
+        }
+
+        var redirectTo = function(path) {
             router.router.redirectTo(path);
         };
 
         // setup router
-        router.controller.register();
         router.router.start();
-
-        redirectTo('');
-        
 
         module("router");
 
-        test("testing unique router", function() {
+        test("singleton router", function() {
             equal(router.router, router.router);
         });
 
-        test("testing unique controller", function() {
+        test("singleton controller", function() {
             equal(router.controller, router.controller);
         });
-
              
         delayedAsyncTest("basic route", function() {
             router.controller.on('foo', function() {
-                ok(true);
+                ok(true, 'callback executed for route');
                 start();
             });
 
@@ -51,7 +52,7 @@ define(
 
         delayedAsyncTest("route with parameter", function() {
             router.controller.on('some/#value', function(value) {
-                ok(value === 'thing');
+                ok(value === 'thing', 'parameter passed correcly');
                 start();
             });
             redirectTo('some/thing');
@@ -60,7 +61,7 @@ define(
 
         delayedAsyncTest("route with multiple parameters", function() {
             router.controller.on('some/#value/#anothervalue', function(value, anothervalue) {
-                ok(value === 'thing'&& anothervalue === 'thing2');
+                ok(value === 'thing'&& anothervalue === 'thing2', 'parameters passed correcly');
                 start();
             });
             redirectTo('some/thing/thing2');
@@ -68,7 +69,7 @@ define(
 
         delayedAsyncTest("regexp route", function() {
             router.controller.on('any/.*', function() {
-                ok(true);
+                ok(true, 'regexp route matches correcly');
                 start();
             });
             redirectTo('any/thing');
@@ -76,7 +77,7 @@ define(
 
         delayedAsyncTest("regexp route with slashes", function() {
             router.controller.on('blah/.*', function() {
-                ok(true);
+                ok(true, 'regexp route matches correcly');
                 start();
             });
             redirectTo('blah/some/thing/bar/baz');
@@ -84,13 +85,107 @@ define(
 
         delayedAsyncTest("notfound event triggered", function() {
             events.at('routing').on('notfound', function(url) {
-                ok(true);
+                ok(true, 'notfound event triggered correcly');
                 this.unbind(); // clean-up: unbound this event
                 start();
             });
 
-            redirectTo('APathNoyBoundToACallback');
+            redirectTo('APathNotBoundToACallback');
         });
+
+        test("route()", function() {
+            window.location.hash = '#!/aPath';
+            equal(router.router.route(), 'aPath', 'returns the URL hash fragment minus the hash-bang (#!)');
+        });
+
+        test("linkTo()", function() {
+            equal(router.router.linkTo('aPath'), '#!/aPath', 'uses the hash-bang "#! convention');
+            equal(router.router.linkTo(''), '#!/', 'handles empty path');
+
+            throws(function() { router.router.linkTo(null); }, 'throws error if null');
+            throws(function() { router.router.linkTo(undefined); }, 'throws error if undefined');
+            throws(function() { router.router.linkTo({}); }, 'throws error if object');
+
+        });
+
+        test("redirectTo()", function() {
+            throws(function() { router.router.redirectTo(null); }, 'throws error if null');
+            throws(function() { router.router.redirectTo(undefined); }, 'throws error if undefined');
+            throws(function() { router.router.redirectTo({}); }, 'throws error if object');
+
+            router.router.redirectTo('aPath');
+            equal(window.location.hash, '#!/aPath', 'sets window.location.hash');            
+
+            router.router.redirectTo('');
+            equal(window.location.hash, '#!/', 'redirects empty path');
+        });
+
+        asyncTest("back()", function() {
+            delayedSteps(
+                function() {
+                    router.router.stop();
+                    window.location.hash = ''; // start path
+                    router.router.start();
+                },
+                function() {
+                    router.router.redirectTo('a');
+                },
+                function() {
+                    router.router.redirectTo('b'); 
+                },
+                function() {
+                    equal(router.router.route(), 'b', 'route is last path'); 
+                },
+                function() { 
+                    router.router.back();
+                },
+                function() { 
+                    equal(router.router.route(), 'a', 'back sets path to previous path'); 
+                },
+                function() { 
+                    router.router.back();
+                },
+                function() { 
+                    equal(router.router.route(), '', 'back set to start path'); 
+                },
+                function() { 
+                    router.router.back();
+                },
+                function() { 
+                    equal(router.router.route(), '', 'can not back furter than start'); 
+                },
+                function() { 
+                    router.router.back('fallback');
+                },
+                function() { 
+                    equal(router.router.route(), 'fallback', 'but can give a fallback path'); 
+                },
+                function() {
+                    start();
+                }
+            );
+        });
+
+      /*  delayedAsyncTest("back()", function() {
+            equal(router.router.route(), 'b', 'route is last path');
+
+            router.router.back();
+            equal(router.router.route(), 'a', 'back sets path to previous path');
+
+            router.router.back();
+            equal(router.router.route(), 'a', 'back is unchanged if end of history');
+
+            router.router.back('aroute');
+            equal(router.router.route(), 'aroute', 'a fallback for end of history can be set');
+
+            ok();
+            start();
+
+        }, function() { 
+            router.router.start(); 
+            router.router.redirectTo('a');
+            router.router.redirectTo('b');
+        }); */
 
     }
 );
