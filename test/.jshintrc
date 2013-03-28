@@ -15,6 +15,7 @@
     "jquery" : true,
     "nomen": true,
     "globals": {
-        "define": true
+        "define": true,
+        "throws" : true
     }
 }
