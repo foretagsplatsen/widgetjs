@@ -136,7 +136,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery"], function(widget, ht
         });
     });
 
-     test("Widgets can replace content of a jQuery", function() {
+    test("Widgets can replace content of a jQuery", function() {
         withCanvas(function(html) {
             // Arrange: a widget
             var aWidget = (function() {
@@ -158,82 +158,77 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery"], function(widget, ht
             // Assert: that widget was appended to DIV
             equal(divQuery.children().length, 1, "only one child element");
             equal(divQuery.children().get(0).id, aWidget.id(), "child is widget");
-
         });
     });
 
     test("Widgets can be appended to a HTML canvas", function() {
-       withCanvas(function(html) {
+        withCanvas(function(html) {
+            // Arrange: a widget
+            var aWidget = (function() {
+                var that = widget();
 
-        // Arrange: a widget
-        var aWidget = (function() {
-            var that = widget();
+                that.renderContentOn = function(html) {
+                    html.div('div').addClass('aDiv');
+                };
 
-            that.renderContentOn = function(html) {
-                html.div('div').addClass('aDiv');
-            };
-
-            return that;
-        })();
+                return that;
+            })();
 
 
-        // Act: append widget to canvas
-        html.render(aWidget);
+            // Act: append widget to canvas
+            html.render(aWidget);
 
-        // Assert: that widget was rendered in canvas
-        ok(html.root.asJQuery().find('.aDiv').get(0), "widget rendered inside canvas");
-
+            // Assert: that widget was rendered in canvas
+            ok(html.root.asJQuery().find('.aDiv').get(0), "widget rendered inside canvas");
         });
     });
 
-     test("isRendered()", function() {
-       withCanvas(function(html) {
+    test("isRendered()", function() {
+        withCanvas(function(html) {
+            // Arrange: a widget
+            var aWidget = (function() {
+                var that = widget();
 
-        // Arrange: a widget
-        var aWidget = (function() {
-            var that = widget();
+                that.renderContentOn = function(html) {
+                    html.div('div').addClass('aDiv');
+                };
 
-            that.renderContentOn = function(html) {
-                html.div('div').addClass('aDiv');
-            };
+                return that;
+            })();
 
-            return that;
-        })();
+            // Assert: false before render
+            ok(!aWidget.isRendered(), 'isRendered() is false when not rendered');
 
-        // Assert: false before render
-        ok(!aWidget.isRendered(), 'isRendered() is false when not rendered');
+            // Act: render widget
+            html.render(aWidget);
 
-        // Act: render widget
-        html.render(aWidget);
-
-        // Assert: true ehrn rendered
-        ok(aWidget.isRendered(), 'isRendered() is true when rendereded');
-
+            // Assert: true ehrn rendered
+            ok(aWidget.isRendered(), 'isRendered() is true when rendereded');
         });
     });
 
 
-     test("renderRoot() can be overridden in widget", function() {
-       withCanvas(function(html) {
+    test("renderRoot() can be overridden in widget", function() {
+        withCanvas(function(html) {
 
-        // Arrange: a widget that renders it's root as
-        // form instead of DIV
-        var aWidget = (function() {
-            var my = {};
-            var that = widget({}, my);
+            // Arrange: a widget that renders it's root as
+            // form instead of DIV
+            var aWidget = (function() {
+                var my = {};
+                var that = widget({}, my);
 
-            my.renderRoot = function (html) {
-                return html.form().id(that.id());
-            };
+                my.renderRootOn = function (html) {
+                    return html.form().id(that.id());
+                };
 
-            return that;
-        })();
+                return that;
+            })();
 
-        // Act: render widget
-        html.render(aWidget);
+            // Act: render widget
+            html.render(aWidget);
 
-        // Assert: that form is rendered with id
-        equal(html.root.asJQuery().find('FORM').get(0).id, aWidget.id(), "root rendered as FORM");
+            // Assert: that form is rendered with id
+            equal(html.root.asJQuery().find('FORM').get(0).id, aWidget.id(), "root rendered as FORM");
 
         });
     });

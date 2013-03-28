@@ -147,7 +147,7 @@ define(
             // makes it possible to do `widget.update()` to re-render widget.
             //
             // `renderOn()` wrapps content rendered by `renderContentOn()` inside a
-            // root element rendered by `renderRoot`.
+            // root element rendered by `renderRootOn`.
             //
             // `update()` empties the root element and re-render content using `renderContentOn()`
             //
@@ -161,7 +161,7 @@ define(
             };
 
             // Renders a wrapper/root for widget - a div as default
-            my.renderRoot = function (html) {
+            my.renderRootOn = function (html) {
                 return html.div().id(id);
             };
 
@@ -171,7 +171,7 @@ define(
 
             // Renders widget by wrapping `renderContentOn()` in a root element.
             that.renderOn = function (html) {
-                my.renderRoot(html).render(that.renderContentOn);
+                my.renderRootOn(html).render(that.renderContentOn);
             };
 
             // `update()` is a general purpose function that will re-render the widget
@@ -181,10 +181,12 @@ define(
                     return;
                 }
 
-                var rootCanvas = htmlCanvas(that.asJQuery());
+                // clear content of root
+                that.asJQuery().empty();
 
-                rootCanvas.root.asJQuery().empty();
-                that.renderContentOn(rootCanvas);
+                // re-render content on root
+                var html = htmlCanvas(that.asJQuery());
+                that.renderContentOn(html);
             };
 
             return that;
