@@ -3,7 +3,7 @@ QUnit.config.autostart = false;
 requirejs.config({
 	baseUrl: '.',
 	paths: {
-		'jquery': '../components/jquery/jquery',
+		'jquery': '../bower_components/jquery/jquery',
 		'widgetjs' : '../src/'
 	}
 });
