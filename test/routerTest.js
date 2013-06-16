@@ -3,9 +3,9 @@ define(
     function(router, events) {
        // helpers
  
-        function delayedAsyncTest(name, fn) {
+        function delayedAsyncTest(name, fn, expected) {
             asyncTest(name, function() {
-                expect(true);
+                expect(expected || 1);
                 setTimeout(fn, 100 /* Give some time to the router to initialize. */);
             });
         }
