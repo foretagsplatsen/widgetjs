@@ -63,7 +63,7 @@ define(
 
 			// Public accessing methods
 			that.path = function() { return path; };
-			that.query = function() { return query };
+			that.query = function() { return query; };
 
 			// Match the path against a string and return an array of
 			// values for matched parameters, or null.
