@@ -84,7 +84,7 @@ define(
         });
 
         delayedAsyncTest("notfound event triggered", function() {
-            events.at('routing').on('notfound', function(url) {
+            events.at('routing').on('notfound', function() {
                 ok(true, 'notfound event triggered correcly');
                 this.unbind(); // clean-up: unbound this event
                 start();
