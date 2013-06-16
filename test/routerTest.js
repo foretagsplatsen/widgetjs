@@ -67,6 +67,16 @@ define(
 			redirectTo('some/thing/thing2');
 		});
 
+		delayedAsyncTest("route with query string", function() {
+			router.controller.on('some /#value', function(value, query) {
+				ok(value === 'thing');
+				ok(query.foo === 'bar');
+				start();
+			});
+			redirectTo('some/thing?foo=bar');
+		});
+
+
 		delayedAsyncTest("regexp route", function() {
 			router.controller.on('any/.*', function() {
 				ok(true, 'regexp route matches correcly');
@@ -165,27 +175,5 @@ define(
 				}
 			);
 		});
-
-		/*	delayedAsyncTest("back()", function() {
-		 equal(router.router.route(), 'b', 'route is last path');
-
-		 router.router.back();
-		 equal(router.router.route(), 'a', 'back sets path to previous path');
-
-		 router.router.back();
-		 equal(router.router.route(), 'a', 'back is unchanged if end of history');
-
-		 router.router.back('aroute');
-		 equal(router.router.route(), 'aroute', 'a fallback for end of history can be set');
-
-		 ok();
-		 start();
-
-		 }, function() { 
-		 router.router.start(); 
-		 router.router.redirectTo('a');
-		 router.router.redirectTo('b');
-		 }); */
-
 	}
 );
