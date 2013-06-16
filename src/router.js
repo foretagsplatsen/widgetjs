@@ -304,14 +304,14 @@ define(
 						if(index < params.length - 1) {
 							link = link + '&';
 						}
-					})
+					});
 				}
 				
 				return link;
 			};
 
-			that.redirectTo = function (path) {
-				setHash(that.linkTo(path));
+			that.redirectTo = function (path, query) {
+				setHash(that.linkTo(path, query));
 			};
 
 			// Navigate to previous fragment. Fallback to the
