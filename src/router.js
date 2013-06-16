@@ -2,13 +2,13 @@
 //
 // - **Router**: simply watches the hash of the URL (uses the hash-bang '#!' convention) and notifies a controller when it change.
 //
-//     http://foo.com/#!**/bar**
+//    http://foo.com/#!**/bar**
 //
 // - **Controller**: responsible for binding events to some URL.
 //
 //		controller.on('/**bar**', function() { alert('bar'); });
 //
-// When the URL (hash fragment) change the router sends a `resolveRoute(route)` message with the new route to the controller that then triggers an
+// When the URL (hash fragment) change the router sends a `resolveUrl(url)` message with the new url to the controller that then triggers an
 // action.
 // - - -
 define(
@@ -18,6 +18,71 @@ define(
 	],
 	function (jQuery, events) {
 
+		
+		// ### Url definition
+		//
+		// A url has a ...
+
+		var url = function(string) {
+			var that = {};
+
+			string = string || '';
+
+			// Path string of the url
+			var path = '';
+			// Query part of the url (?a=1&b=2)
+			var query = {};
+
+			
+			//Comment
+			function setPath(string) {
+				// Remove the optional query string from the path
+				path = string.replace(/\?.*$/g, '');
+				//Remove the first / if any and duplicated / in the path
+				path = path.replace(/^\//, '');
+				path = path.replace(/\/\//g, '/');
+			}
+
+			// Extract query key/value(s) from a string and add them to `query`
+			function extractQuery(string) {
+				var result = /[^?]+\?(.*)$/g.exec(string);
+				var pair;
+				if(result) {
+					(result[1].split("&")).forEach(function(each) {
+						pair = each.split("=");
+						query[pair[0]] = pair[1];
+					});
+				}
+			}
+
+			function setup() {
+				setPath(string);
+				extractQuery(string);
+			}
+
+
+			// Public accessing methods
+			that.path = function() { return path; };
+			that.query = function() { return query };
+
+			// Match the path against a string and return an array of
+			// values for matched parameters, or null.
+			//
+			//		parametersFor('/user/kalle', '/user/#id'); //=> ['kalle']
+			that.parametersFor = function(string) {
+				var parameterExtractor = string.replace(/#[\w\d]+/g, '([^\/]*)');
+				var parameterValues = new RegExp('^' + parameterExtractor + '[\/]?$').exec(path);
+				if (parameterValues) {
+					return parameterValues.slice(1);
+				} else {
+					return null;
+				}
+			};
+
+			setup();
+
+			return that;
+		};
 
 		// ### Event bus/manager for routing
 		// Manage all routing events. Usage:
@@ -47,28 +112,6 @@ define(
 		var controller = function () {
 			var that = {};
 
-			// #### Private methods
-
-
-			// Convert parameters (eg. '#userId') into regexp
-			//
-			//		convertRoute('/user/#userId'); //=> "/user/([^/]*)"
-			function convertRoute(route) {
-				return route.replace(/#[\w\d]+/g, '([^\/]*)');
-			}
-
-			// Match route against path and return array of values for matched parameters in path.
-			//
-			//		extractParameters('/user/kalle', '/user/#id'); //=> ['kalle']
-			function extractParameters(route, path) {
-				var parameterValues = new RegExp('^' + convertRoute(path) + '[\/]?$').exec(route);
-				if (parameterValues) {
-					return parameterValues.slice(1);
-				} else {
-					return null;
-				}
-			}
-
 			// #### Public API
 
 			// Binds a callback to a path. _Eg:_
@@ -84,26 +127,26 @@ define(
 				handler.on(path, callback);
 			};
 
-			// Tries to match registered bindings agains the new route
-			// from the router.
-			that.resolveRoute = function (route) {
+			// Tries to match registered bindings against the new url
+			// from the url.
+			that.resolveUrl = function (url) {
 				var params,
 					numMatches = 0,
 					bindings = handler.events;
 
 				for (var path in bindings) {
 					if (bindings.hasOwnProperty(path)) {
-						params = extractParameters(route, path);
+						params = url.parametersFor(path);
 						if (params) {
 							numMatches++;
-							handler.trigger.apply(this, [path].concat(params));
+							handler.trigger.apply(this, [path].concat(params).concat(url.query()));
 						}
 					}
 				}
 
-				// Trigger 'notfound' event (with route as argument) if no match
+				// Trigger 'notfound' event (with url as argument) if no match
 				if (numMatches === 0) {
-					handler.trigger('notfound', route);
+					handler.trigger('notfound', url.path());
 				}
 			};
 
@@ -149,7 +192,7 @@ define(
 				fragment, // last hash fragment
 				history = [], // history of visited hash fragments
 				timer,
-				iframe_src = (spec.iframe_src || /*jshint scripturl:true*/  'javascript:0'), /*jshint scripturl:false*/
+				iframe_src = (spec.iframe_src || /*jshint scripturl:true*/	'javascript:0'), /*jshint scripturl:false*/
 				controller;
 
 
@@ -163,10 +206,10 @@ define(
 
 			// #### Private methods
 
-			// The route is simply the URL hash fragment minus the hash-bang (#!). Eg. **bar** in:
-			//    http://foo.com/#!**/bar**
-			function route() {
-				return window.location.hash.replace(/^#![\/]?/, '');
+			// The url is built from the URL hash fragment minus the hash-bang (#!). Eg. **bar** in:
+			//	  http://foo.com/#!**/bar**
+			function getUrl() {
+				return url(window.location.hash.replace(/^#![\/]?/, ''));
 			}
 
 			// Get/Set the hash fragment
@@ -180,8 +223,8 @@ define(
 			// Setup IFrame for old versions of IE
 			function setupOldIE() {
 				var iDoc = jQuery("<iframe id='ie_history_iframe'" +
-					"src='" + iframe_src + "'" +
-					"style='display: none'></iframe>").prependTo("body")[0];
+								  "src='" + iframe_src + "'" +
+								  "style='display: none'></iframe>").prependTo("body")[0];
 				var iframe = iDoc.contentWindow.document || iDoc.document;
 				if (window.location.hash) {
 					var hash = window.location.hash.substr(1);
@@ -211,10 +254,10 @@ define(
 				history.push(aFragment);
 			}
 
-			// Delegates route resolving to the current controller, if any
-			function resolveRoute() {
+			// Delegates url resolving to the current controller, if any
+			function resolveUrl() {
 				if (controller) {
-					controller.resolveRoute(route());
+					controller.resolveUrl(getUrl());
 				}
 			}
 
@@ -223,32 +266,48 @@ define(
 			function check() {
 				var newFragment = getHash();
 
-				if (fragment !== newFragment /* route changed */) {
+				if (fragment !== newFragment /* url changed */) {
 					fragment = newFragment;
 					pushToHistory(fragment);
-					resolveRoute();
+					resolveUrl();
 
 				} else if (oldIE) {
 					var iframe = getIframe();
 					if (iframe.location.hash !== newFragment) {
 						setHash(iframe.location.hash);
 						pushToHistory(fragment);
-						resolveRoute();
+						resolveUrl();
 					}
 				}
 			}
 
 			// #### Public API
 
-			// Return current route
-			that.route = route;
+			// Return current url
 
-			that.linkTo = function (path) {
+			that.path = function() {
+				return getUrl().path(); 
+			};
+
+			that.linkTo = function (path, query) {
+				var link, params;
 				if (typeof(path) === 'undefined' || path === null || typeof path !== "string") {
 					throw 'accepts only string paths';
 				}
 
-				return ('#!/' + path);
+				link = '#!/' + path;
+				if(query) {
+					link = link + '?';
+					params = Object.keys(query);
+					params.forEach(function(param, index) {
+						link = link + param + '=' + query[param];
+						if(index < params.length - 1) {
+							link = link + '&';
+						}
+					})
+				}
+				
+				return link;
 			};
 
 			that.redirectTo = function (path) {
@@ -256,27 +315,27 @@ define(
 			};
 
 			// Navigate to previous fragment. Fallback to the
-            // `fallback' url if the history is empty
+			// `fallback' url if the history is empty
 			that.back = function (fallback) {
 				if (history.length > 1) {
 					history.pop();
 					setHash(history.pop());
 				} else if (fallback) {
-                    setHash(that.linkTo(fallback));
-                } 
+					setHash(that.linkTo(fallback));
+				} 
 			};
-	
+			
 			// **Force a check()**, whether the fragment has changed or not.
-			that.forceCheck = resolveRoute;
+			that.forceCheck = resolveUrl;
 
 			// **Register a controller**
 			that.register = function (aController) {
 				// Only one controller can be registered at a time
 				controller = aController;
 
-				// Also send controller route() if started
+				// Also send controller getUrl() if started
 				if(fragment !== undefined) { 
-					resolveRoute();
+					resolveUrl();
 				}
 			};
 
@@ -297,7 +356,7 @@ define(
 					jQuery(window).bind('hashchange', check);
 				}
 
-				resolveRoute(); //send controller our route()
+				resolveUrl(); //send controller our getUrl()
 			};
 
 			that.stop = function () {
