@@ -24,8 +24,8 @@ define(
 			next();
 		}
 
-		var redirectTo = function(path) {
-			router.router.redirectTo(path);
+		var redirectTo = function(path, query) {
+			router.router.redirectTo(path, query);
 		};
 
 		// setup router
@@ -68,12 +68,11 @@ define(
 		});
 
 		delayedAsyncTest("route with query string", function() {
-			router.controller.on('some /#value', function(value, query) {
-				ok(value === 'thing');
+			router.controller.on('querytest/#value', function(value, query) {
 				ok(query.foo === 'bar');
 				start();
 			});
-			redirectTo('some/thing?foo=bar');
+			redirectTo('querytest/thing', {'foo': 'bar'});
 		});
 
 
@@ -105,7 +104,7 @@ define(
 
 		test("route()", function() {
 			window.location.hash = '#!/aPath';
-			equal(router.router.route(), 'aPath', 'returns the URL hash fragment minus the hash-bang (#!)');
+			equal(router.router.path(), 'aPath', 'returns the URL hash fragment minus the hash-bang (#!)');
 		});
 
 		test("linkTo()", function() {
@@ -144,31 +143,31 @@ define(
 					router.router.redirectTo('b'); 
 				},
 				function() {
-					equal(router.router.route(), 'b', 'route is last path'); 
+					equal(router.router.path(), 'b', 'route is last path'); 
 				},
 				function() { 
 					router.router.back();
 				},
 				function() { 
-					equal(router.router.route(), 'a', 'back sets path to previous path'); 
+					equal(router.router.path(), 'a', 'back sets path to previous path'); 
 				},
 				function() { 
 					router.router.back();
 				},
 				function() { 
-					equal(router.router.route(), '', 'back set to start path'); 
+					equal(router.router.path(), '', 'back set to start path'); 
 				},
 				function() { 
 					router.router.back();
 				},
 				function() { 
-					equal(router.router.route(), '', 'can not back furter than start'); 
+					equal(router.router.path(), '', 'can not back furter than start'); 
 				},
 				function() { 
 					router.router.back('fallback');
 				},
 				function() { 
-					equal(router.router.route(), 'fallback', 'but can give a fallback path'); 
+					equal(router.router.path(), 'fallback', 'but can give a fallback path'); 
 				},
 				function() {
 					start();
