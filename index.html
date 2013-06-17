@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>widget-js by foretagsplatsen</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>widget-js</h1>
+        <p>Widget.JS is a framework that provied routing, events and a widgets to JS Apps. </p>
+
+        <p class="view"><a href="https://github.com/foretagsplatsen/widget-js">View the Project on GitHub <small>foretagsplatsen/widget-js</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/foretagsplatsen/widget-js/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/foretagsplatsen/widget-js/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/foretagsplatsen/widget-js">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="widgetjs" class="anchor" href="#widgetjs"><span class="octicon octicon-link"></span></a>Widget.JS</h1>
+
+<h3>
+<a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h3>
+
+<p>Widget.JS is a framework that provides routing, events and widgets to JS Apps. </p>
+
+<h3>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h3>
+
+<div class="highlight"><pre><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span> <span class="na">src=</span><span class="s">"http://code.jquery.com/jquery-1.8.2.min.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span> <span class="na">src=</span><span class="s">"https://raw.github.com/foretagsplatsen/widget-js/master/dist/WidgetJS.min.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</pre></div>
+
+<p>A simple widget can look like:</p>
+
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">helloWidget</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="nx">widgetjs</span><span class="p">.</span><span class="nx">widget</span><span class="p">();</span>
+
+    <span class="nx">that</span><span class="p">.</span><span class="nx">renderContentOn</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">html</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">html</span><span class="p">.</span><span class="nx">h1</span><span class="p">(</span><span class="s1">'hello world'</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>See <a href="https://github.com/foretagsplatsen/widget-js/tree/master/sample">https://github.com/foretagsplatsen/widget-js/tree/master/sample</a></p>
+
+<h3>
+<a name="install" class="anchor" href="#install"><span class="octicon octicon-link"></span></a>Install</h3>
+
+<p>Use <a href="https://github.com/twitter/bower">bower</a> </p>
+
+<pre><code>bower install widgetjs
+</code></pre>
+
+<p>or copy  <a href="https://github.com/foretagsplatsen/widget-js/tree/master/dist/WidgetJS.min.js">https://github.com/foretagsplatsen/widget-js/tree/master/dist/WidgetJS.min.js</a> to your project</p>
+
+<p>Use with requirejs:</p>
+
+<div class="highlight"><pre><span class="nx">requirejs</span><span class="p">.</span><span class="nx">config</span><span class="p">({</span>
+    <span class="nx">baseUrl</span><span class="o">:</span> <span class="s1">'.'</span><span class="p">,</span>
+    <span class="nx">paths</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s1">'widgetjs'</span> <span class="o">:</span> <span class="s1">'&lt;widget js path&gt;/src/WidgetJS.min.js'</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>or</p>
+
+<div class="highlight"><pre><span class="nx">requirejs</span><span class="p">.</span><span class="nx">config</span><span class="p">({</span>
+    <span class="nx">baseUrl</span><span class="o">:</span> <span class="s1">'.'</span><span class="p">,</span>
+    <span class="nx">paths</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s1">'widgetjs'</span> <span class="o">:</span> <span class="s1">'&lt;widget js path&gt;/src/'</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+</pre></div>
+
+<h3>
+<a name="code" class="anchor" href="#code"><span class="octicon octicon-link"></span></a>CODE</h3>
+
+<p>You need <a href="https://npmjs.org/">npm</a>, <a href="https://github.com/twitter/bower">bower</a> and <a href="http://gruntjs.com/">grunt</a></p>
+
+<p>Install depedencies</p>
+
+<pre><code>bower install
+</code></pre>
+
+<pre><code>npm install
+</code></pre>
+
+<p>Lint + run tests :</p>
+
+<pre><code>grunt 
+</code></pre>
+
+<p>Build:</p>
+
+<pre><code>grunt dist
+</code></pre>
+
+<h3>
+<a name="credits" class="anchor" href="#credits"><span class="octicon octicon-link"></span></a>Credits</h3>
+
+<p>Thanks a ton to <a href="https://github.com/NicolasPetton" class="user-mention">@NicolasPetton</a> for HtmlCanvas and tricking us into developing and using Widget.JS at Företagsplatsen</p>
+
+<h3>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h3>
+
+<p>Widget.JS is under the MIT-license, see file LICENSE</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/foretagsplatsen">foretagsplatsen</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
