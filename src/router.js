@@ -238,7 +238,7 @@ define(
 
 			that.next = function() {
 				if(that.atEnd()) {
-					throw "Stream at end";
+					return null;
 				}
 				var element = that.peek();
 				position = position + 1;
@@ -247,6 +247,35 @@ define(
 
 			that.reset = function() {
 				position = 0;
+			};
+
+			var canRewind = function() {
+				return false;
+			};
+
+			// Match an url path (represented here as `elements`). 
+			// If the stream does not match an optional parameter, 
+			// the stream is rewinded til the last optional parameter 
+			// and the process goes on.
+			that.match = function(elements) {
+				var matched = true;
+
+				elements.forEach(function(each) {
+					if(matched) {
+						matched = each.match(that.next());
+					}
+				});
+
+				if(matched) {
+					return true;
+				}
+
+				if(canRewind()) {
+					that.rewindToLastOptionalParameter();
+					return that.match(elements.slice(position, elements.length));
+				}
+
+				return false;
 			};
 
 			return that;
