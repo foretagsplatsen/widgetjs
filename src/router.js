@@ -21,7 +21,7 @@ define(
 		
 		// ### Url definition
 		//
-		// A url has a ...
+		// A url has a path and a query string
 
 		var url = function(string) {
 			var that = {};
@@ -65,24 +65,233 @@ define(
 			that.path = function() { return path; };
 			that.query = function() { return query; };
 
-			// Match the path against a string and return an array of
+			// TODO: remove
+			// Answer a regular expression built upon an extractor string
+			var extractParameters = function(extractor) {
+				return new RegExp('^' + extractor + '[\/]?$').exec(path);
+			};
+
+			// Match the path against a route string and return an array of
 			// values for matched parameters, or null.
 			//
 			//		parametersFor('/user/kalle', '/user/#id'); //=> ['kalle']
+
+			// TODO: remove this version and update the comment
 			that.parametersFor = function(string) {
+				var parameters = [];
+
 				var parameterExtractor = string.replace(/#[\w\d]+/g, '([^\/]*)');
-				var parameterValues = new RegExp('^' + parameterExtractor + '[\/]?$').exec(path);
+				var optionalParameterExtractor = string.replace(/\?[\w\d]+/g, '([^\/]*)');
+				var parameterValues = extractParameters(parameterExtractor);
+				var optionalParameterValues = extractParameters(optionalParameterExtractor);
+
 				if (parameterValues) {
-					return parameterValues.slice(1);
-				} else {
-					return null;
-				}
+					parameterValues.slice(1).forEach(function(each) {
+						parameters.push(parameter(each));
+					});
+				} 
+
+				if (optionalParameterValues) {
+					optionalParameterValues.slice(1).forEach(function(each) {
+						parameters.push(optionalParameter(each));
+					});
+				} 
+
+				return parameters || null;
+			};
+
+			// Answer true if the route is a match for the receiver
+			that.matchRoute = function(route) {
+				return route.matchPath(that.path);
+			};
+
+			that.newParametersFor = function(route) {
+				
 			};
 
 			setup();
 
 			return that;
 		};
+
+
+		// - - -
+		// ### Route objects definition
+		// - - -
+
+		// ### Route object
+		// A route has a path array and can match an url with arguments
+		// Routes are built from string representations
+		// - - -
+		var route = function(string) {
+			var that = {};
+
+			var path = [];
+			var separator = '/';
+
+			that.getPath = function() { return path; };
+
+			// Answer true if the path array matches each of the route
+			// elements. The strategy is to try several passes with
+			// and without optional parameters
+			that.matchPath = function(urlPath) {
+				return matchUrlPath(urlPath, path);
+			};
+
+			// try to match an url path with `paths`. Recursively
+			// remove optional params if it doesn't match
+			function matchUrlPath(urlPath, elements) {
+				var match = true;
+
+				// guard
+				if(!elements) { return false; }
+
+				elements.forEach(function(each, index) {
+					if(!each.match(urlPath[index])) {
+						match = false;
+					}
+				});
+				
+				// if we match, answer. Else give it another try
+				// removing one optional parameter
+				if(match) { 
+					return match; 
+				} else {
+					return matchUrlPath(urlPath, withoutFirstOptionalParameter(elements));
+				}
+			}
+
+			// Answer a copy of the elements without the first optional parameter
+			function withoutFirstOptionalParameter(elements) {
+				var newElements = [];
+				var removedFirst = false;
+
+				elements.forEach(function(each) {
+					if(!removedFirst && each.isOptional) {
+						removedFirst = true;
+					} else {
+						newElements.push(each);
+					}
+				});
+
+				if(removedFirst) { return newElements; }
+				return null;
+			}
+
+			// Path setup. See segment(s) and the `prefix`
+			// attached to parameters
+			function setupPath() {
+				var elements = string.split(separator);
+				elements.forEach(function(each) {
+					if(each.length > 0) {
+						addToPath(each);
+					}
+				});
+			}
+
+			function addToPath(string) {
+				var element;
+				
+				// find the right parameter
+				parameters.forEach(function(each) {
+					if(string[0] === each.prefix) {
+						element = each(string);
+					}
+				});
+
+				// fallback to a simple segment
+				if(element === undefined) {
+					element = segment(string);
+				}
+
+				path.push(element);
+			}
+
+			
+			// Initialization
+			setupPath();
+
+			return that;
+		};
+		
+		// ### Route segment
+		// - - -
+		var segment = function(value) {
+			var that = {};
+
+			that.getValue = function() {
+				return value;
+			};
+			
+			that.isParameter = function() { return false; };
+			that.isOptional = function() { return false; };
+
+
+			// Answer true if the receiver is a match for an url path
+			// element
+			that.match = function(string) {
+				return value === string;
+			};
+
+			return that;
+		};
+
+		// ### Route parameter object
+		// - - -
+		var parameter = function(value) {
+			// Parameters have a prefix, get rid of it
+			var that = segment(value.substr(1));
+
+			that.isParameter = function() { return true; };
+			
+			// For parameters, always answer true if the string is defined.
+			// Since it's a parameter, the value doesn't matter
+			that.match = function(string) { 
+				return typeof string === 'string';
+			};
+			
+			return that;
+		};
+
+		// ### Optional parameter
+		// - - -
+		var optionalParameter = function(value) {
+			var that = parameter(value);
+
+			that.isOptional = function() { return true; };
+			
+			// Optional, so always answer true
+			that.match = function() { return true; };
+
+			return that;
+		};
+
+		// ### Syntax definition.
+		// To add an element prefix, add it to the path element function
+		// - - -
+
+		var parameters = [ segment, parameter, optionalParameter ];
+		parameter.prefix = '#';
+		optionalParameter.prefix = '?';
+
+
+		// ### Route result, used as the answer of a matching url for a route
+		// - - -
+		var routeMatchResult = function() {
+			var that = {};
+			
+			// Route elements that matched the url
+			var  elements = [];
+
+			return that;
+		};
+
+		route('foo/bar');
+		debugger;
+		
+		// - - -
+
+
 
 		// ### Event bus/manager for routing
 		// Manage all routing events. Usage:
@@ -127,8 +336,7 @@ define(
 				handler.on(path, callback);
 			};
 
-			// Tries to match registered bindings against the new url
-			// from the url.
+			// Try to match registered bindings against the new url.
 			that.resolveUrl = function (url) {
 				var params,
 					numMatches = 0,
@@ -379,6 +587,8 @@ define(
 
 		return {
 			controller: current_controller,
-			router: current_router
+			router: current_router,
+			route: route,
+			url: url
 		};
 	});
