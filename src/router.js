@@ -128,7 +128,9 @@ define(
 
 			var path = [];
 			var separator = '/';
+			var stream = routePathStream(path);
 
+			that.stream = function() { return stream; };
 			that.getPath = function() { return path; };
 
 			// Answer true if the path array matches each of the route
@@ -214,6 +216,42 @@ define(
 			return that;
 		};
 		
+		// ### read-only route path stream definition.
+		// Used to stream over a route path segments to match an url
+		// - - -
+		var routePathStream = function(path) {
+			var that = {};
+
+			var position = 0;
+
+			that.getPosition = function() {
+				return position;
+			};
+
+			that.atEnd = function() {
+				return position >= path.length;
+			};
+
+			that.peek = function() {
+				return path[position];
+			};
+
+			that.next = function() {
+				if(that.atEnd()) {
+					throw "Stream at end";
+				}
+				var element = that.peek();
+				position = position + 1;
+				return element;
+			};
+
+			that.reset = function() {
+				position = 0;
+			};
+
+			return that;
+		};
+
 		// ### Route segment
 		// - - -
 		var segment = function(value) {
@@ -329,7 +367,8 @@ define(
 			//			alert('/#!/foo triggered!');
 			//		});
 			that.on = function (path, callback) {
-				if (typeof(path) === 'undefined' || path === null || typeof path !== "string") {
+				// TODO: remove
+				if (typeof path !== "string") {
 					throw 'accepts only string paths';
 				}
 
