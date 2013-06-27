@@ -47,7 +47,6 @@ define(
 			equal(true, router.url("hello/hello").matchRoute(router.route("?foo/#bar/?blah")));
 			
 			//Expected not to match
-			ok(false);
 			equal(false, router.url("hello").matchRoute(router.route("#foo/#bar")));
 		});
 
