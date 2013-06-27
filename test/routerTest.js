@@ -64,19 +64,19 @@ define(
 		test("Route match", function() {
 			
 			//Expected to match
-			equal(true, router.url("hello/world").matchRoute(router.route("hello/world")));
-			equal(true, router.url("/hello/world").matchRoute(router.route("#foo/#bar")));
-			equal(true, router.url("hello//world").matchRoute(router.route("#foo/#bar")));
-			equal(true, router.url("hello/world").matchRoute(router.route("#foo/#bar")));
-			equal(true, router.url("hello").matchRoute(router.route("?foo/hello")));
-			equal(true, router.url("hello").matchRoute(router.route("?foo/#bar")));
-			equal(true, router.url("hello").matchRoute(router.route("?foo/#bar/?blah")));
-			equal(true, router.url("hello/hello").matchRoute(router.route("?foo/#bar/?blah")));
+			equal(true, router.url("hello/world").matchRoute(router.route("hello/world")).matched());
+			equal(true, router.url("/hello/world").matchRoute(router.route("#foo/#bar")).matched());
+			equal(true, router.url("hello//world").matchRoute(router.route("#foo/#bar")).matched());
+			equal(true, router.url("hello/world").matchRoute(router.route("#foo/#bar")).matched());
+			equal(true, router.url("hello").matchRoute(router.route("?foo/hello")).matched());
+			equal(true, router.url("hello").matchRoute(router.route("?foo/#bar")).matched());
+			equal(true, router.url("hello").matchRoute(router.route("?foo/#bar/?blah")).matched());
+			equal(true, router.url("hello/hello").matchRoute(router.route("?foo/#bar/?blah")).matched());
 			
 			//Expected not to match
-			equal(false, router.url("hello").matchRoute(router.route("#foo/#bar")));
-			equal(false, router.url("hello/world").matchRoute(router.route("foo/#bar")));
-			equal(false, router.url("hello/world").matchRoute(router.route("#foo/bar")));
+			equal(false, router.url("hello").matchRoute(router.route("#foo/#bar")).matched());
+			equal(false, router.url("hello/world").matchRoute(router.route("foo/#bar")).matched());
+			equal(false, router.url("hello/world").matchRoute(router.route("#foo/bar")).matched());
 		});
 
 

@@ -196,6 +196,17 @@ define(
 			var that = {};
 			var position = 0;
 
+			// Bind matched route elements with url elements. Used by the
+			// router to evaluate the callback with proper arguments
+			var bindElements = function(urlElements) {
+				var bindings = {};
+				elements.forEach(function(each, index) {
+					bindings[each.getValue()] = urlElements[index];
+				});
+
+				return bindings;
+			};
+
 			that.getElements = function() {
 				return elements;
 			};
@@ -255,10 +266,12 @@ define(
 			that.match = function(urlElements) {
 				var matched = true;
 				var newStream;
+				var result = routeMatchResult();
+				var bindings;
 
 				// Guard
 				if(elements.length < urlElements.length) {
-					return false;
+					return result;
 				}
 
 				urlElements.forEach(function(each) {
@@ -270,17 +283,19 @@ define(
 				// All elements matched and we are at the end of the
 				// stream. Hourra, we made it!
 				if(matched && that.atEnd()) {
-					return true;
+					bindings = bindElements(urlElements);
+					result.setElements(bindings);
+					return result;
 				}
 
 				// Did not match. Try without the first optional parameter
 				newStream = that.trimOptionalParameter();
 				return newStream.match(urlElements);
 			};
+			
 
 			return that;
 		};
-
 		// ### Route segment
 		// - - -
 		var segment = function(value) {
@@ -344,11 +359,22 @@ define(
 
 		// ### Route result, used as the answer of a matching url for a route
 		// - - -
-		var routeMatchResult = function() {
+		var routeMatchResult = function(elements) {
 			var that = {};
 			
-			// Route elements that matched the url
-			var  elements = [];
+			elements = elements || null;
+
+			that.getElements = function() {
+				return elements;
+			};
+
+			that.setElements = function(elts) {
+				elements = elts;
+			};
+
+			that.matched = function() {
+				return elements !== null;
+			};
 
 			return that;
 		};
