@@ -110,7 +110,6 @@ define(
 
 			// Answer true if the route is a match for the receiver
 			that.matchRoute = function(route) {
-				debugger;
 				return route.matchElements(that.elements());
 			};
 
@@ -268,7 +267,9 @@ define(
 					}
 				});
 
-				if(matched) {
+				// All elements matched and we are at the end of the
+				// stream. Hourra, we made it!
+				if(matched && that.atEnd()) {
 					return true;
 				}
 
@@ -352,9 +353,6 @@ define(
 			return that;
 		};
 
-		console.log(url('hello/world').matchRoute(route('#foo/bar')));
-		debugger;
-		
 		// - - -
 
 

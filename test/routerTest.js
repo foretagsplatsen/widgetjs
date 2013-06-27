@@ -1,8 +1,9 @@
 define(
     ["widgetjs/router", "widgetjs/events"],
     function(router, events) {
-		// helpers
 		
+
+		// helpers
         function delayedAsyncTest(name, fn, expected) {
 			asyncTest(name, function() {
 				expect(expected || 1);
@@ -32,6 +33,23 @@ define(
 		router.router.start();
 
 		module("router");
+
+		test("Route match", function(){
+			
+			//Expected to match
+			equal(true, router.url("hello/world").matchRoute(router.route("hello/world")));
+			equal(true, router.url("/hello/world").matchRoute(router.route("#foo/#bar")));
+			equal(true, router.url("hello//world").matchRoute(router.route("#foo/#bar")));
+			equal(true, router.url("hello/world").matchRoute(router.route("#foo/#bar")));
+			equal(true, router.url("hello").matchRoute(router.route("?foo/hello")));
+			equal(true, router.url("hello").matchRoute(router.route("?foo/#bar")));
+			equal(true, router.url("hello").matchRoute(router.route("?foo/#bar/?blah")));
+			equal(true, router.url("hello/hello").matchRoute(router.route("?foo/#bar/?blah")));
+			
+			//Expected not to match
+			ok(false);
+			equal(false, router.url("hello").matchRoute(router.route("#foo/#bar")));
+		});
 
 		test("singleton router", function() {
 			equal(router.router, router.router);
