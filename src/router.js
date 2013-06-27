@@ -18,6 +18,8 @@ define(
 	],
 	function (jQuery, events) {
 
+
+		var urlSeparator = '/';
 		
 		// ### Url definition
 		//
@@ -30,6 +32,9 @@ define(
 
 			// Path string of the url
 			var path = '';
+
+			var elements = [];
+
 			// Query part of the url (?a=1&b=2)
 			var query = {};
 
@@ -41,6 +46,8 @@ define(
 				//Remove the first / if any and duplicated / in the path
 				path = path.replace(/^\//, '');
 				path = path.replace(/\/\//g, '/');
+				
+				elements = path.split(urlSeparator);
 			}
 
 			// Extract query key/value(s) from a string and add them to `query`
@@ -64,6 +71,7 @@ define(
 			// Public accessing methods
 			that.path = function() { return path; };
 			that.query = function() { return query; };
+			that.elements = function() { return elements; };
 
 			// TODO: remove
 			// Answer a regular expression built upon an extractor string
@@ -102,7 +110,8 @@ define(
 
 			// Answer true if the route is a match for the receiver
 			that.matchRoute = function(route) {
-				return route.matchPath(that.path);
+				debugger;
+				return route.matchElements(that.elements());
 			};
 
 			that.newParametersFor = function(route) {
@@ -120,78 +129,43 @@ define(
 		// - - -
 
 		// ### Route object
-		// A route has a path array and can match an url with arguments
+		// A route has an elements array and can match an url with arguments
 		// Routes are built from string representations
 		// - - -
 		var route = function(string) {
 			var that = {};
 
-			var path = [];
-			var separator = '/';
-			var stream = routePathStream(path);
+			var elements = [];
+			var stream = routeElementsStream(elements);
 
 			that.stream = function() { return stream; };
-			that.getPath = function() { return path; };
+			that.getElements = function() { return elements; };
 
-			// Answer true if the path array matches each of the route
+			// Answer true if the elements array matches each of the route
 			// elements. The strategy is to try several passes with
 			// and without optional parameters
-			that.matchPath = function(urlPath) {
-				return matchUrlPath(urlPath, path);
+			that.matchElements = function(urlElements) {
+				return matchUrlElements(urlElements);
 			};
 
-			// try to match an url path with `paths`. Recursively
+			// try to match an url elements with `elementss`. Recursively
 			// remove optional params if it doesn't match
-			function matchUrlPath(urlPath, elements) {
-				var match = true;
-
-				// guard
-				if(!elements) { return false; }
-
-				elements.forEach(function(each, index) {
-					if(!each.match(urlPath[index])) {
-						match = false;
-					}
-				});
-				
-				// if we match, answer. Else give it another try
-				// removing one optional parameter
-				if(match) { 
-					return match; 
-				} else {
-					return matchUrlPath(urlPath, withoutFirstOptionalParameter(elements));
-				}
+			function matchUrlElements(urlElements) {
+				return stream.match(urlElements);
 			}
 
-			// Answer a copy of the elements without the first optional parameter
-			function withoutFirstOptionalParameter(elements) {
-				var newElements = [];
-				var removedFirst = false;
-
-				elements.forEach(function(each) {
-					if(!removedFirst && each.isOptional) {
-						removedFirst = true;
-					} else {
-						newElements.push(each);
-					}
-				});
-
-				if(removedFirst) { return newElements; }
-				return null;
-			}
-
-			// Path setup. See segment(s) and the `prefix`
+			// Elements setup. See segment(s) and the `prefix`
 			// attached to parameters
-			function setupPath() {
-				var elements = string.split(separator);
+			function setupElements() {
+				var elements = string.split(urlSeparator);
 				elements.forEach(function(each) {
 					if(each.length > 0) {
-						addToPath(each);
+						addToElements(each);
 					}
 				});
 			}
 
-			function addToPath(string) {
+			function addToElements(string) {
 				var element;
 				
 				// find the right parameter
@@ -206,33 +180,37 @@ define(
 					element = segment(string);
 				}
 
-				path.push(element);
+				elements.push(element);
 			}
 
 			
 			// Initialization
-			setupPath();
+			setupElements();
 
 			return that;
 		};
 		
-		// ### read-only route path stream definition.
-		// Used to stream over a route path segments to match an url
+		// ### read-only route elements stream definition.
+		// Used to stream over a route elements segments to match an url
 		// - - -
-		var routePathStream = function(path) {
+		var routeElementsStream = function(elements) {
 			var that = {};
 			var position = 0;
+
+			that.getElements = function() {
+				return elements;
+			};
 
 			that.getPosition = function() {
 				return position;
 			};
 
 			that.atEnd = function() {
-				return position >= path.length;
+				return position >= elements.length;
 			};
 
 			that.peek = function() {
-				return path[position];
+				return elements[position];
 			};
 
 			that.next = function() {
@@ -248,42 +226,45 @@ define(
 				position = 0;
 			};
 
-			// Answer a new stream with the path trimmed
+			// Answer a new stream with the elements trimmed
 			that.trimOptionalParameter = function() {
-				// keep a copy of the path array
-				var trimmedPath = [];
+				// keep a copy of the elements array
+				var trimmedElements = [];
 				var trimmed = false;
 
-				path.forEach(function(each) {
+				elements.forEach(function(each) {
 					if(!trimmed) {
 						if(each.isOptional()) {
 							trimmed = true;
 						} else {
-							trimmedPath.push(each);
+							trimmedElements.push(each);
 						}
 					} else {
-						trimmedPath.push(each);
+						trimmedElements.push(each);
 					}
 				});
 
-				return routePathStream(trimmedPath);
+				if(!trimmed) { trimmedElements = []; }
+
+				return routeElementsStream(trimmedElements);
 			};
 
-			// Match an url path (represented here as `elements`). 
+			// Match an url elements (represented here as `elements`). 
 			// If the stream does not match an optional parameter, 
 			// the stream is rewinded til the last optional parameter 
 			// and the process goes on.
-			that.match = function(elements) {
+			that.match = function(urlElements) {
 				var matched = true;
+				var newStream;
 
 				// Guard
-				if(path.length < elements.length) {
+				if(elements.length < urlElements.length) {
 					return false;
 				}
 
-				elements.forEach(function(each) {
+				urlElements.forEach(function(each) {
 					if(matched) {
-						matched = each.match(that.next());
+						matched = that.next().match(each);
 					}
 				});
 
@@ -291,8 +272,9 @@ define(
 					return true;
 				}
 
-				that.rewind();
-				return that.match(elements);
+				// Did not match. Try without the first optional parameter
+				newStream = that.trimOptionalParameter();
+				return newStream.match(urlElements);
 			};
 
 			return that;
@@ -311,7 +293,7 @@ define(
 			that.isOptional = function() { return false; };
 
 
-			// Answer true if the receiver is a match for an url path
+			// Answer true if the receiver is a match for an url elements
 			// element
 			that.match = function(string) {
 				return value === string;
@@ -351,7 +333,7 @@ define(
 		};
 
 		// ### Syntax definition.
-		// To add an element prefix, add it to the path element function
+		// To add an element prefix, add it to the elements element function
 		// - - -
 
 		var parameters = [ segment, parameter, optionalParameter ];
@@ -370,7 +352,7 @@ define(
 			return that;
 		};
 
-		route('foo/bar');
+		console.log(url('hello/world').matchRoute(route('#foo/bar')));
 		debugger;
 		
 		// - - -
