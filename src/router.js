@@ -521,8 +521,8 @@ define(
 			// Setup IFrame for old versions of IE
 			function setupOldIE() {
 				var iDoc = jQuery("<iframe id='ie_history_iframe'" +
-								  "src='" + iframe_src + "'" +
-								  "style='display: none'></iframe>").prependTo("body")[0];
+					"src='" + iframe_src + "'" +
+					"style='display: none'></iframe>").prependTo("body")[0];
 				var iframe = iDoc.contentWindow.document || iDoc.document;
 				if (window.location.hash) {
 					var hash = window.location.hash.substr(1);
