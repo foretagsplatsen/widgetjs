@@ -34,7 +34,34 @@ define(
 
 		module("router");
 
-		test("Route match", function(){
+		test("Route stream", function() {
+			var route = router.route("foo/#bar/?baz");
+			var stream = route.stream();
+			var next;
+
+			equal(false, stream.atEnd());
+			
+			next = stream.next();
+			equal('foo', next.getValue());
+			equal(false, next.isParameter());
+			equal(false, next.isOptional());
+			equal(false, stream.atEnd());
+
+			next = stream.next();
+			equal('bar', next.getValue());
+			equal(true, next.isParameter());
+			equal(false, next.isOptional());
+			equal(false, stream.atEnd());
+
+			next = stream.next();
+			equal('baz', next.getValue());
+			equal(true, next.isParameter());
+			equal(true, next.isOptional());
+
+			equal(true, stream.atEnd());
+		});
+
+		test("Route match", function() {
 			
 			//Expected to match
 			equal(true, router.url("hello/world").matchRoute(router.route("hello/world")));
@@ -48,7 +75,10 @@ define(
 			
 			//Expected not to match
 			equal(false, router.url("hello").matchRoute(router.route("#foo/#bar")));
+			equal(false, router.url("hello/world").matchRoute(router.route("foo/#bar")));
+			equal(false, router.url("hello/world").matchRoute(router.route("#foo/bar")));
 		});
+
 
 		test("singleton router", function() {
 			equal(router.router, router.router);
