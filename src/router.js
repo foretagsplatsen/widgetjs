@@ -221,7 +221,6 @@ define(
 		// - - -
 		var routePathStream = function(path) {
 			var that = {};
-
 			var position = 0;
 
 			that.getPosition = function() {
@@ -249,8 +248,25 @@ define(
 				position = 0;
 			};
 
-			var canRewind = function() {
-				return false;
+			// Answer a new stream with the path trimmed
+			that.trimOptionalParameter = function() {
+				// keep a copy of the path array
+				var trimmedPath = [];
+				var trimmed = false;
+
+				path.forEach(function(each) {
+					if(!trimmed) {
+						if(each.isOptional()) {
+							trimmed = true;
+						} else {
+							trimmedPath.push(each);
+						}
+					} else {
+						trimmedPath.push(each);
+					}
+				});
+
+				return routePathStream(trimmedPath);
 			};
 
 			// Match an url path (represented here as `elements`). 
@@ -259,6 +275,11 @@ define(
 			// and the process goes on.
 			that.match = function(elements) {
 				var matched = true;
+
+				// Guard
+				if(path.length < elements.length) {
+					return false;
+				}
 
 				elements.forEach(function(each) {
 					if(matched) {
@@ -270,12 +291,8 @@ define(
 					return true;
 				}
 
-				if(canRewind()) {
-					that.rewindToLastOptionalParameter();
-					return that.match(elements.slice(position, elements.length));
-				}
-
-				return false;
+				that.rewind();
+				return that.match(elements);
 			};
 
 			return that;
