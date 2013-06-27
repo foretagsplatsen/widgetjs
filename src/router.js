@@ -150,7 +150,14 @@ define(
 			// try to match an url elements with `elementss`. Recursively
 			// remove optional params if it doesn't match
 			function matchUrlElements(urlElements) {
-				return stream.match(urlElements);
+				var parameters = [];
+				elements.forEach(function(each){
+					if(each.isParameter()) {
+						parameters.push(each.getValue());
+					}
+				});
+				var result = routeMatchResult(parameters);
+				return stream.match(urlElements, result);
 			}
 
 			// Elements setup. See segment(s) and the `prefix`
@@ -195,17 +202,6 @@ define(
 		var routeElementsStream = function(elements) {
 			var that = {};
 			var position = 0;
-
-			// Bind matched route elements with url elements. Used by the
-			// router to evaluate the callback with proper arguments
-			var bindElements = function(urlElements) {
-				var bindings = {};
-				elements.forEach(function(each, index) {
-					bindings[each.getValue()] = urlElements[index];
-				});
-
-				return bindings;
-			};
 
 			that.getElements = function() {
 				return elements;
@@ -263,11 +259,9 @@ define(
 			// If the stream does not match an optional parameter, 
 			// the stream is rewinded til the last optional parameter 
 			// and the process goes on.
-			that.match = function(urlElements) {
+			that.match = function(urlElements, result) {
 				var matched = true;
 				var newStream;
-				var result = routeMatchResult();
-				var bindings;
 
 				// Guard
 				if(elements.length < urlElements.length) {
@@ -283,14 +277,13 @@ define(
 				// All elements matched and we are at the end of the
 				// stream. Hourra, we made it!
 				if(matched && that.atEnd()) {
-					bindings = bindElements(urlElements);
-					result.setElements(bindings);
+					result.match();
 					return result;
 				}
 
 				// Did not match. Try without the first optional parameter
 				newStream = that.trimOptionalParameter();
-				return newStream.match(urlElements);
+				return newStream.match(urlElements, result);
 			};
 			
 
@@ -361,7 +354,9 @@ define(
 		// - - -
 		var routeMatchResult = function(elements) {
 			var that = {};
-			
+
+			var matched = false;
+
 			elements = elements || null;
 
 			that.getElements = function() {
@@ -373,7 +368,11 @@ define(
 			};
 
 			that.matched = function() {
-				return elements !== null;
+				return matched;
+			};
+
+			that.match = function() {
+				matched = true;
 			};
 
 			return that;
@@ -506,7 +505,7 @@ define(
 			// #### Private methods
 
 			// The url is built from the URL hash fragment minus the hash-bang (#!). Eg. **bar** in:
-			//	  http://foo.com/#!**/bar**
+			// http://foo.com/#!**/bar**
 			function getUrl() {
 				return url(window.location.hash.replace(/^#![\/]?/, ''));
 			}

@@ -79,6 +79,29 @@ define(
 			equal(false, router.url("hello/world").matchRoute(router.route("#foo/bar")).matched());
 		});
 
+		test("Route parameter bindings", function() {
+			var result;
+			
+			result = router.url("hello/world").matchRoute(router.route("hello/world"));
+			equal(0, result.getElements().length);
+
+			
+			result = router.url("/hello/world").matchRoute(router.route("#foo/#bar"));
+			equal(result.getElements()[0], "foo");
+			equal(result.getElements()[1], "bar");
+
+			result = router.url("/hello/world").matchRoute(router.route("?foo/#bar"));
+			equal(result.getElements()[0], "foo");
+			equal(result.getElements()[1], "bar");
+
+		//	equal(true, router.url("hello//world").matchRoute(router.route("#foo/#bar")).matched());
+		//	equal(true, router.url("hello/world").matchRoute(router.route("#foo/#bar")).matched());
+		//	equal(true, router.url("hello").matchRoute(router.route("?foo/hello")).matched());
+		//	equal(true, router.url("hello").matchRoute(router.route("?foo/#bar")).matched());
+		//	equal(true, router.url("hello").matchRoute(router.route("?foo/#bar/?blah")).matched());
+		//	equal(true, router.url("hello/hello").matchRoute(router.route("?foo/#bar/?blah")).matched());
+		});
+
 
 		test("singleton router", function() {
 			equal(router.router, router.router);
