@@ -1,43 +1,45 @@
-Widget.JS
+Widget-JS
 =====
 
-### Introduction
+Widget-JS is a framework that provides routing, events and widgets to javascript apps. 
 
-Widget.JS is a framework that provides routing, events and widgets to JS Apps. 
+A simple widget can look like:
+``` javascript
+var counterWidget = function () {
+	var that = widgetjs.widget();
+
+	var count = 0;
+
+	that.renderContentOn = function (html) {
+		html.h1(count.toString());
+		html.button('+').click(function() { count++; that.update();});
+		html.button('-').click(function() { count--; that.update();});
+	};
+
+	return that;
+};
+```
+
+See the complete example https://github.com/foretagsplatsen/widget-js/blob/master/sample/counterWidget/index.html
+
+### Install
+
+Install using [bower](https://github.com/twitter/bower) 
+```
+bower install widgetjs
+```
+Alternatively
+
+Download the [minified version](https://github.com/foretagsplatsen/widget-js/tree/master/dist/WidgetJS.min.js ) or the [complete project as a zip](https://github.com/foretagsplatsen/widget-js/archive/master.zip)
 
 
 ### Usage
 
+Include the minified version in your project:
 ``` html
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
-<script type="text/javascript" src="https://raw.github.com/foretagsplatsen/widget-js/master/dist/WidgetJS.min.js"></script>
+<script type="text/javascript" src="WidgetJS.min.js"></script>
 ``` 
-
-A simple widget can look like:
-
-``` javascript
-var helloWidget = function() {
-	var that = widgetjs.widget();
-
-	that.renderContentOn = function(html) {
-		html.h1('hello world');
-	}
-
-	return that;
-}
-```
-
-See https://github.com/foretagsplatsen/widget-js/tree/master/sample
-
-### Install
-
-Use [bower](https://github.com/twitter/bower) 
-```
-bower install widgetjs
-```
-
-
-or copy  https://github.com/foretagsplatsen/widget-js/tree/master/dist/WidgetJS.min.js to your project
 
 
 Use with requirejs:
@@ -82,7 +84,7 @@ grunt dist
 ```
 
 ### Credits
-Thanks a ton to @NicolasPetton for HtmlCanvas and tricking us into developing and using Widget.JS at Företagsplatsen
+Thanks a ton to @NicolasPetton for HtmlCanvas and tricking us into developing and using Widget-JS at Företagsplatsen
 
 ### License
-Widget.JS is under the MIT-license, see file LICENSE
+Widget-JS is under the MIT-license, see file LICENSE
