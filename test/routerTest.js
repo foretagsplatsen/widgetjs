@@ -95,12 +95,6 @@ define(
 			equal(result.getElements()[0], "foo");
 			equal(result.getElements()[1], "bar");
 
-			//	equal(true, router.url("hello//world").matchRoute(router.route("#foo/#bar")).matched());
-			//	equal(true, router.url("hello/world").matchRoute(router.route("#foo/#bar")).matched());
-			//	equal(true, router.url("hello").matchRoute(router.route("?foo/hello")).matched());
-			//	equal(true, router.url("hello").matchRoute(router.route("?foo/#bar")).matched());
-			//	equal(true, router.url("hello").matchRoute(router.route("?foo/#bar/?blah")).matched());
-			//	equal(true, router.url("hello/hello").matchRoute(router.route("?foo/#bar/?blah")).matched());
 		});
 
 		test("singleton router", function () {
@@ -172,7 +166,7 @@ define(
 
 		test("route()", function () {
 			window.location.hash = '#!/aPath';
-			equal(router.router.path(), 'aPath', 'returns the URL hash fragment minus the hash-bang (#!)');
+			equal(router.router.getPath(), 'aPath', 'returns the URL hash fragment minus the hash-bang (#!)');
 		});
 
 		test("linkTo()", function () {
@@ -211,31 +205,31 @@ define(
 					router.router.redirectTo('b');
 				},
 				function () {
-					equal(router.router.path(), 'b', 'route is last path');
+					equal(router.router.getPath(), 'b', 'route is last path');
 				},
 				function () {
 					router.router.back();
 				},
 				function () {
-					equal(router.router.path(), 'a', 'back sets path to previous path');
+					equal(router.router.getPath(), 'a', 'back sets path to previous path');
 				},
 				function () {
 					router.router.back();
 				},
 				function () {
-					equal(router.router.path(), '', 'back set to start path');
+					equal(router.router.getPath(), '', 'back set to start path');
 				},
 				function () {
 					router.router.back();
 				},
 				function () {
-					equal(router.router.path(), '', 'can not back furter than start');
+					equal(router.router.getPath(), '', 'can not back furter than start');
 				},
 				function () {
 					router.router.back('fallback');
 				},
 				function () {
-					equal(router.router.path(), 'fallback', 'but can give a fallback path');
+					equal(router.router.getPath(), 'fallback', 'but can give a fallback path');
 				},
 				function () {
 					start();

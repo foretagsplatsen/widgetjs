@@ -66,9 +66,9 @@ define(
 			}
 
 			// Public accessing methods
-			that.path = function () { return path; };
-			that.query = function () { return query; };
-			that.elements = function () { return elements; };
+			that.getPath = function () { return path; };
+			that.getQuery = function () { return query; };
+			that.getElements = function () { return elements; };
 
 			// TODO: remove
 			// Answer a regular expression built upon an extractor string
@@ -107,7 +107,7 @@ define(
 
 			// Answer true if the route is a match for the receiver
 			that.matchRoute = function (route) {
-				return route.matchElements(that.elements());
+				return route.matchElements(that.getElements());
 			};
 
 			that.newParametersFor = function (route) {
@@ -428,14 +428,14 @@ define(
 						params = url.parametersFor(path);
 						if (params) {
 							numMatches++;
-							handler.trigger.apply(this, [path].concat(params).concat(url.query()));
+							handler.trigger.apply(this, [path].concat(params).concat(url.getQuery()));
 						}
 					}
 				}
 
 				// Trigger 'notfound' event (with url as argument) if no match
 				if (numMatches === 0) {
-					handler.trigger('notfound', url.path());
+					handler.trigger('notfound', url.getPath());
 				}
 			};
 
@@ -516,8 +516,7 @@ define(
 					"style='display: none'></iframe>").prependTo("body")[0];
 				var iframe = iDoc.contentWindow.document || iDoc.document;
 				if (window.location.hash) {
-					var hash = window.location.hash.substr(1);
-					iframe.location.hash = hash;
+					iframe.location.hash = window.location.hash.substr(1);
 				}
 				iframe.location.title = window.title;
 			}
@@ -575,8 +574,8 @@ define(
 
 			// Return current url
 
-			that.path = function () {
-				return getUrl().path();
+			that.getPath = function () {
+				return getUrl().getPath();
 			};
 
 			that.linkTo = function (path, query) {
