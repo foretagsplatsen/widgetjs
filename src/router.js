@@ -18,14 +18,13 @@ define(
 	],
 	function (jQuery, events) {
 
-
 		var urlSeparator = '/';
-		
+
 		// ### Url definition
 		//
 		// A url has a path and a query string
 
-		var url = function(string) {
+		var url = function (string) {
 			var that = {};
 
 			string = string || '';
@@ -38,7 +37,6 @@ define(
 			// Query part of the url (?a=1&b=2)
 			var query = {};
 
-			
 			//Comment
 			function setPath(string) {
 				// Remove the optional query string from the path
@@ -46,7 +44,7 @@ define(
 				//Remove the first / if any and duplicated / in the path
 				path = path.replace(/^\//, '');
 				path = path.replace(/\/\//g, '/');
-				
+
 				elements = path.split(urlSeparator);
 			}
 
@@ -54,8 +52,8 @@ define(
 			function extractQuery(string) {
 				var result = /[^?]+\?(.*)$/g.exec(string);
 				var pair;
-				if(result) {
-					(result[1].split("&")).forEach(function(each) {
+				if (result) {
+					(result[1].split("&")).forEach(function (each) {
 						pair = each.split("=");
 						query[pair[0]] = pair[1];
 					});
@@ -67,15 +65,14 @@ define(
 				extractQuery(string);
 			}
 
-
 			// Public accessing methods
-			that.path = function() { return path; };
-			that.query = function() { return query; };
-			that.elements = function() { return elements; };
+			that.path = function () { return path; };
+			that.query = function () { return query; };
+			that.elements = function () { return elements; };
 
 			// TODO: remove
 			// Answer a regular expression built upon an extractor string
-			var extractParameters = function(extractor) {
+			var extractParameters = function (extractor) {
 				return new RegExp('^' + extractor + '[\/]?$').exec(path);
 			};
 
@@ -85,7 +82,7 @@ define(
 			//		parametersFor('/user/kalle', '/user/#id'); //=> ['kalle']
 
 			// TODO: remove this version and update the comment
-			that.parametersFor = function(string) {
+			that.parametersFor = function (string) {
 				var parameters = [];
 
 				var parameterExtractor = string.replace(/#[\w\d]+/g, '([^\/]*)');
@@ -94,34 +91,33 @@ define(
 				var optionalParameterValues = extractParameters(optionalParameterExtractor);
 
 				if (parameterValues) {
-					parameterValues.slice(1).forEach(function(each) {
+					parameterValues.slice(1).forEach(function (each) {
 						parameters.push(parameter(each));
 					});
-				} 
+				}
 
 				if (optionalParameterValues) {
-					optionalParameterValues.slice(1).forEach(function(each) {
+					optionalParameterValues.slice(1).forEach(function (each) {
 						parameters.push(optionalParameter(each));
 					});
-				} 
+				}
 
 				return parameters || null;
 			};
 
 			// Answer true if the route is a match for the receiver
-			that.matchRoute = function(route) {
+			that.matchRoute = function (route) {
 				return route.matchElements(that.elements());
 			};
 
-			that.newParametersFor = function(route) {
-				
+			that.newParametersFor = function (route) {
+
 			};
 
 			setup();
 
 			return that;
 		};
-
 
 		// - - -
 		// ### Route objects definition
@@ -131,19 +127,19 @@ define(
 		// A route has an elements array and can match an url with arguments
 		// Routes are built from string representations
 		// - - -
-		var route = function(string) {
+		var route = function (string) {
 			var that = {};
 
 			var elements = [];
 			var stream = routeElementsStream(elements);
 
-			that.stream = function() { return stream; };
-			that.getElements = function() { return elements; };
+			that.stream = function () { return stream; };
+			that.getElements = function () { return elements; };
 
 			// Answer true if the elements array matches each of the route
 			// elements. The strategy is to try several passes with
 			// and without optional parameters
-			that.matchElements = function(urlElements) {
+			that.matchElements = function (urlElements) {
 				return matchUrlElements(urlElements);
 			};
 
@@ -151,8 +147,8 @@ define(
 			// remove optional params if it doesn't match
 			function matchUrlElements(urlElements) {
 				var parameters = [];
-				elements.forEach(function(each){
-					if(each.isParameter()) {
+				elements.forEach(function (each) {
+					if (each.isParameter()) {
 						parameters.push(each.getValue());
 					}
 				});
@@ -164,8 +160,8 @@ define(
 			// attached to parameters
 			function setupElements() {
 				var elements = string.split(urlSeparator);
-				elements.forEach(function(each) {
-					if(each.length > 0) {
+				elements.forEach(function (each) {
+					if (each.length > 0) {
 						addToElements(each);
 					}
 				});
@@ -173,54 +169,53 @@ define(
 
 			function addToElements(string) {
 				var element;
-				
+
 				// find the right parameter
-				parameters.forEach(function(each) {
-					if(string[0] === each.prefix) {
+				parameters.forEach(function (each) {
+					if (string[0] === each.prefix) {
 						element = each(string);
 					}
 				});
 
 				// fallback to a simple segment
-				if(element === undefined) {
+				if (element === undefined) {
 					element = segment(string);
 				}
 
 				elements.push(element);
 			}
 
-			
 			// Initialization
 			setupElements();
 
 			return that;
 		};
-		
+
 		// ### read-only route elements stream definition.
 		// Used to stream over a route elements segments to match an url
 		// - - -
-		var routeElementsStream = function(elements) {
+		var routeElementsStream = function (elements) {
 			var that = {};
 			var position = 0;
 
-			that.getElements = function() {
+			that.getElements = function () {
 				return elements;
 			};
 
-			that.getPosition = function() {
+			that.getPosition = function () {
 				return position;
 			};
 
-			that.atEnd = function() {
+			that.atEnd = function () {
 				return position >= elements.length;
 			};
 
-			that.peek = function() {
+			that.peek = function () {
 				return elements[position];
 			};
 
-			that.next = function() {
-				if(that.atEnd()) {
+			that.next = function () {
+				if (that.atEnd()) {
 					return null;
 				}
 				var element = that.peek();
@@ -228,29 +223,31 @@ define(
 				return element;
 			};
 
-			that.reset = function() {
+			that.reset = function () {
 				position = 0;
 			};
 
 			// Answer a new stream with the elements trimmed
-			that.trimOptionalParameter = function() {
+			that.trimOptionalParameter = function () {
 				// keep a copy of the elements array
 				var trimmedElements = [];
 				var trimmed = false;
 
-				elements.forEach(function(each) {
-					if(!trimmed) {
-						if(each.isOptional()) {
+				elements.forEach(function (each) {
+					if (!trimmed) {
+						if (each.isOptional()) {
 							trimmed = true;
-						} else {
+						}
+						else {
 							trimmedElements.push(each);
 						}
-					} else {
+					}
+					else {
 						trimmedElements.push(each);
 					}
 				});
 
-				if(!trimmed) { trimmedElements = []; }
+				if (!trimmed) { trimmedElements = []; }
 
 				return routeElementsStream(trimmedElements);
 			};
@@ -259,24 +256,24 @@ define(
 			// If the stream does not match an optional parameter, 
 			// the stream is rewinded til the last optional parameter 
 			// and the process goes on.
-			that.match = function(urlElements, result) {
+			that.match = function (urlElements, result) {
 				var matched = true;
 				var newStream;
 
 				// Guard
-				if(elements.length < urlElements.length) {
+				if (elements.length < urlElements.length) {
 					return result;
 				}
 
-				urlElements.forEach(function(each) {
-					if(matched) {
+				urlElements.forEach(function (each) {
+					if (matched) {
 						matched = that.next().match(each);
 					}
 				});
 
 				// All elements matched and we are at the end of the
 				// stream. Hourra, we made it!
-				if(matched && that.atEnd()) {
+				if (matched && that.atEnd()) {
 					result.match();
 					return result;
 				}
@@ -285,26 +282,24 @@ define(
 				newStream = that.trimOptionalParameter();
 				return newStream.match(urlElements, result);
 			};
-			
 
 			return that;
 		};
 		// ### Route segment
 		// - - -
-		var segment = function(value) {
+		var segment = function (value) {
 			var that = {};
 
-			that.getValue = function() {
+			that.getValue = function () {
 				return value;
 			};
-			
-			that.isParameter = function() { return false; };
-			that.isOptional = function() { return false; };
 
+			that.isParameter = function () { return false; };
+			that.isOptional = function () { return false; };
 
 			// Answer true if the receiver is a match for an url elements
 			// element
-			that.match = function(string) {
+			that.match = function (string) {
 				return value === string;
 			};
 
@@ -313,30 +308,30 @@ define(
 
 		// ### Route parameter object
 		// - - -
-		var parameter = function(value) {
+		var parameter = function (value) {
 			// Parameters have a prefix, get rid of it
 			var that = segment(value.substr(1));
 
-			that.isParameter = function() { return true; };
-			
+			that.isParameter = function () { return true; };
+
 			// For parameters, always answer true if the string is defined.
 			// Since it's a parameter, the value doesn't matter
-			that.match = function(string) { 
+			that.match = function (string) {
 				return typeof string === 'string';
 			};
-			
+
 			return that;
 		};
 
 		// ### Optional parameter
 		// - - -
-		var optionalParameter = function(value) {
+		var optionalParameter = function (value) {
 			var that = parameter(value);
 
-			that.isOptional = function() { return true; };
-			
+			that.isOptional = function () { return true; };
+
 			// Optional, so always answer true
-			that.match = function() { return true; };
+			that.match = function () { return true; };
 
 			return that;
 		};
@@ -345,33 +340,32 @@ define(
 		// To add an element prefix, add it to the elements element function
 		// - - -
 
-		var parameters = [ segment, parameter, optionalParameter ];
+		var parameters = [segment, parameter, optionalParameter];
 		parameter.prefix = '#';
 		optionalParameter.prefix = '?';
 
-
 		// ### Route result, used as the answer of a matching url for a route
 		// - - -
-		var routeMatchResult = function(elements) {
+		var routeMatchResult = function (elements) {
 			var that = {};
 
 			var matched = false;
 
 			elements = elements || null;
 
-			that.getElements = function() {
+			that.getElements = function () {
 				return elements;
 			};
 
-			that.setElements = function(elts) {
+			that.setElements = function (elts) {
 				elements = elts;
 			};
 
-			that.matched = function() {
+			that.matched = function () {
 				return matched;
 			};
 
-			that.match = function() {
+			that.match = function () {
 				matched = true;
 			};
 
@@ -379,8 +373,6 @@ define(
 		};
 
 		// - - -
-
-
 
 		// ### Event bus/manager for routing
 		// Manage all routing events. Usage:
@@ -390,7 +382,6 @@ define(
 		//		});
 		// - - -
 		var handler = events.at('routing');
-
 
 		// ### Default controller
 		// Use controller.on(...)
@@ -490,12 +481,11 @@ define(
 				fragment, // last hash fragment
 				history = [], // history of visited hash fragments
 				timer,
-				iframe_src = (spec.iframe_src || /*jshint scripturl:true*/	'javascript:0'), /*jshint scripturl:false*/
+				iframe_src = (spec.iframe_src || /*jshint scripturl:true*/    'javascript:0'), /*jshint scripturl:false*/
 				controller;
 
-
 			// #### Initilize
-			
+
 			// Fallback only if no 'onhashchange' event
 			if ('onhashchange' in window) { fallback = false; }
 
@@ -514,6 +504,7 @@ define(
 			function getHash() {
 				return window.location.hash;
 			}
+
 			function setHash(string) {
 				window.location.hash = string;
 			}
@@ -569,7 +560,8 @@ define(
 					pushToHistory(fragment);
 					resolveUrl();
 
-				} else if (oldIE) {
+				}
+				else if (oldIE) {
 					var iframe = getIframe();
 					if (iframe.location.hash !== newFragment) {
 						setHash(iframe.location.hash);
@@ -583,8 +575,8 @@ define(
 
 			// Return current url
 
-			that.path = function() {
-				return getUrl().path(); 
+			that.path = function () {
+				return getUrl().path();
 			};
 
 			that.linkTo = function (path, query) {
@@ -594,17 +586,17 @@ define(
 				}
 
 				link = '#!/' + path;
-				if(query) {
+				if (query) {
 					link = link + '?';
 					params = Object.keys(query);
-					params.forEach(function(param, index) {
+					params.forEach(function (param, index) {
 						link = link + param + '=' + query[param];
-						if(index < params.length - 1) {
+						if (index < params.length - 1) {
 							link = link + '&';
 						}
 					});
 				}
-				
+
 				return link;
 			};
 
@@ -618,11 +610,12 @@ define(
 				if (history.length > 1) {
 					history.pop();
 					setHash(history.pop());
-				} else if (fallback) {
+				}
+				else if (fallback) {
 					setHash(that.linkTo(fallback));
-				} 
+				}
 			};
-			
+
 			// **Force a check()**, whether the fragment has changed or not.
 			that.forceCheck = resolveUrl;
 
@@ -632,7 +625,7 @@ define(
 				controller = aController;
 
 				// Also send controller getUrl() if started
-				if(fragment !== undefined) { 
+				if (fragment !== undefined) {
 					resolveUrl();
 				}
 			};
@@ -641,7 +634,7 @@ define(
 			// In legacy browsers we instead pull for changes every 100 ms.
 			that.start = function () {
 				that.stop();
-				
+
 				fragment = getHash();
 				history = [fragment];
 
@@ -650,7 +643,8 @@ define(
 						setupOldIE();
 					}
 					timer = setInterval(check, 100);
-				} else {
+				}
+				else {
 					jQuery(window).bind('hashchange', check);
 				}
 
@@ -677,8 +671,8 @@ define(
 
 		return {
 			controller: current_controller,
-			router: current_router,
-			route: route,
-			url: url
+			router    : current_router,
+			route     : route,
+			url       : url
 		};
 	});
