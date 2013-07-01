@@ -1,8 +1,8 @@
 define(
 	[
-		'./router/url.js',
-		'./router/route.js',
-		'./router/router.js'
+		'./router/url',
+		'./router/route',
+		'./router/router'
 	],
 
 	function (url, route, router) {

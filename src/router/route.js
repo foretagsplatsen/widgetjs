@@ -14,38 +14,45 @@ define(
 		// A route has an `elements` array and can match an `url`
 		// against its fragments (and parameters..  Routes are built
 		// from string representations
-
-		var route = function (string) {
+		var route = function(string) {
 			var that = {};
 
 			var elements = [];
 			var stream = routeParameterStream(elements);
 
-			that.stream = function () { return stream; };
-			that.getElements = function () { return elements; };
+			that.stream = function() { return stream; };
+			that.getElements = function() { return elements; };
 
 			// Answer true if the elements array matches each of the route
 			// elements. The strategy is to try several passes with
 			// and without optional parameters
-			that.matchElements = function (urlElements) {
+			that.matchElements = function(urlElements) {
 				return matchUrlElements(urlElements);
 			};
 
-			// try to match an url elements with `elementss`. Recursively
-			// remove optional params if it doesn't match
-			function matchUrlElements(urlElements) {
+			// Answer the parameters from the elements array
+			function getParameters() {
 				var parameters = [];
 				elements.forEach(function (each) {
 					if (each.isParameter()) {
 						parameters.push(each.getValue());
 					}
 				});
+				return parameters;
+			}
+
+			// try to match an url elements with `elements`. Recursively
+			// remove optional params if it doesn't match
+			function matchUrlElements(urlElements) {
+				var parameters = getParameters();
 				var result = routeMatchResult(parameters);
 				return stream.match(urlElements, result);
 			}
 
 			// Elements setup. See segment(s) and the `prefix`
-			// attached to parameters
+			// attached to parameters.
+			//
+			// Called upon creation.
 			function setupElements() {
 				var elements = string.split(urlSeparator);
 				elements.forEach(function (each) {
@@ -55,9 +62,12 @@ define(
 				});
 			}
 
-			// Adds a segment created from `string`to the `elements`
-			// array.
 			function addToElements(string) {
+				elements.push(createElement(string));
+			}
+
+			// Create and answer a segment created from `string`.
+			function createElement(string) {
 				var element;
 
 				// find the right parameter
@@ -72,8 +82,9 @@ define(
 					element = segment(string);
 				}
 
-				elements.push(element);
+				return element;
 			}
+
 
 			// Initialization
 			setupElements();
@@ -216,7 +227,7 @@ define(
 		//
 		// *Example:*
 		//
-		// '/foo/#bar/?bar' will be cut down into a route with 3 segments:
+		// '/foo/#bar/?baz' will be cut down into a route with 3 segments:
 		// - foo -> segment
 		// - bar -> parameter
 		// - baz -> optional parameter
@@ -279,7 +290,7 @@ define(
 		// ### Syntax definition.
 		// To add an element prefix, add it to the elements element function.
 
-		var parameters = [segment, parameter, optionalParameter];
+		var parameters = [parameter, optionalParameter];
 		parameter.prefix = '#';
 		optionalParameter.prefix = '?';
 
