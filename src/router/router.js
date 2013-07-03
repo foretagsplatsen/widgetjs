@@ -67,22 +67,26 @@ define(
 
 			// Try to match registered bindings against the new url.
 			that.resolveUrl = function (url) {
-				var params,
+				var matchResult,
+					callbackArguments,
 					numMatches = 0,
 					bindings = handler.events;
 
-				for (var path in bindings) {
-					if (bindings.hasOwnProperty(path)) {
-						params = url.parametersFor(path);
-						if (params) {
+				for(var path in bindings) {
+					if(bindings.hasOwnProperty(path)) {
+						matchResult = url.matchRoute(route(path));
+						if(matchResult.match()) {
 							numMatches++;
-							handler.trigger.apply(this, [path].concat(params).concat(url.getQuery()));
+							callbackArguments.push(path);
+							callbackArguments.concat(matchResult.getElements());
+							callbackArguments.concat(url.getQuery());
+							handler.trigger.apply(this, callbackArguments);
 						}
 					}
 				}
 
 				// Trigger 'notfound' event (with url as argument) if no match
-				if (numMatches === 0) {
+				if(numMatches === 0) {
 					handler.trigger('notfound', url.getPath());
 				}
 			};
