@@ -35,46 +35,10 @@ define(
 			// Query part of the url (?a=1&b=2)
 			var query = {};
 
-
 			// Public accessing methods
 			that.getPath = function () { return path; };
 			that.getQuery = function () { return query; };
 			that.getElements = function () { return elements; };
-
-			// TODO: remove
-			// Answer a regular expression built upon an extractor string
-			var extractParameters = function (extractor) {
-				return new RegExp('^' + extractor + '[\/]?$').exec(path);
-			};
-
-			// Match the path against a route string and return an array of
-			// values for matched parameters, or null.
-			//
-			//		parametersFor('/user/kalle', '/user/#id'); //=> ['kalle']
-
-			// TODO: remove this version and update the comment
-			that.parametersFor = function (string) {
-				var parameters = [];
-
-				var parameterExtractor = string.replace(/#[\w\d]+/g, '([^\/]*)');
-				var optionalParameterExtractor = string.replace(/\?[\w\d]+/g, '([^\/]*)');
-				var parameterValues = extractParameters(parameterExtractor);
-				var optionalParameterValues = extractParameters(optionalParameterExtractor);
-
-				if (parameterValues) {
-					parameterValues.slice(1).forEach(function (each) {
-						parameters.push(parameter(each));
-					});
-				}
-
-				if (optionalParameterValues) {
-					optionalParameterValues.slice(1).forEach(function (each) {
-						parameters.push(optionalParameter(each));
-					});
-				}
-
-				return parameters || null;
-			};
 
 			// Answer true if the route is a match for the receiver
 			that.matchRoute = function (route) {
