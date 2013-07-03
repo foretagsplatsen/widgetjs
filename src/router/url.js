@@ -1,6 +1,6 @@
 define(
 	[
-		'./router/route'
+		'./route'
 	],
 	function (route) {
 

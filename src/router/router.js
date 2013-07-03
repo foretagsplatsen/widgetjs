@@ -14,9 +14,9 @@
 define(
 	[
 		'jquery',
-		'./events',
-		'./router/route',
-		'./router/url'
+		'../events',
+		'./route',
+		'./url'
 	],
 	function (jQuery, events, route, url) {
 

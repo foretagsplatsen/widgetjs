@@ -186,7 +186,7 @@ define(
 			};
 
 			// Answer a new stream with the elements trimmed
-			trimOptionalParameter = function () {
+			var trimOptionalParameter = function () {
 				// keep a copy of the elements array
 				var trimmedElements = [];
 				var trimmed = false;
