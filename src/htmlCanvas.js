@@ -191,7 +191,7 @@ define(
 			//
 			function append(object) {
 				if (typeof(object) === 'undefined' || object === null) {
-					throw 'cannot append null or undefined to brush';
+					throw new Error('cannot append null or undefined to brush');
 				}
 
 				if (typeof object === "object" && object.constructor === Array) {
@@ -407,7 +407,7 @@ define(
 			if (jquery) {
 				element = jquery.get(0);
 				if (!element) {
-					throw 'jQuery did not match an element';
+					throw new Error('jQuery did not match an element');
 				}
 			}
 
