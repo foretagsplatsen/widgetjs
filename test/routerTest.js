@@ -88,12 +88,12 @@ define(
 			equal(0, result.getElements().length);
 
 			result = router.url("/hello/world").matchRoute(router.route("#foo/#bar"));
-			equal(result.getElements()[0], "foo");
-			equal(result.getElements()[1], "bar");
+			equal(result.getElements()[0], "hello");
+			equal(result.getElements()[1], "world");
 
 			result = router.url("/hello/world").matchRoute(router.route("?foo/#bar"));
-			equal(result.getElements()[0], "foo");
-			equal(result.getElements()[1], "bar");
+			equal(result.getElements()[0], "hello");
+			equal(result.getElements()[1], "world");
 
 		});
 
@@ -136,22 +136,6 @@ define(
 				start();
 			});
 			redirectTo('querytest/thing', {'foo': 'bar'});
-		});
-
-		delayedAsyncTest("regexp route", function () {
-			router.controller.on('any/.*', function () {
-				ok(true, 'regexp route matches correcly');
-				start();
-			});
-			redirectTo('any/thing');
-		});
-
-		delayedAsyncTest("regexp route with slashes", function () {
-			router.controller.on('blah/.*', function () {
-				ok(true, 'regexp route matches correcly');
-				start();
-			});
-			redirectTo('blah/some/thing/bar/baz');
 		});
 
 		delayedAsyncTest("notfound event triggered", function () {

@@ -65,15 +65,16 @@ define(
 				handler.on(path, callback);
 			};
 
-			// Try to match registered bindings against the new url.
-			function resolveCallbackArguments(url, matchResult, path) {
+			// Resolve the arguments that should be passed to a route callback
+			function resolveCallbackArguments(matchResult, url, path) {
 				var callbackArguments = [];
 				callbackArguments.push(path);
-				callbackArguments.concat(matchResult.getElements());
-				callbackArguments.concat(url.getQuery());
+				callbackArguments = callbackArguments.concat(matchResult.getElements());
+				callbackArguments.push(url.getQuery());
 				return callbackArguments;
 			}
 
+			// Try to match registered bindings against the new url.
 			that.resolveUrl = function (url) {
 				var matchResult,
 					callbackArguments,
@@ -83,9 +84,9 @@ define(
 				for(var path in bindings) {
 					if(bindings.hasOwnProperty(path)) {
 						matchResult = url.matchRoute(route(path));
-						if(matchResult.match()) {
+						if(matchResult.matched()) {
 							numMatches++;
-							callbackArguments = resolveCallbackArguments(url, matchResult, path);
+							callbackArguments = resolveCallbackArguments(matchResult, url, path);
 							handler.trigger.apply(this, callbackArguments);
 						}
 					}

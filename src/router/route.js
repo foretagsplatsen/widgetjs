@@ -38,22 +38,22 @@ define(
 				return matchUrlElements(urlElements);
 			};
 
-			// Answer the parameters from the elements array
-			function getParameters() {
-				var parameters = [];
-				elements.forEach(function (each) {
+			// Answer the parameter values from urlElements
+			function getParameterValues(urlElements) {
+				var values = [];
+				elements.forEach(function (each, index) {
 					if (each.isParameter()) {
-						parameters.push(each.getValue());
+						values.push(urlElements[index]);
 					}
 				});
-				return parameters;
+				return values;
 			}
 
 			// try to match an url elements with `elements`. Recursively
 			// remove optional params if it doesn't match
 			function matchUrlElements(urlElements) {
-				var parameters = getParameters();
-				var result = routeMatchResult(parameters);
+				var values = getParameterValues(urlElements);
+				var result = routeMatchResult(values);
 				return stream.match(urlElements, result);
 			}
 
