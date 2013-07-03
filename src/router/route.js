@@ -22,6 +22,14 @@ define(
 
 			that.stream = function() { return stream; };
 			that.getElements = function() { return elements; };
+			that.toString = function() {
+				var str = 'route( ';
+				elements.forEach(function(each) {
+					str = str + each.toString() + ' / ';
+				});
+				str = str + ')';
+				return str;
+			};
 
 			// Answer true if the elements array matches each of the route
 			// elements. The strategy is to try several passes with
@@ -248,6 +256,10 @@ define(
 				return value === string;
 			};
 
+			that.toString = function() {
+				return value;
+			};
+
 			return that;
 		};
 
@@ -268,6 +280,10 @@ define(
 				return typeof string === 'string';
 			};
 
+			that.toString = function() {
+				return 'param(' + value.substr(1) + ')';
+			};
+
 			return that;
 		};
 
@@ -283,6 +299,10 @@ define(
 
 			// Optional, so always answer true
 			that.match = function () { return true; };
+
+			that.toString = function() {
+				return 'optional(' + value.substr(1) + ')';
+			};
 
 			return that;
 		};

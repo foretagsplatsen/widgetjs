@@ -66,6 +66,14 @@ define(
 			};
 
 			// Try to match registered bindings against the new url.
+			function resolveCallbackArguments(url, matchResult, path) {
+				var callbackArguments = [];
+				callbackArguments.push(path);
+				callbackArguments.concat(matchResult.getElements());
+				callbackArguments.concat(url.getQuery());
+				return callbackArguments;
+			}
+
 			that.resolveUrl = function (url) {
 				var matchResult,
 					callbackArguments,
@@ -77,9 +85,7 @@ define(
 						matchResult = url.matchRoute(route(path));
 						if(matchResult.match()) {
 							numMatches++;
-							callbackArguments.push(path);
-							callbackArguments.concat(matchResult.getElements());
-							callbackArguments.concat(url.getQuery());
+							callbackArguments = resolveCallbackArguments(url, matchResult, path);
 							handler.trigger.apply(this, callbackArguments);
 						}
 					}
