@@ -207,7 +207,7 @@ define(
 
 				if (!trimmed) { trimmedElements = []; }
 
-				return routeStream(trimmedElements);
+				return routeParameterStream(trimmedElements);
 			};
 
 
