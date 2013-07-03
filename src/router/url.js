@@ -28,7 +28,7 @@ define(
 			var parser = urlParser();
 
 			// Path string of the url
-			var path = '';
+			var path = string;
 
 			var elements = [];
 
