@@ -11,107 +11,107 @@ define(
 		// (registered in the router with an associated callback
 		// function.
 		//
-		// A route has an `elements` array and can match an `url`
+		// A route has an `segments` array and can match an `url`
 		// against its fragments (and parameters..  Routes are built
 		// from string representations
 		var route = function(string) {
 			var that = {};
 
-			var elements = [];
-			var stream = routeParameterStream(elements);
+			var segments = [];
+			var stream = routeParameterStream(segments);
 
 			that.stream = function() { return stream; };
-			that.getElements = function() { return elements; };
+			that.getSegments = function() { return segments; };
 			that.toString = function() {
 				var str = 'route( ';
-				elements.forEach(function(each) {
+				segments.forEach(function(each) {
 					str = str + each.toString() + ' / ';
 				});
 				str = str + ')';
 				return str;
 			};
 
-			// Answer true if the elements array matches each of the route
-			// elements. The strategy is to try several passes with
+			// Answer true if the segments array matches each of the route
+			// segments. The strategy is to try several passes with
 			// and without optional parameters
-			that.matchElements = function(urlElements) {
-				return matchUrlElements(urlElements);
+			that.matchSegments = function(urlSegments) {
+				return matchUrlSegments(urlSegments);
 			};
 
-			// Answer the parameter values from urlElements
-			function getParameterValues(urlElements) {
+			// Answer the parameter values from urlSegments
+			function getParameterValues(urlSegments) {
 				var values = [];
-				elements.forEach(function (each, index) {
+				segments.forEach(function (each, index) {
 					if (each.isParameter()) {
-						values.push(urlElements[index]);
+						values.push(urlSegments[index]);
 					}
 				});
 				return values;
 			}
 
-			// try to match an url elements with `elements`. Recursively
+			// try to match an url segments with `segments`. Recursively
 			// remove optional params if it doesn't match
-			function matchUrlElements(urlElements) {
-				var values = getParameterValues(urlElements);
+			function matchUrlSegments(urlSegments) {
+				var values = getParameterValues(urlSegments);
 				var result = routeMatchResult(values);
-				return stream.match(urlElements, result);
+				return stream.match(urlSegments, result);
 			}
 
-			// Elements setup. See segment(s) and the `prefix`
+			// Segments setup. See segment(s) and the `prefix`
 			// attached to parameters.
 			//
 			// Called upon creation.
-			function setupElements() {
-				var elements = string.split(urlSeparator);
-				elements.forEach(function (each) {
+			function setupSegments() {
+				var segments = string.split(urlSeparator);
+				segments.forEach(function (each) {
 					if (each.length > 0) {
-						addToElements(each);
+						addToSegments(each);
 					}
 				});
 			}
 
-			function addToElements(string) {
-				elements.push(createElement(string));
+			function addToSegments(string) {
+				segments.push(createSegment(string));
 			}
 
 			// Create and answer a segment created from `string`.
-			function createElement(string) {
-				var element;
+			function createSegment(string) {
+				var segm;
 
 				// find the right parameter
 				parameters.forEach(function (each) {
 					if (string[0] === each.prefix) {
-						element = each(string);
+						segm = each(string);
 					}
 				});
 
 				// fallback to a simple segment
-				if (element === undefined) {
-					element = segment(string);
+				if (segm === undefined) {
+					segm = segment(string);
 				}
 
-				return element;
+				return segm;
 			}
 
 
 			// Initialization
-			setupElements();
+			setupSegments();
 
 			return that;
 		};
 
 
 		// ### read-only route stream definition.
-		// Used to stream over a route elements segments to match an url
-		var routeStream = function (elements) {
+		// Used to stream over a route segments segments to match an url
+		var routeStream = function (segments) {
 			var that = {};
 
 			// Internally hold onto the position of the stream.
 			var position = 0;
 
 			// Accessors definition
-			that.getElements = function () {
-				return elements;
+			that.getSegments = function () {
+				return segments;
 			};
 
 			that.getPosition = function () {
@@ -122,22 +122,22 @@ define(
 			// Answer true if the stream has reached the end of the
 			// route.
 			that.atEnd = function () {
-				return position >= elements.length;
+				return position >= segments.length;
 			};
 
-			// Answer the next element *without* moving the stream
+			// Answer the next segment *without* moving the stream
 			that.peek = function () {
-				return elements[position];
+				return segments[position];
 			};
 
-			// Answer the next element *and* moved the stream by 1.
+			// Answer the next segment *and* moved the stream by 1.
 			that.next = function () {
 				if (that.atEnd()) {
 					return null;
 				}
-				var element = that.peek();
+				var segment = that.peek();
 				position = position + 1;
-				return element;
+				return segment;
 			};
 
 			// Reset the stream to the beginning of the route.
@@ -159,29 +159,29 @@ define(
 		// Used together with a `routeMatchResult` object, filled
 		// with the result of the match.
 		
-		var routeParameterStream = function(elements) {
-			var that = routeStream(elements);
+		var routeParameterStream = function(segments) {
+			var that = routeStream(segments);
 			
-			// Match an url elements (represented here as `elements`). 
+			// Match an url segments (represented here as `segments`). 
 			// If the stream does not match an optional parameter, 
 			// the stream is rewinded til the last optional parameter 
 			// and the process goes on.
-			that.match = function (urlElements, result) {
+			that.match = function (urlSegments, result) {
 				var matched = true;
 				var newStream;
 
 				// Guard
-				if (that.getElements().length < urlElements.length) {
+				if (that.getSegments().length < urlSegments.length) {
 					return result;
 				}
 
-				urlElements.forEach(function (each) {
+				urlSegments.forEach(function (each) {
 					if (matched) {
 						matched = that.next().match(each);
 					}
 				});
 
-				// All elements matched and we are at the end of the
+				// All segments matched and we are at the end of the
 				// stream. Hourra, we made it!
 				if (matched && that.atEnd()) {
 					result.match();
@@ -190,32 +190,32 @@ define(
 
 				// Did not match. Try without the first optional parameter
 				newStream = trimOptionalParameter();
-				return newStream.match(urlElements, result);
+				return newStream.match(urlSegments, result);
 			};
 
-			// Answer a new stream with the elements trimmed
+			// Answer a new stream with the segments trimmed
 			var trimOptionalParameter = function () {
-				// keep a copy of the elements array
-				var trimmedElements = [];
+				// keep a copy of the segments array
+				var trimmedSegments = [];
 				var trimmed = false;
 
-				that.getElements().forEach(function (each) {
+				that.getSegments().forEach(function (each) {
 					if (!trimmed) {
 						if (each.isOptional()) {
 							trimmed = true;
 						}
 						else {
-							trimmedElements.push(each);
+							trimmedSegments.push(each);
 						}
 					}
 					else {
-						trimmedElements.push(each);
+						trimmedSegments.push(each);
 					}
 				});
 
-				if (!trimmed) { trimmedElements = []; }
+				if (!trimmed) { trimmedSegments = []; }
 
-				return routeParameterStream(trimmedElements);
+				return routeParameterStream(trimmedSegments);
 			};
 
 
@@ -240,7 +240,7 @@ define(
 		// - bar -> parameter
 		// - baz -> optional parameter
 
-		var segment = function (value) {
+		function segment(value) {
 			var that = {};
 
 			that.getValue = function () {
@@ -250,8 +250,8 @@ define(
 			that.isParameter = function () { return false; };
 			that.isOptional = function () { return false; };
 
-			// Answer true if the receiver is a match for an url elements
-			// element
+			// Answer true if the receiver is a match for an url segments
+			// segment
 			that.match = function (string) {
 				return value === string;
 			};
@@ -261,14 +261,14 @@ define(
 			};
 
 			return that;
-		};
+		}
 
 		// ### Route parameter definition
 		//
 		// Note: the leading '#' is *not* part of the value of the
 		// segment.
 
-		var parameter = function (value) {
+		function parameter(value) {
 			// Parameters have a prefix, get rid of it
 			var that = segment(value.substr(1));
 
@@ -285,14 +285,14 @@ define(
 			};
 
 			return that;
-		};
+		}
 
 		// ### Optional parameter definition
 		// 
 		// Note: the leading '?' is *not* part of the value of the
 		// segment.
 
-		var optionalParameter = function (value) {
+		function optionalParameter(value) {
 			var that = parameter(value);
 
 			that.isOptional = function () { return true; };
@@ -305,10 +305,10 @@ define(
 			};
 
 			return that;
-		};
+		}
 
 		// ### Syntax definition.
-		// To add an element prefix, add it to the elements element function.
+		// To add an segment prefix, add it to the segments segment function.
 
 		var parameters = [parameter, optionalParameter];
 		parameter.prefix = '#';
@@ -321,20 +321,20 @@ define(
 		// `route.match()` and filled appropriately depending on the
 		// match.
 
-		var routeMatchResult = function (elements) {
+		var routeMatchResult = function (segments) {
 			var that = {};
 
 			var matched = false;
 
-			elements = elements || null;
+			segments = segments || null;
 
 			// Public accessors
-			that.getElements = function () {
-				return elements;
+			that.getSegments = function () {
+				return segments;
 			};
 
-			that.setElements = function (elts) {
-				elements = elts;
+			that.setSegments = function (elts) {
+				segments = elts;
 			};
 
 			that.matched = function () {

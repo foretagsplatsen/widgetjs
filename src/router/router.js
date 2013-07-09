@@ -69,7 +69,7 @@ define(
 			function resolveCallbackArguments(matchResult, url, path) {
 				var callbackArguments = [];
 				callbackArguments.push(path);
-				callbackArguments = callbackArguments.concat(matchResult.getElements());
+				callbackArguments = callbackArguments.concat(matchResult.getSegments());
 				callbackArguments.push(url.getQuery());
 				return callbackArguments;
 			}

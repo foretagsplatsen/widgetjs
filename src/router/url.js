@@ -30,7 +30,7 @@ define(
 			// Path string of the url
 			var path = string;
 
-			var elements = [];
+			var segments = [];
 
 			// Query part of the url (?a=1&b=2)
 			var query = {};
@@ -38,16 +38,16 @@ define(
 			// Public accessing methods
 			that.getPath = function () { return path; };
 			that.getQuery = function () { return query; };
-			that.getElements = function () { return elements; };
+			that.getSegments = function () { return segments; };
 
 			// Answer true if the route is a match for the receiver
 			that.matchRoute = function (route) {
-				return route.matchElements(that.getElements());
+				return route.matchSegments(that.getSegments());
 			};
 
 			// Method called upon url creation.
 			function setup() {
-				elements = parser.parsePath(string);
+				segments = parser.parsePath(string);
 				query = parser.parseQuery(string);
 			}
 

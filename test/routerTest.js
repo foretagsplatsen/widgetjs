@@ -85,15 +85,15 @@ define(
 			var result;
 
 			result = router.url("hello/world").matchRoute(router.route("hello/world"));
-			equal(0, result.getElements().length);
+			equal(0, result.getSegments().length);
 
 			result = router.url("/hello/world").matchRoute(router.route("#foo/#bar"));
-			equal(result.getElements()[0], "hello");
-			equal(result.getElements()[1], "world");
+			equal(result.getSegments()[0], "hello");
+			equal(result.getSegments()[1], "world");
 
 			result = router.url("/hello/world").matchRoute(router.route("?foo/#bar"));
-			equal(result.getElements()[0], "hello");
-			equal(result.getElements()[1], "world");
+			equal(result.getSegments()[0], "hello");
+			equal(result.getSegments()[1], "world");
 
 		});
 
