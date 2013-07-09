@@ -76,21 +76,21 @@ define(
 
 			// Create and answer a segment created from `string`.
 			function createSegment(string) {
-				var segm;
+				var element;
 
 				// find the right parameter
 				parameters.forEach(function (each) {
 					if (string[0] === each.prefix) {
-						segm = each(string);
+						element = each(string);
 					}
 				});
 
 				// fallback to a simple segment
-				if (segm === undefined) {
-					segm = segment(string);
+				if (element === undefined) {
+					element = segment(string);
 				}
 
-				return segm;
+				return element;
 			}
 
 
