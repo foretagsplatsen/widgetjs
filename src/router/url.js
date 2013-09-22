@@ -8,7 +8,7 @@ define(
 
 		// ### Url definition
 		//
-		// An `url` actually represents the fragment part of the actual url.
+		// A `url` actually represents the fragment part of the actual url.
 		// A `url` has a `path` and a `query`, parsed upon creation.
 		// 
 		// ### Route matching 
@@ -18,22 +18,22 @@ define(
 		// `query`, and is delegated to the `route` (passed as argument).
 		// See also `route.js`.
 
-		var url = function (string) {
+		var url = function (rawUrl) {
 			var that = {};
 
-			string = string || '';
+			rawUrl = rawUrl || '';
 
 			// Parser instance used to parse the url path and query
 			// upon creation.
 			var parser = urlParser();
 
-			// Path string of the url
-			var path = string;
+			// Path of the url
+			var path = rawUrl;
 
-			var segments = [];
+			var segments = parser.parsePath(rawUrl);
 
 			// Query part of the url (?a=1&b=2)
-			var query = {};
+			var query = parser.parseQuery(rawUrl);
 
 			// Public accessing methods
 			that.getPath = function () { return path; };
@@ -42,16 +42,8 @@ define(
 
 			// Answer true if the route is a match for the receiver
 			that.matchRoute = function (route) {
-				return route.matchSegments(that.getSegments());
+				return route.matchUrl(that);
 			};
-
-			// Method called upon url creation.
-			function setup() {
-				segments = parser.parsePath(string);
-				query = parser.parseQuery(string);
-			}
-
-			setup();
 
 			return that;
 		};
@@ -59,7 +51,7 @@ define(
 		
 		// ### Url parser definition 
 		//
-		// A parser can parse the path string with `parsePath()` and
+		// A parser can parse the path URL with `parsePath()` and
 		// the query with `parseQuery()`.
 		//
 		// Both parsing methods answer the parsed result.

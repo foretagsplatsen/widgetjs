@@ -2,7 +2,6 @@ define(
 	["widgetjs/router", "widgetjs/events"],
 	function (router, events) {
 
-
 		// helpers
 		function delayedAsyncTest(name, fn, expected) {
 			asyncTest(name, function () {
@@ -27,75 +26,80 @@ define(
 			next();
 		}
 
+		function assertUrlMatchRoute(arg, message) {
+			ok(router.url(arg.url).matchRoute(router.route(arg.route)).matched(),
+				'Url "' + arg.url + '" should match route "' + arg.route + '". ' + 
+				(message ? message : ''));
+		}
+
+		function assertUrlNotMatchRoute(arg, message) {
+			ok(!router.url(arg.url).matchRoute(router.route(arg.route)).matched(),
+				'Url "' + arg.url + '" should not match route "' + arg.route + '". ' + 
+				(message ? message : ''));
+		}
+
 		var redirectTo = function (path, query) {
 			router.router.redirectTo(path, query);
 		};
 
-		// setup router
-		router.router.start();
-
-		module("router");
-
-		test("Route stream", function () {
-			var route = router.route("foo/#bar/?baz");
-			var stream = route.stream();
-			var next;
-
-			equal(false, stream.atEnd());
-
-			next = stream.next();
-			equal('foo', next.getValue());
-			equal(false, next.isParameter());
-			equal(false, next.isOptional());
-			equal(false, stream.atEnd());
-
-			next = stream.next();
-			equal('bar', next.getValue());
-			equal(true, next.isParameter());
-			equal(false, next.isOptional());
-			equal(false, stream.atEnd());
-
-			next = stream.next();
-			equal('baz', next.getValue());
-			equal(true, next.isParameter());
-			equal(true, next.isOptional());
-
-			equal(true, stream.atEnd());
+		module("router", {
+			setup: function() {
+				router.router.start();
+			}
 		});
+		
 
 		test("Route match", function () {
-
-			//Expected to match
-			equal(true, router.url("hello/world").matchRoute(router.route("hello/world")).matched());
-			equal(true, router.url("/hello/world").matchRoute(router.route("#foo/#bar")).matched());
-			equal(true, router.url("hello//world").matchRoute(router.route("#foo/#bar")).matched());
-			equal(true, router.url("hello/world").matchRoute(router.route("#foo/#bar")).matched());
-			equal(true, router.url("hello").matchRoute(router.route("?foo/hello")).matched());
-			equal(true, router.url("hello").matchRoute(router.route("?foo/#bar")).matched());
-			equal(true, router.url("hello").matchRoute(router.route("?foo/#bar/?blah")).matched());
-			equal(true, router.url("hello/hello").matchRoute(router.route("?foo/#bar/?blah")).matched());
+			assertUrlMatchRoute({ url: "", route: ""}, 'Empty match.');
+			assertUrlMatchRoute({ url: "hello/world", route: "hello/world"}, 'Segments match.');
+			assertUrlMatchRoute({ url: "/hello/world", route: "#foo/#bar"}, 'Named parameters match both URL  segments');
+			assertUrlMatchRoute({ url: "hello//world", route: "#foo/#bar"}, 'Extra "/" is ignored.');
+			assertUrlMatchRoute({ url: "hello/world", route: "#foo/#bar"}, 'Leading slash not required.');
+			assertUrlMatchRoute({ url: "hello", route: "?foo/hello"}, 'Strips optional segments til match.');
+			assertUrlMatchRoute({ url: "/foo/world/hello", route: "?foo/world/?bar/hello"}, 'Strips optional segments til match.');
+			assertUrlMatchRoute({ url: "hello", route: "?foo/#bar"}, 'Strips first optional argument and match second parameter.');
+			assertUrlMatchRoute({ url: "hello", route: "?foo/#bar/?blah"}, 'Query parameters not mandatory.');
+			assertUrlMatchRoute({ url: "hello/hello", route: "?foo/#bar/?blah"}, 'Handles optional, named and query parameters');
 
 			//Expected not to match
-			equal(false, router.url("hello").matchRoute(router.route("#foo/#bar")).matched());
-			equal(false, router.url("hello/world").matchRoute(router.route("foo/#bar")).matched());
-			equal(false, router.url("hello/world").matchRoute(router.route("#foo/bar")).matched());
+			assertUrlNotMatchRoute({ url: "hello", route: "#foo/#bar"}, 'Two named parameters expected.');
+			assertUrlNotMatchRoute({ url: "hello/world", route: "foo/#bar"}, 'First segment "hello" should not match "bar".');
+			assertUrlNotMatchRoute({ url: "hello/world", route: "#foo/bar"}, 'Second segment "world" does not match "bar".');
 		});
 
 		test("Route parameter bindings", function () {
 			var result;
 
 			result = router.url("hello/world").matchRoute(router.route("hello/world"));
-			equal(0, result.getSegments().length);
+			equal(0, result.getValues().length);
 
 			result = router.url("/hello/world").matchRoute(router.route("#foo/#bar"));
-			equal(result.getSegments()[0], "hello");
-			equal(result.getSegments()[1], "world");
+			equal(result.getValues()[0], "hello");
+			equal(result.getValues()[1], "world");
 
 			result = router.url("/hello/world").matchRoute(router.route("?foo/#bar"));
-			equal(result.getSegments()[0], "hello");
-			equal(result.getSegments()[1], "world");
+			equal(result.getValues()[0], "hello");
+			equal(result.getValues()[1], "world");
 
 		});
+
+		test("Route parameter bindings 2", function () {
+			result = router.url("/hello/world").matchRoute(router.route("#foo/#bar"));
+			var props = result.getParameters();
+
+			equal(props.foo, "hello");
+			equal(props.bar, "world");
+
+		});
+
+		test("Route parameter bindings 3", function () {
+			result = router.url("/hello/world").matchRoute(router.route("?foo/#bar"));
+			var props = result.getParameters();
+
+			equal(props.foo, "hello");
+			equal(props.bar, "world");
+		});
+
 
 		test("singleton router", function () {
 			equal(router.router, router.router);
@@ -108,6 +112,7 @@ define(
 		delayedAsyncTest("basic route", function () {
 			router.controller.on('foo', function () {
 				ok(true, 'callback executed for route');
+				this.unbind(); // clean-up: unbound this event
 				start();
 			});
 
@@ -117,6 +122,7 @@ define(
 		delayedAsyncTest("route with parameter", function () {
 			router.controller.on('some/#value', function (value) {
 				ok(value === 'thing', 'parameter passed correcly');
+				this.unbind(); // clean-up: unbound this event
 				start();
 			});
 			redirectTo('some/thing');
@@ -125,6 +131,7 @@ define(
 		delayedAsyncTest("route with multiple parameters", function () {
 			router.controller.on('some/#value/#anothervalue', function (value, anothervalue) {
 				ok(value === 'thing' && anothervalue === 'thing2', 'parameters passed correcly');
+				this.unbind(); // clean-up: unbound this event
 				start();
 			});
 			redirectTo('some/thing/thing2');
@@ -133,6 +140,7 @@ define(
 		delayedAsyncTest("route with query string", function () {
 			router.controller.on('querytest/#value', function (value, query) {
 				ok(query.foo === 'bar');
+				this.unbind(); // clean-up: unbound this event
 				start();
 			});
 			redirectTo('querytest/thing', {'foo': 'bar'});
