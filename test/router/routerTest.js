@@ -2,7 +2,8 @@ define(
 	["widgetjs/router", "widgetjs/events"],
 	function (router, events) {
 
-		// helpers
+		// Helpers
+
 		function delayedAsyncTest(name, fn, expected) {
 			asyncTest(name, function () {
 				expect(expected || 1);
@@ -26,18 +27,6 @@ define(
 			next();
 		}
 
-		function assertUrlMatchRoute(arg, message) {
-			ok(router.url(arg.url).matchRoute(router.route(arg.route)).matched(),
-				'Url "' + arg.url + '" should match route "' + arg.route + '". ' + 
-				(message ? message : ''));
-		}
-
-		function assertUrlNotMatchRoute(arg, message) {
-			ok(!router.url(arg.url).matchRoute(router.route(arg.route)).matched(),
-				'Url "' + arg.url + '" should not match route "' + arg.route + '". ' + 
-				(message ? message : ''));
-		}
-
 		var redirectTo = function (path, query) {
 			router.router.redirectTo(path, query);
 		};
@@ -47,59 +36,6 @@ define(
 				router.router.start();
 			}
 		});
-		
-
-		test("Route match", function () {
-			assertUrlMatchRoute({ url: "", route: ""}, 'Empty match.');
-			assertUrlMatchRoute({ url: "hello/world", route: "hello/world"}, 'Segments match.');
-			assertUrlMatchRoute({ url: "/hello/world", route: "#foo/#bar"}, 'Named parameters match both URL  segments');
-			assertUrlMatchRoute({ url: "hello//world", route: "#foo/#bar"}, 'Extra "/" is ignored.');
-			assertUrlMatchRoute({ url: "hello/world", route: "#foo/#bar"}, 'Leading slash not required.');
-			assertUrlMatchRoute({ url: "hello", route: "?foo/hello"}, 'Strips optional segments til match.');
-			assertUrlMatchRoute({ url: "/foo/world/hello", route: "?foo/world/?bar/hello"}, 'Strips optional segments til match.');
-			assertUrlMatchRoute({ url: "hello", route: "?foo/#bar"}, 'Strips first optional argument and match second parameter.');
-			assertUrlMatchRoute({ url: "hello", route: "?foo/#bar/?blah"}, 'Query parameters not mandatory.');
-			assertUrlMatchRoute({ url: "hello/hello", route: "?foo/#bar/?blah"}, 'Handles optional, named and query parameters');
-
-			//Expected not to match
-			assertUrlNotMatchRoute({ url: "hello", route: "#foo/#bar"}, 'Two named parameters expected.');
-			assertUrlNotMatchRoute({ url: "hello/world", route: "foo/#bar"}, 'First segment "hello" should not match "bar".');
-			assertUrlNotMatchRoute({ url: "hello/world", route: "#foo/bar"}, 'Second segment "world" does not match "bar".');
-		});
-
-		test("Route parameter bindings", function () {
-			var result;
-
-			result = router.url("hello/world").matchRoute(router.route("hello/world"));
-			equal(0, result.getValues().length);
-
-			result = router.url("/hello/world").matchRoute(router.route("#foo/#bar"));
-			equal(result.getValues()[0], "hello");
-			equal(result.getValues()[1], "world");
-
-			result = router.url("/hello/world").matchRoute(router.route("?foo/#bar"));
-			equal(result.getValues()[0], "hello");
-			equal(result.getValues()[1], "world");
-
-		});
-
-		test("Route parameter bindings 2", function () {
-			result = router.url("/hello/world").matchRoute(router.route("#foo/#bar"));
-			var props = result.getParameters();
-
-			equal(props.foo, "hello");
-			equal(props.bar, "world");
-
-		});
-
-		test("Route parameter bindings 3", function () {
-			result = router.url("/hello/world").matchRoute(router.route("?foo/#bar"));
-			var props = result.getParameters();
-
-			equal(props.foo, "hello");
-			equal(props.bar, "world");
-		});
-
 
 		test("singleton router", function () {
 			equal(router.router, router.router);
@@ -109,7 +45,7 @@ define(
 			equal(router.controller, router.controller);
 		});
 
-		delayedAsyncTest("basic route", function () {
+		delayedAsyncTest("Executes route callback", function () {
 			router.controller.on('foo', function () {
 				ok(true, 'callback executed for route');
 				this.unbind(); // clean-up: unbound this event
@@ -119,16 +55,7 @@ define(
 			redirectTo('foo');
 		});
 
-		delayedAsyncTest("route with parameter", function () {
-			router.controller.on('some/#value', function (value) {
-				ok(value === 'thing', 'parameter passed correcly');
-				this.unbind(); // clean-up: unbound this event
-				start();
-			});
-			redirectTo('some/thing');
-		});
-
-		delayedAsyncTest("route with multiple parameters", function () {
+		delayedAsyncTest("Pass parameter values to callback", function () {
 			router.controller.on('some/#value/#anothervalue', function (value, anothervalue) {
 				ok(value === 'thing' && anothervalue === 'thing2', 'parameters passed correcly');
 				this.unbind(); // clean-up: unbound this event
@@ -137,7 +64,7 @@ define(
 			redirectTo('some/thing/thing2');
 		});
 
-		delayedAsyncTest("route with query string", function () {
+		delayedAsyncTest("Pass query as last argument to callback", function () {
 			router.controller.on('querytest/#value', function (value, query) {
 				ok(query.foo === 'bar');
 				this.unbind(); // clean-up: unbound this event
@@ -146,7 +73,7 @@ define(
 			redirectTo('querytest/thing', {'foo': 'bar'});
 		});
 
-		delayedAsyncTest("notfound event triggered", function () {
+		delayedAsyncTest("Triggers notfound event if no route match", function () {
 			events.at('routing').on('notfound', function () {
 				ok(true, 'notfound event triggered correcly');
 				this.unbind(); // clean-up: unbound this event
@@ -156,9 +83,9 @@ define(
 			redirectTo('APathNotBoundToACallback');
 		});
 
-		test("route()", function () {
+		test("Keeps the current path", function () {
 			window.location.hash = '#!/aPath';
-			equal(router.router.getPath(), 'aPath', 'returns the URL hash fragment minus the hash-bang (#!)');
+			equal(router.router.getPath(), 'aPath', 'URL hash fragment minus the hash-bang (#!)');
 		});
 
 		test("linkTo()", function () {

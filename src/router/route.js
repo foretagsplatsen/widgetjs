@@ -51,6 +51,11 @@ define(
 			};
 
 			function findMatchingPath(urlSegments) {
+				// Can not match if more url than route segments
+				if (segments.length < urlSegments.length) {
+					return null;
+				}
+
 				// Try to find a sequene of optional/mandatory 
 				// segments that match URL
 				var candidates = segments.clone();
@@ -95,7 +100,12 @@ define(
 		//
 		var routeFactory = function(routePattern) {
 			var segmentStrings = routePattern.split(urlSeparator);
-			var segmentArray = segmentStrings.map(function(segmentString) {
+			
+			var nonEmptySegmentStrings = segmentStrings
+				.map(Function.prototype.call, String.prototype.trim)
+				.filter(Boolean);
+
+			var segmentArray = nonEmptySegmentStrings.map(function(segmentString) {
 				return routeSegments.segmentFactory(segmentString);
 			});
 
@@ -118,7 +128,7 @@ define(
 
 			var url = spec.url;
 			var route = spec.route;
-			var parameters = spec.parameters || null;
+			var parameters = spec.parameters || {};
 
 			var that = {};
 

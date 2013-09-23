@@ -63,11 +63,14 @@ define(
 			that.parsePath = function(string) {
 				// Remove the optional query string from the path
 				var path = string.replace(/\?.*$/g, '');
+				
 				//Remove the first / if any and duplicated / in the path
+				// and trailing slash
 				path = path.replace(/^\//, '');
 				path = path.replace(/\/\//g, '/');
+				path = path.replace(/\/+$/, '');
 
-				return path.split(urlSeparator);
+				return path.split(urlSeparator).filter(Boolean);
 			};
 
 			// Extracts query key/value(s) from a string and add them

@@ -160,14 +160,16 @@ define([], function() {
 		};
 
 		that.match = function(urlSegments) {
-			// Can not match if more url than route segments
-			if (segments.length < urlSegments.length) {
-				return segmentPath([]);
+			var match = [];
+			for(var segmentIndex = 0; segmentIndex < that.length; segmentIndex++) {
+				var urlSegment = urlSegments[segmentIndex]; // we allow undefined url segments 
+				var routeSegment = that[segmentIndex];
+				if(!routeSegment.match(urlSegment)) {
+					break;
+				}
+				match.push(routeSegment);
 			}
 
-			var match = that.filter(function(routeSegment, index) {
-				return routeSegment.match(urlSegments[index]);
-			});
 
 			return segmentPath(match);
 		};
