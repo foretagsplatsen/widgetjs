@@ -230,5 +230,29 @@ define(
 			deepEqual(query, {a: '1', b:'2', c: '3'}, 'match query parameters');
 		});
 
+		// Expand
+
+		test("Expand parameters", function() {
+			var route = router.route("#a/test/#b");
+
+			var url = route.expand({a : 'hello', b: 'world'});
+
+			equal(url, 'hello/test/world');			
+		});
+
+		test("Expand optionals", function() {
+			var route = router.route("#a/?c/#b/?d");
+
+			equal(route.expand({a : 'hello', b: 'world', d: 'd'}), 'hello/world/d');			
+			equal(route.expand({a : 'hello', b: 'world' }), 'hello/world');			
+			equal(route.expand({a : 'hello', b: 'world', c: 'c' }), 'hello/c/world');			
+		});
+
+		test("Expand throws not valid URL error", function() {
+			var route = router.route("#a/#b");
+
+			throws(function() { route.expand({a : 'hello'});}, 'error since required parameter missing');
+		});
+
 	}
 );

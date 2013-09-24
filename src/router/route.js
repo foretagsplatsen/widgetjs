@@ -55,6 +55,34 @@ define(
 				return result;
 			};
 
+			that.expand = function(params) {
+				params = params || {};
+
+				// Try to expand route into URL
+				var urlSegments = [];
+				segments.forEach(function(routeSegment) {
+					var urlSegment;
+					if(routeSegment.isParameter()) {
+						// Use supplied value for parameters
+						urlSegment = params[routeSegment.getName()];
+					} else {
+						// name/value for segments
+						urlSegment = routeSegment.getValue();
+					}
+
+					// Validate segment
+					if (!routeSegment.match(urlSegment)) {
+						throw new Error('Could not generate a valid URL');
+					}
+
+					if(urlSegment !== undefined) {
+						urlSegments.push(urlSegment);
+					}
+				});
+
+				return urlSegments.join('/');
+			};
+
 			that.toString = function() {
 				return 'route(' + segments.join('/') + ')';
 			};
