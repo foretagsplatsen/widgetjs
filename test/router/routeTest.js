@@ -204,10 +204,8 @@ define(
 			var optionalInPath = router.url("hello/world").matchRoute(router.route("#foo/?bar/#bro")).getParameters();
 			deepEqual(optionalInPath, { foo: 'hello', bro : 'world'}, 'match mandatory parameters even if not first');
 
-			// TODO: should only pass matched parameters or pass all parameters with a default value for 
-			// does not matched (I vote for default value)
 			var trailingOptionals = router.url("hello/world").matchRoute(router.route("#foo/?bar/?bro")).getParameters();
-			deepEqual(trailingOptionals, { foo: 'hello', bar : 'world', bro: undefined}, 'match optional from left');
+			deepEqual(trailingOptionals, { foo: 'hello', bar : 'world'}, 'match optional from left');
 		});
 
 		// Query

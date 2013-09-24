@@ -154,17 +154,32 @@ define([], function() {
 			}));
 		};
 
+		that.isAllOptional = function() {
+			return that.every(function(segment) { 
+				return segment.isOptional();
+			});
+		}; 
+
 		that.lastOptional = function(segment) {
 			var matchedOptionals = that.findOptional();
 			return matchedOptionals[matchedOptionals.length - 1];
 		};
 
+		that.last = function () {
+			return that[that.length - 1];
+		};
+
+		that.after = function(segment) {
+			var index = that.indexOf(segment);
+			return index === -1 ? that : segmentPath(that.slice(index + 1));
+		}; 
+
 		that.match = function(urlSegments) {
 			var match = [];
 			for(var segmentIndex = 0; segmentIndex < that.length; segmentIndex++) {
-				var urlSegment = urlSegments[segmentIndex]; // we allow undefined url segments 
+				var urlSegment = urlSegments[segmentIndex]; 
 				var routeSegment = that[segmentIndex];
-				if(!routeSegment.match(urlSegment)) {
+				if(urlSegment === undefined || !routeSegment.match(urlSegment)) {
 					break;
 				}
 				match.push(routeSegment);

@@ -73,6 +73,13 @@ define(
 						return candidates;
 					}
 
+					// Return match if match all urlSegments and 
+					// remaining candidates are optional
+					var remaining = candidates.after(matched.last());
+					if(urlSegments.length === matched.length && remaining.isAllOptional()) {
+						return matched;
+					}
+
 					// Try to strip off last optional segment in match.
 					var lastOptional = matched.lastOptional();
 					if(!lastOptional) {
