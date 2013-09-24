@@ -199,13 +199,28 @@ define(
 			deepEqual(firstOptionalBothMatch, { foo: 'hello', bar : 'world'}, 'match all segments if possible');
 
 			var firstOptionalOneMatch = router.url("/world").matchRoute(router.route("?foo/#bar")).getParameters();
-			deepEqual(firstOptionalOneMatch, { bar : 'world'}, 'match mandatory parameter first');
+			deepEqual(firstOptionalOneMatch, { foo: undefined, bar : 'world'}, 'match mandatory parameter first');
 
 			var optionalInPath = router.url("hello/world").matchRoute(router.route("#foo/?bar/#bro")).getParameters();
-			deepEqual(optionalInPath, { foo: 'hello', bro : 'world'}, 'match mandatory parameters even if not first');
+			deepEqual(optionalInPath, { foo: 'hello', bar: undefined,bro : 'world'}, 'match mandatory parameters even if not first');
 
 			var trailingOptionals = router.url("hello/world").matchRoute(router.route("#foo/?bar/?bro")).getParameters();
-			deepEqual(trailingOptionals, { foo: 'hello', bar : 'world'}, 'match optional from left');
+			deepEqual(trailingOptionals, { foo: 'hello', bar : 'world', bro: undefined}, 'match optional from left');
+		});
+
+		test("Route parameter can have defaults", function() {
+			var route = router.route("?foo/?bar", {
+				defaults: {
+					bar: 'world'
+				}
+			});
+
+			var result = router.url("/hello").matchRoute(route);
+			var props = result.getParameters();
+
+			ok(props, 'contains parameters');
+			equal(props.foo, "hello");
+			equal(props.bar, "world");
 		});
 
 		// Query

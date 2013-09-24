@@ -19,7 +19,9 @@ define(
 		//
 		var route = function(spec, my) {
 			if(Object.prototype.toString.call(spec) === '[object String]') {
-				return routeFactory(spec);
+				var routePattern = spec;
+				var routeSpec = my;
+				return routeFactory(routePattern, routeSpec);
 			}
 
 			spec = spec || {};
@@ -91,9 +93,18 @@ define(
 
 			function getParameters(segmentPath, urlSegments) {
 				var parameters = {};
+
+				// Fill with matched parameter values
 				segmentPath.forEach(function(routeSegment, index) {
 					if(routeSegment.isParameter()) {
 						parameters[routeSegment.getName()] = routeSegment.getValue(urlSegments[index]);
+					}
+				});
+
+				// Fill unmatched parameters
+				segments.forEach(function(routeSegment) {
+					if(routeSegment.isParameter() && !segmentPath.contains(routeSegment)) {
+						parameters[routeSegment.getName()] = routeSegment.getValue(); // should return default
 					}
 				});
 
@@ -112,7 +123,7 @@ define(
 		//
 		// See valid [segments](segments.html)
 		//
-		var routeFactory = function(routePattern) {
+		var routeFactory = function(routePattern, spec) {
 			var segmentStrings = routePattern.split(urlSeparator);
 			
 			var nonEmptySegmentStrings = segmentStrings
@@ -120,12 +131,12 @@ define(
 				.filter(Boolean);
 
 			var segmentArray = nonEmptySegmentStrings.map(function(segmentString) {
-				return routeSegments.segmentFactory(segmentString);
+				return routeSegments.segmentFactory(segmentString, spec);
 			});
 
-			var segments = routeSegments.segmentPath(segmentArray);
-
-			return route({ segments: segments });
+			return route({ 
+				segments: routeSegments.segmentPath(segmentArray) 
+			});
 		};
 
 

@@ -29,16 +29,19 @@ define([], function() {
 	//	- **bar** -> parameter
 	//	- **baz** -> optional parameter
 	//
-	var segmentFactory = function(segmentString) {
+	var segmentFactory = function(segmentString, options) {
+		var segmentOptions = options || {};
+		segmentOptions.defaults = segmentOptions.defaults || {};
 
 		var prefix = segmentString[0];
+		var aSegment;
 		switch (prefix) {
 		case '#':
-			return parameter(segmentString);
+			return parameter(segmentString, segmentOptions);
 		case '?':
-			return optionalParameter(segmentString);
+			return optionalParameter(segmentString, segmentOptions);
 		default:
-			return segment(segmentString);
+			return segment(segmentString, segmentOptions);
 		}
 	};
 
@@ -88,11 +91,19 @@ define([], function() {
 	// Note: the leading '#' is *not* part of the name of the
 	// segment.
 	//
-	function parameter(value) {
-		var that = segment(value.substr(1) /* strip prefix from name */);
+	function parameter(value, options) {
+		options = options || {};
+
+		var name = value.substr(1); /* strip prefix from name */
+
+		var defaultValue = options.defaults[name] !== undefined ?
+			options.defaults[name] : undefined;
+
+		var that = segment(name, options);
+
 
 		that.getValue = function(urlSegment) {
-			return urlSegment;
+			return urlSegment === undefined ? defaultValue : urlSegment;
 		};
 
 		that.isParameter = function() {
@@ -124,8 +135,8 @@ define([], function() {
 	// Note: the leading '?' is *not* part of the name of the
 	// segment.
 	//
-	function optionalParameter(value) {
-		var that = parameter(value);
+	function optionalParameter(value, options) {
+		var that = parameter(value, options);
 
 		that.isOptional = function() {
 			return true;
@@ -145,7 +156,7 @@ define([], function() {
 	//
 	// An ordered list of segments
 	//
-	var segmentPath = function (segments) {
+	var segmentPath = function (segments, options) {
 		var that = segments || [];
 
 		that.findOptional = function() { 
@@ -172,7 +183,11 @@ define([], function() {
 		that.after = function(segment) {
 			var index = that.indexOf(segment);
 			return index === -1 ? that : segmentPath(that.slice(index + 1));
-		}; 
+		};
+
+		that.contains = function(segment) {
+			return that.indexOf(segment) !== -1;	
+		};
 
 		that.match = function(urlSegments) {
 			var match = [];
