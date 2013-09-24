@@ -70,14 +70,18 @@ define(
 						urlSegment = routeSegment.getValue();
 					}
 
+					// Skip if no match and optional
+					if(urlSegment === undefined && 
+						routeSegment.isOptional()) {
+						return;
+					}
+
 					// Validate segment
 					if (!routeSegment.match(urlSegment)) {
 						throw new Error('Could not generate a valid URL');
 					}
 
-					if(urlSegment !== undefined) {
-						urlSegments.push(urlSegment);
-					}
+					urlSegments.push(urlSegment);
 				});
 
 				return urlSegments.join('/');

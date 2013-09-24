@@ -30,18 +30,33 @@ define([], function() {
 	//	- **baz** -> optional parameter
 	//
 	var segmentFactory = function(segmentString, options) {
-		var segmentOptions = options || {};
-		segmentOptions.defaults = segmentOptions.defaults || {};
+		options = options || {};
 
 		var prefix = segmentString[0];
-		var aSegment;
+		var name = segmentString.substr(1);
+
+		// Default value
+		var defaultValue = options.defaults && options.defaults[name] !== undefined ?
+			options.defaults[name] : undefined;
+
+		// Constraints
+		var constraint = options.constraints && options.constraints[name] !== undefined ?
+			options.constraints[name] : undefined;
+
+
+		var segmentOptions = {
+			name: name,
+			defaultValue : defaultValue,
+			constraints: constraint ? [constraint] : []
+		};
+
 		switch (prefix) {
 		case '#':
-			return parameter(segmentString, segmentOptions);
+			return parameter(segmentOptions);
 		case '?':
-			return optionalParameter(segmentString, segmentOptions);
+			return optionalParameter(segmentOptions);
 		default:
-			return segment(segmentString, segmentOptions);
+			return segment(segmentString);
 		}
 	};
 
@@ -81,29 +96,51 @@ define([], function() {
 		return that;
 	}
 
+	function parameterValidator(constraint) {
+		// Custom function that take vale as argument
+		if(typeof constraint === 'function') {
+			return constraint;
+		} 
+
+		// Match against RegExp
+		if(constraint instanceof RegExp) {
+			var exp = new RegExp(constraint);
+			return function(string) { return exp.test(string); };		
+		}
+
+		// Match valid options in an array 
+		if(Object.prototype.toString.call(constraint) === '[object Array]') {
+			var options = constraint.map(function(option) {
+				return option.toLowerCase();
+			});
+			return function(string) {
+				var val = string.toLowerCase();
+				return options.indexOf(val) !== -1;
+			};
+		}		
+	}
+
 	// #### Parameter
 	//
 	// Parameters always match a URL segment. The value is the URL segment.
 	// Route '/#foo/world' match URLs like '/hello/world', '/a/world', '/b/world' 
-	//
-	// and 'foo' values are 'hello', 'a', 'b'
+	// with 'foo' values 'hello', 'a', 'b'
 	// 
 	// Note: the leading '#' is *not* part of the name of the
 	// segment.
 	//
-	function parameter(value, options) {
-		options = options || {};
+	function parameter(spec, my) {
+		spec = spec || {};
+		my = my || {};
 
-		var name = value.substr(1); /* strip prefix from name */
+		my.name = spec.name;
+		my.defaultValue = spec.defaultValue;
+		my.validators = spec.constraints.map(parameterValidator).filter(Boolean);
 
-		var defaultValue = options.defaults[name] !== undefined ?
-			options.defaults[name] : undefined;
-
-		var that = segment(name, options);
-
+		var that = segment(my.name, my);
 
 		that.getValue = function(urlSegment) {
-			return urlSegment === undefined ? defaultValue : urlSegment;
+			return urlSegment === undefined ? my.defaultValue : urlSegment;
 		};
 
 		that.isParameter = function() {
@@ -111,7 +148,11 @@ define([], function() {
 		};
 
 		that.match = function(string) {
-			return typeof string === 'string';
+			return typeof string === 'string' && that.isValid(string);
+		};
+
+		that.isValid = function (string) {
+			return my.validators.every(function(validator) { return validator(string);});
 		};
 
 		that.toString = function() {
@@ -135,15 +176,14 @@ define([], function() {
 	// Note: the leading '?' is *not* part of the name of the
 	// segment.
 	//
-	function optionalParameter(value, options) {
-		var that = parameter(value, options);
+	function optionalParameter(spec, my) {
+		spec = spec || {};
+		my = my || {};
+
+		var that = parameter(spec, my);
 
 		that.isOptional = function() {
 			return true;
-		};
-
-		that.match = function() {
-			return true;	// Optional, so always answer true
 		};
 
 		that.toString = function() {

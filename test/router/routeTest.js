@@ -254,5 +254,99 @@ define(
 			throws(function() { route.expand({a : 'hello'});}, 'error since required parameter missing');
 		});
 
+		// Constraints
+
+		test("Route with function constraint", function() {
+			var aRoute = router.route('/hello/#foo/', {
+				constraints : {
+					foo: function(value) {
+						return value.length === 5; 
+					}
+				}	
+			});
+
+			ok(aRoute.matchUrl(router.url('/hello/world')).matched(), 'match if function return true');
+			ok(!aRoute.matchUrl(router.url('/hello/sweden')).matched(), 'no match if function return false');
+		});
+
+		test("Route with array constraint", function() {
+			var aRoute = router.route('hello/#foo', {
+				constraints : {
+					foo: ['world', 'sweden']
+				}	
+			});
+
+			ok(aRoute.matchUrl(router.url('/hello/world')).matched(), 'match if value in array');
+			ok(!aRoute.matchUrl(router.url('/hello/france')).matched(), 'no match if value not in array');
+		});
+
+		test("Route with RegExp constraint", function() {
+			var aRoute = router.route('hello/#foo', {
+				constraints : {
+					foo: /(^[a-z]+$)/
+				}	
+			});
+
+			ok(aRoute.matchUrl(router.url('/hello/world')).matched(), 'match if regexp match value');
+			ok(!aRoute.matchUrl(router.url('/hello/öland')).matched(), 'no match if regexp dont match');
+		});
+
+		test("Route with mixed constraints", function() {
+			var aRoute = router.route('#a/#b/#c', {
+				constraints : {
+					a: function(value) {
+						return value.length > 5; 
+					},
+					b: ['nicolas', 'Mikael'],
+					c: /(^[h-w]+$)/
+				}	
+			});
+
+			ok(aRoute.matchUrl(router.url('/henrik/mikael/h')).matched(), 'all constraints match');
+			ok(!aRoute.matchUrl(router.url('/ben/mikael/1')).matched(), 'function constraint dont match');
+			ok(!aRoute.matchUrl(router.url('/henrik/dennis/1')).matched(), 'array constrait dont match');
+			ok(!aRoute.matchUrl(router.url('/henrik/mikael/a')).matched(), 'regexp constraint dont match');
+		});
+
+		test("Route constraints on optional parameters", function() {
+			var aRoute = router.route('?a/?b/?c', {
+				constraints : {
+					a: function(value) {
+						return value.length > 5; 
+					},
+					b: ['nicolas', 'micke'],
+					c: /(^[h-w]+$)/
+				}	
+			});
+
+			ok(aRoute.matchUrl(router.url('')).matched(), 'constraints are not evaluated if never matched');
+
+			ok(!aRoute.matchUrl(router.url('ö')).matched(), 'no parameters match url segment');
+
+			ok(aRoute.matchUrl(router.url('henrik/micke/h')).matched(), 'all constraints match');
+			deepEqual(aRoute.matchUrl(router.url('henrik/micke/h')).getParameters(), { a: 'henrik', b: 'micke', c: 'h'}, 'parameters');
+
+			ok(aRoute.matchUrl(router.url('henrik/micke')).matched(), 'first two constraints match');
+			deepEqual(aRoute.matchUrl(router.url('henrik/micke')).getParameters(), { a: 'henrik', b: 'micke', c: undefined}, 'parameters');
+
+			ok(aRoute.matchUrl(router.url('henrik')).matched(), 'first constraint match');
+			deepEqual(aRoute.matchUrl(router.url('henrik')).getParameters(), { a: 'henrik', b: undefined, c: undefined}, 'parameters');
+
+			/*
+			
+			These two tests will fail since the matching algorithm will treat all optional segments as equal when
+			removed from candidate paths (see route.js). Could be solved by permuting all optional segments.   
+
+			ok(aRoute.matchUrl(router.url('micke')).matched(), 'second constraint match');
+			deepEqual(aRoute.matchUrl(router.url('micke')).getParameters(), { a: undefined, b: 'micke', c: undefined}, 'parameters');
+
+			ok(aRoute.matchUrl(router.url('h')).matched(), 'last constraint match');
+			deepEqual(aRoute.matchUrl(router.url('h')).getParameters(), { a: undefined, b: undefined, c: 'h'}, 'parameters');
+			*/
+		});
+
+
+
+
 	}
 );
