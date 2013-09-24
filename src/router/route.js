@@ -1,6 +1,6 @@
 define(
-	['./segments'],
-	function(routeSegments) {
+	['./segments', '../events', 'jquery'],
+	function(routeSegments, events, jQuery) {
 
 		var urlSeparator = '/';
 
@@ -29,6 +29,9 @@ define(
 
 			var that = {};
 
+			// Mixin events
+			jQuery.extend(that, events.eventhandler());
+
 			my.getSegments = function() {
 				return segments;
 			};
@@ -43,7 +46,11 @@ define(
 
 				// Get values for each matching parameter and return as result
 				var parameters = getParameters(matchingSegments, urlSegments);
-				return routeMatchResult({route: that, url: url, parameters: parameters});
+				var result = routeMatchResult({route: that, url: url, parameters: parameters});
+
+				that.trigger('matched', result);
+
+				return result;
 			};
 
 			that.toString = function() {
@@ -154,6 +161,13 @@ define(
 
 			that.matched = function() {
 				return true;
+			};
+
+			that.getCallbackArguments = function () {
+				var callbackArguments = [];
+				callbackArguments = callbackArguments.concat(that.getValues());
+				callbackArguments.push(url.getQuery());
+				return callbackArguments;
 			};
 
 			return that;

@@ -31,6 +31,7 @@ define(
 			router.router.redirectTo(path, query);
 		};
 
+
 		module("router", {
 			setup: function() {
 				router.router.start();
@@ -89,8 +90,8 @@ define(
 		});
 
 		test("linkTo()", function () {
-			equal(router.router.linkTo('aPath'), '#!/aPath', 'uses the hash-bang "#! convention');
-			equal(router.router.linkTo(''), '#!/', 'handles empty path');
+			equal(router.router.linkTo('aPath'), 'aPath', 'Hash-bang "#!" convention hiden in hash.js');
+			equal(router.router.linkTo(''), '', 'handles empty path');
 
 			throws(function () { router.router.linkTo(null); }, 'throws error if null');
 			throws(function () { router.router.linkTo(undefined); }, 'throws error if undefined');
