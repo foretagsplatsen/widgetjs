@@ -87,6 +87,12 @@ define(
 				return urlSegments.join('/');
 			};
 
+			that.hasParameter = function(name) {
+				return segments.some(function(segment) {
+					return segment.isParameter() && segment.getName() === name;
+				});
+			};
+
 			that.toString = function() {
 				return 'route(' + segments.join('/') + ')';
 			};

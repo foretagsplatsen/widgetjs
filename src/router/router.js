@@ -61,12 +61,23 @@ define(
 
 			// #### Public API
 
-			that.addRoute = function(routePattern, callback) {
-				var newRoute = route(routePattern);
-				newRoute.on('matched', function(result) {
-					callback.apply(this, result.getCallbackArguments());
-				});
+			that.addRoute = function(routeSpec) {
+				routeSpec = routeSpec || {};
+
+				var newRoute = route(routeSpec.pattern, routeSpec);
+				newRoute.on('matched', routeSpec.onMatched);
+				
 				my.routeTable.push(newRoute);
+				return newRoute;
+			};
+
+			that.removeRoute = function(route) {
+				var index = my.routeTable.indexOf(route);
+				if(index === -1) {
+					throw new Error('Route not in route table'); 
+				}
+
+				my.routeTable.splice(index, 1); 
 			};
 
 			that.resolvePath = my.resolvePath;
@@ -89,6 +100,27 @@ define(
 
 			that.redirectTo = function(path, query) {
 				return my.location.setPath(that.linkTo(path, query));
+			};
+
+			that.updatePath = function(parameters) {
+				if(!lastMatch) {
+					throw new Error('No route to update');
+				}
+
+				var currentRoute = lastMatch.getRoute();
+
+				var newQuery = Object.create(lastMatch.getUrl().getQuery());
+				var newParameters = Object.create(lastMatch.getParameters());
+				Object.keys(parameters).forEach(function(param){
+					if(currentRoute.hasParameter(param)) {
+						newParameters[param] = parameters[param];
+					} else {
+						newQuery[param] = parameters[param];
+					}
+				});
+
+				var path = currentRoute.expand(newParameters);				
+				that.redirectTo(path, newQuery);
 			};
 
 			that.back = function(fallback) {
@@ -137,7 +169,12 @@ define(
 		// TODO: Controller deprecated: Use router.addRoute()	
 		var controllerSingleton = {};
 		controllerSingleton.on = function(path, callback) {
-			routerSingleton.addRoute(path, callback);
+			routerSingleton.addRoute({
+				pattern: path,
+				onMatched: function(result) {
+					callback.apply(this, result.getCallbackArguments());
+				}
+			});
 		};
 
 		return {
