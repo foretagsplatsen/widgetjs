@@ -1,19 +1,22 @@
 {
-    "curly": true,
-    "eqeqeq": true,
-    "forin":true,
-    "immed": true,
-    "indent": 4,
-    "latedef": true,
-    "newcap": true,
-    "noarg": true,
-    "noempty": true,
-    "regexp": true,
-    "undef": true,
-    "eqnull": true,
-    "browser": true,
-    "nomen": true,
-    "globals": {
-        "define": true
-    }
+    // JSHint  Configuration File
+    // See http://jshint.com/docs/ for more details
+
+    "maxerr"        : 50,       // {int} Maximum error before stopping
+
+    // Enforcing
+    "bitwise"       : true,     // true: Prohibit bitwise operators (&, |, ^, etc.)
+    "funcscope"     : false,     // true: Tolerate defining variables inside control statements"
+
+
+    "supernew"      : false,     // true: Tolerate `new function () { ... };` and `new Object;`
+
+    // Environments
+    "browser"       : true,     // Web Browser (window, document, etc)
+    "devel"         : true,     // Development/debugging (alert, confirm, etc)
+    "jquery"        : true,    // jQuery
+    "nonstandard"   : true,    // Widely adopted globals (escape, unescape, etc)
+
+    // Custom Globals
+    "predef"        : ["define", "require", "console", "module"]
 }
