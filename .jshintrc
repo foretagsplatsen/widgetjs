@@ -8,6 +8,8 @@
     "bitwise"       : true,     // true: Prohibit bitwise operators (&, |, ^, etc.)
     "funcscope"     : false,     // true: Tolerate defining variables inside control statements"
 
+    "loopfunc"      : true
+
 
     "supernew"      : false,     // true: Tolerate `new function () { ... };` and `new Object;`
 

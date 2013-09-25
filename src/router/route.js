@@ -14,8 +14,12 @@ define(
 		// A route have a `segments` array. Some segments are optional and other mandatory. 
 		// A route match a URL if the segments matches the route segments. 
 		//
-		// The strategy to match route against a URL is to try several passes with and 
-		// without optional parameters.
+		// The strategy to match route against a URL is to match it against the segments
+		// and then all combinations optional parameters. An array with all optional 
+		// sequences is calculated when route is created.
+		//
+		// _Note:_: Avvoid large number of optionals since it will consume memory
+		// and slow down matching. You can sse query parameters instead.
 		//
 		var route = function(spec, my) {
 			if(Object.prototype.toString.call(spec) === '[object String]') {
@@ -27,7 +31,16 @@ define(
 			spec = spec || {};
 			my = my || {};
 
+			// Segments to match
 			var segments = spec.segments;
+
+			// Array with all optional sequences, ie. all combinations 
+			// of optional perameters. Array must be orderd to match URL:s
+			// left to right. 
+			var optionalSequences = [];
+
+			// Pre-caluclate optional sequences.
+			ensureOptionalSequences();
 
 			var that = {};
 
@@ -41,7 +54,8 @@ define(
 			that.matchUrl = function(url) {
 				// Match URL segments against route segments
 				var urlSegments = url.getSegments();
-				var matchingSegments = findMatchingPath(urlSegments);
+
+				var matchingSegments = findMatch(urlSegments); 
 				if(!matchingSegments) {
 					return routeNoMatchResult();
 				}
@@ -97,37 +111,72 @@ define(
 				return 'route(' + segments.join('/') + ')';
 			};
 
-			function findMatchingPath(urlSegments) {
-				// Can not match if more url than route segments
-				if (segments.length < urlSegments.length) {
-					return null;
+			function isMatch(urlSegments, sequence) {
+				sequence = sequence || segments;
+
+				// Can not match if different sizes
+				if(urlSegments.length != sequence.length) {
+					return false;
 				}
 
-				// Try to find a sequene of optional/mandatory 
-				// segments that match URL
-				var candidates = segments.clone();
-				while(true) {
-					// Return candidates if all match 
-					var matched = candidates.match(urlSegments);
-					if(matched.length === candidates.length) {						
-						return candidates;
+				// TODO: rtewrite
+				for(var segmentIndex = 0; segmentIndex < sequence.length; segmentIndex++) {
+					var urlSegment = urlSegments[segmentIndex]; 
+					var routeSegment = sequence[segmentIndex];
+					if(urlSegment === undefined || !routeSegment.match(urlSegment)) {
+						return false;
 					}
-
-					// Return match if match all urlSegments and 
-					// remaining candidates are optional
-					var remaining = candidates.after(matched.last());
-					if(urlSegments.length === matched.length && remaining.isAllOptional()) {
-						return matched;
-					}
-
-					// Try to strip off last optional segment in match.
-					var lastOptional = matched.lastOptional();
-					if(!lastOptional) {
-						return null; // no more optional parameters to strip off => no match	
-					}
-					candidates.remove(lastOptional);
 				}
+
+				return true;
+			};
+
+			function findMatch(urlSegments) {
+				if(isMatch(urlSegments)) {
+					return segments;
+				}
+
+				for(var i = 0; i < optionalSequences.length; i++) {
+					if(isMatch(urlSegments, optionalSequences[i])) {
+						return optionalSequences[i];
+					}
+				}
+
+				return null;
 			}
+
+			function ensureOptionalSequences () {
+				// Find positions for optionals
+				var optionalPositions = [];
+				segments.forEach(function(segment, index) { 
+					if(segment.isOptional()) {
+						optionalPositions.push(index); 
+					}
+				});
+
+				// Create arrays that we can use to pick all combinations of
+				// optional positions.
+				// 3 => [[2], [1], [0], [1,2], [0,1], [0,2], [0,1,2]]
+				var generator = rangeSubsets(optionalPositions.length)
+				
+				// Generate all possible combinations of optional 
+				generator.forEach(function(indexSequence) {
+					// Clone segments array and remove optionals matching
+					// indexes in index sequence
+					var permutation = segments.slice();
+					indexSequence.forEach(function(index, numRemoved) {
+						// Use the generator index to look up the real
+						// position of the optional using the optionalPositions array
+						var optionalIndex = optionalPositions[index];
+
+						// Remove optional but take in to account that we have already
+						// removed {numRemoved} from permutation.
+						permutation.splice(optionalIndex - numRemoved, 1);
+					});
+
+					optionalSequences.push(permutation); 
+				});
+			};
 
 			function getParameters(segmentPath, urlSegments) {
 				var parameters = {};
@@ -141,14 +190,13 @@ define(
 
 				// Fill unmatched parameters
 				segments.forEach(function(routeSegment) {
-					if(routeSegment.isParameter() && !segmentPath.contains(routeSegment)) {
+					if(routeSegment.isParameter() && segmentPath.indexOf(routeSegment) === -1){ //!segmentPath.contains(routeSegment)) {
 						parameters[routeSegment.getName()] = routeSegment.getValue(); // should return default
 					}
 				});
 
 				return parameters;
 			}
-
 
 			return that;
 		};
@@ -173,9 +221,45 @@ define(
 			});
 
 			return route({ 
-				segments: routeSegments.segmentPath(segmentArray) 
+				segments: segmentArray 
 			});
 		};
+
+		// Generates a range of a given size. Eg. 3 => [1,2,3]
+		// Then generates all subsets of the range (with same internal order)
+		// Returned subsets are ordered in right to left order. 
+		// Examples: 
+		// 1 => [[0]]
+		// 2 => [[0], [0,1]]
+		// 3 => [[2], [1], [0], [1,2], [0,1], [0,2], [0,1,2]]
+		function rangeSubsets(size) {
+			var queue = [];
+			var anArray = [];
+			for(var i = 0; i < size; i++) {
+				anArray.push(i);
+				queue.push([i]);
+			}
+
+			anArray.slice().map(function(item) {
+				return [item];
+			});
+
+			var permutations = [];
+			while (queue.length > 0) {
+				var seqence = queue.pop();
+				permutations.push(seqence);
+
+				var indexLastItem = seqence[seqence.length - 1];         
+				var remaining = anArray.slice(indexLastItem + 1);
+
+				remaining.forEach(function(item) {
+					var newSequence = seqence.concat(item);
+					queue.unshift(newSequence);
+				});
+			}
+
+			return permutations;
+		}
 
 
 		// ### Route result 

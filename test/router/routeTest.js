@@ -332,21 +332,11 @@ define(
 			ok(aRoute.matchUrl(router.url('henrik')).matched(), 'first constraint match');
 			deepEqual(aRoute.matchUrl(router.url('henrik')).getParameters(), { a: 'henrik', b: undefined, c: undefined}, 'parameters');
 
-			/*
-			
-			These two tests will fail since the matching algorithm will treat all optional segments as equal when
-			removed from candidate paths (see route.js). Could be solved by permuting all optional segments.   
-
 			ok(aRoute.matchUrl(router.url('micke')).matched(), 'second constraint match');
 			deepEqual(aRoute.matchUrl(router.url('micke')).getParameters(), { a: undefined, b: 'micke', c: undefined}, 'parameters');
 
 			ok(aRoute.matchUrl(router.url('h')).matched(), 'last constraint match');
 			deepEqual(aRoute.matchUrl(router.url('h')).getParameters(), { a: undefined, b: undefined, c: 'h'}, 'parameters');
-			*/
 		});
-
-
-
-
 	}
 );
