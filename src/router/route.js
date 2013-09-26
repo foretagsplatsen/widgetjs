@@ -52,17 +52,12 @@ define(
 			};
 
 			that.matchUrl = function(url) {
-				// Match URL segments against route segments
-				var urlSegments = url.getSegments();
-
-				var matchingSegments = findMatch(urlSegments); 
-				if(!matchingSegments) {
+				var match = findMatch(url);
+				if(!match) {
 					return routeNoMatchResult();
 				}
 
-				// Get values for each matching parameter and return as result
-				var parameters = getParameters(matchingSegments, urlSegments);
-				var result = routeMatchResult({route: that, url: url, parameters: parameters});
+				var result = createMatchResult(match, url);
 
 				that.trigger('matched', result);
 
@@ -119,23 +114,23 @@ define(
 					return false;
 				}
 
-				// TODO: rtewrite
-				for(var segmentIndex = 0; segmentIndex < sequence.length; segmentIndex++) {
-					var urlSegment = urlSegments[segmentIndex]; 
-					var routeSegment = sequence[segmentIndex];
-					if(urlSegment === undefined || !routeSegment.match(urlSegment)) {
-						return false;
-					}
-				}
+				// All routeSegments much match coresponding URL segment
+				return sequence.every(function(routeSegment, index) {
+					var urlSegment = urlSegments[index];
+					return urlSegment !== undefined && routeSegment.match(urlSegment);
+				});
+			}
 
-				return true;
-			};
+			function findMatch(url) {
+				// Match URL segments against route segments
+				var urlSegments = url.getSegments();
 
-			function findMatch(urlSegments) {
+				// Try match orignial segements
 				if(isMatch(urlSegments)) {
 					return segments;
 				}
 
+				// then optionals
 				for(var i = 0; i < optionalSequences.length; i++) {
 					if(isMatch(urlSegments, optionalSequences[i])) {
 						return optionalSequences[i];
@@ -148,54 +143,49 @@ define(
 			function ensureOptionalSequences () {
 				// Find positions for optionals
 				var optionalPositions = [];
-				segments.forEach(function(segment, index) { 
+				segments.forEach(function(segment, index) {
 					if(segment.isOptional()) {
-						optionalPositions.push(index); 
+						optionalPositions.push(index);
 					}
 				});
 
-				// Create arrays that we can use to pick all combinations of
-				// optional positions.
-				// 3 => [[2], [1], [0], [1,2], [0,1], [0,2], [0,1,2]]
-				var generator = rangeSubsets(optionalPositions.length)
-				
-				// Generate all possible combinations of optional 
-				generator.forEach(function(indexSequence) {
+				// Generate possible sequences
+				var possibleOptionalSequences = orderedSubsets(optionalPositions);
+
+				possibleOptionalSequences.forEach(function(sequence) {
 					// Clone segments array and remove optionals matching
 					// indexes in index sequence
-					var permutation = segments.slice();
-					indexSequence.forEach(function(index, numRemoved) {
-						// Use the generator index to look up the real
-						// position of the optional using the optionalPositions array
-						var optionalIndex = optionalPositions[index];
-
+					var optionalSequence = segments.slice();
+					sequence.forEach(function(optionalIndex, numRemoved) {
 						// Remove optional but take in to account that we have already
 						// removed {numRemoved} from permutation.
-						permutation.splice(optionalIndex - numRemoved, 1);
+						optionalSequence.splice(optionalIndex - numRemoved, 1);
 					});
 
-					optionalSequences.push(permutation); 
+					optionalSequences.push(optionalSequence);
 				});
-			};
+			}
 
-			function getParameters(segmentPath, urlSegments) {
+			function createMatchResult(match, url) {
+				var urlSegments = url.getSegments();
+
 				var parameters = {};
 
 				// Fill with matched parameter values
-				segmentPath.forEach(function(routeSegment, index) {
+				match.forEach(function(routeSegment, index) {
 					if(routeSegment.isParameter()) {
 						parameters[routeSegment.getName()] = routeSegment.getValue(urlSegments[index]);
 					}
 				});
 
-				// Fill unmatched parameters
+				// Fill with default values for not matched parameters
 				segments.forEach(function(routeSegment) {
-					if(routeSegment.isParameter() && segmentPath.indexOf(routeSegment) === -1){ //!segmentPath.contains(routeSegment)) {
-						parameters[routeSegment.getName()] = routeSegment.getValue(); // should return default
+					if(routeSegment.isParameter() && match.indexOf(routeSegment) === -1) {
+						parameters[routeSegment.getName()] = routeSegment.getValue();
 					}
 				});
 
-				return parameters;
+				return routeMatchResult({route: that, url: url, parameters: parameters});
 			}
 
 			return that;
@@ -225,44 +215,30 @@ define(
 			});
 		};
 
-		// Generates a range of a given size. Eg. 3 => [1,2,3]
-		// Then generates all subsets of the range (with same internal order)
-		// Returned subsets are ordered in right to left order. 
-		// Examples: 
-		// 1 => [[0]]
-		// 2 => [[0], [0,1]]
-		// 3 => [[2], [1], [0], [1,2], [0,1], [0,2], [0,1,2]]
-		function rangeSubsets(size) {
-			var queue = [];
-			var anArray = [];
-			for(var i = 0; i < size; i++) {
-				anArray.push(i);
-				queue.push([i]);
+		// Generates all subsets of aray with same internal order
+		// Returned subsets are ordered in right to left order.
+		// Examples:
+		// [1,2,3] => [1,2,3],[2,3],[1,3],[3],[1,2],[2],[1])
+		var orderedSubsets = function(input) {
+			var results = [], result, mask, 
+				total = Math.pow(2, input.length);
+
+			for (mask = 1; mask < total; mask++) {
+				result = [];
+				i = input.length - 1;
+				do {
+					if ((mask & (1 << i)) !== 0) {
+						result.unshift(input[i]);
+					}
+				} while (i--);
+				results.unshift(result);
 			}
 
-			anArray.slice().map(function(item) {
-				return [item];
-			});
-
-			var permutations = [];
-			while (queue.length > 0) {
-				var seqence = queue.pop();
-				permutations.push(seqence);
-
-				var indexLastItem = seqence[seqence.length - 1];         
-				var remaining = anArray.slice(indexLastItem + 1);
-
-				remaining.forEach(function(item) {
-					var newSequence = seqence.concat(item);
-					queue.unshift(newSequence);
-				});
-			}
-
-			return permutations;
-		}
+			return results;
+		};
 
 
-		// ### Route result 
+		// ### Route result
 		//
 		// Route match result are used as the answer of matching
 		// a url for a route. 
@@ -322,7 +298,6 @@ define(
 
 			return that;
 		};
-
 
 		return route;
 	}
