@@ -58,7 +58,7 @@ define(
 
 		// - - -
 
-		
+
 		// ### htmlCanvas
 		// htmlCanvas provides a HTML-looking-syntax interface for appending content to the The Document Object Model (DOM).
 		//
@@ -164,7 +164,7 @@ define(
 				'click dblclick mousedown mouseup mousemove mouseover ' +
 				'mouseout mouseenter mouseleave change select submit ' +
 				'keydown keypress keyup error').split(' ');
-			
+
 			var jquery = spec.jQuery;
 			var elementTagName = spec.tag;
 			var children = spec.children;

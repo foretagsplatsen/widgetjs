@@ -5,21 +5,46 @@ define(
 		var urlSeparator = '/';
 
 		// ### Route object
-		// 
-		// Routes are used to match URLs. Routes represent
-		// the path taken for which an action has to be taken
-		// (registered in the router with an associated callback
-		// function).
 		//
-		// A route have a `segments` array. Some segments are optional and other mandatory. 
-		// A route match a URL if the segments matches the route segments. 
+		// Routes represent the path for which an action should be taken (see `matched` event).
 		//
-		// The strategy to match route against a URL is to match it against the segments
-		// and then all combinations optional parameters. An array with all optional 
-		// sequences is calculated when route is created.
+		// Route is implemented as an array of segments. A route can be constructed from a segment array
+		// or a route pattern string.
 		//
-		// _Note:_: Avvoid large number of optionals since it will consume memory
-		// and slow down matching. You can sse query parameters instead.
+		//		var aRouteFromSegments = route({segments: arrayOfRouteSegments});
+		//		var aRouteFromPattern = route('/segmentA/#aParameter/?andAnOptionalParameter');
+		//
+		// Route pattern strings are parsed into segment arrays by `routeFactory`.
+		//
+		// Route match URL:s by comparing the URL segments against an array
+		// of route segments. A route match a URL if the segments matches the route segments.
+		//
+		// Eg.
+		//		Route: /User/#id => Route segments [segment('User'), parameter()]
+		//		URL: /User/john => URL segments ['User', 'john']
+		//
+		// Route would match URL since first segment in URL match Route (both 'User') and second
+		// segment is matched since a route parameter will match all values (if no constraints).
+		//
+		// Some segments can be optional and other mandatory. The strategy to match route with optional
+		// segments is to match it URL:s against the segments and then all combinations of optional.
+		// parameters.
+		//
+		// An array with all optional sequences is calculated when route is created.
+		//
+		// _Note:_: Avoid large number of optionals since it will consume memory
+		// and slow down matching. You can use query parameters instead.
+		//
+		// When a URL is matched the router will bind matches parameters to coresponding segments in URL
+		// and return them in `matchResult`
+		//
+		//		var result = route('/user/#id').matchUrl('/user/john');
+		//		console.dir(result.getParameters()); // => { user: 'john'}
+		//
+		// Routes can also be used as patterns for creating URLs
+		//
+		//		var url = route('/user/#id').expand({id: 'john'});
+		//		console.log(url); // => '/user/john'
 		//
 		var route = function(spec, my) {
 			if(Object.prototype.toString.call(spec) === '[object String]') {
@@ -34,9 +59,9 @@ define(
 			// Segments to match
 			var segments = spec.segments;
 
-			// Array with all optional sequences, ie. all combinations 
+			// Array with all optional sequences, ie. all combinations
 			// of optional perameters. Array must be orderd to match URL:s
-			// left to right. 
+			// left to right.
 			var optionalSequences = [];
 
 			// Pre-caluclate optional sequences.
@@ -80,7 +105,7 @@ define(
 					}
 
 					// Skip if no match and optional
-					if(urlSegment === undefined && 
+					if(urlSegment === undefined &&
 						routeSegment.isOptional()) {
 						return;
 					}
@@ -149,6 +174,12 @@ define(
 					}
 				});
 
+				if(optionalPositions.length > 15)  {
+					throw new Error ('Too many optional arguments. "' + optionalPositions.length +
+						'"" optionals would generate  ' + Math.pow(2,optionalPositions.length) +
+						' optional sequences.');
+				}
+
 				// Generate possible sequences
 				var possibleOptionalSequences = orderedSubsets(optionalPositions);
 
@@ -201,7 +232,7 @@ define(
 		//
 		var routeFactory = function(routePattern, spec) {
 			var segmentStrings = routePattern.split(urlSeparator);
-			
+
 			var nonEmptySegmentStrings = segmentStrings
 				.map(Function.prototype.call, String.prototype.trim)
 				.filter(Boolean);
@@ -210,8 +241,8 @@ define(
 				return routeSegments.segmentFactory(segmentString, spec);
 			});
 
-			return route({ 
-				segments: segmentArray 
+			return route({
+				segments: segmentArray
 			});
 		};
 
@@ -220,7 +251,7 @@ define(
 		// Examples:
 		// [1,2,3] => [1,2,3],[2,3],[1,3],[3],[1,2],[2],[1])
 		var orderedSubsets = function(input) {
-			var results = [], result, mask, 
+			var results = [], result, mask,
 				total = Math.pow(2, input.length);
 
 			for (mask = 1; mask < total; mask++) {
@@ -241,7 +272,7 @@ define(
 		// ### Route result
 		//
 		// Route match result are used as the answer of matching
-		// a url for a route. 
+		// a url for a route.
 		//
 		// Parameters is a hash with matched segment names as keys
 		// and matching url segment values.

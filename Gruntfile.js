@@ -76,7 +76,7 @@ module.exports = function(grunt) {
 	// Default task(s).
 	grunt.registerTask('default', ['jshint:src', 'qunit']);
 	grunt.registerTask('dist', ['default', 'requirejs', 'docco']);
-	
+
 	// Test task
 	grunt.registerTask('test', 'qunit');
 };

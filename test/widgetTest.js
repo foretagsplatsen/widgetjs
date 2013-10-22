@@ -24,7 +24,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery"], function(widget, ht
 
         var html = htmlCanvas(sandbox);
         callback(html);
-        
+
         sandbox.remove();
     };
 
@@ -71,7 +71,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery"], function(widget, ht
         var my = {}; // reference to protected methods using 'my';
         var aWidget = widget({}, my);
 
-        equal(my.linkTo('foo/bar'), 'foo/bar', 'Hash-bang convention hidden in hash.js');
+        equal(my.linkTo('foo/bar'), '#!/foo/bar', 'Hash-bang convention hidden in hash.js');
     });
 
     test("redirectTo() redirects to paths in app", function() {
@@ -79,7 +79,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery"], function(widget, ht
         var aWidget = widget({}, my);
 
         my.redirectTo('foo/bar');
-        equal(window.location.hash, my.linkTo('#!/foo/bar'), 'Use hash-bang convention hidden in hash.js');
+        equal(window.location.hash, my.linkTo('foo/bar'), 'Use hash-bang convention hidden in hash.js');
     });
 
     test("Render", function() {
@@ -95,7 +95,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery"], function(widget, ht
             };
 
             aWidget.update();
-            
+
             ok(jQuery("#foo").get(0), "updates widget");
         });
     });

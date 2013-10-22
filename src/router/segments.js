@@ -4,7 +4,7 @@ define([], function() {
 	//
 	// A segment represents a single part of the route. All segments answer `match`
 	// that take a URL segments and answers if it match route segment.
-	// 
+	//
 	// Three kind of segments are currently defined:
 	//
 	//	- **segment:** static segments in the URL
@@ -14,12 +14,12 @@ define([], function() {
 
 	// #### Route Factory
 	//
-	// Creates segments from strings. Segment strings starting with: 
+	// Creates segments from strings. Segment strings starting with:
 	//
 	//	- '**#**' will return parameter
 	//	- '**?**' will return optional parameter
 	//
-	// Default is a static **segment**. 
+	// Default is a static **segment**.
 	//
 	// _Example:_
 	//
@@ -62,7 +62,7 @@ define([], function() {
 
 	//
 	// #### Segment
-	// 
+	//
 	// Static segments match URL segments that are equal to value.
 	// Eg. Route '/hello/world' match only URL '/hello/world'
 	//
@@ -100,15 +100,15 @@ define([], function() {
 		// Custom function that take vale as argument
 		if(typeof constraint === 'function') {
 			return constraint;
-		} 
+		}
 
 		// Match against RegExp
 		if(constraint instanceof RegExp) {
 			var exp = new RegExp(constraint);
-			return function(string) { return exp.test(string); };		
+			return function(string) { return exp.test(string); };
 		}
 
-		// Match valid options in an array 
+		// Match valid options in an array
 		if(Object.prototype.toString.call(constraint) === '[object Array]') {
 			var options = constraint.map(function(option) {
 				return option.toLowerCase();
@@ -117,15 +117,15 @@ define([], function() {
 				var val = string.toLowerCase();
 				return options.indexOf(val) !== -1;
 			};
-		}		
+		}
 	}
 
 	// #### Parameter
 	//
 	// Parameters always match a URL segment. The value is the URL segment.
-	// Route '/#foo/world' match URLs like '/hello/world', '/a/world', '/b/world' 
+	// Route '/#foo/world' match URLs like '/hello/world', '/a/world', '/b/world'
 	// with 'foo' values 'hello', 'a', 'b'
-	// 
+	//
 	// Note: the leading '#' is *not* part of the name of the
 	// segment.
 	//
@@ -169,10 +169,10 @@ define([], function() {
 	// in the URL.
 	//
 	// Route '/?foo/world' match URLs like '/hello/world', '/a/world', '/b/world'
-	// but also '/world' 
+	// but also '/world'
 	//
 	// and 'foo' values are 'hello', 'a', 'b' and undefined
-	// 
+	//
 	// Note: the leading '?' is *not* part of the name of the
 	// segment.
 	//

@@ -76,12 +76,48 @@ define(
 
 		delayedAsyncTest("Triggers notfound event if no route match", function () {
 			events.at('routing').on('notfound', function () {
-				ok(true, 'notfound event triggered correcly');
 				this.unbind(); // clean-up: unbound this event
 				start();
 			});
 
 			redirectTo('APathNotBoundToACallback');
+
+			ok(true, 'notfound event triggered correcly');
+		});
+
+
+		delayedAsyncTest("Pipe notfound to another router", function () {
+			var anotherRouter = router.router.router(); // :)
+
+			anotherRouter.addRoute({
+				pattern: 'APathNotInDefaultRouterButInPipedRouter',
+				onMatched: function(result) {
+					ok(true, 'callback executed for route');
+					this.unbind(); // clean-up: unbound this event
+					start();
+				}
+			});
+
+			router.router.pipeNotFound(anotherRouter);
+
+			redirectTo('APathNotInDefaultRouterButInPipedRouter');
+		});
+
+		delayedAsyncTest("Pipe route to another router", function () {
+			var anotherRouter = router.router.router(); // :)
+
+			anotherRouter.addRoute({
+				pattern: '/a/b/#c',
+				onMatched: function(result) {
+					ok(true, 'callback executed for route');
+					this.unbind(); // clean-up: unbound this event
+					start();
+				}
+			});
+
+			router.router.pipeRoute({pattern: 'a/#b/#c'}, anotherRouter);
+
+			redirectTo('/a/b/c');
 		});
 
 		test("Keeps the current path", function () {
@@ -90,8 +126,8 @@ define(
 		});
 
 		test("linkTo()", function () {
-			equal(router.router.linkTo('aPath'), 'aPath', 'Hash-bang "#!" convention hiden in hash.js');
-			equal(router.router.linkTo(''), '', 'handles empty path');
+			equal(router.router.linkTo('aPath'), '#!/aPath', 'Hash-bang "#!" convention (hiden in hash.js)');
+			equal(router.router.linkTo(''), '#!/', 'handles empty path');
 
 			throws(function () { router.router.linkTo(null); }, 'throws error if null');
 			throws(function () { router.router.linkTo(undefined); }, 'throws error if undefined');

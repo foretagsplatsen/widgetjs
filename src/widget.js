@@ -90,7 +90,7 @@ define(
             that.widgets = function () {
                 return [];
             };
-           
+
             // Expose widget id
             that.getId = function () {
                 return id;
@@ -99,7 +99,7 @@ define(
                 return id;
             };
 
-            
+
             // #### Route / Controller extensions
 
             // Returns link to route/path
@@ -112,7 +112,7 @@ define(
                 router.router.redirectTo(path);
             };
 
-            
+
             // #### Render extensions
 
             // Append widget to DOM-element matched by aJQuery

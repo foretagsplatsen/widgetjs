@@ -1,7 +1,7 @@
 Widget-JS [![Travis CI Status](https://secure.travis-ci.org/foretagsplatsen/widget-js.png)](https://travis-ci.org/#!/foretagsplatsen/widget-js)
 =====
 
-Widget-JS is a framework that provides routing, events and widgets to javascript apps. 
+Widget-JS is a framework that provides routing, events and widgets to javascript apps.
 
 A simple widget can look like:
 ``` javascript
@@ -24,7 +24,7 @@ See the complete example https://github.com/foretagsplatsen/widget-js/blob/maste
 
 ### Install
 
-Install using [bower](https://github.com/twitter/bower) 
+Install using [bower](https://github.com/twitter/bower)
 ```
 bower install widgetjs
 ```
@@ -39,7 +39,7 @@ Include the minified version in your project:
 ``` html
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
 <script type="text/javascript" src="WidgetJS.min.js"></script>
-``` 
+```
 
 
 Use with requirejs:
@@ -75,7 +75,7 @@ npm install
 
 Lint + run tests :
 ```
-grunt 
+grunt
 ```
 
 Build:
