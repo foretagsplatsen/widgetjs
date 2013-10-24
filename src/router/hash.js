@@ -9,19 +9,19 @@ define([
 	// Listens for changes in the hash fragment of the URL. In modern browsers we use the 'hashchange' event.
 	// In legacy browsers we instead pull for changes using a timer/interval.
 	//
-	// In old IE (< IE 8) a hidden IFrame is created to allow the back button and hash-based history to work.
+	// In old IE (< IE 8) a hidden IFrame is created to allow the back button and hash-based my.history to work.
 	// See `createFrame()` and `fixHistoryForIE()`.
 	//
 	// Usage:
 	//
 	//		var location = hash();
-	//		hash.on('changed', function(newHash) { window.alert(newHash); });
+	//		hash.on('changed', function(newUrl) { window.alert(newUrl); });
 	//		location.start();
 	//		location.setUrl('newUrl');
 	//		location.setUrl('anotherUrl');
 	//		location.back();
 	//
-	// _Note:_ Router can be started before DOM is ready, but since it won’t be usable before then in
+	// _Note:_ Hash can be started before DOM is ready, but since it won’t be usable before then in
 	// IE6/7 (due to the necessary IFrame), recommended usage is to bind it inside a DOM ready handler.
 	//
 
@@ -33,12 +33,13 @@ define([
 		spec = spec || {};
 		my = my || {};
 
-		var currentHash, // last hash fragment
-			history = [], // history of visited hash fragments
-			pollTimerId = null,
+		var pollTimerId = null,
 			iframe,
 			iframe_src = (spec.iframe_src || /*jshint scripturl:true*/ 'javascript:0');
 			/*jshint scripturl:false*/
+
+		my.currentHash = undefined; // last hash fragment
+		my.history = []; // history of visited hash fragments
 
 		var that = {};
 
@@ -84,7 +85,7 @@ define([
 			// IE will add a history entry when IFrame is opened/closed.
 			iframe.open();
 			iframe.close();
-			iframe.location.hash = currentHash;
+			iframe.location.hash = my.currentHash;
 		}
 
 		function check() {
@@ -92,34 +93,35 @@ define([
 				iframe.location.hash :
 				getHash();
 
-			var urlChanged = currentHash !== newHash;
+			var urlChanged = my.currentHash !== newHash;
 			if (urlChanged) {
-				currentHash = newHash;
-				history.push(currentHash);
-
-				that.trigger('changed', currentHash);
+				my.currentHash = newHash;
+				my.history.push(my.currentHash);
 
 				if (isLegacyBrowser) {
 					updateFrame();
 					setHash(iframe.location.hash);
 				}
+
+				that.trigger('changed', getUrl());
 			}
 		}
 
 		// ### Public API
 
-		that.setHash = setHash;
-		that.getHash = getHash;
+		that.setUrl = function(aUrl) {
+			setUrl(aUrl);
+			check();
+		};
 
 		that.getUrl = getUrl;
-		that.setUrl = setUrl;
 
 		that.linkToUrl = urlToHash;
 
 		that.back = function(fallbackUrl) {
-			if (history.length > 1) {
-				history.pop();
-				setHash(history.pop());
+			if (my.history.length > 1) {
+				my.history.pop();
+				setHash(my.history.pop());
 			} else if (fallbackUrl) {
 				setUrl(fallbackUrl);
 			}
@@ -131,8 +133,8 @@ define([
 		that.start = function() {
 			that.stop();
 
-			currentHash = getHash();
-			history = [currentHash];
+			my.currentHash = getHash();
+			my.history = [my.currentHash];
 
 			if (fallback) {
 				if (isLegacyBrowser) {
@@ -150,7 +152,7 @@ define([
 				pollTimerId = null;
 			}
 			jQuery(window).unbind('hashchange', check);
-			jQuery('#ie_history_iframe').remove(); // remove any IFRAME
+			jQuery('#ie_my.history_iframe').remove(); // remove any IFRAME
 			iframe = null;
 		};
 

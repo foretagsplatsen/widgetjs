@@ -1,15 +1,6 @@
 define(
-	["widgetjs/router", "widgetjs/events"],
-	function (router, events) {
-
-		// Helpers
-
-		function delayedAsyncTest(name, fn, expected) {
-			asyncTest(name, function () {
-				expect(expected || 1);
-				setTimeout(fn, 100 /* Give some time to the router to initialize. */);
-			});
-		}
+	["widgetjs/router/router"],
+	function (router) {
 
 		function delayedSteps() {
 			var steps = Array.prototype.slice.call(arguments);
@@ -27,165 +18,391 @@ define(
 			next();
 		}
 
-		var redirectTo = function (path, query) {
-			router.router.redirectTo(path, query);
-		};
-
+		var my, aRouter;
 
 		module("router", {
 			setup: function() {
-				router.router.start();
+				window.location.hash = '';
+
+				my = {};
+				aRouter = router({}, my);
+			},
+			teardown: function() {
+				window.location.hash = '';
+				aRouter.stop();
+				my = null;
+				aRouter = null;
 			}
 		});
 
-		test("singleton router", function () {
-			equal(router.router, router.router);
+		test("Router defaults", function () {
+			// Assert that defaults are correct
+			equal(my.routeTable.length, 0, 'routetable is empty');
+			equal(my.lastMatch, undefined, 'no route matched');
 		});
 
-		test("singleton controller", function () {
-			equal(router.controller, router.controller);
+		test("Router options", function () {
+			// Arrange a router with options set
+			var anotherMy = {};
+			var anotherRouter = router({
+				locationHandler: { isFake: true, on: function() {} }
+			}, anotherMy);
+
+			// Assert that options where applied
+			equal(anotherMy.location.isFake, true, 'location handler from options');
 		});
 
-		delayedAsyncTest("Executes route callback", function () {
-			router.controller.on('foo', function () {
-				ok(true, 'callback executed for route');
-				this.unbind(); // clean-up: unbound this event
-				start();
+		test("Add route", function () {
+			// Act: add a route
+			var route = aRouter.addRoute({ pattern: '/users/' });
+
+			// Assert that route was added to route table
+			equal(my.routeTable.length, 1, 'route was added to routetable');
+			equal(my.routeTable[0], route, 'equals route created');
+		});
+
+
+		test("Remove route", function () {
+			// Act: add and remove route
+			var route = aRouter.addRoute({pattern: '/users/'});
+			aRouter.removeRoute(route);
+
+			// Assert that route was removed from route table
+			equal(my.routeTable.length, 0, 'route was removed from routetable');
+		});
+
+		test("Add routes with priority", function () {
+			// Act: add routes with different priorities
+			var invoiceRoute = aRouter.addRoute({pattern: '/invoice/'});
+			var ticketRoute = aRouter.addRoute({pattern: '/ticket/'});
+			var customerRoute = aRouter.addRoute({pattern: '/customer/', priority: 2});
+			var orderRoute = aRouter.addRoute({pattern: '/order/', priority: 2});
+			var userRoute = aRouter.addRoute({pattern: '/user/', priority: 1});
+
+			// Assert that route was added to route table in correct order
+			equal(my.routeTable.length, 5, 'all added to routetable');
+			equal(my.routeTable[0], userRoute, 'lowest priority first');
+			equal(my.routeTable[2], orderRoute, 'registration order if same priority');
+			equal(my.routeTable[3], invoiceRoute, 'routes without priority last');
+			equal(my.routeTable[4], ticketRoute, 'registration order if no priority');
+		});
+
+		asyncTest("resolveUrl executes route callback on match", 1, function () {
+			// Arrange: setup a route
+			var userRoute = aRouter.addRoute({pattern: '/user/'});
+			userRoute.on('matched', function() {
+				start(); // execute asserts
+				this.unbind(); // clean-up
 			});
 
-			redirectTo('foo');
+			// Act: resolve two different URL:s but only first should match
+			aRouter.resolveUrl('/user/');
+			aRouter.resolveUrl('/order/');
+
+			// Assert that callback was executed (start was called)
+			ok(true, 'callback executed for route');
 		});
 
-		delayedAsyncTest("Pass parameter values to callback", function () {
-			router.controller.on('some/#value/#anothervalue', function (value, anothervalue) {
-				ok(value === 'thing' && anothervalue === 'thing2', 'parameters passed correcly');
-				this.unbind(); // clean-up: unbound this event
-				start();
-			});
-			redirectTo('some/thing/thing2');
+		asyncTest("resolveUrl triggers resolveUrl event", 1, function () {
+			// listen for 'resolveUrl event' on router
+			aRouter.on('resolveUrl', function(url) {
+				start(); // execute asserts
+				this.unbind(); // clean-up
+			})
+
+			// Act: resolve any URL
+			aRouter.resolveUrl('/user/');
+
+			// Assert that callback was 'resolveUrl event' executed
+			ok(true, 'callback executed');
 		});
 
-		delayedAsyncTest("Pass query as last argument to callback", function () {
-			router.controller.on('querytest/#value', function (value, query) {
-				ok(query.foo === 'bar');
-				this.unbind(); // clean-up: unbound this event
-				start();
-			});
-			redirectTo('querytest/thing', {'foo': 'bar'});
+		asyncTest("resolveUrl triggers routeMatched event", 2, function () {
+			// Arrange: setup a route
+			var userRoute = aRouter.addRoute({pattern: '/user/'});
+
+			// listen for 'matched event' on router
+			aRouter.on('routeMatched', function(result) {
+				// Assert that callback was executed
+				ok(result, 'callback executed with result parameter');
+				equal(result.getRoute(), userRoute, 'matched route is correct');
+
+				start(); // execute asserts
+				this.unbind(); // clean-up
+			})
+
+			// Act: resolve URL that match
+			aRouter.resolveUrl('/user/');
 		});
 
-		delayedAsyncTest("Triggers notfound event if no route match", function () {
-			events.at('routing').on('notfound', function () {
-				this.unbind(); // clean-up: unbound this event
-				start();
-			});
+		asyncTest("resolveUrl triggers routeNotFound event", 2, function () {
+			// Arrange: setup no routes but
+			// a lister for 'notFound event'
+			aRouter.on('routeNotFound', function(url) {
+				// Assert that callback was executed
+				ok(url, 'callback executed with url parameter');
+				equal(url, '/user/', 'url is correct');
 
-			redirectTo('APathNotBoundToACallback');
+				start(); // execute asserts
+				this.unbind(); // clean-up
+			})
 
-			ok(true, 'notfound event triggered correcly');
+			// Act: resolve URL:s that should not match
+			aRouter.resolveUrl('/user/');
 		});
 
-
-		delayedAsyncTest("Pipe notfound to another router", function () {
-			var anotherRouter = router.router.router(); // :)
-
-			anotherRouter.addRoute({
-				pattern: 'APathNotInDefaultRouterButInPipedRouter',
-				onMatched: function(result) {
-					ok(true, 'callback executed for route');
-					this.unbind(); // clean-up: unbound this event
-					start();
+		asyncTest("resolveUrl executes action on match", 1, function () {
+			// Arrange: setup a route
+			var userRoute = aRouter.addRoute({
+				pattern: '/user/',
+				action: function() {
+					start(); // execute asserts
+					this.unbind(); // clean-up
 				}
 			});
 
-			router.router.pipeNotFound(anotherRouter);
+			// Act: resolve a URL that match pattern
+			aRouter.resolveUrl('/user/');
 
-			redirectTo('APathNotInDefaultRouterButInPipedRouter');
+			// Assert that callback was executed (start was called)
+			ok(true, 'action was executed once');
 		});
 
-		delayedAsyncTest("Pipe route to another router", function () {
-			var anotherRouter = router.router.router(); // :)
-
-			anotherRouter.addRoute({
-				pattern: '/a/b/#c',
-				onMatched: function(result) {
-					ok(true, 'callback executed for route');
-					this.unbind(); // clean-up: unbound this event
-					start();
+		asyncTest("resolveUrl pass values to action", 1, function () {
+			// Arrange a route that have two mandatory parameters
+			var userRoute = aRouter.addRoute({
+				pattern: '/user/#userid/order/#orderid',
+				action: function(userid, orderid) {
+					ok(userid === 'john' && orderid === '1', 'parameters passed in same order as defined');
+					start(); // execute asserts
+					this.unbind(); // clean-up
 				}
 			});
 
-			router.router.pipeRoute({pattern: 'a/#b/#c'}, anotherRouter);
-
-			redirectTo('/a/b/c');
+			// Act: resolve a URL that match pattern
+			aRouter.resolveUrl('/user/john/order/1');
 		});
 
-		test("Keeps the current path", function () {
+		asyncTest("resolveUrl pass optional values to action", 2, function () {
+			// Arrange a route that have two mandatory parameters
+			var userRoute = aRouter.addRoute({
+				pattern: '/user/?userid/order/?orderid',
+				action: function(userid, orderid) {
+					equal(userid, undefined, 'optional parameters without values is undefined');
+					equal(orderid, '1', 'optional parameters with values get value');
+					start(); // execute asserts
+					this.unbind(); // clean-up
+				}
+			});
+
+			// Act: resolve a URL that match pattern
+			aRouter.resolveUrl('/user/order/1');
+		});
+
+		asyncTest("resolveUrl pass optional value defaults to action", 2, function () {
+			// Arrange a route that have two optional parameters
+			//  with defaukts
+			var userRoute = aRouter.addRoute({
+				pattern: '/user/?userid/order/?orderid',
+				defaults: {
+					userid: 'bengan',
+					orderid: 'skor'
+				},
+				action: function(userid, orderid) {
+					equal(userid, 'bengan', 'optional parameters get default value');
+					equal(orderid, '1', 'optional parameters with values get value');
+					start(); // execute asserts
+					this.unbind(); // clean-up
+				}
+			});
+
+			// Act: resolve a URL that match pattern
+			aRouter.resolveUrl('/user/order/1');
+		});
+
+		asyncTest("resolveUrl pass query as last argument to action", 3, function () {
+			// Arrange a route that have one parameter
+			var userRoute = aRouter.addRoute({
+				pattern: '/user/#userid/order',
+				action: function(userid, query) {
+					// Assert: that parameters and query was passed ok
+					equal(userid, 'john', 'parameter passed ok');
+					equal(query.filter, 'open', 'first query parameter passed ok');
+					equal(query.orderBy, 'date', 'second query parameter passed ok');
+					start(); // execute asserts
+					this.unbind(); // clean-up
+				}
+			});
+
+			// Act: resolve a URL that match pattern
+			aRouter.resolveUrl('/user/john/order/?filter=open&orderBy=date');
+		});
+
+		asyncTest("resolveUrl continues if fallThrough", 2, function () {
+			// Arrange a 3 routes, where first have fallThrough
+			// set and the two other have not
+
+			aRouter.addRoute({
+				fallThrough: true,
+				pattern: '/user/',
+				action: function() {
+					ok(true, 'executes fallThrough route');
+					this.unbind(); // clean-up
+				}
+			});
+
+			aRouter.addRoute({
+				pattern: '/user/',
+				action: function() {
+					ok(true, 'and route after fallThrough route');
+					start(); // execute asserts
+					this.unbind(); // clean-up
+				}
+			});
+
+			aRouter.addRoute({
+				pattern: '/user/',
+				action: function() {
+					ok(false, 'but not after that route');
+				}
+			});
+
+			// Act: resolve a URL that match pattern
+			aRouter.resolveUrl('/user/');
+		});
+
+		asyncTest("Add route with constraints", function () {
+			expect(1); // only 1 match
+
+			// Arrange a route with constraints
+			var userRoute = aRouter.addRoute({
+				pattern: '/user/#name/',
+				constraints: {
+					name: ['nicolas', 'Mikael'],
+				},
+				action: function(name) {
+					ok(true, 'Route got name ' + name);
+				}
+			});
+
+			// Act: resolve one URL that match constraint and two more
+			aRouter.resolveUrl('/user/nicolas');
+			aRouter.resolveUrl('/user/john');
+			aRouter.resolveUrl('/user/james');
+			start();
+
+			// Assert: only 1 match
+		});
+
+		test("getUrl returns current location", function () {
+			// Act: change hash and get url
 			window.location.hash = '#!/aPath';
-			equal(router.router.getPath(), 'aPath', 'URL hash fragment minus the hash-bang (#!)');
+			var currentUrl = aRouter.getUrl();
+
+			// Assert correct url
+			equal(currentUrl.toString(), 'aPath', 'url is current location');
 		});
 
-		test("linkTo()", function () {
-			equal(router.router.linkTo('aPath'), '#!/aPath', 'Hash-bang "#!" convention (hiden in hash.js)');
-			equal(router.router.linkTo(''), '#!/', 'handles empty path');
 
-			throws(function () { router.router.linkTo(null); }, 'throws error if null');
-			throws(function () { router.router.linkTo(undefined); }, 'throws error if undefined');
-			throws(function () { router.router.linkTo({}); }, 'throws error if object');
+		test("linkTo() creates links for href", function () {
+			equal(aRouter.linkTo('aPath'), '#!/aPath', 'Hash-bang "#!" convention (hash.js)');
+			equal(aRouter.linkTo(''), '#!/', 'handles empty path');
 
+			throws(function () { aRouter.linkTo(null); }, 'throws error if null');
+			throws(function () { aRouterlinkTo(undefined); }, 'throws error if undefined');
+			throws(function () { aRouter.linkTo({}); }, 'throws error if object');
 		});
 
-		test("redirectTo()", function () {
-			throws(function () { router.router.redirectTo(null); }, 'throws error if null');
-			throws(function () { router.router.redirectTo(undefined); }, 'throws error if undefined');
-			throws(function () { router.router.redirectTo({}); }, 'throws error if object');
+		test("redirectTo() changes the current location to URL", function () {
+			throws(function () { aRouter.redirectTo(null); }, 'throws error if null');
+			throws(function () { aRouter.redirectTo(undefined); }, 'throws error if undefined');
+			throws(function () { aRouter.redirectTo({}); }, 'throws error if object');
 
-			router.router.redirectTo('aPath');
+			aRouter.redirectTo('aPath');
 			equal(window.location.hash, '#!/aPath', 'sets window.location.hash');
 
-			router.router.redirectTo('');
+			aRouter.redirectTo('');
 			equal(window.location.hash, '#!/', 'redirects empty path');
 		});
 
+		asyncTest("Pipe notfound to another router", 1, function () {
+			// Arrange another router with a route handler
+			var anotherRouter = router();
+			anotherRouter.addRoute({
+				pattern: 'APathNotInDefaultRouterButInPipedRouter',
+				action: function() {
+					start();
+					this.unbind(); // clean-up: unbound this event
+				}
+			});
+
+			// Act: pipe to second router if not found in first
+			aRouter.pipeNotFound(anotherRouter);
+			aRouter.resolveUrl('APathNotInDefaultRouterButInPipedRouter');
+
+			// Assert that second router matched the route
+			ok(true, 'callback executed for route');
+		});
+
+		asyncTest("Pipe route to another router", 1, function () {
+			// Arrange another router with a route handler
+			var anotherRouter = router();
+			anotherRouter.addRoute({
+				pattern: '/a/b/#c',
+				action: function() {
+					start();
+					this.unbind(); // clean-up: unbound this event
+				}
+			});
+
+			// Act: pipe pattern tp second router
+			aRouter.pipeRoute({pattern: 'a/#b/#c'}, anotherRouter);
+			aRouter.resolveUrl('/a/b/c');
+
+			// Assert that second router matched the route
+			ok(true, 'callback executed for route');
+		});
+
 		asyncTest("back()", function () {
+			aRouter.stop();
+			window.location.hash = ''; // start path
+			aRouter.start();
+
+			expect(5);
+
 			delayedSteps(
 				function () {
-					router.router.stop();
-					window.location.hash = ''; // start path
-					router.router.start();
+					aRouter.redirectTo('a');
 				},
 				function () {
-					router.router.redirectTo('a');
+					aRouter.redirectTo('b');
 				},
 				function () {
-					router.router.redirectTo('b');
+					equal(aRouter.getUrl().toString(), 'b', 'route is last URL');
 				},
 				function () {
-					equal(router.router.getPath(), 'b', 'route is last path');
+					aRouter.back();
 				},
 				function () {
-					router.router.back();
+					equal(aRouter.getUrl().toString(), 'a', 'back sets path to previous path');
 				},
 				function () {
-					equal(router.router.getPath(), 'a', 'back sets path to previous path');
+					aRouter.back();
 				},
 				function () {
-					router.router.back();
+					equal(aRouter.getUrl().toString(), '', 'back set to start path');
 				},
 				function () {
-					equal(router.router.getPath(), '', 'back set to start path');
+					aRouter.back();
 				},
 				function () {
-					router.router.back();
+					equal(aRouter.getUrl().toString(), '', 'can not back furter than start');
 				},
 				function () {
-					equal(router.router.getPath(), '', 'can not back furter than start');
+					aRouter.back('fallback');
 				},
 				function () {
-					router.router.back('fallback');
-				},
-				function () {
-					equal(router.router.getPath(), 'fallback', 'but can give a fallback path');
+					equal(aRouter.getUrl().toString(), 'fallback', 'but can give a fallback path');
 				},
 				function () {
 					start();
@@ -194,42 +411,44 @@ define(
 		});
 
 		asyncTest("updatePath()", function () {
+			aRouter.stop();
+			window.location.hash = ''; // start path
+			aRouter.start();
+
+			aRouter.addRoute({pattern: 'a/#value'});
+
+			expect(4);
+
 			delayedSteps(
 				function () {
-					router.router.stop();
-					window.location.hash = ''; // start path
-					router.controller.on('a/#value', function () {});
-
-					router.router.start();
+					aRouter.redirectTo('a/b', {foo : 'bar'});
 				},
 				function () {
-					router.router.redirectTo('a/b', {foo : 'bar'});
+					equal(aRouter.getUrl().toString(), 'a/b?foo=bar', 'parameter and query set');
 				},
 				function () {
-					equal(router.router.getPath(), 'a/b?foo=bar', 'parameter and query set');
+					aRouter.updateUrl({value : 'hello'});
 				},
 				function () {
-					router.router.updatePath({value : 'hello'});
+					equal(aRouter.getUrl().toString(), 'a/hello?foo=bar', 'parameter updated');
 				},
 				function () {
-					equal(router.router.getPath(), 'a/hello?foo=bar', 'parameter updated');
+					aRouter.updateUrl({foo : 'world'});
 				},
 				function () {
-					router.router.updatePath({foo : 'world'});
+					equal(aRouter.getUrl().toString(), 'a/hello?foo=world', 'query updated');
 				},
 				function () {
-					equal(router.router.getPath(), 'a/hello?foo=world', 'query updated');
+					aRouter.updateUrl({extra : 'fun'});
 				},
 				function () {
-					router.router.updatePath({extra : 'fun'});
-				},
-				function () {
-					equal(router.router.getPath(), 'a/hello?extra=fun&foo=world', 'extra parameter added');
+					equal(aRouter.getUrl().toString(), 'a/hello?extra=fun&foo=world', 'extra parameter added');
 				},
 				function () {
 					start();
 				}
 			);
 		});
+
 	}
 );

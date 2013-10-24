@@ -197,6 +197,12 @@ define(
 				});
 			}
 
+			function getParameters() {
+				return segments.filter(function(segment) {
+					return segment.isParameter();
+				});
+			}
+
 			function createMatchResult(match, url) {
 				var urlSegments = url.getSegments();
 
@@ -216,7 +222,7 @@ define(
 					}
 				});
 
-				return routeMatchResult({route: that, url: url, parameters: parameters});
+				return routeMatchResult({route: that, url: url, parameterValues: parameters, parameters: getParameters()});
 			}
 
 			return that;
@@ -282,19 +288,20 @@ define(
 
 			var url = spec.url;
 			var route = spec.route;
-			var parameters = spec.parameters || {};
+			var parameterValues = spec.parameterValues || {};
+			var parameters = spec.parameters;
 
 			var that = {};
 
-			that.getParameters = function() { return parameters; };
+			that.getParameters = function() { return parameterValues; };
 
 			that.getKeys = function() {
-				return Object.keys(parameters);
+				return Object.keys(parameterValues);
 			};
 
 			that.getValues = function() {
 				return that.getKeys().map(function(v) {
-					return parameters[v];
+					return parameterValues[v];
 				});
 			};
 
@@ -311,8 +318,10 @@ define(
 			};
 
 			that.getCallbackArguments = function () {
-				var callbackArguments = [];
-				callbackArguments = callbackArguments.concat(that.getValues());
+				var callbackArguments = parameters.map(function(p) {
+					return parameterValues[p.getName()];
+
+				});
 				callbackArguments.push(url.getQuery());
 				return callbackArguments;
 			};

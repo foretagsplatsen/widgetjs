@@ -65,7 +65,7 @@ define(
 		});
 
 		test("Parameter route", function() {
-			var route = 'a/#parameter/path'; // 
+			var route = 'a/#parameter/path'; //
 
 			assertMatch("/a/foo/path",route, 'Match any segment value');
 			assertMatch("a/bar/path",route, 'Ignore leading slash');
@@ -79,7 +79,7 @@ define(
 		});
 
 		test("Multiple parameters route", function() {
-			var route = '#parameter/#parameter2'; // 
+			var route = '#parameter/#parameter2'; //
 
 			assertMatch("foo/bar",route, 'Match any segment values');
 			assertMatch("a/bar/",route, 'Ignore leading slash');
@@ -93,7 +93,7 @@ define(
 		});
 
 		test("Optional Parameter route", function() {
-			var route = 'a/?parameter/path'; // 
+			var route = 'a/?parameter/path'; //
 
 			assertMatch("/a/foo/path",route, 'Match any segment value');
 			assertMatch("/a/path",route, 'Match URL without segment');
@@ -146,7 +146,7 @@ define(
 
 		// Parameter binding tests
 
-		test("Route match result", function() {			
+		test("Route match result", function() {
 			var route = router.route("#a/#b");
 			var url = router.url("hello/world");
 
@@ -225,7 +225,7 @@ define(
 
 		// Query
 
-		test("Query", function() {			
+		test("Query", function() {
 			var query = router.url("hello/world?a=1&b=2&c=3").getQuery();
 			deepEqual(query, {a: '1', b:'2', c: '3'}, 'match query parameters');
 		});
@@ -237,15 +237,15 @@ define(
 
 			var url = route.expand({a : 'hello', b: 'world'});
 
-			equal(url, 'hello/test/world');			
+			equal(url, 'hello/test/world');
 		});
 
 		test("Expand optionals", function() {
 			var route = router.route("#a/?c/#b/?d");
 
-			equal(route.expand({a : 'hello', b: 'world', d: 'd'}), 'hello/world/d');			
-			equal(route.expand({a : 'hello', b: 'world' }), 'hello/world');			
-			equal(route.expand({a : 'hello', b: 'world', c: 'c' }), 'hello/c/world');			
+			equal(route.expand({a : 'hello', b: 'world', d: 'd'}), 'hello/world/d');
+			equal(route.expand({a : 'hello', b: 'world' }), 'hello/world');
+			equal(route.expand({a : 'hello', b: 'world', c: 'c' }), 'hello/c/world');
 		});
 
 		test("Expand throws not valid URL error", function() {
@@ -260,9 +260,9 @@ define(
 			var aRoute = router.route('/hello/#foo/', {
 				constraints : {
 					foo: function(value) {
-						return value.length === 5; 
+						return value.length === 5;
 					}
-				}	
+				}
 			});
 
 			ok(aRoute.matchUrl(router.url('/hello/world')).matched(), 'match if function return true');
@@ -273,7 +273,7 @@ define(
 			var aRoute = router.route('hello/#foo', {
 				constraints : {
 					foo: ['world', 'sweden']
-				}	
+				}
 			});
 
 			ok(aRoute.matchUrl(router.url('/hello/world')).matched(), 'match if value in array');
@@ -284,7 +284,7 @@ define(
 			var aRoute = router.route('hello/#foo', {
 				constraints : {
 					foo: /(^[a-z]+$)/
-				}	
+				}
 			});
 
 			ok(aRoute.matchUrl(router.url('/hello/world')).matched(), 'match if regexp match value');
@@ -295,11 +295,11 @@ define(
 			var aRoute = router.route('#a/#b/#c', {
 				constraints : {
 					a: function(value) {
-						return value.length > 5; 
+						return value.length > 5;
 					},
 					b: ['nicolas', 'Mikael'],
 					c: /(^[h-w]+$)/
-				}	
+				}
 			});
 
 			ok(aRoute.matchUrl(router.url('/henrik/mikael/h')).matched(), 'all constraints match');
@@ -312,11 +312,11 @@ define(
 			var aRoute = router.route('?a/?b/?c', {
 				constraints : {
 					a: function(value) {
-						return value.length > 5; 
+						return value.length > 5;
 					},
 					b: ['nicolas', 'micke'],
 					c: /(^[h-w]+$)/
-				}	
+				}
 			});
 
 			ok(aRoute.matchUrl(router.url('')).matched(), 'constraints are not evaluated if never matched');

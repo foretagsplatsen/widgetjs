@@ -42,16 +42,20 @@ define(
 		//
 		// _Note:_ By default router use [hash.js]('hash.js') to listen for URL changes.
 		//
-		// An event is also triggered on match with routeMatchResult as argument and
-		// aswell when a route is 'not found' with url as argument.
+		// An event is also triggered on each resolve with url, on match with routeMatchResult and
+		// when a route is 'not found' with url as argument.
 		//
 		// Usage:
 		//
-		//		router.on('match', function(result) {
+		//		router.on('resolveUrl', function(url) {
+		//			console.log(url.toString()); // or log to google analytics / mixpanel / etc
+		//		});
+		//
+		//		router.on('routeMatched', function(result) {
 		//			alert('Route match: ' + result.getUrl().getPath());
 		//		});
 		//
-		//		router.on('notfound', function(url) {
+		//		router.on('routeNotFound', function(url) {
 		//			alert('404 - Url not found: ' + url);
 		//		});
 		//
@@ -70,7 +74,6 @@ define(
 			my.location = spec.locationHandler || hashSingleton();
 			my.routeTable = [];
 			my.lastMatch = undefined;
-			my.stopOnMatch = spec.stopOnMatch === undefined ? true : spec.stopOnMatch;
 
 			// Listen for URL changes and resolve URL when changed
 			my.location.on('changed', function() { my.resolveUrl(); });
@@ -81,29 +84,37 @@ define(
 			my.resolveUrl = function(aUrl) {
 				var currentUrl = aUrl === undefined ? my.location.getUrl() : aUrl;
 
+				that.trigger('resolveUrl', currentUrl);
+
 				var numMatched = 0;
 				my.routeTable.some(function(candidateRoute) {
 					var result = currentUrl.matchRoute(candidateRoute);
 					if(result.matched()) {
 						my.lastMatch = result;
 						numMatched++;
-						that.trigger('matched', result);
+						that.trigger('routeMatched', result);
 
-						if(my.stopOnMatch) {
+						if(candidateRoute.fallThrough === undefined || 
+							candidateRoute.fallThrough === false) {
 							return true;
 						}
 					}
 				});
 
 				if (numMatched === 0) {
-					that.trigger('notfound', currentUrl.toString());
+					that.trigger('routeNotFound', currentUrl.toString());
 				}
 			};
 
 			var sortedInsert = function (route) {
 				var routeIndex = my.routeTable.length;
-				do { --routeIndex; } while (my.routeTable[routeIndex] && route.priority <= my.routeTable[routeIndex].priority);
-				my.routeTable.splice(routeIndex + 1, 0, route);
+				if(route.priority !== undefined) {
+					do { --routeIndex; } while (my.routeTable[routeIndex] &&
+						(my.routeTable[routeIndex].priority === undefined ||
+						route.priority < my.routeTable[routeIndex].priority));
+					routeIndex += 1;
+				}
+				my.routeTable.splice(routeIndex, 0, route);
 			};
 
 			// #### Public API
@@ -112,10 +123,18 @@ define(
 				routeSpec = routeSpec || {};
 
 				var newRoute = route(routeSpec.pattern, routeSpec);
-				newRoute.on('matched', routeSpec.onMatched);
-				newRoute.priority = routeSpec.priority;
 
+				if(routeSpec.action) {
+					newRoute.on('matched', function(result) {
+						routeSpec.action.apply(this, result.getCallbackArguments());
+					});
+				}
+
+				newRoute.fallThrough = routeSpec.fallThrough;
+
+				newRoute.priority = routeSpec.priority;
 				sortedInsert(newRoute);
+
 				return newRoute;
 			};
 
@@ -133,15 +152,16 @@ define(
 					throw new Error('Route pattern required');
 				}
 
-				routeSpec.onMatched = function(result) {
+				var aRoute = that.addRoute(routeSpec);
+				aRoute.on('matched', function(result) {
 					router.resolveUrl(result.getUrl());
-				};
+				});
 
-				return that.addRoute(routeSpec);
+				return aRoute;
 			};
 
 			that.pipeNotFound = function (router) {
-				return that.on('notfound', function(aRawUrl) {
+				return that.on('routeNotFound', function(aRawUrl) {
 					router.resolveUrl(aRawUrl);
 				});
 			};
@@ -218,42 +238,5 @@ define(
 			return that;
 		};
 
-		// FACADE FOR OLD DEPRECATED ROUTER/CONTROLLER
-
-		var handler = events.at('routing');
-
-		var routerSingleton = (function(spec,my) {
-			var that = router(spec, my);
-
-			that.on('match', function(result) {
-				events.at('routing').trigger('match', result);
-			});
-			that.on('notfound', function(url) {
-				events.at('routing').trigger('notfound', url);
-			});
-
-			that.resolvePath = that.resolveUrl;
-			that.getPath = function() { return that.getUrl().toString(); };
-			that.updatePath = that.updateUrl;
-
-			return that;
-		}());
-
-		var controllerSingleton = {};
-		controllerSingleton.on = function(path, callback) {
-			routerSingleton.addRoute({
-				pattern: path,
-				onMatched: function(result) {
-					callback.apply(this, result.getCallbackArguments());
-				}
-			});
-		};
-
-		// Expose new router
-		routerSingleton.router = router;
-
-		return {
-			controller: controllerSingleton,
-			router: routerSingleton
-		};
+		return router;
 	});
