@@ -21,7 +21,7 @@ define(
 				var fn = steps.shift();
 				setTimeout(function () {
 					next(fn.apply(next, arguments));
-				}, 10);
+				}, 30);
 			}
 
 			next();
@@ -150,47 +150,6 @@ define(
 				},
 				function () {
 					equal(router.router.getPath(), 'fallback', 'but can give a fallback path');
-				},
-				function () {
-					start();
-				}
-			);
-		});
-
-		asyncTest("updatePath()", function () {
-			expect(4);
-
-			delayedSteps(
-				function () {
-					router.router.stop();
-					window.location.hash = ''; // start path
-					router.controller.on('a/#value', function () {});
-
-					router.router.start();
-				},
-				function () {
-					router.router.redirectTo('a/b', {foo : 'bar'});
-				},
-				function () {
-					equal(router.router.getPath(), 'a/b?foo=bar', 'parameter and query set');
-				},
-				function () {
-					router.router.updatePath({value : 'hello'});
-				},
-				function () {
-					equal(router.router.getPath(), 'a/hello?foo=bar', 'parameter updated');
-				},
-				function () {
-					router.router.updatePath({foo : 'world'});
-				},
-				function () {
-					equal(router.router.getPath(), 'a/hello?foo=world', 'query updated');
-				},
-				function () {
-					router.router.updatePath({extra : 'fun'});
-				},
-				function () {
-					equal(router.router.getPath(), 'a/hello?extra=fun&foo=world', 'extra parameter added');
 				},
 				function () {
 					start();

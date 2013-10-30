@@ -10,7 +10,7 @@ define([
 	// In legacy browsers we instead pull for changes using a timer/interval.
 	//
 	// In old IE (< IE 8) a hidden IFrame is created to allow the back button and hash-based my.history to work.
-	// See `createFrame()` and `fixHistoryForIE()`.
+	// See `createFrame()` and `updateFrame()`.
 	//
 	// Usage:
 	//
@@ -25,9 +25,9 @@ define([
 	// IE6/7 (due to the necessary IFrame), recommended usage is to bind it inside a DOM ready handler.
 	//
 
-	var fallback = !('onhashchange' in window),
-		poll_intervall = 25,  // Num ms between each location change poll on legacy browsers
-		isLegacyBrowser = jQuery.browser.msie && parseInt(jQuery.browser.version, 10) < 8;
+	var noHashChangeSupport = !('onhashchange' in window),
+		isLegacyBrowser = jQuery.browser.msie && parseInt(jQuery.browser.version, 10) < 8,
+		poll_intervall = 25;  // Num ms between each location change poll on legacy browsers
 
 	function hash(spec, my) {
 		spec = spec || {};
@@ -46,17 +46,19 @@ define([
 		// Mixin events
 		jQuery.extend(that, events.eventhandler());
 
-		function getHash() {
+
+		// Handle Window Hash
+
+		function getWindowHash() {
 			return window.location.hash;
 		}
 
-		function setHash(string) {
-			window.location.hash = string;
+		function setWindowHash(aHash) {
+			window.location.hash = aHash;
 		}
 
-		function getUrl() {
-			return url(window.location.hash.replace(/^#![\/]?/, ''));
-		}
+
+		// Convert hash to/from url
 
 		function urlToHash(aUrl) {
 			if(typeof aUrl === "string") {
@@ -65,81 +67,114 @@ define([
 			return '#!/' + aUrl.toString();
 		}
 
-		function setUrl(aUrl) {
-			setHash(urlToHash(aUrl));
+		function urlFromHash(aHash) {
+			// Remove hash/hash-bang and any leading /
+			return url(aHash.replace(/^#!?[\/]?/, ''));
 		}
 
+		// Manage iFrame for IE < 8
+
 		function createFrame() {
-			var iDoc = jQuery("<iframe id='ie_history_iframe'" +
+			var idoc = jQuery("<iframe id='ie_history_iframe'" +
 				"src='" + iframe_src + "'" +
 				"style='display: none'></iframe>").prependTo("body")[0];
-			iframe = iDoc.contentWindow.document || iDoc.document;
+			iframe = idoc.contentWindow.document || idoc.document;
 			if (window.location.hash) {
-				iframe.location.hash = window.location.hash.substr(1);
+				iframe.location.hash = my.currentHash.substr(1); // remove #
 			}
 			iframe.location.title = window.title;
 		}
 
-		function updateFrame() {
+		function setFrameHash(aHash) {
 			// Special hack for IE < 8 since hashchanges is not added to history.
 			// IE will add a history entry when IFrame is opened/closed.
 			iframe.open();
 			iframe.close();
-			iframe.location.hash = my.currentHash;
+			iframe.location.hash = aHash.substr(1); // remove #
 		}
 
-		function check() {
-			var newHash = isLegacyBrowser ?
-				iframe.location.hash :
-				getHash();
+		function getFrameHash() {
+			return iframe.location.hash;
+		}
 
-			var urlChanged = my.currentHash !== newHash;
-			if (urlChanged) {
+
+		// Handle Hash change
+
+		function setCurrentHash(newHash) {
+			newHash = newHash || getWindowHash();
+
+			if(my.currentHash !== newHash) {
 				my.currentHash = newHash;
 				my.history.push(my.currentHash);
 
 				if (isLegacyBrowser) {
-					updateFrame();
-					setHash(iframe.location.hash);
+					setFrameHash(my.currentHash);
 				}
+			}
 
-				that.trigger('changed', getUrl());
+			that.trigger('changed', urlFromHash(my.currentHash));
+		}
+
+		function check() {
+			var windowHash = getWindowHash();
+
+			if(isLegacyBrowser) {
+				var frameHash = getFrameHash();
+
+				var isBackButtonClicked = frameHash !== my.currentHash &&
+					frameHash !== windowHash;
+
+				if(isBackButtonClicked) {
+					setWindowHash(frameHash);
+					windowHash = frameHash;
+				}
+			}
+
+			var urlChanged = my.currentHash !== windowHash;
+			if (urlChanged) {
+				setCurrentHash(windowHash);
 			}
 		}
+
 
 		// ### Public API
 
 		that.setUrl = function(aUrl) {
-			setUrl(aUrl);
-			check();
+			var aHash = urlToHash(aUrl);
+			setWindowHash(aHash);
+			setCurrentHash(aHash);
 		};
 
-		that.getUrl = getUrl;
+		that.getUrl = function() {
+			return urlFromHash(getWindowHash());
+		};
 
-		that.linkToUrl = urlToHash;
+		that.linkToUrl = function(aUrl) {
+			return urlToHash(aUrl);
+		};
 
 		that.back = function(fallbackUrl) {
 			if (my.history.length > 1) {
 				my.history.pop();
-				setHash(my.history.pop());
+				setWindowHash(my.history.pop());
 			} else if (fallbackUrl) {
-				setUrl(fallbackUrl);
+				setWindowHash(urlToHash(fallbackUrl));
 			}
-		};
 
-		// **Start/stop** url changes check. If the browser supports it we bind 'check()' to the 'hashchange' event.
-		// In legacy browsers we instead pull for changes every 100 ms.
+			setCurrentHash();
+		};
 
 		that.start = function() {
 			that.stop();
 
-			my.currentHash = getHash();
+			my.currentHash = getWindowHash();
 			my.history = [my.currentHash];
 
-			if (fallback) {
+			if (noHashChangeSupport) {
 				if (isLegacyBrowser) {
 					createFrame();
 				}
+
 				pollTimerId = setInterval(check, poll_intervall);
 			} else {
 				jQuery(window).bind('hashchange', check);

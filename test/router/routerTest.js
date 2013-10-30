@@ -108,7 +108,7 @@ define(
 			aRouter.on('resolveUrl', function(url) {
 				start(); // execute asserts
 				this.unbind(); // clean-up
-			})
+			});
 
 			// Act: resolve any URL
 			aRouter.resolveUrl('/user/');
@@ -129,7 +129,7 @@ define(
 
 				start(); // execute asserts
 				this.unbind(); // clean-up
-			})
+			});
 
 			// Act: resolve URL that match
 			aRouter.resolveUrl('/user/');
@@ -145,7 +145,7 @@ define(
 
 				start(); // execute asserts
 				this.unbind(); // clean-up
-			})
+			});
 
 			// Act: resolve URL:s that should not match
 			aRouter.resolveUrl('/user/');

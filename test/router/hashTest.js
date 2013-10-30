@@ -75,25 +75,27 @@ define([
 			equal(my.history[0], my.currentHash, 'history entry is current hash');
 		});
 
-		asyncTest("triggers changed event when URL is changed", function () {
-			// Arrange: listen for url changes
-			var capturedUrls = [];
-			hashLocation.on('changed', function(url) {
-				capturedUrls.push(url.toString());
-				if(capturedUrls.length === 3) {
-					start();
-				}
+		if(!($.browser.msie  && parseInt($.browser.version, 10) === 7)) {
+			asyncTest("triggers changed event when URL is changed", function () {
+				// Arrange: listen for url changes
+				var capturedUrls = [];
+				hashLocation.on('changed', function(url) {
+					capturedUrls.push(url.toString());
+					if(capturedUrls.length === 3) {
+						start();
+					}
+				});
+
+				// Act: start listening for changes and change URL 3 times
+				hashLocation.start();
+				setHash('#!/a');
+				setHash('#!/b');
+				setHash('#!/c');
+
+				// Assert that event was triggered for each url
+				deepEqual(capturedUrls, ['a', 'b', 'c'], 'Event triggered');
 			});
-
-			// Act: start listening for changes and change URL 3 times
-			hashLocation.start();
-			setHash('#!/a');
-			setHash('#!/b');
-			setHash('#!/c');
-
-			// Assert that event was triggered for each url
-			deepEqual(capturedUrls, ['a', 'b', 'c'], 'Event triggered');
-		});
+		}
 
 		test("getUrl() returns location.hash minus hash-bang", function () {
 			// Arrange: set a location hash
@@ -109,6 +111,7 @@ define([
 
 		test("setUrl() adds hash-bang", function () {
 			// Act: set url
+			hashLocation.start();
 			hashLocation.setUrl('test');
 
 			// Assert that current hash is set correctly
@@ -132,6 +135,7 @@ define([
 			});
 
 			// Act: set URL
+			hashLocation.start();
 			hashLocation.setUrl('test');
 
 			// Assert that 'change' callback was executed with url

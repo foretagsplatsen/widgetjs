@@ -33,17 +33,49 @@ define(
 		//
 		// Eg:
 		//
-		//		var route = aRouter.addRoute({
+		//		aRouter.addRoute({
 		//			pattern: '/user/#id',
-		//			onMatch: function(result) { console.dir(result);}
+		//			action: function(id) { console.log(id);},
+		//			priority: 4000
 		//		});
 		//
-		// onMatch is triggered when a URL match pattern
+		// The action callback is triggered when a URL match pattern. Values for matched parameterers are
+		// supplied as arguments in the same order as they are defined in the pattern. Priority is optional.
+		//
+		// Add router accept the same options as [route](route.js)
+		//
+		//		var aRoute = aRouter.addRoute({
+		//			pattern: '/user/?id',
+		//			defaults: {
+		//				id: 'john'
+		//			},
+		//			constraints: {
+		//				id :  ['john', 'olle']
+		//			}
+		//		});
+		//
+		//		aRoute.on('matched', function(result) {
+		//			console.dir(result.getParameters());
+		//		});
+		//
+		// Routes are removed using 'removeRoute'
+		//
+		// Eg:
+		//
+		//		aRouter.removeRoute(aRoute);
+		//
+		//
+		// Url's can be resolved manualy using the 'resolveRoute' method or automaticly when the URL change. The URL
+		// location handler can be set when the router is constructed
+		//
+		//Eg:
+		//
+		//	var aHashRouter = router({locationHandler: hash()});
+		//	var aPushStateRouter = router({locationHandler: pushState()});
 		//
 		// _Note:_ By default router use [hash.js]('hash.js') to listen for URL changes.
 		//
-		// An event is also triggered on each resolve with url, on match with routeMatchResult and
-		// when a route is 'not found' with url as argument.
+		// Events are triggered on each resolve, on match and when a route is 'not found' with url as argument.
 		//
 		// Usage:
 		//
@@ -194,7 +226,7 @@ define(
 				return my.location.setUrl(aUrl);
 			};
 
-			that.updateUrl = function(parameters) {
+			that.getUpdateUrl = function(parameters) {
 				var newQuery, newParameters, currentRoute;
 
 				// Use current route as template
@@ -219,7 +251,16 @@ define(
 
 				var aRawUrl = currentRoute.expand(newParameters);
 
-				that.redirectTo(aRawUrl, newQuery);
+				return url.build(aRawUrl, newQuery);
+			};
+
+
+			that.linkToUpdateUrl = function(parameters) {
+				return my.location.linkToUrl(that.getUpdateUrl(parameters));
+			};
+
+			that.updateUrl = function(parameters) {
+				that.redirectToUrl(that.getUpdateUrl(parameters));
 			};
 
 			that.back = function(aFallbackUrl) {

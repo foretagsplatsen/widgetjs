@@ -32,7 +32,7 @@ define([], function() {
 	var segmentFactory = function(segmentString, options) {
 		options = options || {};
 
-		var prefix = segmentString[0];
+		var prefix = segmentString.substr(0, 1);
 		var name = segmentString.substr(1);
 
 		// Default value

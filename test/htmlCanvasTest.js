@@ -67,7 +67,7 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
     test("render object literal attributes", function() {
         withCanvas(function(html) {
             // Arrange: a div with attributes
-            html.div({id: 'test_div', 'class' : 'test_class', 'special_attribute' : 'test'}, 'content');
+            html.div({id: 'test_div', klass : 'test_class', 'special_attribute' : 'test'}, 'content');
 
             // Assert: that DIV was rendered
             var divEl = jQuery("#test_div");
@@ -253,11 +253,11 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
 
     test("css() get/set style", function () {
         withCanvas(function(html) {
-            // Arrange: a heading
-            var h1 = html.h1().id('aHeading');
+            // Arrange: a div
+            var div = html.div();
 
-            h1.css('background-color', 'red');
-            equal(h1.asJQuery().css('background-color'), 'rgb(255, 0, 0)');
+            div.css('width', '100px');
+            equal(div.asJQuery().css('width'), '100px');
         });
     });
 
