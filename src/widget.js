@@ -99,6 +99,10 @@ define(
                 return id;
             };
 
+            my.nextId = function () {
+                return idGenerator.newId();
+            };
+
 
             // #### Route / Controller extensions
 
