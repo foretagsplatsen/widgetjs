@@ -45,7 +45,7 @@ define([
 					if((index + 1) % 2 === 0) {
 						html.div({klass: 'clearfix visible-xs'});
 					}
-				}
+				};
 			}));
 		};
 

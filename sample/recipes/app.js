@@ -110,11 +110,11 @@ define([
 		 * @param {string} options.doc		Document to attach to action
 		 * @param {string} options.pattern	Route pattern to match URLs against.
 		 * @param {string} options.action	Callback to execute on match. First argument to callback is doc
-		 *                              	thereafter parameters in same order as defined in pattern. (optional)
+		 *									thereafter parameters in same order as defined in pattern. (optional)
 		 * @param {string} options.label	Label for navigation item. If omitted no item is created (optional)
 		 * @param {string} options.id		Identifier for navigation item to show on route match. (optional)
 		 * @param {object} options.values	Key-Value object with default values for route parameters
-		 *                                	to use in menu link.
+		 *									to use in menu link.
 		 */
 		that.addAction = function (options) {
 			var menuId = options.menuId || my.nextId(),
