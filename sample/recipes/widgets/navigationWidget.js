@@ -28,7 +28,7 @@ define([
 							html.span({ klass: 'icon-bar' }),
 							html.span({ klass: 'icon-bar' })
 						),
-						html.a({ href: '#!/', klass: 'navbar-brand' }, brand)
+						html.a({ href: my.linkTo(''), klass: 'navbar-brand' }, brand)
 					),
 					html.div({ klass: 'navbar-collapse collapse'},
 						html.ul({ klass: 'nav navbar-nav' }, that.items.map(function(item) {
@@ -39,7 +39,11 @@ define([
 							}
 
 							return li;
-						}))
+						})),
+						html.form({klass: 'navbar-form navbar-right'},
+							html.a({klass: 'btn btn-primary pull-right', href: my.linkTo('create/recipe') }, 'Create')
+						)
+
 					)
 				)
 			);

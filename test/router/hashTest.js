@@ -22,7 +22,8 @@ define([
 
 		function setHash(aHash) {
 			window.location.hash = aHash;
-			$(window).trigger( 'hashchange');
+			window.open(window.location, '_self', true);
+			jQuery(window).trigger( 'hashchange');
 		}
 
 		var my, hashLocation;

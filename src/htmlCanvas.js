@@ -163,7 +163,7 @@ define(
 			var events = ('blur focus focusin focusout load resize scroll unload ' +
 				'click dblclick mousedown mouseup mousemove mouseover ' +
 				'mouseout mouseenter mouseleave change select submit ' +
-				'keydown keypress keyup error').split(' ');
+				'keydown keypress keyup error dragstart dragenter dragover dragleave drop dragend').split(' ');
 
 			var jquery = spec.jQuery;
 			var elementTagName = spec.tag;

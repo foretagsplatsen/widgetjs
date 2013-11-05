@@ -1,71 +1,139 @@
 define([
 	'widgetjs/core',
-	'widgetjs/router/router',
+	'widgetjs/router',
 	'documents',
 	'widgets',
 	'jquery',
 	'boostrap'
 ], function (widgetjs, router, documents, widgets, jQuery) {
 
+	/**
+	 * Recipe application concists of the following views/documents:
+	 *
+	 * - recipesDocument : Displays all recipes
+	 * - recipeDocument : Display as single recipe
+	 * - recipeEditorDocument : An editor for creating new recipes or edit existing
+	 * - exportDocument : Import/Export document from/to JSON
+	 * - aboutDocument : Info on the sample
+	 *
+	 * @exports app
+	 */
 	function app (spec, my) {
 		spec = spec || {};
 		my = my || {};
 
 		var that = widgetjs.widget(spec, my);
 
+		/** @type {navigationWidget} Main navigation for application. */
 		var navigation = widgets.navigationWidget({brand : 'My Recipes'});
+
+		/** @type {regionWidget} Displays the current document */
 		var mainRegion = widgets.regionWidget();
 
+		/**
+		 * Registers routes and creates menu items using addAction()
+		 * Executed once on start-up to initilize the application.
+		 */
 		that.initialize = function () {
-			// Setup routes
-			my.router = router();
+			my.router = router.router;
 
 			that.addAction({
-				pattern: '/',
+				pattern: '',
+				action: function(recipes) {
+					recipes.showAll();
+				},
 				doc: documents.recipesDocument,
-				label: 'Recipes',
+				menuLabel: 'Recipes',
+				menuId: 'recipes'
 			});
 
 			that.addAction({
-				pattern: '/recipe/#id',
+				pattern: 'recipe/#recipeId',
+				action: function(recipe, recipeId) {
+					recipe.show(recipeId);
+				},
 				doc: documents.recipeDocument,
-				action: function(doc, id) {
-					doc.show(id);
-				}
+				menuId: 'recipes'
 			});
 
 			that.addAction({
-				pattern: '/about',
-				label: 'About',
-				doc: documents.aboutDocument
+				pattern: 'recipe/#recipeId/edit',
+				action: function(recipeEditor, recipeId) {
+					recipeEditor.edit(recipeId);
+				},
+				doc: documents.recipeEditorDocument,
+				menuId: 'recipes'
+			});
+
+			that.addAction({
+				pattern: 'create/recipe',
+				action: function(recipeEditor) {
+					recipeEditor.create();
+				},
+				doc: documents.recipeEditorDocument,
+				menuId: 'recipes'
+			});
+
+			that.addAction({
+				pattern: 'export',
+				doc: documents.exportDocument,
+				menuLabel: 'Export'
+			});
+
+			that.addAction({
+				pattern: 'about',
+				doc: documents.aboutDocument,
+				menuLabel: 'About',
 			});
 
 			// Render our self on BODY
 			that.appendTo('body');
 
+			// Log route events
+			my.router.on('routeMatched', function(result) {
+				console.log(result.getRoute().toString(), 'matched url', result.getUrl().toString());
+			});
+
+			// Route not found
+			my.router.on('routeNotFound', function(url) {
+				alert('Page not found: ' + url);
+				my.redirectTo('');
+			});
+
 			my.router.start();
 		};
 
+		/**
+		 * Helper that sets-up a route for a document action and
+		 * a entry in the navigation widget.
+		 *
+		 * @param {string} options.doc		Document to attach to action
+		 * @param {string} options.pattern	Route pattern to match URLs against.
+		 * @param {string} options.action	Callback to execute on match. First argument to callback is doc
+		 *                              	thereafter parameters in same order as defined in pattern. (optional)
+		 * @param {string} options.label	Label for navigation item. If omitted no item is created (optional)
+		 * @param {string} options.id		Identifier for navigation item to show on route match. (optional)
+		 * @param {object} options.values	Key-Value object with default values for route parameters
+		 *                                	to use in menu link.
+		 */
 		that.addAction = function (options) {
-			var id = options.id || my.nextId(),
+			var menuId = options.menuId || my.nextId(),
 				doc = options.doc;
 
-			var route = my.router.addRoute({ pattern: options.pattern, action: function() {
-				// Forward action to callback with document as first argument
+			var route = my.router.addRoute({ pattern: options.pattern});
+			route.on('matched', function(result) {
 				if(options.action) {
-					var params = Array.prototype.slice.call(arguments);
-					params.unshift(doc);
-					options.action.apply(this, params);
+					options.action.apply(my.router, [doc].concat(result.getCallbackArguments()));
 				}
 
-				// Activate menu item and show
-				navigation.activate(id);
+				navigation.activate(menuId);
 				mainRegion.set(doc);
-			}});
+				jQuery('html, body').animate({ scrollTop: 0}, 200);
+			});
 
-			if(options.label) {
+			if(options.menuLabel) {
 				var url = route.expand(options.values || {});
-				navigation.items.push({ id: id, href: my.router.linkTo(url), label: options.label });
+				navigation.items.push({ id: menuId, href: my.router.linkTo(url), label: options.menuLabel });
 			}
 		};
 
