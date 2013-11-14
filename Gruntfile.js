@@ -46,7 +46,7 @@ module.exports = function(grunt) {
 		jshint: {
 			src: ['src/**/*.js'],
 			test: ['test/**/*.js'],
-			sample: ['test/**/*.js']
+			sample: ['sample/**/*.js']
 		},
 		qunit: {
 			all: ['test/**/*.html']
@@ -60,7 +60,7 @@ module.exports = function(grunt) {
 			}
 		},
 		watch: {
-			files: ['<%= jshint.all %>'],
+			files: ['<%= jshint.src %>', '<%= jshint.test %>', '<%= jshint.sample %>'],
 			tasks: ['jshint:src', 'qunit']
 		}
 	});
@@ -74,9 +74,9 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
 	// Default task(s).
-	grunt.registerTask('default', ['jshint:src', 'qunit']);
+	grunt.registerTask('default', ['jshint', 'qunit']);
 	grunt.registerTask('dist', ['default', 'requirejs', 'docco']);
-	
+
 	// Test task
 	grunt.registerTask('test', 'qunit');
 };

@@ -1,0 +1,16 @@
+body {
+  min-height: 2000px;
+  padding-top: 70px;
+}
+
+#imagedrop_zone {
+	margin: 10px auto;
+}
+
+.drop_zone {
+	border: 2px dashed #bbb;
+	border-radius: 5px;
+	padding: 25px;
+	text-align: center;
+	color: #bbb;
+}

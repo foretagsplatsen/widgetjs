@@ -1,353 +1,343 @@
 define(
-	[],
-	function () {
+	['./segments', '../events', 'jquery'],
+	function(routeSegments, events, jQuery) {
 
 		var urlSeparator = '/';
 
-		// ### Route object definition
-		// 
-		// Routes are used to match urls in routers. Routes represent
-		// the path taken for which an action has to be taken
-		// (registered in the router with an associated callback
-		// function.
+		// ### Route object
 		//
-		// A route has an `segments` array and can match an `url`
-		// against its fragments (and parameters..  Routes are built
-		// from string representations
-		var route = function(string) {
+		// Routes represent the path for which an action should be taken (see `matched` event).
+		//
+		// Route is implemented as an array of segments. A route can be constructed from a segment array
+		// or a route pattern string.
+		//
+		//		var aRouteFromSegments = route({segments: arrayOfRouteSegments});
+		//		var aRouteFromPattern = route('/segmentA/#aParameter/?andAnOptionalParameter');
+		//
+		// Route pattern strings are parsed into segment arrays by `routeFactory`.
+		//
+		// Route match URL:s by comparing the URL segments against an array
+		// of route segments. A route match a URL if the segments matches the route segments.
+		//
+		// Eg.
+		//		Route: /User/#id => Route segments [segment('User'), parameter()]
+		//		URL: /User/john => URL segments ['User', 'john']
+		//
+		// Route would match URL since first segment in URL match Route (both 'User') and second
+		// segment is matched since a route parameter will match all values (if no constraints).
+		//
+		// Some segments can be optional and other mandatory. The strategy to match route with optional
+		// segments is to match it URL:s against the segments and then all combinations of optional.
+		// parameters.
+		//
+		// An array with all optional sequences is calculated when route is created.
+		//
+		// _Note:_: Avoid large number of optionals since it will consume memory
+		// and slow down matching. You can use query parameters instead.
+		//
+		// When a URL is matched the router will bind matches parameters to coresponding segments in URL
+		// and return them in `matchResult`
+		//
+		//		var result = route('/user/#id').matchUrl('/user/john');
+		//		console.dir(result.getParameters()); // => { user: 'john'}
+		//
+		// Routes can also be used as patterns for creating URLs
+		//
+		//		var url = route('/user/#id').expand({id: 'john'});
+		//		console.log(url); // => '/user/john'
+		//
+		var route = function(spec, my) {
+			if(Object.prototype.toString.call(spec) === '[object String]') {
+				var routePattern = spec;
+				var routeSpec = my;
+				return routeFactory(routePattern, routeSpec);
+			}
+
+			spec = spec || {};
+			my = my || {};
+
+			// Segments to match
+			var segments = spec.segments;
+
+			// Array with all optional sequences, ie. all combinations
+			// of optional perameters. Array must be orderd to match URL:s
+			// left to right.
+			var optionalSequences = [];
+
+			// Pre-caluclate optional sequences.
+			ensureOptionalSequences();
+
 			var that = {};
 
-			var segments = [];
-			var stream = routeParameterStream(segments);
+			// Mixin events
+			jQuery.extend(that, events.eventhandler());
 
-			that.stream = function() { return stream; };
-			that.getSegments = function() { return segments; };
-			that.toString = function() {
-				var str = 'route( ';
-				segments.forEach(function(each) {
-					str = str + each.toString() + ' / ';
-				});
-				str = str + ')';
-				return str;
-			};
-
-			// Answer true if the segments array matches each of the route
-			// segments. The strategy is to try several passes with
-			// and without optional parameters
-			that.matchSegments = function(urlSegments) {
-				return matchUrlSegments(urlSegments);
-			};
-
-			// Answer the parameter values from urlSegments
-			function getParameterValues(urlSegments) {
-				var values = [];
-				segments.forEach(function (each, index) {
-					if (each.isParameter()) {
-						values.push(urlSegments[index]);
-					}
-				});
-				return values;
-			}
-
-			// try to match an url segments with `segments`. Recursively
-			// remove optional params if it doesn't match
-			function matchUrlSegments(urlSegments) {
-				var values = getParameterValues(urlSegments);
-				var result = routeMatchResult(values);
-				return stream.match(urlSegments, result);
-			}
-
-			// Segments setup. See segment(s) and the `prefix`
-			// attached to parameters.
-			//
-			// Called upon creation.
-			function setupSegments() {
-				var segments = string.split(urlSeparator);
-				segments.forEach(function (each) {
-					if (each.length > 0) {
-						addToSegments(each);
-					}
-				});
-			}
-
-			function addToSegments(string) {
-				segments.push(createSegment(string));
-			}
-
-			// Create and answer a segment created from `string`.
-			function createSegment(string) {
-				var element;
-
-				// find the right parameter
-				parameters.forEach(function (each) {
-					if (string[0] === each.prefix) {
-						element = each(string);
-					}
-				});
-
-				// fallback to a simple segment
-				if (element === undefined) {
-					element = segment(string);
-				}
-
-				return element;
-			}
-
-
-			// Initialization
-			setupSegments();
-
-			return that;
-		};
-
-
-		// ### read-only route stream definition.
-		// Used to stream over a route segments segments to match an url
-		var routeStream = function (segments) {
-			var that = {};
-
-			// Internally hold onto the position of the stream.
-			var position = 0;
-
-			// Accessors definition
-			that.getSegments = function () {
+			my.getSegments = function() {
 				return segments;
 			};
 
-			that.getPosition = function () {
-				return position;
-			};
-
-
-			// Answer true if the stream has reached the end of the
-			// route.
-			that.atEnd = function () {
-				return position >= segments.length;
-			};
-
-			// Answer the next segment *without* moving the stream
-			that.peek = function () {
-				return segments[position];
-			};
-
-			// Answer the next segment *and* moved the stream by 1.
-			that.next = function () {
-				if (that.atEnd()) {
-					return null;
-				}
-				var segment = that.peek();
-				position = position + 1;
-				return segment;
-			};
-
-			// Reset the stream to the beginning of the route.
-			that.reset = function () {
-				position = 0;
-			};
-
-			return that;
-		};
-
-		
-		// ### Parameter stream definition
-		//
-		// Special route stream used to match parameters with an
-		// url.
-		//
-		// ### match()
-		// `match()` tests the route against an url path.
-		// Used together with a `routeMatchResult` object, filled
-		// with the result of the match.
-		
-		var routeParameterStream = function(segments) {
-			var that = routeStream(segments);
-			
-			// Match an url segments (represented here as `segments`). 
-			// If the stream does not match an optional parameter, 
-			// the stream is rewinded til the last optional parameter 
-			// and the process goes on.
-			that.match = function (urlSegments, result) {
-				var matched = true;
-				var newStream;
-
-				// Guard
-				if (that.getSegments().length < urlSegments.length) {
-					return result;
+			that.matchUrl = function(url) {
+				var match = findMatch(url);
+				if(!match) {
+					return routeNoMatchResult();
 				}
 
-				urlSegments.forEach(function (each) {
-					if (matched) {
-						matched = that.next().match(each);
+				var result = createMatchResult(match, url);
+
+				that.trigger('matched', result);
+
+				return result;
+			};
+
+			that.expand = function(params) {
+				params = params || {};
+
+				// Try to expand route into URL
+				var urlSegments = [];
+				segments.forEach(function(routeSegment) {
+					var urlSegment;
+					if(routeSegment.isParameter()) {
+						// Use supplied value for parameters
+						urlSegment = params[routeSegment.getName()];
+					} else {
+						// name/value for segments
+						urlSegment = routeSegment.getValue();
+					}
+
+					// Skip if no match and optional
+					if(urlSegment === undefined &&
+						routeSegment.isOptional()) {
+						return;
+					}
+
+					// Validate segment
+					if (!routeSegment.match(urlSegment)) {
+						throw new Error('Could not generate a valid URL');
+					}
+
+					urlSegments.push(urlSegment);
+				});
+
+				return urlSegments.join('/');
+			};
+
+			that.hasParameter = function(name) {
+				return segments.some(function(segment) {
+					return segment.isParameter() && segment.getName() === name;
+				});
+			};
+
+			that.toString = function() {
+				return 'route(' + segments.join('/') + ')';
+			};
+
+			function isMatch(urlSegments, sequence) {
+				sequence = sequence || segments;
+
+				// Can not match if different sizes
+				if(urlSegments.length != sequence.length) {
+					return false;
+				}
+
+				// All routeSegments much match coresponding URL segment
+				return sequence.every(function(routeSegment, index) {
+					var urlSegment = urlSegments[index];
+					return urlSegment !== undefined && routeSegment.match(urlSegment);
+				});
+			}
+
+			function findMatch(url) {
+				// Match URL segments against route segments
+				var urlSegments = url.getSegments();
+
+				// Try match orignial segements
+				if(isMatch(urlSegments)) {
+					return segments;
+				}
+
+				// then optionals
+				for(var i = 0; i < optionalSequences.length; i++) {
+					if(isMatch(urlSegments, optionalSequences[i])) {
+						return optionalSequences[i];
+					}
+				}
+
+				return null;
+			}
+
+			function ensureOptionalSequences () {
+				// Find positions for optionals
+				var optionalPositions = [];
+				segments.forEach(function(segment, index) {
+					if(segment.isOptional()) {
+						optionalPositions.push(index);
 					}
 				});
 
-				// All segments matched and we are at the end of the
-				// stream. Hourra, we made it!
-				if (matched && that.atEnd()) {
-					result.match();
-					return result;
+				if(optionalPositions.length > 15)  {
+					throw new Error ('Too many optional arguments. "' + optionalPositions.length +
+						'"" optionals would generate  ' + Math.pow(2,optionalPositions.length) +
+						' optional sequences.');
 				}
 
-				// Did not match. Try without the first optional parameter
-				newStream = trimOptionalParameter();
-				return newStream.match(urlSegments, result);
-			};
+				// Generate possible sequences
+				var possibleOptionalSequences = orderedSubsets(optionalPositions);
 
-			// Answer a new stream with the segments trimmed
-			var trimOptionalParameter = function () {
-				// keep a copy of the segments array
-				var trimmedSegments = [];
-				var trimmed = false;
+				possibleOptionalSequences.forEach(function(sequence) {
+					// Clone segments array and remove optionals matching
+					// indexes in index sequence
+					var optionalSequence = segments.slice();
+					sequence.forEach(function(optionalIndex, numRemoved) {
+						// Remove optional but take in to account that we have already
+						// removed {numRemoved} from permutation.
+						optionalSequence.splice(optionalIndex - numRemoved, 1);
+					});
 
-				that.getSegments().forEach(function (each) {
-					if (!trimmed) {
-						if (each.isOptional()) {
-							trimmed = true;
-						}
-						else {
-							trimmedSegments.push(each);
-						}
-					}
-					else {
-						trimmedSegments.push(each);
+					optionalSequences.push(optionalSequence);
+				});
+			}
+
+			function getParameters() {
+				return segments.filter(function(segment) {
+					return segment.isParameter();
+				});
+			}
+
+			function createMatchResult(match, url) {
+				var urlSegments = url.getSegments();
+
+				var parameters = {};
+
+				// Fill with matched parameter values
+				match.forEach(function(routeSegment, index) {
+					if(routeSegment.isParameter()) {
+						parameters[routeSegment.getName()] = routeSegment.getValue(urlSegments[index]);
 					}
 				});
 
-				if (!trimmed) { trimmedSegments = []; }
+				// Fill with default values for not matched parameters
+				segments.forEach(function(routeSegment) {
+					if(routeSegment.isParameter() && match.indexOf(routeSegment) === -1) {
+						parameters[routeSegment.getName()] = routeSegment.getValue();
+					}
+				});
 
-				return routeParameterStream(trimmedSegments);
-			};
-
+				return routeMatchResult({route: that, url: url, parameterValues: parameters, parameters: getParameters()});
+			}
 
 			return that;
 		};
 
+		// ### Route Factory
+		//
+		// Create route from pattern. A pattern can look like:
+		//
+		//	`/foo/#bar/?baz`
+		//
+		// See valid [segments](segments.html)
+		//
+		var routeFactory = function(routePattern, spec) {
+			var segmentStrings = routePattern.split(urlSeparator);
+
+			var nonEmptySegmentStrings = segmentStrings
+				.map(Function.prototype.call, String.prototype.trim)
+				.filter(Boolean);
+
+			var segmentArray = nonEmptySegmentStrings.map(function(segmentString) {
+				return routeSegments.segmentFactory(segmentString, spec);
+			});
+
+			return route({
+				segments: segmentArray
+			});
+		};
+
+		// Generates all subsets of aray with same internal order
+		// Returned subsets are ordered in right to left order.
+		// Examples:
+		// [1,2,3] => [1,2,3],[2,3],[1,3],[3],[1,2],[2],[1])
+		var orderedSubsets = function(input) {
+			var results = [], result, mask,
+				total = Math.pow(2, input.length);
+
+			for (mask = 1; mask < total; mask++) {
+				result = [];
+				i = input.length - 1;
+				do {
+					if ((mask & (1 << i)) !== 0) {
+						result.unshift(input[i]);
+					}
+				} while (i--);
+				results.unshift(result);
+			}
+
+			return results;
+		};
 
 
-		// ### Route segment
+		// ### Route result
 		//
-		// A segment represents a single part of the route.
+		// Route match result are used as the answer of matching
+		// a url for a route.
 		//
-		// Three kind of segments are currently defined:
-		// - segment: simple segment
-		// - parameter: parameter segment, starting with a '#'
-		// - optioanl parameter: optional parameter segment, starting with a '?'
+		// Parameters is a hash with matched segment names as keys
+		// and matching url segment values.
 		//
-		// *Example:*
-		//
-		// '/foo/#bar/?baz' will be cut down into a route with 3 segments:
-		// - foo -> segment
-		// - bar -> parameter
-		// - baz -> optional parameter
+		var routeMatchResult = function(spec) {
+			spec = spec || {};
 
-		function segment(value) {
+			var url = spec.url;
+			var route = spec.route;
+			var parameterValues = spec.parameterValues || {};
+			var parameters = spec.parameters;
+
 			var that = {};
 
-			that.getValue = function () {
-				return value;
+			that.getParameters = function() { return parameterValues; };
+
+			that.getKeys = function() {
+				return Object.keys(parameterValues);
 			};
 
-			that.isParameter = function () { return false; };
-			that.isOptional = function () { return false; };
-
-			// Answer true if the receiver is a match for an url segments
-			// segment
-			that.match = function (string) {
-				return value === string;
+			that.getValues = function() {
+				return that.getKeys().map(function(v) {
+					return parameterValues[v];
+				});
 			};
 
-			that.toString = function() {
-				return value;
+			that.getRoute = function () {
+				return route;
 			};
 
-			return that;
-		}
-
-		// ### Route parameter definition
-		//
-		// Note: the leading '#' is *not* part of the value of the
-		// segment.
-
-		function parameter(value) {
-			// Parameters have a prefix, get rid of it
-			var that = segment(value.substr(1));
-
-			that.isParameter = function () { return true; };
-
-			// For parameters, always answer true if the string is defined.
-			// Since it's a parameter, the value doesn't matter
-			that.match = function (string) {
-				return typeof string === 'string';
+			that.getUrl = function () {
+				return url;
 			};
 
-			that.toString = function() {
-				return 'param(' + value.substr(1) + ')';
+			that.matched = function() {
+				return true;
 			};
 
-			return that;
-		}
+			that.getCallbackArguments = function () {
+				var callbackArguments = parameters.map(function(p) {
+					return parameterValues[p.getName()];
 
-		// ### Optional parameter definition
-		// 
-		// Note: the leading '?' is *not* part of the value of the
-		// segment.
-
-		function optionalParameter(value) {
-			var that = parameter(value);
-
-			that.isOptional = function () { return true; };
-
-			// Optional, so always answer true
-			that.match = function () { return true; };
-
-			that.toString = function() {
-				return 'optional(' + value.substr(1) + ')';
-			};
-
-			return that;
-		}
-
-		// ### Syntax definition.
-		// To add an segment prefix, add it to the segments segment function.
-
-		var parameters = [parameter, optionalParameter];
-		parameter.prefix = '#';
-		optionalParameter.prefix = '?';
-
-		// ### Route result definition
-		//
-		// Route matched results are used as the answer of a matching
-		// url for a route. Instances are passed as arguments to
-		// `route.match()` and filled appropriately depending on the
-		// match.
-
-		var routeMatchResult = function (segments) {
-			var that = {};
-
-			var matched = false;
-
-			segments = segments || null;
-
-			// Public accessors
-			that.getSegments = function () {
-				return segments;
-			};
-
-			that.setSegments = function (elts) {
-				segments = elts;
-			};
-
-			that.matched = function () {
-				return matched;
-			};
-
-			that.match = function () {
-				matched = true;
+				});
+				callbackArguments.push(url.getQuery());
+				return callbackArguments;
 			};
 
 			return that;
 		};
 
+		var routeNoMatchResult = function() {
+			var that = routeMatchResult();
+
+			that.matched = function() {
+				return false;
+			};
+
+			return that;
+		};
 
 		return route;
 	}

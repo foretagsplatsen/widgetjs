@@ -26,14 +26,14 @@ define(["widgetjs/events", "jquery"], function(manager, jquery) {
         manager.on('foo', function() {triggered = true;});
 
         ok(!triggered, 'should only be executed once triggered');
-        
+
         manager.trigger('foo');
         ok(triggered, 'should be when event triggered');
     });
 
     test("named event categories", function() {
-       var triggered1 = false;
-       var triggered2 = false;
+        var triggered1 = false;
+        var triggered2 = false;
 
         var firstFooEventBinding = manager.at('1').on('foo', function() {
             triggered1 = true;
@@ -79,7 +79,7 @@ define(["widgetjs/events", "jquery"], function(manager, jquery) {
         fooEvent.unbind();
     });
 
-     test("mixin into any object", function() {
+    test("mixin into any object", function() {
         var anyObject = {};
         jQuery.extend(anyObject, manager.eventhandler());
 

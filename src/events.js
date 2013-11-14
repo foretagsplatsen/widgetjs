@@ -86,7 +86,7 @@ define([], function () {
         // or **onceOn()** and remove with **off()**. Use **trigger()** to execute all callbacks for an event.
         var eventHandler = function () {
             var that = {};
-            
+
             // Map of events with name as key
             that.events = {};
 

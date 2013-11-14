@@ -2,15 +2,17 @@ define(
 	[
 		'./router/url',
 		'./router/route',
-		'./router/router'
+		'./router/router',
+		'./router/deprecatedRouter'
 	],
 
-	function (url, route, router) {
+	function (url, route, router, deprecatedRouter) {
 		return {
 			url: url,
 			route: route,
-			router: router.router,
-			controller: router.controller
+			router: deprecatedRouter.router,
+			controller: deprecatedRouter.controller,
+			newRouter: router
 		};
 	}
 );

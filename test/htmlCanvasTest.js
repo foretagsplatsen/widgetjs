@@ -1,14 +1,14 @@
 define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
 
     // Helper
-    
+
     var withCanvas = function(callback) {
         $("BODY").append("<div id='sandbox'></div>");
         var sandbox = jQuery('#sandbox');
 
         var html = htmlCanvas(sandbox);
         callback(html);
-        
+
         sandbox.remove();
     };
 
@@ -40,7 +40,7 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
         withCanvas(function(html) {
             // Arrange: a Hello World! H1
             html.h1('Hello World!');
-            
+
             // Assert: that H1 was rendered
             var h1El = jQuery("#sandbox > H1");
             ok(h1El.get(0), 'element rendered');
@@ -54,7 +54,7 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
         withCanvas(function(html) {
             // Arrange: a Google link
             html.a('Google').id('test_id').href('http://www.google.se');
-            
+
             // Assert: that A was rendered
             var linkEl = jQuery("#test_id");
             ok(linkEl.get(0), 'element rendered');
@@ -67,8 +67,8 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
     test("render object literal attributes", function() {
         withCanvas(function(html) {
             // Arrange: a div with attributes
-            html.div({id: 'test_div', 'class' : 'test_class', 'special_attribute' : 'test'}, 'content');
-            
+            html.div({id: 'test_div', klass : 'test_class', 'special_attribute' : 'test'}, 'content');
+
             // Assert: that DIV was rendered
             var divEl = jQuery("#test_div");
             ok(divEl.get(0), 'element rendered');
@@ -87,7 +87,7 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
 
             // Arrange: a link with a click callback
             html.a('Click me!').id('test_link').click(function() { clicked = true; });
-            
+
             // Assert: that link was rendered
             var linkEl = jQuery("#test_link");
             ok(linkEl.get(0), 'element rendered');
@@ -106,7 +106,7 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
                     html.span('Some text')
                 )
             );
-            
+
             // Assert: that outer div rendered
             ok(jQuery("#outer_div").get(0), 'outer div rendered');
             ok(jQuery("#inner_div").get(0), 'inner div rendered');
@@ -119,11 +119,10 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
             // Arrange a button, assign to variable and then set class
             var button = html.a('Home').id('test_button').href('/');
             button.addClass('button');
-            
+
             // Assert:
             ok(jQuery("#test_button").get(0), 'button rendered');
-           equal(jQuery('#test_button').attr('class'), 'button', 'attribute class rendered');
-
+            equal(jQuery('#test_button').attr('class'), 'button', 'attribute class rendered');
         });
     });
 
@@ -148,7 +147,7 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
             var div = html.div($.map([1,2,3,4,5,6,7,8,9,10], function(num) {
                 return html.span(num.toString());
             })).id('test_div');
-            
+
             // Assert:
             equal(jQuery("#test_div > SPAN").length, 10, 'div rendered with children from array');
 
@@ -177,7 +176,7 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
 
             // and render a DIV with function as argument
             html.div({id : 'aDiv'}, htmlFn);
-            
+
             // Assert
             ok(jQuery("#aDiv").get(0), 'div was rendered');
             ok(jQuery("#aDiv > .aSpan").get(0), 'child div from function was rendered inside div');
@@ -194,13 +193,13 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
                 };
 
                 return that;
-           };
+            };
 
-           // Act: render object
-           html.render(appendableObject());
+            // Act: render object
+            html.render(appendableObject());
 
-           // Assert
-           ok(jQuery("#aDiv").get(0), 'div was rendered');
+            // Assert
+            ok(jQuery("#aDiv").get(0), 'div was rendered');
         });
     });
 
@@ -220,13 +219,13 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
                 };
 
                 return that;
-           };
+            };
 
-           // Act: render widget
-           html.render(simpleWidget());
+            // Act: render widget
+            html.render(simpleWidget());
 
-           // Assert
-           ok(jQuery("#aDiv").get(0), 'div was rendered');
+            // Assert
+            ok(jQuery("#aDiv").get(0), 'div was rendered');
         });
     });
 
@@ -239,7 +238,7 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
             equal(h1.element(), jQuery("#aHeading").get(0), 'element acessor returns correct element.');
         });
     });
-    
+
 
     test("setAttribute() get/set style using key/value", function () {
         withCanvas(function(html) {
@@ -254,11 +253,11 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
 
     test("css() get/set style", function () {
         withCanvas(function(html) {
-            // Arrange: a heading
-            var h1 = html.h1().id('aHeading');
+            // Arrange: a div
+            var div = html.div();
 
-            h1.css('background-color', 'red');
-            equal(h1.asJQuery().css('background-color'), 'rgb(255, 0, 0)');
+            div.css('width', '100px');
+            equal(div.asJQuery().css('width'), '100px');
         });
     });
 

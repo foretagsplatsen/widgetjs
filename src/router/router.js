@@ -1,334 +1,283 @@
-// Event-based URL handling:
-//
-// - **Router**: simply watches the hash of the URL (uses the hash-bang '#!' convention) and notifies a controller when it change.
-//
-//    http://foo.com/#!**/bar**
-//
-// - **Controller**: responsible for binding events to some URL.
-//
-//		controller.on('/**bar**', function() { alert('bar'); });
-//
-// When the URL (hash fragment) change the router sends a `resolveUrl(url)` message with the new url to the controller that then triggers an
-// action.
-// - - -
 define(
 	[
 		'jquery',
 		'../events',
 		'./route',
-		'./url'
+		'./url',
+		'./hash'
 	],
-	function (jQuery, events, route, url) {
+	function(jQuery, events, route, url, hash) {
 
-		// - - -
-
-		// ### Event bus/manager for routing
-		// Manage all routing events. Usage:
-		//
-		//		events.at('routing').on('notfound', function(url) {
-		//			alert('404 - Url not found: ' + url);
-		//		});
-		// - - -
-		var handler = events.at('routing');
-
-		// ### Default controller
-		// Use controller.on(...)
-		//
-		// Example: path with parameters (starting with a '#')
-		//
-		//		myController.on('/page/#pageNumber', function(pageNumber) {
-		//			alert(pageNumber);
-		//		});
-		//
-		// Example: regexp path:
-		//
-		//		myController.on('/page/.*', function() {
-		//			...
-		//		});
-		//
-		var controller = function () {
-			var that = {};
-
-			// #### Public API
-
-			// Binds a callback to a path. _Eg:_
-			//
-			//		myController.on('foo', function() {
-			//			alert('/#!/foo triggered!');
-			//		});
-			that.on = function (path, callback) {
-				// TODO: remove
-				if (typeof path !== "string") {
-					throw 'accepts only string paths';
-				}
-
-				handler.on(path, callback);
-			};
-
-			// Resolve the arguments that should be passed to a route callback
-			function resolveCallbackArguments(matchResult, url, path) {
-				var callbackArguments = [];
-				callbackArguments.push(path);
-				callbackArguments = callbackArguments.concat(matchResult.getSegments());
-				callbackArguments.push(url.getQuery());
-				return callbackArguments;
+		// Even if we create multiple routers
+		// we usualy only want one hash-fragment
+		// listner.
+		var hashSingleton = function() {
+			if(!hashSingleton.instance) {
+				hashSingleton.instance = hash();
 			}
 
-			// Try to match registered bindings against the new url.
-			that.resolveUrl = function (url) {
-				var matchResult,
-					callbackArguments,
-					numMatches = 0,
-					bindings = handler.events;
-
-				for(var path in bindings) {
-					if(bindings.hasOwnProperty(path)) {
-						matchResult = url.matchRoute(route(path));
-						if(matchResult.matched()) {
-							numMatches++;
-							callbackArguments = resolveCallbackArguments(matchResult, url, path);
-							handler.trigger.apply(this, callbackArguments);
-						}
-					}
-				}
-
-				// Trigger 'notfound' event (with url as argument) if no match
-				if(numMatches === 0) {
-					handler.trigger('notfound', url.getPath());
-				}
-			};
-
-			return that;
+			return hashSingleton.instance;
 		};
 
-		// - - -
-
 		// ### Router
-		// Listens for changes in the hash fragment of the URL. In modern browsers we use the 'hashchange' event.
-		// In legacy browsers we instead pull for changes using a timer/interval.
 		//
-		// In old IE (< IE 8) a hidden IFrame is created to allow the back button and hash-based history to work. 
-		// See `setupOldIE()` and `fixHistoryForIE()`.
+		// Router allow you to keep state in the URL. When a user visits a specific URL the application
+		// can be transformed accordingly.
+		//
+		// Router have a routing table concisting of an array of routes. When the router resolves a URL
+		// each route is matched against the URL one-by-one. The order is defined by the route priority
+		// property (lower first). If two routes have the same priority or if priority is omitted, routes
+		// are matched in registration order.
+		//
+		// Routes are added using 'addRoute'
+		//
+		// Eg:
+		//
+		//		aRouter.addRoute({
+		//			pattern: '/user/#id',
+		//			action: function(id) { console.log(id);},
+		//			priority: 4000
+		//		});
+		//
+		// The action callback is triggered when a URL match pattern. Values for matched parameterers are
+		// supplied as arguments in the same order as they are defined in the pattern. Priority is optional.
+		//
+		// Add router accept the same options as [route](route.js)
+		//
+		//		var aRoute = aRouter.addRoute({
+		//			pattern: '/user/?id',
+		//			defaults: {
+		//				id: 'john'
+		//			},
+		//			constraints: {
+		//				id :  ['john', 'olle']
+		//			}
+		//		});
+		//
+		//		aRoute.on('matched', function(result) {
+		//			console.dir(result.getParameters());
+		//		});
+		//
+		// Routes are removed using 'removeRoute'
+		//
+		// Eg:
+		//
+		//		aRouter.removeRoute(aRoute);
+		//
+		//
+		// Url's can be resolved manualy using the 'resolveRoute' method or automaticly when the URL change. The URL
+		// location handler can be set when the router is constructed
+		//
+		//Eg:
+		//
+		//	var aHashRouter = router({locationHandler: hash()});
+		//	var aPushStateRouter = router({locationHandler: pushState()});
+		//
+		// _Note:_ By default router use [hash.js]('hash.js') to listen for URL changes.
+		//
+		// Events are triggered on each resolve, on match and when a route is 'not found' with url as argument.
 		//
 		// Usage:
 		//
-		// 1. Register your controller
+		//		router.on('resolveUrl', function(url) {
+		//			console.log(url.toString()); // or log to google analytics / mixpanel / etc
+		//		});
 		//
-		//		current_router.register(controller);
+		//		router.on('routeMatched', function(result) {
+		//			alert('Route match: ' + result.getUrl().getPath());
+		//		});
 		//
-		//		or
+		//		router.on('routeNotFound', function(url) {
+		//			alert('404 - Url not found: ' + url);
+		//		});
 		//
-		//		controller.register();
+		// Routers can be chained using `pipeRoute` and  `pipeNotFound`
 		//
-		// 2. Set-up routing
+		//		router.pipeNotFound(anotherRouter);
+		//		router.pipeRoute({ pattern: '/module/#feature'}, anotherRouter);
 		//
-		//		controller.on(...)
 		//
-		// 3. Start the router
-		//
-		//		router.start();
-		//
-		// Router can be started before DOM is ready, but since it won’t be usable before then in IE6/7 (due to the necessary IFrame),
-		// recommended usage is to bind it inside a DOM ready handler.
-		//
-		var router = function (spec) {
+		var router = function(spec, my) {
 			spec = spec || {};
+			my = my || {};
+
 			var that = {};
 
-			var fallback = true,
-				oldIE, // IE7 or older
-				fragment, // last hash fragment
-				history = [], // history of visited hash fragments
-				timer,
-				iframe_src = (spec.iframe_src || /*jshint scripturl:true*/    'javascript:0'), /*jshint scripturl:false*/
-				controller;
+			my.location = spec.locationHandler || hashSingleton();
+			my.routeTable = [];
+			my.lastMatch = undefined;
 
-			// #### Initilize
+			// Listen for URL changes and resolve URL when changed
+			my.location.on('changed', function() { my.resolveUrl(); });
 
-			// Fallback only if no 'onhashchange' event
-			if ('onhashchange' in window) { fallback = false; }
+			// Mixin events
+			jQuery.extend(that, events.eventhandler());
 
-			// oldIE if IE < IE8
-			oldIE = jQuery.browser.msie && parseInt(jQuery.browser.version, 10) < 8;
+			my.resolveUrl = function(aUrl) {
+				var currentUrl = aUrl === undefined ? my.location.getUrl() : aUrl;
 
-			// #### Private methods
+				that.trigger('resolveUrl', currentUrl);
 
-			// The url is built from the URL hash fragment minus the hash-bang (#!). Eg. **bar** in:
-			// http://foo.com/#!**/bar**
-			function getUrl() {
-				return url(window.location.hash.replace(/^#![\/]?/, ''));
-			}
+				var numMatched = 0;
+				my.routeTable.some(function(candidateRoute) {
+					var result = currentUrl.matchRoute(candidateRoute);
+					if(result.matched()) {
+						my.lastMatch = result;
+						numMatched++;
+						that.trigger('routeMatched', result);
 
-			// Get/Set the hash fragment
-			function getHash() {
-				return window.location.hash;
-			}
-
-			function setHash(string) {
-				window.location.hash = string;
-			}
-
-			// Setup IFrame for old versions of IE
-			function setupOldIE() {
-				var iDoc = jQuery("<iframe id='ie_history_iframe'" +
-					"src='" + iframe_src + "'" +
-					"style='display: none'></iframe>").prependTo("body")[0];
-				var iframe = iDoc.contentWindow.document || iDoc.document;
-				if (window.location.hash) {
-					iframe.location.hash = window.location.hash.substr(1);
-				}
-				iframe.location.title = window.title;
-			}
-
-			// Special hack for IE < 8 since hashchanges is not added to history. 
-			// IE will add a history entry when IFrame is opened/closed.
-			function fixHistoryForIE() {
-				var iframe = getIframe();
-				iframe.open();
-				iframe.close();
-				iframe.location.hash = fragment;
-			}
-
-			function getIframe() {
-				return jQuery('#ie_history_iframe').get(0).contentWindow.document;
-			}
-
-			// Adds a fragment to history
-			function pushToHistory(aFragment) {
-				if (oldIE) {
-					fixHistoryForIE();
-				}
-				history.push(aFragment);
-			}
-
-			// Delegates url resolving to the current controller, if any
-			function resolveUrl() {
-				if (controller) {
-					controller.resolveUrl(getUrl());
-				}
-			}
-
-			// Check if the url fragment has changed
-			// and resolve it if needed.
-			function check() {
-				var newFragment = getHash();
-
-				if (fragment !== newFragment /* url changed */) {
-					fragment = newFragment;
-					pushToHistory(fragment);
-					resolveUrl();
-
-				}
-				else if (oldIE) {
-					var iframe = getIframe();
-					if (iframe.location.hash !== newFragment) {
-						setHash(iframe.location.hash);
-						pushToHistory(fragment);
-						resolveUrl();
+						if(candidateRoute.fallThrough === undefined || 
+							candidateRoute.fallThrough === false) {
+							return true;
+						}
 					}
+				});
+
+				if (numMatched === 0) {
+					that.trigger('routeNotFound', currentUrl.toString());
 				}
-			}
+			};
+
+			var sortedInsert = function (route) {
+				var routeIndex = my.routeTable.length;
+				if(route.priority !== undefined) {
+					do { --routeIndex; } while (my.routeTable[routeIndex] &&
+						(my.routeTable[routeIndex].priority === undefined ||
+						route.priority < my.routeTable[routeIndex].priority));
+					routeIndex += 1;
+				}
+				my.routeTable.splice(routeIndex, 0, route);
+			};
 
 			// #### Public API
 
-			// Return current url
+			that.addRoute = function(routeSpec) {
+				routeSpec = routeSpec || {};
 
-			that.getPath = function () {
-				return getUrl().getPath();
-			};
+				var newRoute = route(routeSpec.pattern, routeSpec);
 
-			that.linkTo = function (path, query) {
-				var link, params;
-				if (typeof(path) === 'undefined' || path === null || typeof path !== "string") {
-					throw 'accepts only string paths';
-				}
-
-				link = '#!/' + path;
-				if (query) {
-					link = link + '?';
-					params = Object.keys(query);
-					params.forEach(function (param, index) {
-						link = link + param + '=' + query[param];
-						if (index < params.length - 1) {
-							link = link + '&';
-						}
+				if(routeSpec.action) {
+					newRoute.on('matched', function(result) {
+						routeSpec.action.apply(this, result.getCallbackArguments());
 					});
 				}
 
-				return link;
+				newRoute.fallThrough = routeSpec.fallThrough;
+
+				newRoute.priority = routeSpec.priority;
+				sortedInsert(newRoute);
+
+				return newRoute;
 			};
 
-			that.redirectTo = function (path, query) {
-				setHash(that.linkTo(path, query));
-			};
-
-			// Navigate to previous fragment. Fallback to the
-			// `fallback' url if the history is empty
-			that.back = function (fallback) {
-				if (history.length > 1) {
-					history.pop();
-					setHash(history.pop());
+			that.removeRoute = function(route) {
+				var index = my.routeTable.indexOf(route);
+				if(index === -1) {
+					throw new Error('Route not in route table');
 				}
-				else if (fallback) {
-					setHash(that.linkTo(fallback));
-				}
+
+				my.routeTable.splice(index, 1);
 			};
 
-			// **Force a check()**, whether the fragment has changed or not.
-			that.forceCheck = resolveUrl;
-
-			// **Register a controller**
-			that.register = function (aController) {
-				// Only one controller can be registered at a time
-				controller = aController;
-
-				// Also send controller getUrl() if started
-				if (fragment !== undefined) {
-					resolveUrl();
+			that.pipeRoute = function (routeSpec, router) {
+				if(!routeSpec || !routeSpec.pattern) {
+					throw new Error('Route pattern required');
 				}
+
+				var aRoute = that.addRoute(routeSpec);
+				aRoute.on('matched', function(result) {
+					router.resolveUrl(result.getUrl());
+				});
+
+				return aRoute;
 			};
 
-			// **Start/stop** url changes check. If the browser supports it we bind 'check()' to the 'hashchange' event.
-			// In legacy browsers we instead pull for changes every 100 ms.
-			that.start = function () {
-				that.stop();
+			that.pipeNotFound = function (router) {
+				return that.on('routeNotFound', function(aRawUrl) {
+					router.resolveUrl(aRawUrl);
+				});
+			};
 
-				fragment = getHash();
-				history = [fragment];
+			that.resolveUrl = function(aUrl) {
+				if(typeof aUrl === "string") {
+					aUrl = url(aUrl);
+				}
 
-				if (fallback) {
-					if (oldIE) {
-						setupOldIE();
+				my.resolveUrl(aUrl);
+			};
+
+			that.getUrl = function() {
+				return my.location.getUrl();
+			};
+
+			that.linkTo = function(path, query) {
+				return that.linkToUrl(url.build(path, query));
+			};
+
+			that.linkToUrl = function(aUrl) {
+				return my.location.linkToUrl(aUrl);
+			};
+
+			that.redirectTo = function(path, query) {
+				return that.redirectToUrl(url.build(path, query));
+			};
+
+			that.redirectToUrl = function(aUrl) {
+				return my.location.setUrl(aUrl);
+			};
+
+			that.getUpdateUrl = function(parameters) {
+				var newQuery, newParameters, currentRoute;
+
+				// Use current route as template
+				if(my.lastMatch) {
+					currentRoute = my.lastMatch.getRoute();
+					newQuery = Object.create(my.lastMatch.getUrl().getQuery());
+					newParameters = Object.create(my.lastMatch.getParameters());
+				} else {
+					currentRoute = route();
+					newQuery = {};
+					newParameters = {};
+				}
+
+				// If parameter exist in route add to parameters otherwise to query.
+				Object.keys(parameters).forEach(function(param){
+					if(currentRoute.hasParameter(param)) {
+						newParameters[param] = parameters[param];
+					} else {
+						newQuery[param] = parameters[param];
 					}
-					timer = setInterval(check, 100);
-				}
-				else {
-					jQuery(window).bind('hashchange', check);
-				}
+				});
 
-				resolveUrl(); //send controller our getUrl()
+				var aRawUrl = currentRoute.expand(newParameters);
+
+				return url.build(aRawUrl, newQuery);
 			};
 
-			that.stop = function () {
-				if (timer) {
-					timer.clearInterval();
-					timer = null;
-				}
-				jQuery(window).unbind('hashchange', check);
-				jQuery('#ie_history_iframe').remove(); // remove any IFRAME
+
+			that.linkToUpdateUrl = function(parameters) {
+				return my.location.linkToUrl(that.getUpdateUrl(parameters));
+			};
+
+			that.updateUrl = function(parameters) {
+				that.redirectToUrl(that.getUpdateUrl(parameters));
+			};
+
+			that.back = function(aFallbackUrl) {
+				return my.location.back(aFallbackUrl);
+			};
+
+			that.start = function() {
+				my.location.start();
+				my.resolveUrl(); // resolve current url
+			};
+
+			that.stop = function() {
+				my.location.stop();
 			};
 
 			return that;
 		};
 
-		// ### Exports
-		// Instances of default router and controller
-		var current_router = router();
-		var current_controller = controller();
-		current_router.register(current_controller);
-
-		return {
-			controller: current_controller,
-			router    : current_router
-		};
+		return router;
 	});
