@@ -67,6 +67,10 @@ define(
 			// Pre-caluclate optional sequences.
 			ensureOptionalSequences();
 
+            // Route match URL if all route segments match
+            // but URL still contain trailing segments (default false)
+            var ignoreTrailingSegments = spec.ignoreTrailingSegments || false;
+
 			var that = {};
 
 			// Mixin events
@@ -135,7 +139,7 @@ define(
 				sequence = sequence || segments;
 
 				// Can not match if different sizes
-				if(urlSegments.length != sequence.length) {
+				if(urlSegments.length != sequence.length && !ignoreTrailingSegments) {
 					return false;
 				}
 
@@ -237,6 +241,7 @@ define(
 		// See valid [segments](segments.html)
 		//
 		var routeFactory = function(routePattern, spec) {
+            spec = spec || {};
 			var segmentStrings = routePattern.split(urlSeparator);
 
 			var nonEmptySegmentStrings = segmentStrings
@@ -248,7 +253,8 @@ define(
 			});
 
 			return route({
-				segments: segmentArray
+				segments: segmentArray,
+                ignoreTrailingSegments: spec.ignoreTrailingSegments
 			});
 		};
 

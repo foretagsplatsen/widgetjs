@@ -338,5 +338,15 @@ define(
 			ok(aRoute.matchUrl(router.url('h')).matched(), 'last constraint match');
 			deepEqual(aRoute.matchUrl(router.url('h')).getParameters(), { a: undefined, b: undefined, c: 'h'}, 'parameters');
 		});
+
+
+        test("Ignore trailing segments route option", function() {
+            var aRoute = router.route('hello/#foo', {
+                ignoreTrailingSegments: true
+            });
+
+            ok(aRoute.matchUrl(router.url('/hello/world')).matched(), 'match as normal route');
+            ok(aRoute.matchUrl(router.url('/hello/world/and/some/extra')).matched(), 'ignores trailing segments');
+        });
 	}
 );
