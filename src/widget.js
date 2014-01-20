@@ -77,14 +77,6 @@ define(
             //
             jQuery.extend(that, events.eventhandler());
 
-            // **Third party protected extensions** added to `my`.
-            // See [widget-extensions.js](widget-extensions.html)
-            for (var extProperty in ext) {
-                if (ext.hasOwnProperty(extProperty)) {
-                    my[extProperty] = ext[extProperty];
-                }
-            }
-
             // Returns sub widgets of the widget. Needed
             // to traverse widget tree. Override in concrete widgets!
             that.widgets = function () {
@@ -192,6 +184,14 @@ define(
                 var html = htmlCanvas(that.asJQuery());
                 that.renderContentOn(html);
             };
+
+            // **Third party protected extensions** added to `my`.
+            // See [widget-extensions.js](widget-extensions.html)
+            for (var extProperty in ext) {
+                if (ext.hasOwnProperty(extProperty)) {
+                    my[extProperty] = ext[extProperty];
+                }
+            }
 
             return that;
         };
