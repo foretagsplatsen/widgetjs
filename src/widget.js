@@ -109,6 +109,12 @@ define(
             };
 
 
+            // TODO: methods
+            my.call = router.router.call;
+            my.answer = router.router.answer;
+            my.cancel = router.router.cancel;
+
+
             // #### Render extensions
 
             // Append widget to DOM-element matched by aJQuery

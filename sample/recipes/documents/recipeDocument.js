@@ -54,7 +54,13 @@ define([
 						return html.li(instruction.toString());
 					})),
 
-					html.a({ klass: 'btn', href: my.linkTo('recipe/' + recipe.id + '/edit')}, html.span({klass: 'glyphicon glyphicon-pencil'}), ' Edit')
+					html.a({ klass: 'btn'}, html.span({klass: 'glyphicon glyphicon-pencil'}), ' Edit').click(function() {
+                        my.call('editRecipe', { recipeId: recipe.id }, function(recipe) {
+                            alert('Answer:\n' + JSON.stringify(recipe));
+                        }, function() {
+                            alert('cancel');
+                        });
+                    })
 				)
 			);
 		};

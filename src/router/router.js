@@ -108,12 +108,100 @@ define(
 			my.lastMatch = undefined;
 
 			// Listen for URL changes and resolve URL when changed
-			my.location.on('changed', function() { my.resolveUrl(); });
+			my.location.on('changed', function(url, isTriggeredByBackButton) {
+
+                // Check if we have a callback to cancel
+                if(isTriggeredByBackButton) {
+                    var currentRoute = my.lastMatch.getRoute();
+                    if(currentRoute) {
+                        var callback = my.getCallbackByCaller(currentRoute);
+                        if(callback) {
+                            currentRoute.trigger('answer', false, callback.cancelCallback);
+                            my.removeCallback(callback);
+
+                        }
+                    }
+                }
+
+                my.resolveUrl();
+            });
 
 			// Mixin events
 			jQuery.extend(that, events.eventhandler());
 
-			my.resolveUrl = function(aUrl) {
+
+            my.callbacks = [];
+
+            // Callbacks
+
+            my.getCallbackByCaller = function(route) {
+                var match = my.callbacks.filter(function(callback) {
+                    return callback.caller === route;
+                });
+
+                return match.length > 0 ? match[0] : null;
+            };
+
+            my.getCallbackByTarget = function(route) {
+                var match = my.callbacks.filter(function(callback) {
+                    return callback.target === route;
+                });
+
+                return match.length > 0 ? match[0] : null;
+            };
+
+            my.saveCallback = function(caller, target, answerCallback, cancelCallback) {
+                var callback = { caller: caller, target: target, answerCallback: answerCallback, cancelCallback:cancelCallback}
+                my.callbacks.push(callback);
+                return callback;
+
+            };
+
+            my.removeCallback = function (callback) {
+                my.callbacks.splice(my.callbacks.indexOf((callback)), 1);
+            };
+
+            that.call = function(routeName, args, answerCallback, cancelCallback) {
+                var route = that.getRouteByName(routeName);
+                var currentRoute = my.lastMatch.getRoute();
+
+                my.saveCallback(currentRoute, route, answerCallback, cancelCallback);
+
+                var url = route.expand(args);
+                return that.redirectToUrl(url);
+            };
+
+            that.answer = function(result) {
+                var currentRoute = my.lastMatch.getRoute();
+                if(currentRoute) {
+                    var callback = my.getCallbackByTarget(currentRoute);
+                    if(callback) {
+                        callback.caller.trigger('answer', true, callback.answerCallback, result);
+                        my.removeCallback(callback);
+                        return;
+                    }
+                }
+
+                return that.back();
+            };
+
+            that.cancel = function () {
+                var currentRoute = my.lastMatch.getRoute();
+                if(currentRoute) {
+                    var callback = my.getCallbackByTarget(currentRoute);
+                    if(callback) {
+                        callback.caller.trigger('answer', false, callback.cancelCallback);
+                        my.removeCallback(callback);
+                        return;
+                    }
+                }
+
+                return that.back();
+
+            };
+
+
+            my.resolveUrl = function(aUrl) {
 				var currentUrl = aUrl === undefined ? my.location.getUrl() : aUrl;
 
 				that.trigger('resolveUrl', currentUrl);
@@ -122,6 +210,12 @@ define(
 				my.routeTable.some(function(candidateRoute) {
 					var result = currentUrl.matchRoute(candidateRoute);
 					if(result.matched()) {
+
+                        var callback = my.getCallbackByCaller(candidateRoute);
+                        if(callback) {
+                            my.removeCallback(callback);
+                        }
+
 						my.lastMatch = result;
 						numMatched++;
 						that.trigger('routeMatched', result);
@@ -162,6 +256,10 @@ define(
 					});
 				}
 
+                if(routeSpec.name) {
+                    newRoute.name = routeSpec.name;
+                }
+
 				newRoute.fallThrough = routeSpec.fallThrough;
 
 				newRoute.priority = routeSpec.priority;
@@ -169,6 +267,14 @@ define(
 
 				return newRoute;
 			};
+
+            that.getRouteByName = function(name) {
+                var routes = my.routeTable.filter(function(route) {
+                    return route.name === name;
+                });
+
+                return routes.length > 0 ? routes[0] : null;
+            };
 
 			that.removeRoute = function(route) {
 				var index = my.routeTable.indexOf(route);
@@ -266,6 +372,7 @@ define(
 			that.back = function(aFallbackUrl) {
 				return my.location.back(aFallbackUrl);
 			};
+
 
 			that.start = function() {
 				my.location.start();

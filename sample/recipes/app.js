@@ -32,7 +32,7 @@ define([
 
 		/**
 		 * Registers routes and creates menu items using addAction()
-		 * Executed once on start-up to initilize the application.
+		 * Executed once on start-up to initialize the application.
 		 */
 		that.initialize = function () {
 			my.router = router.router;
@@ -57,6 +57,7 @@ define([
 			});
 
 			that.addAction({
+                name: 'editRecipe',
 				pattern: 'recipe/#recipeId/edit',
 				action: function(recipeEditor, recipeId) {
 					recipeEditor.edit(recipeId);
@@ -120,7 +121,7 @@ define([
 			var menuId = options.menuId || my.nextId(),
 				doc = options.doc;
 
-			var route = my.router.addRoute({ pattern: options.pattern});
+			var route = my.router.addRoute({ pattern: options.pattern, name: options.name });
 			route.on('matched', function(result) {
 				if(options.action) {
 					options.action.apply(my.router, [doc].concat(result.getCallbackArguments()));
@@ -130,6 +131,13 @@ define([
 				mainRegion.set(doc);
 				jQuery('html, body').animate({ scrollTop: 0}, 200);
 			});
+
+            route.on('answer', function(success, callback, result) {
+                navigation.activate(menuId);
+                mainRegion.set(doc);
+
+                callback(result);
+            });
 
 			if(options.menuLabel) {
 				var url = route.expand(options.values || {});
