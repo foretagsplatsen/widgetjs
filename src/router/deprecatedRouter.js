@@ -19,7 +19,7 @@ define([
 
 		that.resolvePath = that.resolveUrl;
 		that.getPath = function() { return that.getUrl().toString(); };
-		that.updatePath = that.updateUrl;
+		that.updatePath = that.setParameters;
 
 		return that;
 	}());

@@ -55,7 +55,7 @@ define(
 		//		});
 		//
 		//		aRoute.on('matched', function(result) {
-		//			console.dir(result.getParameters());
+		//			console.dir(result.getRouteParameters());
 		//		});
 		//
 		// Routes are removed using 'removeRoute'
@@ -245,7 +245,7 @@ define(
 				return my.location.setUrl(aUrl);
 			};
 
-			that.getUpdateUrl = function(routeName, parameters) {
+			that.getParameterPath = function(routeName, parameters) {
                 // routeName can be omitted
                 if(!(typeof routeName == 'string' || routeName instanceof String)) {
                     parameters = routeName;
@@ -269,7 +269,7 @@ define(
                 else if(my.lastMatch) {
 					currentRoute = my.lastMatch.getRoute();
 					newQuery = Object.create(my.lastMatch.getUrl().getQuery());
-					newParameters = Object.create(my.lastMatch.getParameters());
+					newParameters = Object.create(my.lastMatch.getRouteParameters());
 				}
 
                 // otherwise put everything in query parameters
@@ -292,15 +292,24 @@ define(
 			};
 
 
-			that.linkToUpdateUrl = function(routeName, parameters) {
-				return my.location.linkToUrl(that.getUpdateUrl(routeName, parameters));
+			that.linkToParameters = function(routeName, parameters) {
+				return my.location.linkToUrl(that.getParameterPath(routeName, parameters));
 			};
 
-			that.updateUrl = function(routeName, parameters) {
-				that.redirectToUrl(that.getUpdateUrl(routeName, parameters));
+			that.setParameters = function(routeName, parameters) {
+				that.redirectToUrl(that.getParameterPath(routeName, parameters));
 			};
 
-			that.back = function(aFallbackUrl) {
+            that.getRouteParameters = function () {
+                return my.lastMatch ? my.lastMatch.getParameters() : {};
+            };
+
+            that.getParameter = function (parameterKey) {
+                var parameters = that.getRouteParameters();
+                return parameters[parameterKey];
+            };
+
+            that.back = function(aFallbackUrl) {
 				return my.location.back(aFallbackUrl);
 			};
 

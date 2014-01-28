@@ -422,30 +422,30 @@ define(
 			);
 		});
 
-        test("Update URL for named route", function () {
+        test("Path from parameters for named route", function () {
             // Arrange: a named route
             aRouter.addRoute({name: 'user', pattern: '/user/#userId'});
 
-            // Act: get URL from parameters
-            var url = aRouter.getUpdateUrl('user', { userId: 'john', includeDetails : true});
+            // Act: get path from parameters
+            var url = aRouter.getParameterPath('user', { userId: 'john', includeDetails : true});
 
-            // Assert that URL parameters was injected in url and
+            // Assert that route parameters was injected in url and
             // other parameters was set in query
             equal(url.toString(), 'user/john?includeDetails=true', 'URL match pattern and data');
         });
 
-        test("Update URL for empty route", function () {
+        test("Path from parameters for empty route", function () {
             // Arrange: empty hash route
             window.location.hash = ''; // start path
 
-            // Act: get URL from parameters
-            var url = aRouter.getUpdateUrl({ userId: 'john', includeDetails : true});
+            // Act: get path from parameters
+            var url = aRouter.getParameterPath({ userId: 'john', includeDetails : true});
 
             // Assert that all parameters was set as query parameters
             equal(url.toString(), '?userId=john&includeDetails=true', 'URL match pattern and data');
         });
 
-        asyncTest("Update URL for named route", 1, function () {
+        asyncTest("Path from parameters for current route", 1, function () {
             // Arrange: a named route
             aRouter.addRoute({
                 name: 'user',
@@ -459,12 +459,44 @@ define(
             // and navigate to that route
             aRouter.redirectTo('/user/john', {includeCompanies : true});
 
-            // Act: get URL from parameters
-            var url = aRouter.getUpdateUrl({ includeDetails : true});
+            // Act: get path from parameters for current location
+            var url = aRouter.getParameterPath({ includeDetails : true});
 
-            // Assert that URL parameters was injected in url and
+            // Assert that route parameters was injected in url and
             // other parameters was set in query
             equal(url.toString(), 'user/john?includeDetails=true&includeCompanies=true', 'URL match pattern and data');
+        });
+
+        test("GetParameters from current URL", function () {
+            // Arrange: a named route
+            aRouter.addRoute({name: 'user', pattern: '/user/#userId'});
+
+            // and navigate to that route
+            aRouter.redirectTo('/user/john', {includeCompanies : true});
+
+            // Act: get parameters from URL
+            var parameters = aRouter.getRouteParameters();
+
+            // Assert that parameters contains both query and URL parameters
+            deepEqual(parameters, {userId : 'john', includeCompanies: 'true'}, 'Parameters contains query and URL parameters');
+        });
+
+        test("GetParameter", function () {
+            // Arrange: a named route
+            aRouter.addRoute({name: 'user', pattern: '/user/#userId'});
+
+            // and navigate to that route
+            aRouter.redirectTo('/user/john', {includeCompanies : true});
+
+            // Act: get parameters from URL
+            var userIdParameter = aRouter.getParameter('userId');
+            var includeCompaniesParameter = aRouter.getParameter('includeCompanies');
+            var unknownParameter = aRouter.getParameter('unknown');
+
+            // Assert that parameters contains both query and URL parameters
+            equal(userIdParameter, 'john', 'URL parameter match');
+            equal(includeCompaniesParameter, 'true', 'Query parameter match');
+            equal(unknownParameter, null, 'Unknown parameter is null');
         });
 
         asyncTest("updatePath()", function () {
@@ -484,19 +516,19 @@ define(
 					equal(aRouter.getUrl().toString(), 'a/b?foo=bar', 'parameter and query set');
 				},
 				function () {
-					aRouter.updateUrl({value : 'hello'});
+					aRouter.setParameters({value : 'hello'});
 				},
 				function () {
 					equal(aRouter.getUrl().toString(), 'a/hello?foo=bar', 'parameter updated');
 				},
 				function () {
-					aRouter.updateUrl({foo : 'world'});
+					aRouter.setParameters({foo : 'world'});
 				},
 				function () {
 					equal(aRouter.getUrl().toString(), 'a/hello?foo=world', 'query updated');
 				},
 				function () {
-					aRouter.updateUrl({extra : 'fun'});
+					aRouter.setParameters({extra : 'fun'});
 				},
 				function () {
 					equal(aRouter.getUrl().toString(), 'a/hello?extra=fun&foo=world', 'extra parameter added');
