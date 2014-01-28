@@ -71,6 +71,18 @@ define(
 			equal(my.routeTable.length, 0, 'route was removed from routetable');
 		});
 
+
+        test("Named routes", function () {
+            // Arrange: a named route
+            var route = aRouter.addRoute({name: 'users', pattern: '/users/'});
+
+            // Act: lookup route by name
+            var namedRoute = aRouter.getRouteByName('users');
+
+            // Assert that route is found
+            equal(namedRoute, route, 'same route');
+        });
+
 		test("Add routes with priority", function () {
 			// Act: add routes with different priorities
 			var invoiceRoute = aRouter.addRoute({pattern: '/invoice/'});

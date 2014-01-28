@@ -162,6 +162,7 @@ define(
 					});
 				}
 
+                newRoute.name = routeSpec.name;
 				newRoute.fallThrough = routeSpec.fallThrough;
 
 				newRoute.priority = routeSpec.priority;
@@ -169,6 +170,24 @@ define(
 
 				return newRoute;
 			};
+
+            that.findRoute = function(predicate) {
+                var numRoutes = my.routeTable.length;
+                for(var routeIndex = 0; routeIndex < numRoutes; routeIndex++) {
+                    var route = my.routeTable[routeIndex];
+                    if(predicate(route)) {
+                        return route;
+                    }
+                }
+
+                return null;
+            };
+
+            that.getRouteByName = function(routeName) {
+                return that.findRoute(function(route) {
+                    return route.name && route.name === routeName;
+                });
+            };
 
 			that.removeRoute = function(route) {
 				var index = my.routeTable.indexOf(route);
