@@ -245,18 +245,36 @@ define(
 				return my.location.setUrl(aUrl);
 			};
 
-			that.getUpdateUrl = function(parameters) {
-				var newQuery, newParameters, currentRoute;
+			that.getUpdateUrl = function(routeName, parameters) {
+                // routeName can be omitted
+                if(!(typeof routeName == 'string' || routeName instanceof String)) {
+                    parameters = routeName;
+                    routeName = null;
+                }
 
-				// Use current route as template
-				if(my.lastMatch) {
+				var newQuery = {};
+                var newParameters = {};
+                var currentRoute;
+
+                // Lookup named route if name supplied
+                if(routeName) {
+                    currentRoute = that.getRouteByName(routeName);
+                    if(!currentRoute) {
+                        throw new Error("No route found with name " + routeName);
+                    }
+                }
+
+				// Use current route as template and pre-fill parameters
+                // and query with current url values
+                else if(my.lastMatch) {
 					currentRoute = my.lastMatch.getRoute();
 					newQuery = Object.create(my.lastMatch.getUrl().getQuery());
 					newParameters = Object.create(my.lastMatch.getParameters());
-				} else {
+				}
+
+                // otherwise put everything in query parameters
+                else {
 					currentRoute = route();
-					newQuery = {};
-					newParameters = {};
 				}
 
 				// If parameter exist in route add to parameters otherwise to query.
@@ -274,12 +292,12 @@ define(
 			};
 
 
-			that.linkToUpdateUrl = function(parameters) {
-				return my.location.linkToUrl(that.getUpdateUrl(parameters));
+			that.linkToUpdateUrl = function(routeName, parameters) {
+				return my.location.linkToUrl(that.getUpdateUrl(routeName, parameters));
 			};
 
-			that.updateUrl = function(parameters) {
-				that.redirectToUrl(that.getUpdateUrl(parameters));
+			that.updateUrl = function(routeName, parameters) {
+				that.redirectToUrl(that.getUpdateUrl(routeName, parameters));
 			};
 
 			that.back = function(aFallbackUrl) {

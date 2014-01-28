@@ -422,7 +422,52 @@ define(
 			);
 		});
 
-		asyncTest("updatePath()", function () {
+        test("Update URL for named route", function () {
+            // Arrange: a named route
+            aRouter.addRoute({name: 'user', pattern: '/user/#userId'});
+
+            // Act: get URL from parameters
+            var url = aRouter.getUpdateUrl('user', { userId: 'john', includeDetails : true});
+
+            // Assert that URL parameters was injected in url and
+            // other parameters was set in query
+            equal(url.toString(), 'user/john?includeDetails=true', 'URL match pattern and data');
+        });
+
+        test("Update URL for empty route", function () {
+            // Arrange: empty hash route
+            window.location.hash = ''; // start path
+
+            // Act: get URL from parameters
+            var url = aRouter.getUpdateUrl({ userId: 'john', includeDetails : true});
+
+            // Assert that all parameters was set as query parameters
+            equal(url.toString(), '?userId=john&includeDetails=true', 'URL match pattern and data');
+        });
+
+        asyncTest("Update URL for named route", 1, function () {
+            // Arrange: a named route
+            aRouter.addRoute({
+                name: 'user',
+                pattern: '/user/#userId',
+                action: function() {
+                    start();
+                    this.unbind(); // clean-up: unbound this event
+                }
+            });
+
+            // and navigate to that route
+            aRouter.redirectTo('/user/john', {includeCompanies : true});
+
+            // Act: get URL from parameters
+            var url = aRouter.getUpdateUrl({ includeDetails : true});
+
+            // Assert that URL parameters was injected in url and
+            // other parameters was set in query
+            equal(url.toString(), 'user/john?includeDetails=true&includeCompanies=true', 'URL match pattern and data');
+        });
+
+        asyncTest("updatePath()", function () {
 			aRouter.stop();
 			window.location.hash = ''; // start path
 			aRouter.start();

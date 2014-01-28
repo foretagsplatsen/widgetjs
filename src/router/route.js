@@ -57,7 +57,7 @@ define(
 			my = my || {};
 
 			// Segments to match
-			var segments = spec.segments;
+			var segments = spec.segments || [];
 
 			// Array with all optional sequences, ie. all combinations
 			// of optional perameters. Array must be orderd to match URL:s
