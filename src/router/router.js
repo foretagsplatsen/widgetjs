@@ -288,6 +288,8 @@ define(
                     routeName = null;
                 }
 
+                parameters = parameters || {};
+
 				var newQuery = {};
                 var newParameters = {};
                 var currentRoute;
