@@ -322,13 +322,11 @@ define(
 
 			throws(function () { aRouter.linkTo(null); }, 'throws error if null');
 			throws(function () { aRouterlinkTo(undefined); }, 'throws error if undefined');
-			throws(function () { aRouter.linkTo({}); }, 'throws error if object');
 		});
 
 		test("redirectTo() changes the current location to URL", function () {
 			throws(function () { aRouter.redirectTo(null); }, 'throws error if null');
 			throws(function () { aRouter.redirectTo(undefined); }, 'throws error if undefined');
-			throws(function () { aRouter.redirectTo({}); }, 'throws error if object');
 
 			aRouter.redirectTo('aPath');
 			equal(window.location.hash, '#!/aPath', 'sets window.location.hash');

@@ -229,7 +229,25 @@ define(
 				return my.location.getUrl();
 			};
 
-			that.linkTo = function(path, query) {
+            that.linkTo = function(path, query) {
+                // TODO: Clean-up this code when deprecated code can be removed.
+
+                // If path is an object assume it's a parameter object
+                if(!(typeof path == 'string' || path instanceof String)) {
+                    return that.linkToParameters(path);
+                }
+
+                // If path match a route name assume it's a routeName
+                var route = that.getRouteByName(path);
+                if(route) {
+                    return that.linkToParameters(route.name, query);
+                }
+
+                // TODO: deprecated. Should be used directly using linkToPath not linkTo
+                return that.linkToPath(path, query);
+            };
+
+            that.linkToPath = function(path, query) {
 				return that.linkToUrl(url.build(path, query));
 			};
 
@@ -237,7 +255,25 @@ define(
 				return my.location.linkToUrl(aUrl);
 			};
 
-			that.redirectTo = function(path, query) {
+            that.redirectTo = function(path, query) {
+                // TODO: Clean-up this code when deprecated code can be removed.
+
+                // If path is an object assume it's a parameter object
+                if(!(typeof path == 'string' || path instanceof String)) {
+                    return that.setParameters(path);
+                }
+
+                // If path match a route name assume it's a routeName
+                var route = that.getRouteByName(path);
+                if(route) {
+                    return that.setParameters(route.name, query);
+                }
+
+                // TODO: deprecated. Should be used directly using redirectToPath not redirectTo
+                return that.redirectToPath(path, query);
+            };
+
+			that.redirectToPath = function(path, query) {
 				return that.redirectToUrl(url.build(path, query));
 			};
 
