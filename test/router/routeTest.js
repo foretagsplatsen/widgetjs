@@ -156,18 +156,18 @@ define(
 			equal(result.getRoute(), route, 'have route');
 			equal(result.getUrl(), url, 'have url');
 
-			ok(result.getParameters(), 'contains parameters');
-			equal(result.getParameters().a, 'hello', 'first parameter set');
-			equal(result.getParameters().a, 'hello', 'first parameter set');
+			ok(result.getRouteParameters(), 'contains parameters');
+			equal(result.getRouteParameters().a, 'hello', 'first parameter set');
+			equal(result.getRouteParameters().a, 'hello', 'first parameter set');
 
-			deepEqual(result.getValues(), ['hello', 'world'], 'values as array');
-			deepEqual(result.getKeys(), ['a', 'b'], 'parameter names as array');
+			deepEqual(result.getRouteParameterValues(), ['hello', 'world'], 'values as array');
+			deepEqual(result.getRouteParameterKeys(), ['a', 'b'], 'parameter names as array');
 
 		});
 
 		test("Route match capture parameters", function() {
 			var result = router.url("/hello/world").matchRoute(router.route("#foo/#bar"));
-			var props = result.getParameters();
+			var props = result.getRouteParameters();
 
 			ok(props, 'contains parameters');
 			equal(props.foo, "hello");
@@ -177,7 +177,7 @@ define(
 
 		test("Route match capture parameters mixed with statics", function() {
 			var result = router.url("/hello/static/world").matchRoute(router.route("#foo/static/#bar"));
-			var props = result.getParameters();
+			var props = result.getRouteParameters();
 
 			ok(props, 'contains parameters');
 			equal(props.foo, "hello", 'foo');
@@ -187,7 +187,7 @@ define(
 
 		test("Route parameter capture optional parameters", function() {
 			var result = router.url("/hello/world").matchRoute(router.route("?foo/?bar"));
-			var props = result.getParameters();
+			var props = result.getRouteParameters();
 
 			ok(props, 'contains parameters');
 			equal(props.foo, "hello");
@@ -195,16 +195,16 @@ define(
 		});
 
 		test("Route parameter capture optional parameters mixed with parameters", function() {
-			var firstOptionalBothMatch = router.url("hello/world").matchRoute(router.route("?foo/#bar")).getParameters();
+			var firstOptionalBothMatch = router.url("hello/world").matchRoute(router.route("?foo/#bar")).getRouteParameters();
 			deepEqual(firstOptionalBothMatch, { foo: 'hello', bar : 'world'}, 'match all segments if possible');
 
-			var firstOptionalOneMatch = router.url("/world").matchRoute(router.route("?foo/#bar")).getParameters();
+			var firstOptionalOneMatch = router.url("/world").matchRoute(router.route("?foo/#bar")).getRouteParameters();
 			deepEqual(firstOptionalOneMatch, { foo: undefined, bar : 'world'}, 'match mandatory parameter first');
 
-			var optionalInPath = router.url("hello/world").matchRoute(router.route("#foo/?bar/#bro")).getParameters();
+			var optionalInPath = router.url("hello/world").matchRoute(router.route("#foo/?bar/#bro")).getRouteParameters();
 			deepEqual(optionalInPath, { foo: 'hello', bar: undefined,bro : 'world'}, 'match mandatory parameters even if not first');
 
-			var trailingOptionals = router.url("hello/world").matchRoute(router.route("#foo/?bar/?bro")).getParameters();
+			var trailingOptionals = router.url("hello/world").matchRoute(router.route("#foo/?bar/?bro")).getRouteParameters();
 			deepEqual(trailingOptionals, { foo: 'hello', bar : 'world', bro: undefined}, 'match optional from left');
 		});
 
@@ -216,7 +216,7 @@ define(
 			});
 
 			var result = router.url("/hello").matchRoute(route);
-			var props = result.getParameters();
+			var props = result.getRouteParameters();
 
 			ok(props, 'contains parameters');
 			equal(props.foo, "hello");
@@ -324,19 +324,19 @@ define(
 			ok(!aRoute.matchUrl(router.url('ö')).matched(), 'no parameters match url segment');
 
 			ok(aRoute.matchUrl(router.url('henrik/micke/h')).matched(), 'all constraints match');
-			deepEqual(aRoute.matchUrl(router.url('henrik/micke/h')).getParameters(), { a: 'henrik', b: 'micke', c: 'h'}, 'parameters');
+			deepEqual(aRoute.matchUrl(router.url('henrik/micke/h')).getRouteParameters(), { a: 'henrik', b: 'micke', c: 'h'}, 'parameters');
 
 			ok(aRoute.matchUrl(router.url('henrik/micke')).matched(), 'first two constraints match');
-			deepEqual(aRoute.matchUrl(router.url('henrik/micke')).getParameters(), { a: 'henrik', b: 'micke', c: undefined}, 'parameters');
+			deepEqual(aRoute.matchUrl(router.url('henrik/micke')).getRouteParameters(), { a: 'henrik', b: 'micke', c: undefined}, 'parameters');
 
 			ok(aRoute.matchUrl(router.url('henrik')).matched(), 'first constraint match');
-			deepEqual(aRoute.matchUrl(router.url('henrik')).getParameters(), { a: 'henrik', b: undefined, c: undefined}, 'parameters');
+			deepEqual(aRoute.matchUrl(router.url('henrik')).getRouteParameters(), { a: 'henrik', b: undefined, c: undefined}, 'parameters');
 
 			ok(aRoute.matchUrl(router.url('micke')).matched(), 'second constraint match');
-			deepEqual(aRoute.matchUrl(router.url('micke')).getParameters(), { a: undefined, b: 'micke', c: undefined}, 'parameters');
+			deepEqual(aRoute.matchUrl(router.url('micke')).getRouteParameters(), { a: undefined, b: 'micke', c: undefined}, 'parameters');
 
 			ok(aRoute.matchUrl(router.url('h')).matched(), 'last constraint match');
-			deepEqual(aRoute.matchUrl(router.url('h')).getParameters(), { a: undefined, b: undefined, c: 'h'}, 'parameters');
+			deepEqual(aRoute.matchUrl(router.url('h')).getRouteParameters(), { a: undefined, b: undefined, c: 'h'}, 'parameters');
 		});
 
 

@@ -28,10 +28,8 @@ define(
 				aRouter = router({}, my);
 			},
 			teardown: function() {
-				window.location.hash = '';
-				aRouter.stop();
-				my = null;
-				aRouter = null;
+                aRouter.stop();
+                aRouter.clear();
 			}
 		});
 
@@ -70,6 +68,18 @@ define(
 			// Assert that route was removed from route table
 			equal(my.routeTable.length, 0, 'route was removed from routetable');
 		});
+
+
+        test("Named routes", function () {
+            // Arrange: a named route
+            var route = aRouter.addRoute({name: 'users', pattern: '/users/'});
+
+            // Act: lookup route by name
+            var namedRoute = aRouter.getRouteByName('users');
+
+            // Assert that route is found
+            equal(namedRoute, route, 'same route');
+        });
 
 		test("Add routes with priority", function () {
 			// Act: add routes with different priorities
@@ -264,6 +274,7 @@ define(
 				pattern: '/user/',
 				action: function() {
 					ok(false, 'but not after that route');
+                    this.unbind(); // clean-up
 				}
 			});
 
@@ -278,10 +289,12 @@ define(
 			var userRoute = aRouter.addRoute({
 				pattern: '/user/#name/',
 				constraints: {
-					name: ['nicolas', 'Mikael'],
+					name: ['nicolas', 'Mikael']
 				},
 				action: function(name) {
 					ok(true, 'Route got name ' + name);
+                    start();
+                    this.unbind(); // clean-up
 				}
 			});
 
@@ -289,9 +302,6 @@ define(
 			aRouter.resolveUrl('/user/nicolas');
 			aRouter.resolveUrl('/user/john');
 			aRouter.resolveUrl('/user/james');
-			start();
-
-			// Assert: only 1 match
 		});
 
 		test("getUrl returns current location", function () {
@@ -303,21 +313,12 @@ define(
 			equal(currentUrl.toString(), 'aPath', 'url is current location');
 		});
 
-
 		test("linkTo() creates links for href", function () {
 			equal(aRouter.linkTo('aPath'), '#!/aPath', 'Hash-bang "#!" convention (hash.js)');
 			equal(aRouter.linkTo(''), '#!/', 'handles empty path');
-
-			throws(function () { aRouter.linkTo(null); }, 'throws error if null');
-			throws(function () { aRouterlinkTo(undefined); }, 'throws error if undefined');
-			throws(function () { aRouter.linkTo({}); }, 'throws error if object');
 		});
 
 		test("redirectTo() changes the current location to URL", function () {
-			throws(function () { aRouter.redirectTo(null); }, 'throws error if null');
-			throws(function () { aRouter.redirectTo(undefined); }, 'throws error if undefined');
-			throws(function () { aRouter.redirectTo({}); }, 'throws error if object');
-
 			aRouter.redirectTo('aPath');
 			equal(window.location.hash, '#!/aPath', 'sets window.location.hash');
 
@@ -342,6 +343,7 @@ define(
 
 			// Assert that second router matched the route
 			ok(true, 'callback executed for route');
+            anotherRouter.stop();
 		});
 
 		asyncTest("Pipe route to another router", 1, function () {
@@ -361,6 +363,7 @@ define(
 
 			// Assert that second router matched the route
 			ok(true, 'callback executed for route');
+            anotherRouter.stop();
 		});
 
 		asyncTest("back()", function () {
@@ -410,7 +413,82 @@ define(
 			);
 		});
 
-		asyncTest("updatePath()", function () {
+         test("Path from parameters for named route", function () {
+            // Arrange: a named route
+            aRouter.addRoute({name: 'user', pattern: '/user/#userId'});
+
+            // Act: get path from parameters
+            var url = aRouter.getParameterPath('user', { userId: 'john', includeDetails : true});
+
+            // Assert that route parameters was injected in url and
+            // other parameters was set in query
+            equal(url.toString(), 'user/john?includeDetails=true', 'URL match pattern and data');
+        });
+
+        test("Path from parameters for empty route", function () {
+            // Arrange: empty hash route
+            window.location.hash = ''; // start path
+
+            // Act: get path from parameters
+            var url = aRouter.getParameterPath({ userId: 'john', includeDetails : true});
+
+            // Assert that all parameters was set as query parameters
+            equal(url.toString(), '?userId=john&includeDetails=true', 'URL match pattern and data');
+        });
+
+
+
+         test("Path from parameters for current route", function () {
+            // Arrange: a named route
+            aRouter.addRoute({
+                name: 'user',
+                pattern: '/user/#userId'
+            });
+
+            // and navigate to that route
+            aRouter.redirectTo('/user/john', { includeCompanies : true});
+
+            // Act: get path from parameters for current location
+            var url = aRouter.getParameterPath({ includeDetails : true});
+
+            // Assert that route parameters was injected in url and
+            // other parameters was set in query
+            equal(url.toString(), 'user/john?includeDetails=true&includeCompanies=true', 'URL match pattern and data');
+        });
+
+        test("GetParameters from current URL", function () {
+            // Arrange: a named route
+            aRouter.addRoute({name: 'user', pattern: '/user/#userId'});
+
+            // and navigate to that route
+            aRouter.redirectTo('/user/john', {includeCompanies : true});
+
+            // Act: get parameters from URL
+            var parameters = aRouter.getRouteParameters();
+
+            // Assert that parameters contains both query and URL parameters
+            deepEqual(parameters, {userId : 'john', includeCompanies: 'true'}, 'Parameters contains query and URL parameters');
+        });
+
+        test("GetParameter", function () {
+            // Arrange: a named route
+            aRouter.addRoute({name: 'user', pattern: '/user/#userId'});
+
+            // and navigate to that route
+            aRouter.redirectTo('/user/john', {includeCompanies : true});
+
+            // Act: get parameters from URL
+            var userIdParameter = aRouter.getParameter('userId');
+            var includeCompaniesParameter = aRouter.getParameter('includeCompanies');
+            var unknownParameter = aRouter.getParameter('unknown');
+
+            // Assert that parameters contains both query and URL parameters
+            equal(userIdParameter, 'john', 'URL parameter match');
+            equal(includeCompaniesParameter, 'true', 'Query parameter match');
+            equal(unknownParameter, null, 'Unknown parameter is null');
+        });
+
+        asyncTest("setParameters()", function () {
 			aRouter.stop();
 			window.location.hash = ''; // start path
 			aRouter.start();
@@ -427,19 +505,19 @@ define(
 					equal(aRouter.getUrl().toString(), 'a/b?foo=bar', 'parameter and query set');
 				},
 				function () {
-					aRouter.updateUrl({value : 'hello'});
+					aRouter.setParameters({value : 'hello'});
 				},
 				function () {
 					equal(aRouter.getUrl().toString(), 'a/hello?foo=bar', 'parameter updated');
 				},
 				function () {
-					aRouter.updateUrl({foo : 'world'});
+					aRouter.setParameters({foo : 'world'});
 				},
 				function () {
 					equal(aRouter.getUrl().toString(), 'a/hello?foo=world', 'query updated');
 				},
 				function () {
-					aRouter.updateUrl({extra : 'fun'});
+					aRouter.setParameters({extra : 'fun'});
 				},
 				function () {
 					equal(aRouter.getUrl().toString(), 'a/hello?extra=fun&foo=world', 'extra parameter added');
@@ -449,6 +527,5 @@ define(
 				}
 			);
 		});
-
 	}
 );

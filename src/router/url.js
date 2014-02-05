@@ -54,8 +54,11 @@ define(
 			}
 
 			if (query) {
-				return url((path + '?' + decodeURIComponent(jQuery.param(query))));
-			}
+                var queryPart = decodeURIComponent(jQuery.param(query));
+                if(queryPart) {
+                    return url((path + '?' + queryPart));
+                }
+            }
 
 			return url(path);
 		};

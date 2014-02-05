@@ -36,10 +36,10 @@ define([
 				hashLocation = hash({}, my);
 			},
 			teardown: function() {
+                if(hashLocation) {
+                    hashLocation.stop();
+                }
 				window.location.hash = '';
-				hashLocation.stop();
-				my = null;
-				hashLocation = null;
 			}
 		});
 
@@ -77,7 +77,7 @@ define([
 		});
 
 		if(!($.browser.msie  && parseInt($.browser.version, 10) === 7)) {
-			asyncTest("triggers changed event when URL is changed", function () {
+			asyncTest("triggers changed event when URL is changed", 1, function () {
 				// Arrange: listen for url changes
 				var capturedUrls = [];
 				hashLocation.on('changed', function(url) {
@@ -128,19 +128,23 @@ define([
 		});
 
 		asyncTest("setUrl() triggers change", 1, function () {
+            var anotherHashLocation = hash();
+
 			// Arrange: listen for url changes
 			var capturedUrl;
-			hashLocation.on('changed', function(url) {
+            anotherHashLocation.on('changed', function(url) {
 				capturedUrl = url;
 				start();
 			});
 
 			// Act: set URL
-			hashLocation.start();
-			hashLocation.setUrl('test');
+            anotherHashLocation.start();
+            anotherHashLocation.setUrl('test');
 
 			// Assert that 'change' callback was executed with url
 			equal(capturedUrl, 'test', 'Parameter in "changed event" is URL');
+
+            anotherHashLocation.stop();
 		});
 
 		asyncTest("back()", 5, function () {

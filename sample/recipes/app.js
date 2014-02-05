@@ -38,6 +38,7 @@ define([
 			my.router = router.router;
 
 			that.addAction({
+                name: 'recipes',
 				pattern: '',
 				action: function(recipes) {
 					recipes.showAll();
@@ -48,6 +49,7 @@ define([
 			});
 
 			that.addAction({
+                name: 'showRecipe',
 				pattern: 'recipe/#recipeId',
 				action: function(recipe, recipeId) {
 					recipe.show(recipeId);
@@ -57,6 +59,7 @@ define([
 			});
 
 			that.addAction({
+                name: 'editRecipe',
 				pattern: 'recipe/#recipeId/edit',
 				action: function(recipeEditor, recipeId) {
 					recipeEditor.edit(recipeId);
@@ -66,6 +69,7 @@ define([
 			});
 
 			that.addAction({
+                name: 'createRecipe',
 				pattern: 'create/recipe',
 				action: function(recipeEditor) {
 					recipeEditor.create();
@@ -75,12 +79,14 @@ define([
 			});
 
 			that.addAction({
+                name: 'export',
 				pattern: 'export',
 				doc: documents.exportDocument,
 				menuLabel: 'Export'
 			});
 
 			that.addAction({
+                name: 'about',
 				pattern: 'about',
 				doc: documents.aboutDocument,
 				menuLabel: 'About',
@@ -120,7 +126,7 @@ define([
 			var menuId = options.menuId || my.nextId(),
 				doc = options.doc;
 
-			var route = my.router.addRoute({ pattern: options.pattern});
+			var route = my.router.addRoute({ pattern: options.pattern, name: options.name});
 			route.on('matched', function(result) {
 				if(options.action) {
 					options.action.apply(my.router, [doc].concat(result.getCallbackArguments()));
@@ -133,7 +139,7 @@ define([
 
 			if(options.menuLabel) {
 				var url = route.expand(options.values || {});
-				navigation.items.push({ id: menuId, href: my.router.linkTo(url), label: options.menuLabel });
+				navigation.items.push({ id: menuId, href: my.router.linkToUrl(url), label: options.menuLabel });
 			}
 		};
 

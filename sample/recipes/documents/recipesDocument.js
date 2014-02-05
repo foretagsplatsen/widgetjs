@@ -6,34 +6,34 @@ define([
 	/**
 	 * List all recipes
 	 */
-	function recepiesDocument(spec, my) {
+	function recipesDocument(spec, my) {
 		spec = spec || {};
 		my = my || {};
 
 		var that = widgetjs.widget(spec, my);
 
-		var recepies = [];
+		var recipes = [];
 
 		/**
-		 * Show all recipies in database
+		 * Show all recipes in database
 		 */
 		that.showAll = function() {
 			recipeRepository.findAll({
 				onSuccess: function(allRecipes) {
-					recepies = allRecipes;
+					recipes = allRecipes;
 					that.update();
 				}
 			});
 		};
 
 		that.renderContentOn = function (html) {
-			html.div({klass: 'row'}, recepies.map(function(recipe, index) {
+			html.div({klass: 'row'}, recipes.map(function(recipe, index) {
 				return function (html) {
 					html.div({klass: 'recipe-card col-xs-6 col-sm-2'},
-						html.a({href: my.linkTo('/recipe/' + recipe.id)},
+						html.a({href: my.linkTo('showRecipe', { recipeId: recipe.id })},
 							html.img({klass: 'img-responsive img-thumbnail', src: recipe.image })
 						),
-						html.h5(html.a({href: my.linkTo('recipe/' + recipe.id)}, recipe.name))
+						html.h5(html.a({href: my.linkTo('showRecipe', { recipeId: recipe.id })}, recipe.name))
 					);
 
 					// Break rows every 6th item on desktop
@@ -52,5 +52,5 @@ define([
 		return that;
 	}
 
-	return recepiesDocument;
+	return recipesDocument;
 });

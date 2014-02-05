@@ -54,7 +54,7 @@ define([
 						return html.li(instruction.toString());
 					})),
 
-					html.a({ klass: 'btn', href: my.linkTo('recipe/' + recipe.id + '/edit')}, html.span({klass: 'glyphicon glyphicon-pencil'}), ' Edit')
+					html.a({ klass: 'btn', href: my.linkTo('editRecipe', {recipeId: recipe.id})}, html.span({klass: 'glyphicon glyphicon-pencil'}), ' Edit')
 				)
 			);
 		};

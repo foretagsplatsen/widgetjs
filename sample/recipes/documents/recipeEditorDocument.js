@@ -128,20 +128,20 @@ define([
 					// Save Button
 					html.button({klass: 'btn btn-default'}, 'Save Recipe').click(function() {
 						recipeRepository.save({model: recipe, onSuccess: function() {
-							my.redirectTo('recipe/' + recipe.id);
+							my.redirectTo('showRecipe', {recipeId: recipe.id});
 						}});
 					}),
 					' or ',
 
 					// Cancel Button
-					html.a({ href: my.linkTo(recipe.id ? 'recipe/' + recipe.id : '') }, 'Cancel')
+					html.a({ href: recipe.id ? my.linkTo('showRecipe', {recipeId: recipe.id}) : my.linkTo('recipes') }, 'Cancel')
 				),
 
 				html.span({ klass: 'pull-right'},
 					// Delete Button
 					html.button({klass: 'btn btn-danger'}, 'Delete Recipe').click(function() {
 						recipeRepository.remove({model: recipe, onSuccess: function() {
-							my.redirectTo('');
+							my.redirectTo('recipes');
 						}});
 					})
 				)

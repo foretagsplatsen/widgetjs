@@ -39,7 +39,7 @@ define(
 		// and return them in `matchResult`
 		//
 		//		var result = route('/user/#id').matchUrl('/user/john');
-		//		console.dir(result.getParameters()); // => { user: 'john'}
+		//		console.dir(result.getRouteParameters()); // => { user: 'john'}
 		//
 		// Routes can also be used as patterns for creating URLs
 		//
@@ -57,7 +57,7 @@ define(
 			my = my || {};
 
 			// Segments to match
-			var segments = spec.segments;
+			var segments = spec.segments || [];
 
 			// Array with all optional sequences, ie. all combinations
 			// of optional perameters. Array must be orderd to match URL:s
@@ -299,29 +299,50 @@ define(
 
 			var that = {};
 
-			that.getParameters = function() { return parameterValues; };
+            that.getRoute = function () {
+                return route;
+            };
 
-			that.getKeys = function() {
+            that.getUrl = function () {
+                return url;
+            };
+
+            that.matched = function() {
+                return true;
+            };
+
+			that.getRouteParameters = function() { return parameterValues; };
+
+			that.getRouteParameterKeys = function() {
 				return Object.keys(parameterValues);
 			};
 
-			that.getValues = function() {
-				return that.getKeys().map(function(v) {
+			that.getRouteParameterValues = function() {
+				return that.getRouteParameterKeys().map(function(v) {
 					return parameterValues[v];
 				});
 			};
 
-			that.getRoute = function () {
-				return route;
-			};
+            that.getParameters = function() {
+                var allProperties = {};
 
-			that.getUrl = function () {
-				return url;
-			};
+                // Fill with route parameters
+                for (var parameterName in parameterValues) {
+                    if(parameterValues.hasOwnProperty(parameterName)) {
+                        allProperties[parameterName] = parameterValues[parameterName];
+                    }
+                }
 
-			that.matched = function() {
-				return true;
-			};
+                // Fill with query parameters
+                var queryParameters = url.getQuery();
+                for (var queryParameterName in queryParameters) {
+                    if(queryParameters.hasOwnProperty(queryParameterName)) {
+                        allProperties[queryParameterName] = queryParameters[queryParameterName];
+                    }
+                }
+
+                return allProperties;
+            };
 
 			that.getCallbackArguments = function () {
 				var callbackArguments = parameters.map(function(p) {

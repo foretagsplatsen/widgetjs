@@ -98,16 +98,17 @@ define(
 
             // #### Route / Controller extensions
 
-            // Returns link to route/path
-            my.linkTo = function (path) {
-                return router.router.linkTo(path);
-            };
+            my.linkTo = router.router.linkTo;
+            my.linkToPath = router.router.linkToPath;
+            my.linkToUrl = router.router.linkToUrl;
 
-            // Redirects to route/path
-            my.redirectTo = function (path) {
-                router.router.redirectTo(path);
-            };
+            my.redirectTo = router.router.redirectTo;
+            my.redirectToPath = router.router.redirectToPath;
+            my.redirectToUrl = router.router.redirectToUrl;
 
+            my.getParameters = router.router.getParameters;
+            my.getParameter = router.router.getParameter;
+            my.setParameters = router.router.setParameters;
 
             // #### Render extensions
 

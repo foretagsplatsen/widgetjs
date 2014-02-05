@@ -55,7 +55,7 @@ define(
 		//		});
 		//
 		//		aRoute.on('matched', function(result) {
-		//			console.dir(result.getParameters());
+		//			console.dir(result.getRouteParameters());
 		//		});
 		//
 		// Routes are removed using 'removeRoute'
@@ -162,6 +162,7 @@ define(
 					});
 				}
 
+                newRoute.name = routeSpec.name;
 				newRoute.fallThrough = routeSpec.fallThrough;
 
 				newRoute.priority = routeSpec.priority;
@@ -169,6 +170,24 @@ define(
 
 				return newRoute;
 			};
+
+            that.findRoute = function(predicate) {
+                var numRoutes = my.routeTable.length;
+                for(var routeIndex = 0; routeIndex < numRoutes; routeIndex++) {
+                    var route = my.routeTable[routeIndex];
+                    if(predicate(route)) {
+                        return route;
+                    }
+                }
+
+                return null;
+            };
+
+            that.getRouteByName = function(routeName) {
+                return that.findRoute(function(route) {
+                    return route.name && route.name === routeName;
+                });
+            };
 
 			that.removeRoute = function(route) {
 				var index = my.routeTable.indexOf(route);
@@ -178,6 +197,11 @@ define(
 
 				my.routeTable.splice(index, 1);
 			};
+
+            that.clear = function() {
+                my.routeTable = [];
+                my.lastMatch = undefined;
+            };
 
 			that.pipeRoute = function (routeSpec, router) {
 				if(!routeSpec || !routeSpec.pattern) {
@@ -210,7 +234,25 @@ define(
 				return my.location.getUrl();
 			};
 
-			that.linkTo = function(path, query) {
+            that.linkTo = function(path, query) {
+                // TODO: Clean-up this code when deprecated code can be removed.
+
+                // If path is an object assume it's a parameter object
+                if(!(typeof path == 'string' || path instanceof String)) {
+                    return that.linkToParameters(path);
+                }
+
+                // If path match a route name assume it's a routeName
+                var route = that.getRouteByName(path);
+                if(route) {
+                    return that.linkToParameters(route.name, query);
+                }
+
+                // TODO: deprecated. Should be used directly using linkToPath not linkTo
+                return that.linkToPath(path, query);
+            };
+
+            that.linkToPath = function(path, query) {
 				return that.linkToUrl(url.build(path, query));
 			};
 
@@ -218,7 +260,25 @@ define(
 				return my.location.linkToUrl(aUrl);
 			};
 
-			that.redirectTo = function(path, query) {
+            that.redirectTo = function(path, query) {
+                // TODO: Clean-up this code when deprecated code can be removed.
+
+                // If path is an object assume it's a parameter object
+                if(!(typeof path == 'string' || path instanceof String)) {
+                    return that.setParameters(path);
+                }
+
+                // If path match a route name assume it's a routeName
+                var route = that.getRouteByName(path);
+                if(route) {
+                    return that.setParameters(route.name, query);
+                }
+
+                // TODO: deprecated. Should be used directly using redirectToPath not redirectTo
+                return that.redirectToPath(path, query);
+            };
+
+			that.redirectToPath = function(path, query) {
 				return that.redirectToUrl(url.build(path, query));
 			};
 
@@ -226,18 +286,38 @@ define(
 				return my.location.setUrl(aUrl);
 			};
 
-			that.getUpdateUrl = function(parameters) {
-				var newQuery, newParameters, currentRoute;
+			that.getParameterPath = function(routeName, parameters) {
+                // routeName can be omitted
+                if(!(typeof routeName == 'string' || routeName instanceof String)) {
+                    parameters = routeName;
+                    routeName = null;
+                }
 
-				// Use current route as template
-				if(my.lastMatch) {
+                parameters = parameters || {};
+
+				var newQuery = {};
+                var newParameters = {};
+                var currentRoute;
+
+                // Lookup named route if name supplied
+                if(routeName) {
+                    currentRoute = that.getRouteByName(routeName);
+                    if(!currentRoute) {
+                        throw new Error("No route found with name " + routeName);
+                    }
+                }
+
+				// Use current route as template and pre-fill parameters
+                // and query with current url values
+                else if(my.lastMatch) {
 					currentRoute = my.lastMatch.getRoute();
 					newQuery = Object.create(my.lastMatch.getUrl().getQuery());
-					newParameters = Object.create(my.lastMatch.getParameters());
-				} else {
+					newParameters = Object.create(my.lastMatch.getRouteParameters());
+				}
+
+                // otherwise put everything in query parameters
+                else {
 					currentRoute = route();
-					newQuery = {};
-					newParameters = {};
 				}
 
 				// If parameter exist in route add to parameters otherwise to query.
@@ -255,15 +335,24 @@ define(
 			};
 
 
-			that.linkToUpdateUrl = function(parameters) {
-				return my.location.linkToUrl(that.getUpdateUrl(parameters));
+			that.linkToParameters = function(routeName, parameters) {
+				return my.location.linkToUrl(that.getParameterPath(routeName, parameters));
 			};
 
-			that.updateUrl = function(parameters) {
-				that.redirectToUrl(that.getUpdateUrl(parameters));
+			that.setParameters = function(routeName, parameters) {
+				that.redirectToUrl(that.getParameterPath(routeName, parameters));
 			};
 
-			that.back = function(aFallbackUrl) {
+            that.getRouteParameters = function () {
+                return my.lastMatch ? my.lastMatch.getParameters() : {};
+            };
+
+            that.getParameter = function (parameterKey) {
+                var parameters = that.getRouteParameters();
+                return parameters[parameterKey];
+            };
+
+            that.back = function(aFallbackUrl) {
 				return my.location.back(aFallbackUrl);
 			};
 
