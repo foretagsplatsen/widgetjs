@@ -18,8 +18,11 @@
     "jquery": "~1.8.3"
   },
   "devDependencies": {
-    "requirejs": "~2.0.6",
-    "qunit" : "1.11.0"
+    "requirejs": "~2.1.10",
+    "qunit": "1.11.0",
+    "mocha": "~1.17.1",
+    "chai": "~1.9.0",
+    "chai-jquery": "~1.2.1"
   },
   "ignore": [
     ".*"

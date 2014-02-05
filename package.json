@@ -35,6 +35,7 @@
     "almond": "~0.2.6",
     "grunt-docco": "~0.2.0",
     "grunt-contrib-watch": "~0.5.3",
-    "grunt-contrib-qunit": "~0.4.0"
+    "grunt-contrib-qunit": "~0.4.0",
+    "grunt-mocha": "~0.4.10"
   }
 }
