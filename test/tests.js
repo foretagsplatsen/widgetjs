@@ -1,4 +1,4 @@
-QUnit.config.autostart = false;
+//QUnit.config.autostart = false;
 
 requirejs.config({
 	baseUrl: '.',
@@ -10,15 +10,15 @@ requirejs.config({
 
 var testModules = [
 	'htmlCanvasTest',
-	'widgetTest',
-	'eventsTest',
-	'router/hashTest',
-	'router/deprecatedRouterTest',
-	'router/routerTest',
+    'widgetTest',
+    'eventsTest',
+    'router/hashTest',
+    'router/deprecatedRouterTest',
+    'router/routerTest',
 	'router/routeTest'
 ];
 
 
 define(testModules, function() {
-	QUnit.start();
+	//QUnit.start();
 });

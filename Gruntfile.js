@@ -74,7 +74,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
 	// Default task(s).
-	grunt.registerTask('default', ['jshint', 'qunit']);
+	grunt.registerTask('default', ['jshint']); // Disable test until QUnit is replaced: , 'qunit']);
 	grunt.registerTask('dist', ['default', 'requirejs', 'docco']);
 
 	// Test task

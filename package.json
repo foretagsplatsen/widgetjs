@@ -30,11 +30,11 @@
   },
   "devDependencies": {
     "grunt": "~0.4.1",
-    "grunt-contrib-qunit": "~0.2.2",
     "grunt-contrib-requirejs": "~0.4.1",
     "grunt-contrib-jshint": "~0.6.4",
     "almond": "~0.2.6",
     "grunt-docco": "~0.2.0",
-    "grunt-contrib-watch": "~0.5.3"
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-qunit": "~0.4.0"
   }
 }

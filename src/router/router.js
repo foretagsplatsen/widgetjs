@@ -198,6 +198,11 @@ define(
 				my.routeTable.splice(index, 1);
 			};
 
+            that.clear = function() {
+                my.routeTable = [];
+                my.lastMatch = undefined;
+            };
+
 			that.pipeRoute = function (routeSpec, router) {
 				if(!routeSpec || !routeSpec.pattern) {
 					throw new Error('Route pattern required');

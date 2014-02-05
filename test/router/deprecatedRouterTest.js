@@ -90,18 +90,9 @@ define(
 		test("linkTo()", function () {
 			equal(router.router.linkTo('aPath'), '#!/aPath', 'Hash-bang "#!" convention (hiden in hash.js)');
 			equal(router.router.linkTo(''), '#!/', 'handles empty path');
-
-			throws(function () { router.router.linkTo(null); }, 'throws error if null');
-			throws(function () { router.router.linkTo(undefined); }, 'throws error if undefined');
-			throws(function () { router.router.linkTo({}); }, 'throws error if object');
-
 		});
 
 		test("redirectTo()", function () {
-			throws(function () { router.router.redirectTo(null); }, 'throws error if null');
-			throws(function () { router.router.redirectTo(undefined); }, 'throws error if undefined');
-			throws(function () { router.router.redirectTo({}); }, 'throws error if object');
-
 			router.router.redirectTo('aPath');
 			equal(window.location.hash, '#!/aPath', 'sets window.location.hash');
 

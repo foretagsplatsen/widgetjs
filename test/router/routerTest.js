@@ -28,10 +28,8 @@ define(
 				aRouter = router({}, my);
 			},
 			teardown: function() {
-				window.location.hash = '';
-				aRouter.stop();
-				my = null;
-				aRouter = null;
+                aRouter.stop();
+                aRouter.clear();
 			}
 		});
 
@@ -276,6 +274,7 @@ define(
 				pattern: '/user/',
 				action: function() {
 					ok(false, 'but not after that route');
+                    this.unbind(); // clean-up
 				}
 			});
 
@@ -290,10 +289,12 @@ define(
 			var userRoute = aRouter.addRoute({
 				pattern: '/user/#name/',
 				constraints: {
-					name: ['nicolas', 'Mikael'],
+					name: ['nicolas', 'Mikael']
 				},
 				action: function(name) {
 					ok(true, 'Route got name ' + name);
+                    start();
+                    this.unbind(); // clean-up
 				}
 			});
 
@@ -301,9 +302,6 @@ define(
 			aRouter.resolveUrl('/user/nicolas');
 			aRouter.resolveUrl('/user/john');
 			aRouter.resolveUrl('/user/james');
-			start();
-
-			// Assert: only 1 match
 		});
 
 		test("getUrl returns current location", function () {
@@ -315,19 +313,12 @@ define(
 			equal(currentUrl.toString(), 'aPath', 'url is current location');
 		});
 
-
 		test("linkTo() creates links for href", function () {
 			equal(aRouter.linkTo('aPath'), '#!/aPath', 'Hash-bang "#!" convention (hash.js)');
 			equal(aRouter.linkTo(''), '#!/', 'handles empty path');
-
-			throws(function () { aRouter.linkTo(null); }, 'throws error if null');
-			throws(function () { aRouterlinkTo(undefined); }, 'throws error if undefined');
 		});
 
 		test("redirectTo() changes the current location to URL", function () {
-			throws(function () { aRouter.redirectTo(null); }, 'throws error if null');
-			throws(function () { aRouter.redirectTo(undefined); }, 'throws error if undefined');
-
 			aRouter.redirectTo('aPath');
 			equal(window.location.hash, '#!/aPath', 'sets window.location.hash');
 
@@ -352,6 +343,7 @@ define(
 
 			// Assert that second router matched the route
 			ok(true, 'callback executed for route');
+            anotherRouter.stop();
 		});
 
 		asyncTest("Pipe route to another router", 1, function () {
@@ -371,6 +363,7 @@ define(
 
 			// Assert that second router matched the route
 			ok(true, 'callback executed for route');
+            anotherRouter.stop();
 		});
 
 		asyncTest("back()", function () {
@@ -420,7 +413,7 @@ define(
 			);
 		});
 
-        test("Path from parameters for named route", function () {
+         test("Path from parameters for named route", function () {
             // Arrange: a named route
             aRouter.addRoute({name: 'user', pattern: '/user/#userId'});
 
@@ -443,19 +436,17 @@ define(
             equal(url.toString(), '?userId=john&includeDetails=true', 'URL match pattern and data');
         });
 
-        asyncTest("Path from parameters for current route", 1, function () {
+
+
+         test("Path from parameters for current route", function () {
             // Arrange: a named route
             aRouter.addRoute({
                 name: 'user',
-                pattern: '/user/#userId',
-                action: function() {
-                    start();
-                    this.unbind(); // clean-up: unbound this event
-                }
+                pattern: '/user/#userId'
             });
 
             // and navigate to that route
-            aRouter.redirectTo('/user/john', {includeCompanies : true});
+            aRouter.redirectTo('/user/john', { includeCompanies : true});
 
             // Act: get path from parameters for current location
             var url = aRouter.getParameterPath({ includeDetails : true});
@@ -497,7 +488,7 @@ define(
             equal(unknownParameter, null, 'Unknown parameter is null');
         });
 
-        asyncTest("updatePath()", function () {
+        asyncTest("setParameters()", function () {
 			aRouter.stop();
 			window.location.hash = ''; // start path
 			aRouter.start();
@@ -536,6 +527,5 @@ define(
 				}
 			);
 		});
-
 	}
 );
