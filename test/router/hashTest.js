@@ -38,7 +38,7 @@ define([
 
 				my = {};
 				hashLocation = hash({}, my);
-	    });
+        });
 
         afterEach(function() {
             if(hashLocation) {
