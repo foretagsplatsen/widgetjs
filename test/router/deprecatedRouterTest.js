@@ -1,13 +1,14 @@
 define(
-	["widgetjs/router", "widgetjs/events"],
-	function (router, events) {
+	["widgetjs/router", "widgetjs/events", "chai"],
+	function (router, events, chai) {
 
-		// Helpers
+        var assert = chai.assert;
+
+        // Helpers
 
 		function delayedAsyncTest(name, fn, expected) {
-			asyncTest(name, function () {
-				expect(expected || 1);
-				setTimeout(fn, 100 /* Give some time to the router to initialize. */);
+			test(name, function (done) {
+				setTimeout(function() { fn(done); }, 100 /* Give some time to the router to initialize. */);
 			});
 		}
 
@@ -32,25 +33,23 @@ define(
 		};
 
 
-		module("deprecated router", {
-			setup: function() {
-				router.router.start();
-			}
-		});
+		suite("deprecated router");
+
+        beforeEach(function() {
+            router.router.start();
+        });
 
 		test("singleton router", function () {
-			equal(router.router, router.router);
+			assert.equal(router.router, router.router);
 		});
 
 		test("singleton controller", function () {
-			equal(router.controller, router.controller);
+			assert.equal(router.controller, router.controller);
 		});
 
-		delayedAsyncTest("Executes route callback", function () {
-			expect(1);
-
+		delayedAsyncTest("Executes route callback", function (start) {
 			router.controller.on('foo', function () {
-				ok(true, 'callback executed for route');
+				assert.ok(true, 'callback executed for route');
 				this.unbind(); // clean-up: unbound this event
 				start();
 			});
@@ -58,11 +57,9 @@ define(
 			redirectTo('foo');
 		});
 
-		delayedAsyncTest("Pass parameter values to callback", function () {
-			expect(1);
-
+		delayedAsyncTest("Pass parameter values to callback", function (start) {
 			router.controller.on('some/#value/#anothervalue', function (value, anothervalue) {
-				ok(value === 'thing' && anothervalue === 'thing2', 'parameters passed in same order as defined');
+				assert.ok(value === 'thing' && anothervalue === 'thing2', 'parameters passed in same order as defined');
 				this.unbind(); // clean-up: unbound this event
 				start();
 			});
@@ -70,11 +67,9 @@ define(
 			redirectTo('some/thing/thing2');
 		});
 
-		delayedAsyncTest("Pass query as last argument to callback", function () {
-			expect(1);
-
+		delayedAsyncTest("Pass query as last argument to callback", function (start) {
 			router.controller.on('querytest/#value', function (value, query) {
-				ok(query.foo === 'bar');
+				assert.ok(query.foo === 'bar');
 				this.unbind(); // clean-up: unbound this event
 				start();
 			});
@@ -84,24 +79,23 @@ define(
 
 		test("Keeps the current path", function () {
 			window.location.hash = '#!/aPath';
-			equal(router.router.getPath(), 'aPath', 'URL hash fragment minus the hash-bang (#!)');
+			assert.equal(router.router.getPath(), 'aPath', 'URL hash fragment minus the hash-bang (#!)');
 		});
 
 		test("linkTo()", function () {
-			equal(router.router.linkTo('aPath'), '#!/aPath', 'Hash-bang "#!" convention (hiden in hash.js)');
-			equal(router.router.linkTo(''), '#!/', 'handles empty path');
+			assert.equal(router.router.linkTo('aPath'), '#!/aPath', 'Hash-bang "#!" convention (hiden in hash.js)');
+			assert.equal(router.router.linkTo(''), '#!/', 'handles empty path');
 		});
 
 		test("redirectTo()", function () {
 			router.router.redirectTo('aPath');
-			equal(window.location.hash, '#!/aPath', 'sets window.location.hash');
+			assert.equal(window.location.hash, '#!/aPath', 'sets window.location.hash');
 
 			router.router.redirectTo('');
-			equal(window.location.hash, '#!/', 'redirects empty path');
+			assert.equal(window.location.hash, '#!/', 'redirects empty path');
 		});
 
-		asyncTest("back()", function () {
-			expect(5);
+		test("back()", function (start) {
 
 			delayedSteps(
 				function () {
@@ -116,31 +110,31 @@ define(
 					router.router.redirectTo('b');
 				},
 				function () {
-					equal(router.router.getPath(), 'b', 'route is last path');
+					assert.equal(router.router.getPath(), 'b', 'route is last path');
 				},
 				function () {
 					router.router.back();
 				},
 				function () {
-					equal(router.router.getPath(), 'a', 'back sets path to previous path');
+					assert.equal(router.router.getPath(), 'a', 'back sets path to previous path');
 				},
 				function () {
 					router.router.back();
 				},
 				function () {
-					equal(router.router.getPath(), '', 'back set to start path');
+					assert.equal(router.router.getPath(), '', 'back set to start path');
 				},
 				function () {
 					router.router.back();
 				},
 				function () {
-					equal(router.router.getPath(), '', 'can not back furter than start');
+					assert.equal(router.router.getPath(), '', 'can not back furter than start');
 				},
 				function () {
 					router.router.back('fallback');
 				},
 				function () {
-					equal(router.router.getPath(), 'fallback', 'but can give a fallback path');
+					assert.equal(router.router.getPath(), 'fallback', 'but can give a fallback path');
 				},
 				function () {
 					start();

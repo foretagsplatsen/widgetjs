@@ -10,11 +10,10 @@ require.config({
             exports: '$'
         },
         'chai-jquery': ['jquery', 'chai']
-    },
-    urlArgs: 'bust=' + (new Date()).getTime()
+    }
+    //, urlArgs: 'bust=' + (new Date()).getTime()
 });
 
-/*
  var testModules = [
  'htmlCanvasTest',
  'widgetTest',
@@ -25,25 +24,7 @@ require.config({
  'router/routeTest'
  ];
 
-
- define(testModules, function() {
- //QUnit.start();
- });
-
-
-require(['require', 'chai', 'chai-jquery', 'mocha', 'jquery'], function (require, chai, chaiJquery) {
-
-    chai.use(chaiJquery);
-    mocha.setup('qunit');
-
-    require(['router/learn.js'], function () {
-        mocha.run();
-    });
-});
-
- */
-
-require(['router/learn.js'], function () {
+require(testModules, function () {
     if (window.mochaPhantomJS) {
         window.mochaPhantomJS.run();
     }
