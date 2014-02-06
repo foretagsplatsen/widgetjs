@@ -1,4 +1,6 @@
-define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
+define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, chai) {
+
+    var assert = chai.assert;
 
     // Helper
 
@@ -12,10 +14,10 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
         sandbox.remove();
     };
 
-    module("htmlCanvas");
+    suite("htmlCanvas");
 
     test("htmlCanvas library", function() {
-        ok(htmlCanvas, "exported correcly.");
+        assert.ok(htmlCanvas, "exported correcly.");
     });
 
     test("can be created on a jQuery", function() {
@@ -23,15 +25,17 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
         var html = htmlCanvas("BODY");
 
         // Assert that:
-        ok(html, 'canvas was created');
-        ok(html.root, 'have a root');
-        ok(html.root.element(), 'have an element');
-        ok($("BODY").is(html.root.element()), 'element is BODY.');
+        assert.ok(html, 'canvas was created');
+        assert.ok(html.root, 'have a root');
+        assert.ok(html.root.element(), 'have an element');
+        assert.ok($("BODY").is(html.root.element()), 'element is BODY.');
     });
 
     test("throws exception if jQuery dont match element", function() {
-        throws(
+        assert.throws(
             function() { htmlCanvas("#notfound"); },
+            Error,
+            'jQuery did not match an element',
             'throws exception if no matching element'
         );
     });
@@ -43,10 +47,10 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
 
             // Assert: that H1 was rendered
             var h1El = jQuery("#sandbox > H1");
-            ok(h1El.get(0), 'element rendered');
+            assert.ok(h1El.get(0), 'element rendered');
 
             // and class was set
-            equal(h1El.text(), 'Hello World!', 'text rendered');
+            assert.equal(h1El.text(), 'Hello World!', 'text rendered');
         });
     });
 
@@ -57,10 +61,10 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
 
             // Assert: that A was rendered
             var linkEl = jQuery("#test_id");
-            ok(linkEl.get(0), 'element rendered');
+            assert.ok(linkEl.get(0), 'element rendered');
 
             // and href was set
-            equal(linkEl.attr('href'), 'http://www.google.se', 'href attribute rendered');
+            assert.equal(linkEl.attr('href'), 'http://www.google.se', 'href attribute rendered');
         });
     });
 
@@ -71,13 +75,13 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
 
             // Assert: that DIV was rendered
             var divEl = jQuery("#test_div");
-            ok(divEl.get(0), 'element rendered');
+            assert.ok(divEl.get(0), 'element rendered');
 
             // and class was set
-            equal(divEl.attr('class'), 'test_class', 'attribute class rendered');
+            assert.equal(divEl.attr('class'), 'test_class', 'attribute class rendered');
 
             // and class was set
-            equal(divEl.attr('special_attribute'), 'test', 'attribute special_attribute rendered');
+            assert.equal(divEl.attr('special_attribute'), 'test', 'attribute special_attribute rendered');
         });
     });
 
@@ -90,11 +94,11 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
 
             // Assert: that link was rendered
             var linkEl = jQuery("#test_link");
-            ok(linkEl.get(0), 'element rendered');
+            assert.ok(linkEl.get(0), 'element rendered');
 
             // and click triggers callback
             linkEl.click(); // execute click
-            equal(clicked, true, 'click callback executed');
+            assert.equal(clicked, true, 'click callback executed');
         });
     });
 
@@ -108,9 +112,9 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
             );
 
             // Assert: that outer div rendered
-            ok(jQuery("#outer_div").get(0), 'outer div rendered');
-            ok(jQuery("#inner_div").get(0), 'inner div rendered');
-            ok(jQuery("#inner_div > SPAN").get(0), 'inner SPAN rendered');
+            assert.ok(jQuery("#outer_div").get(0), 'outer div rendered');
+            assert.ok(jQuery("#inner_div").get(0), 'inner div rendered');
+            assert.ok(jQuery("#inner_div > SPAN").get(0), 'inner SPAN rendered');
         });
     });
 
@@ -121,8 +125,8 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
             button.addClass('button');
 
             // Assert:
-            ok(jQuery("#test_button").get(0), 'button rendered');
-            equal(jQuery('#test_button').attr('class'), 'button', 'attribute class rendered');
+            assert.ok(jQuery("#test_button").get(0), 'button rendered');
+            assert.equal(jQuery('#test_button').attr('class'), 'button', 'attribute class rendered');
         });
     });
 
@@ -136,7 +140,7 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
 
 
             // Assert:
-            ok(jQuery("#aDiv > .aSpan").get(0), 'SPAN rendered inside DIV');
+            assert.ok(jQuery("#aDiv > .aSpan").get(0), 'SPAN rendered inside DIV');
         });
     });
 
@@ -149,19 +153,23 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
             })).id('test_div');
 
             // Assert:
-            equal(jQuery("#test_div > SPAN").length, 10, 'div rendered with children from array');
+            assert.equal(jQuery("#test_div > SPAN").length, 10, 'div rendered with children from array');
 
         });
     });
 
     test("throws error if object to append is null or undefined", function () {
         withCanvas(function(html) {
-            throws(
+            assert.throws(
                 function() { html.render(null); },
+                Error,
+                'cannot append null or undefined to brush',
                 'throws error if null'
             );
-            throws(
+            assert.throws(
                 function() { html.render(undefined); },
+                Error,
+                'cannot append null or undefined to brush',
                 'throws error if undefined'
             );
         });
@@ -178,8 +186,8 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
             html.div({id : 'aDiv'}, htmlFn);
 
             // Assert
-            ok(jQuery("#aDiv").get(0), 'div was rendered');
-            ok(jQuery("#aDiv > .aSpan").get(0), 'child div from function was rendered inside div');
+            assert.ok(jQuery("#aDiv").get(0), 'div was rendered');
+            assert.ok(jQuery("#aDiv > .aSpan").get(0), 'child div from function was rendered inside div');
         });
     });
 
@@ -199,7 +207,7 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
             html.render(appendableObject());
 
             // Assert
-            ok(jQuery("#aDiv").get(0), 'div was rendered');
+            assert.ok(jQuery("#aDiv").get(0), 'div was rendered');
         });
     });
 
@@ -225,7 +233,7 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
             html.render(simpleWidget());
 
             // Assert
-            ok(jQuery("#aDiv").get(0), 'div was rendered');
+            assert.ok(jQuery("#aDiv").get(0), 'div was rendered');
         });
     });
 
@@ -235,7 +243,7 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
             var h1 = html.h1().id('aHeading');
 
             // Assert
-            equal(h1.element(), jQuery("#aHeading").get(0), 'element acessor returns correct element.');
+            assert.equal(h1.element(), jQuery("#aHeading").get(0), 'element acessor returns correct element.');
         });
     });
 
@@ -246,7 +254,7 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
             var h1 = html.h1().setAttribute('id', 'aHeading');
 
             // Assert: id set
-            equal(h1.asJQuery().attr('id'), ('aHeading'), 'attribute set');
+            assert.equal(h1.asJQuery().attr('id'), ('aHeading'), 'attribute set');
         });
     });
 
@@ -257,7 +265,7 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
             var div = html.div();
 
             div.css('width', '100px');
-            equal(div.asJQuery().css('width'), '100px');
+            assert.equal(div.asJQuery().css('width'), '100px');
         });
     });
 
@@ -267,7 +275,7 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
             var h1 = html.h1().attr({id : 'aHeading'});
 
             // Assert: that id is set
-            equal(h1.asJQuery().attr("id"), 'aHeading', 'attribute set');
+            assert.equal(h1.asJQuery().attr("id"), 'aHeading', 'attribute set');
         });
     });
 
@@ -278,11 +286,11 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
 
             // addClass()
             h1.addClass('foo');
-            ok(h1.asJQuery().hasClass('foo'));
+            assert.ok(h1.asJQuery().hasClass('foo'));
 
             // removeClass()
             h1.removeClass('foo');
-            ok(!h1.asJQuery().hasClass('foo'));
+            assert.ok(!h1.asJQuery().hasClass('foo'));
         });
     });
 
@@ -292,7 +300,7 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
             var h1 = html.h1().id('aHeading');
 
             // Assert
-            equal(h1.asJQuery().get(0), jQuery("#aHeading").get(0), 'asJQuery() acessor returns hquery that match element.');
+            assert.equal(h1.asJQuery().get(0), jQuery("#aHeading").get(0), 'asJQuery() acessor returns hquery that match element.');
         });
     });
 
@@ -308,7 +316,7 @@ define(["widgetjs/htmlCanvas", "jquery"], function(htmlCanvas, jQuery) {
             html.render({}); // as attributes but since it have no keys => nothing
             html.render([]); // as array but since empty => nothing
 
-            ok(true);
+            assert.ok(true);
         });
     });
 });

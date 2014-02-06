@@ -1,8 +1,11 @@
 define([
-	'widgetjs/router/hash'
-], function (hash) {
+	'widgetjs/router/hash',
+    'chai'
+], function (hash, chai) {
 
-		// Helpers
+        var assert = chai.assert;
+
+        // Helpers
 
 		function delayedSteps() {
 			var steps = Array.prototype.slice.call(arguments);
@@ -28,25 +31,26 @@ define([
 
 		var my, hashLocation;
 
-		module("hash", {
-			setup: function() {
+		suite("hash");
+
+        beforeEach(function() {
 				window.location.hash = '';
 
 				my = {};
 				hashLocation = hash({}, my);
-			},
-			teardown: function() {
-                if(hashLocation) {
-                    hashLocation.stop();
-                }
-				window.location.hash = '';
-			}
+        });
+
+        afterEach(function() {
+            if(hashLocation) {
+                hashLocation.stop();
+            }
+            window.location.hash = '';
 		});
 
 		test("hash defaults", function () {
 			// Assert that defaults are correct
-			equal(my.currentHash, undefined, 'current hash is undefined');
-			equal(my.history.length, 0, 'history is empty');
+			assert.equal(my.currentHash, undefined, 'current hash is undefined');
+			assert.equal(my.history.length, 0, 'history is empty');
 		});
 
 		test("start() initilize hash", function () {
@@ -57,9 +61,9 @@ define([
 			hashLocation.start();
 
 			// Assert that hash is current location and history is set
-			equal(my.currentHash, '#!/test', 'current hash is window location hash');
-			equal(my.history.length, 1, 'history have one entry');
-			equal(my.history[0], my.currentHash, 'history entry is current hash');
+			assert.equal(my.currentHash, '#!/test', 'current hash is window location hash');
+			assert.equal(my.history.length, 1, 'history have one entry');
+			assert.equal(my.history[0], my.currentHash, 'history entry is current hash');
 		});
 
 		test("start() resets hash", function () {
@@ -72,18 +76,18 @@ define([
 			hashLocation.start();
 
 			// Assert that hash was reset,
-			equal(my.history.length, 1, 'history have one entry');
-			equal(my.history[0], my.currentHash, 'history entry is current hash');
+			assert.equal(my.history.length, 1, 'history have one entry');
+			assert.equal(my.history[0], my.currentHash, 'history entry is current hash');
 		});
 
 		if(!($.browser.msie  && parseInt($.browser.version, 10) === 7)) {
-			asyncTest("triggers changed event when URL is changed", 1, function () {
+			test("triggers changed event when URL is changed", function (done) {
 				// Arrange: listen for url changes
 				var capturedUrls = [];
 				hashLocation.on('changed', function(url) {
 					capturedUrls.push(url.toString());
 					if(capturedUrls.length === 3) {
-						start();
+						done();
 					}
 				});
 
@@ -94,7 +98,7 @@ define([
 				setHash('#!/c');
 
 				// Assert that event was triggered for each url
-				deepEqual(capturedUrls, ['a', 'b', 'c'], 'Event triggered');
+				assert.deepEqual(capturedUrls, ['a', 'b', 'c'], 'Event triggered');
 			});
 		}
 
@@ -107,7 +111,7 @@ define([
 			var currentUrl = hashLocation.getUrl();
 
 			// Assert that URL is location hash minus hash-bang
-			equal(currentUrl.toString(), 'test', 'URL is location hash minus hash-bang');
+			assert.equal(currentUrl.toString(), 'test', 'URL is location hash minus hash-bang');
 		});
 
 		test("setUrl() adds hash-bang", function () {
@@ -116,7 +120,7 @@ define([
 			hashLocation.setUrl('test');
 
 			// Assert that current hash is set correctly
-			equal(my.currentHash, '#!/test', 'Hash-bang is added to location hash');
+			assert.equal(my.currentHash, '#!/test', 'Hash-bang is added to location hash');
 		});
 
 		test("linkToUrl() return link for href:s", function () {
@@ -124,17 +128,17 @@ define([
 			var link = hashLocation.linkToUrl('someurl');
 
 			// Assert that URL have hash-bang
-			equal(link, '#!/someurl', 'Hash-bang is added to URL');
+			assert.equal(link, '#!/someurl', 'Hash-bang is added to URL');
 		});
 
-		asyncTest("setUrl() triggers change", 1, function () {
+		test("setUrl() triggers change", function (done) {
             var anotherHashLocation = hash();
 
 			// Arrange: listen for url changes
 			var capturedUrl;
             anotherHashLocation.on('changed', function(url) {
 				capturedUrl = url;
-				start();
+				done();
 			});
 
 			// Act: set URL
@@ -142,12 +146,12 @@ define([
             anotherHashLocation.setUrl('test');
 
 			// Assert that 'change' callback was executed with url
-			equal(capturedUrl, 'test', 'Parameter in "changed event" is URL');
+			assert.equal(capturedUrl, 'test', 'Parameter in "changed event" is URL');
 
             anotherHashLocation.stop();
 		});
 
-		asyncTest("back()", 5, function () {
+		test("back()", function (done) {
 			delayedSteps(
 				function () {
 					hashLocation.stop();
@@ -161,34 +165,34 @@ define([
 					hashLocation.setUrl('b');
 				},
 				function () {
-					equal(hashLocation.getUrl().toString(), 'b', 'location is last url');
+					assert.equal(hashLocation.getUrl().toString(), 'b', 'location is last url');
 				},
 				function () {
 					hashLocation.back();
 				},
 				function () {
-					equal(hashLocation.getUrl().toString(), 'a', 'back sets url to previous url');
+					assert.equal(hashLocation.getUrl().toString(), 'a', 'back sets url to previous url');
 				},
 				function () {
 					hashLocation.back();
 				},
 				function () {
-					equal(hashLocation.getUrl().toString(), '', 'back set to start url');
+					assert.equal(hashLocation.getUrl().toString(), '', 'back set to start url');
 				},
 				function () {
 					hashLocation.back();
 				},
 				function () {
-					equal(hashLocation.getUrl().toString(), '', 'can not back furter than start');
+					assert.equal(hashLocation.getUrl().toString(), '', 'can not back furter than start');
 				},
 				function () {
 					hashLocation.back('fallback');
 				},
 				function () {
-					equal(hashLocation.getUrl().toString(), 'fallback', 'but can give a fallback url');
+					assert.equal(hashLocation.getUrl().toString(), 'fallback', 'but can give a fallback url');
 				},
 				function () {
-					start();
+					done();
 				}
 			);
 		});

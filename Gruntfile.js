@@ -48,9 +48,19 @@ module.exports = function(grunt) {
 			test: ['test/**/*.js'],
 			sample: ['sample/**/*.js']
 		},
-		qunit: {
-			all: ['test/**/*.html']
-		},
+        mocha: {
+            test: {
+                src: ['test/**/*.html'],
+                options: {
+                    reporter: 'Spec'
+                }
+            },
+            xunit: {
+                src: ['test/**/*.html'],
+                reporter: 'XUnit',
+                dest: './dist/xunit.out'
+            },
+        },
 		docco: {
 			src: {
 				src: ['src/**/*.js'],
@@ -67,16 +77,16 @@ module.exports = function(grunt) {
 
 	// Load the plugin that provides the "uglify" task.
 	grunt.loadNpmTasks('grunt-contrib-jshint');
-	grunt.loadNpmTasks('grunt-contrib-qunit');
-	//grunt.loadNpmTasks('grunt-requirejs');
+    grunt.loadNpmTasks('grunt-mocha');
+    //grunt.loadNpmTasks('grunt-requirejs');
 	grunt.loadNpmTasks('grunt-contrib-requirejs');
 	grunt.loadNpmTasks('grunt-docco');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
 	// Default task(s).
-	grunt.registerTask('default', ['jshint']); // Disable test until QUnit is replaced: , 'qunit']);
+	grunt.registerTask('default', ['jshint', 'test']);
 	grunt.registerTask('dist', ['default', 'requirejs', 'docco']);
 
 	// Test task
-	grunt.registerTask('test', 'qunit');
+	grunt.registerTask('test', 'mocha:test');
 };

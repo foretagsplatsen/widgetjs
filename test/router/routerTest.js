@@ -1,8 +1,10 @@
 define(
-	["widgetjs/router/router"],
-	function (router) {
+	["widgetjs/router/router", "chai"],
+	function (router, chai) {
 
-		function delayedSteps() {
+        var assert = chai.assert;
+
+        function delayedSteps() {
 			var steps = Array.prototype.slice.call(arguments);
 
 			function next() {
@@ -20,23 +22,24 @@ define(
 
 		var my, aRouter;
 
-		module("router", {
-			setup: function() {
-				window.location.hash = '';
+		suite("router");
 
-				my = {};
-				aRouter = router({}, my);
-			},
-			teardown: function() {
-                aRouter.stop();
-                aRouter.clear();
-			}
+        beforeEach(function() {
+            window.location.hash = '';
+
+            my = {};
+            aRouter = router({}, my);
+        });
+
+        afterEach(function() {
+            aRouter.stop();
+            aRouter.clear();
 		});
 
 		test("Router defaults", function () {
 			// Assert that defaults are correct
-			equal(my.routeTable.length, 0, 'routetable is empty');
-			equal(my.lastMatch, undefined, 'no route matched');
+			assert.equal(my.routeTable.length, 0, 'routetable is empty');
+			assert.equal(my.lastMatch, undefined, 'no route matched');
 		});
 
 		test("Router options", function () {
@@ -47,7 +50,7 @@ define(
 			}, anotherMy);
 
 			// Assert that options where applied
-			equal(anotherMy.location.isFake, true, 'location handler from options');
+			assert.equal(anotherMy.location.isFake, true, 'location handler from options');
 		});
 
 		test("Add route", function () {
@@ -55,8 +58,8 @@ define(
 			var route = aRouter.addRoute({ pattern: '/users/' });
 
 			// Assert that route was added to route table
-			equal(my.routeTable.length, 1, 'route was added to routetable');
-			equal(my.routeTable[0], route, 'equals route created');
+			assert.equal(my.routeTable.length, 1, 'route was added to routetable');
+			assert.equal(my.routeTable[0], route, 'equals route created');
 		});
 
 
@@ -66,7 +69,7 @@ define(
 			aRouter.removeRoute(route);
 
 			// Assert that route was removed from route table
-			equal(my.routeTable.length, 0, 'route was removed from routetable');
+			assert.equal(my.routeTable.length, 0, 'route was removed from routetable');
 		});
 
 
@@ -78,7 +81,7 @@ define(
             var namedRoute = aRouter.getRouteByName('users');
 
             // Assert that route is found
-            equal(namedRoute, route, 'same route');
+            assert.equal(namedRoute, route, 'same route');
         });
 
 		test("Add routes with priority", function () {
@@ -90,14 +93,14 @@ define(
 			var userRoute = aRouter.addRoute({pattern: '/user/', priority: 1});
 
 			// Assert that route was added to route table in correct order
-			equal(my.routeTable.length, 5, 'all added to routetable');
-			equal(my.routeTable[0], userRoute, 'lowest priority first');
-			equal(my.routeTable[2], orderRoute, 'registration order if same priority');
-			equal(my.routeTable[3], invoiceRoute, 'routes without priority last');
-			equal(my.routeTable[4], ticketRoute, 'registration order if no priority');
+			assert.equal(my.routeTable.length, 5, 'all added to routetable');
+			assert.equal(my.routeTable[0], userRoute, 'lowest priority first');
+			assert.equal(my.routeTable[2], orderRoute, 'registration order if same priority');
+			assert.equal(my.routeTable[3], invoiceRoute, 'routes without priority last');
+			assert.equal(my.routeTable[4], ticketRoute, 'registration order if no priority');
 		});
 
-		asyncTest("resolveUrl executes route callback on match", 1, function () {
+		test("resolveUrl executes route callback on match", function (start) {
 			// Arrange: setup a route
 			var userRoute = aRouter.addRoute({pattern: '/user/'});
 			userRoute.on('matched', function() {
@@ -110,10 +113,10 @@ define(
 			aRouter.resolveUrl('/order/');
 
 			// Assert that callback was executed (start was called)
-			ok(true, 'callback executed for route');
+			assert.ok(true, 'callback executed for route');
 		});
 
-		asyncTest("resolveUrl triggers resolveUrl event", 1, function () {
+		test("resolveUrl triggers resolveUrl event", function (start) {
 			// listen for 'resolveUrl event' on router
 			aRouter.on('resolveUrl', function(url) {
 				start(); // execute asserts
@@ -124,18 +127,18 @@ define(
 			aRouter.resolveUrl('/user/');
 
 			// Assert that callback was 'resolveUrl event' executed
-			ok(true, 'callback executed');
+			assert.ok(true, 'callback executed');
 		});
 
-		asyncTest("resolveUrl triggers routeMatched event", 2, function () {
+		test("resolveUrl triggers routeMatched event", function (start) {
 			// Arrange: setup a route
 			var userRoute = aRouter.addRoute({pattern: '/user/'});
 
 			// listen for 'matched event' on router
 			aRouter.on('routeMatched', function(result) {
 				// Assert that callback was executed
-				ok(result, 'callback executed with result parameter');
-				equal(result.getRoute(), userRoute, 'matched route is correct');
+				assert.ok(result, 'callback executed with result parameter');
+				assert.equal(result.getRoute(), userRoute, 'matched route is correct');
 
 				start(); // execute asserts
 				this.unbind(); // clean-up
@@ -145,13 +148,13 @@ define(
 			aRouter.resolveUrl('/user/');
 		});
 
-		asyncTest("resolveUrl triggers routeNotFound event", 2, function () {
+		test("resolveUrl triggers routeNotFound event", function (start) {
 			// Arrange: setup no routes but
 			// a lister for 'notFound event'
 			aRouter.on('routeNotFound', function(url) {
 				// Assert that callback was executed
-				ok(url, 'callback executed with url parameter');
-				equal(url, '/user/', 'url is correct');
+				assert.ok(url, 'callback executed with url parameter');
+				assert.equal(url, '/user/', 'url is correct');
 
 				start(); // execute asserts
 				this.unbind(); // clean-up
@@ -161,7 +164,7 @@ define(
 			aRouter.resolveUrl('/user/');
 		});
 
-		asyncTest("resolveUrl executes action on match", 1, function () {
+		test("resolveUrl executes action on match", function (start) {
 			// Arrange: setup a route
 			var userRoute = aRouter.addRoute({
 				pattern: '/user/',
@@ -175,15 +178,15 @@ define(
 			aRouter.resolveUrl('/user/');
 
 			// Assert that callback was executed (start was called)
-			ok(true, 'action was executed once');
+			assert.ok(true, 'action was executed once');
 		});
 
-		asyncTest("resolveUrl pass values to action", 1, function () {
+		test("resolveUrl pass values to action", function (start) {
 			// Arrange a route that have two mandatory parameters
 			var userRoute = aRouter.addRoute({
 				pattern: '/user/#userid/order/#orderid',
 				action: function(userid, orderid) {
-					ok(userid === 'john' && orderid === '1', 'parameters passed in same order as defined');
+					assert.ok(userid === 'john' && orderid === '1', 'parameters passed in same order as defined');
 					start(); // execute asserts
 					this.unbind(); // clean-up
 				}
@@ -193,13 +196,13 @@ define(
 			aRouter.resolveUrl('/user/john/order/1');
 		});
 
-		asyncTest("resolveUrl pass optional values to action", 2, function () {
+		test("resolveUrl pass optional values to action", function (start) {
 			// Arrange a route that have two mandatory parameters
 			var userRoute = aRouter.addRoute({
 				pattern: '/user/?userid/order/?orderid',
 				action: function(userid, orderid) {
-					equal(userid, undefined, 'optional parameters without values is undefined');
-					equal(orderid, '1', 'optional parameters with values get value');
+					assert.equal(userid, undefined, 'optional parameters without values is undefined');
+					assert.equal(orderid, '1', 'optional parameters with values get value');
 					start(); // execute asserts
 					this.unbind(); // clean-up
 				}
@@ -209,7 +212,7 @@ define(
 			aRouter.resolveUrl('/user/order/1');
 		});
 
-		asyncTest("resolveUrl pass optional value defaults to action", 2, function () {
+		test("resolveUrl pass optional value defaults to action", function (start) {
 			// Arrange a route that have two optional parameters
 			//  with defaukts
 			var userRoute = aRouter.addRoute({
@@ -219,8 +222,8 @@ define(
 					orderid: 'skor'
 				},
 				action: function(userid, orderid) {
-					equal(userid, 'bengan', 'optional parameters get default value');
-					equal(orderid, '1', 'optional parameters with values get value');
+					assert.equal(userid, 'bengan', 'optional parameters get default value');
+					assert.equal(orderid, '1', 'optional parameters with values get value');
 					start(); // execute asserts
 					this.unbind(); // clean-up
 				}
@@ -230,15 +233,15 @@ define(
 			aRouter.resolveUrl('/user/order/1');
 		});
 
-		asyncTest("resolveUrl pass query as last argument to action", 3, function () {
+		test("resolveUrl pass query as last argument to action", function (start) {
 			// Arrange a route that have one parameter
 			var userRoute = aRouter.addRoute({
 				pattern: '/user/#userid/order',
 				action: function(userid, query) {
 					// Assert: that parameters and query was passed ok
-					equal(userid, 'john', 'parameter passed ok');
-					equal(query.filter, 'open', 'first query parameter passed ok');
-					equal(query.orderBy, 'date', 'second query parameter passed ok');
+					assert.equal(userid, 'john', 'parameter passed ok');
+					assert.equal(query.filter, 'open', 'first query parameter passed ok');
+					assert.equal(query.orderBy, 'date', 'second query parameter passed ok');
 					start(); // execute asserts
 					this.unbind(); // clean-up
 				}
@@ -248,7 +251,7 @@ define(
 			aRouter.resolveUrl('/user/john/order/?filter=open&orderBy=date');
 		});
 
-		asyncTest("resolveUrl continues if fallThrough", 2, function () {
+		test("resolveUrl continues if fallThrough", function (start) {
 			// Arrange a 3 routes, where first have fallThrough
 			// set and the two other have not
 
@@ -256,7 +259,7 @@ define(
 				fallThrough: true,
 				pattern: '/user/',
 				action: function() {
-					ok(true, 'executes fallThrough route');
+					assert.ok(true, 'executes fallThrough route');
 					this.unbind(); // clean-up
 				}
 			});
@@ -264,7 +267,7 @@ define(
 			aRouter.addRoute({
 				pattern: '/user/',
 				action: function() {
-					ok(true, 'and route after fallThrough route');
+					assert.ok(true, 'and route after fallThrough route');
 					start(); // execute asserts
 					this.unbind(); // clean-up
 				}
@@ -273,7 +276,7 @@ define(
 			aRouter.addRoute({
 				pattern: '/user/',
 				action: function() {
-					ok(false, 'but not after that route');
+					assert.ok(false, 'but not after that route');
                     this.unbind(); // clean-up
 				}
 			});
@@ -282,9 +285,7 @@ define(
 			aRouter.resolveUrl('/user/');
 		});
 
-		asyncTest("Add route with constraints", function () {
-			expect(1); // only 1 match
-
+		test("Add route with constraints", function (start) {
 			// Arrange a route with constraints
 			var userRoute = aRouter.addRoute({
 				pattern: '/user/#name/',
@@ -292,7 +293,7 @@ define(
 					name: ['nicolas', 'Mikael']
 				},
 				action: function(name) {
-					ok(true, 'Route got name ' + name);
+					assert.ok(true, 'Route got name ' + name);
                     start();
                     this.unbind(); // clean-up
 				}
@@ -310,23 +311,23 @@ define(
 			var currentUrl = aRouter.getUrl();
 
 			// Assert correct url
-			equal(currentUrl.toString(), 'aPath', 'url is current location');
+			assert.equal(currentUrl.toString(), 'aPath', 'url is current location');
 		});
 
 		test("linkTo() creates links for href", function () {
-			equal(aRouter.linkTo('aPath'), '#!/aPath', 'Hash-bang "#!" convention (hash.js)');
-			equal(aRouter.linkTo(''), '#!/', 'handles empty path');
+			assert.equal(aRouter.linkTo('aPath'), '#!/aPath', 'Hash-bang "#!" convention (hash.js)');
+			assert.equal(aRouter.linkTo(''), '#!/', 'handles empty path');
 		});
 
 		test("redirectTo() changes the current location to URL", function () {
 			aRouter.redirectTo('aPath');
-			equal(window.location.hash, '#!/aPath', 'sets window.location.hash');
+			assert.equal(window.location.hash, '#!/aPath', 'sets window.location.hash');
 
 			aRouter.redirectTo('');
-			equal(window.location.hash, '#!/', 'redirects empty path');
+			assert.equal(window.location.hash, '#!/', 'redirects empty path');
 		});
 
-		asyncTest("Pipe notfound to another router", 1, function () {
+		test("Pipe notfound to another router", function (start) {
 			// Arrange another router with a route handler
 			var anotherRouter = router();
 			anotherRouter.addRoute({
@@ -342,11 +343,11 @@ define(
 			aRouter.resolveUrl('APathNotInDefaultRouterButInPipedRouter');
 
 			// Assert that second router matched the route
-			ok(true, 'callback executed for route');
+			assert.ok(true, 'callback executed for route');
             anotherRouter.stop();
 		});
 
-		asyncTest("Pipe route to another router", 1, function () {
+		test("Pipe route to another router", function (start) {
 			// Arrange another router with a route handler
 			var anotherRouter = router();
 			anotherRouter.addRoute({
@@ -362,16 +363,14 @@ define(
 			aRouter.resolveUrl('/a/b/c');
 
 			// Assert that second router matched the route
-			ok(true, 'callback executed for route');
+			assert.ok(true, 'callback executed for route');
             anotherRouter.stop();
 		});
 
-		asyncTest("back()", function () {
+		test("back()", function (start) {
 			aRouter.stop();
 			window.location.hash = ''; // start path
 			aRouter.start();
-
-			expect(5);
 
 			delayedSteps(
 				function () {
@@ -381,31 +380,31 @@ define(
 					aRouter.redirectTo('b');
 				},
 				function () {
-					equal(aRouter.getUrl().toString(), 'b', 'route is last URL');
+					assert.equal(aRouter.getUrl().toString(), 'b', 'route is last URL');
 				},
 				function () {
 					aRouter.back();
 				},
 				function () {
-					equal(aRouter.getUrl().toString(), 'a', 'back sets path to previous path');
+					assert.equal(aRouter.getUrl().toString(), 'a', 'back sets path to previous path');
 				},
 				function () {
 					aRouter.back();
 				},
 				function () {
-					equal(aRouter.getUrl().toString(), '', 'back set to start path');
+					assert.equal(aRouter.getUrl().toString(), '', 'back set to start path');
 				},
 				function () {
 					aRouter.back();
 				},
 				function () {
-					equal(aRouter.getUrl().toString(), '', 'can not back furter than start');
+					assert.equal(aRouter.getUrl().toString(), '', 'can not back furter than start');
 				},
 				function () {
 					aRouter.back('fallback');
 				},
 				function () {
-					equal(aRouter.getUrl().toString(), 'fallback', 'but can give a fallback path');
+					assert.equal(aRouter.getUrl().toString(), 'fallback', 'but can give a fallback path');
 				},
 				function () {
 					start();
@@ -422,7 +421,7 @@ define(
 
             // Assert that route parameters was injected in url and
             // other parameters was set in query
-            equal(url.toString(), 'user/john?includeDetails=true', 'URL match pattern and data');
+            assert.equal(url.toString(), 'user/john?includeDetails=true', 'URL match pattern and data');
         });
 
         test("Path from parameters for empty route", function () {
@@ -433,7 +432,7 @@ define(
             var url = aRouter.getParameterPath({ userId: 'john', includeDetails : true});
 
             // Assert that all parameters was set as query parameters
-            equal(url.toString(), '?userId=john&includeDetails=true', 'URL match pattern and data');
+            assert.equal(url.toString(), '?userId=john&includeDetails=true', 'URL match pattern and data');
         });
 
 
@@ -453,7 +452,7 @@ define(
 
             // Assert that route parameters was injected in url and
             // other parameters was set in query
-            equal(url.toString(), 'user/john?includeDetails=true&includeCompanies=true', 'URL match pattern and data');
+            assert.equal(url.toString(), 'user/john?includeDetails=true&includeCompanies=true', 'URL match pattern and data');
         });
 
         test("GetParameters from current URL", function () {
@@ -467,7 +466,7 @@ define(
             var parameters = aRouter.getRouteParameters();
 
             // Assert that parameters contains both query and URL parameters
-            deepEqual(parameters, {userId : 'john', includeCompanies: 'true'}, 'Parameters contains query and URL parameters');
+            assert.deepEqual(parameters, {userId : 'john', includeCompanies: 'true'}, 'Parameters contains query and URL parameters');
         });
 
         test("GetParameter", function () {
@@ -483,44 +482,42 @@ define(
             var unknownParameter = aRouter.getParameter('unknown');
 
             // Assert that parameters contains both query and URL parameters
-            equal(userIdParameter, 'john', 'URL parameter match');
-            equal(includeCompaniesParameter, 'true', 'Query parameter match');
-            equal(unknownParameter, null, 'Unknown parameter is null');
+            assert.equal(userIdParameter, 'john', 'URL parameter match');
+            assert.equal(includeCompaniesParameter, 'true', 'Query parameter match');
+            assert.equal(unknownParameter, null, 'Unknown parameter is null');
         });
 
-        asyncTest("setParameters()", function () {
+        test("setParameters()", function (start) {
 			aRouter.stop();
 			window.location.hash = ''; // start path
 			aRouter.start();
 
 			aRouter.addRoute({pattern: 'a/#value'});
 
-			expect(4);
-
 			delayedSteps(
 				function () {
 					aRouter.redirectTo('a/b', {foo : 'bar'});
 				},
 				function () {
-					equal(aRouter.getUrl().toString(), 'a/b?foo=bar', 'parameter and query set');
+					assert.equal(aRouter.getUrl().toString(), 'a/b?foo=bar', 'parameter and query set');
 				},
 				function () {
 					aRouter.setParameters({value : 'hello'});
 				},
 				function () {
-					equal(aRouter.getUrl().toString(), 'a/hello?foo=bar', 'parameter updated');
+					assert.equal(aRouter.getUrl().toString(), 'a/hello?foo=bar', 'parameter updated');
 				},
 				function () {
 					aRouter.setParameters({foo : 'world'});
 				},
 				function () {
-					equal(aRouter.getUrl().toString(), 'a/hello?foo=world', 'query updated');
+					assert.equal(aRouter.getUrl().toString(), 'a/hello?foo=world', 'query updated');
 				},
 				function () {
 					aRouter.setParameters({extra : 'fun'});
 				},
 				function () {
-					equal(aRouter.getUrl().toString(), 'a/hello?extra=fun&foo=world', 'extra parameter added');
+					assert.equal(aRouter.getUrl().toString(), 'a/hello?extra=fun&foo=world', 'extra parameter added');
 				},
 				function () {
 					start();

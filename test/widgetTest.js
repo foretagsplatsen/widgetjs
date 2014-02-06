@@ -1,4 +1,6 @@
-define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery"], function(widget, htmlCanvas, jQuery) {
+define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(widget, htmlCanvas, jQuery, chai) {
+
+    var assert = chai.assert;
 
     // helper functions
 
@@ -30,19 +32,19 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery"], function(widget, ht
 
     // actual tests
 
-    module("widget");
+    suite("widget");
 
     test("widgets are assigned unique identifiers", function() {
         withWidget(function(aWidget) {
             for( var i=0; i<1000;i++) {
-                ok(widget().id() !== aWidget.id(), "aWidget id should be unique");
+                assert.ok(widget().id() !== aWidget.id(), "aWidget id should be unique");
             }
         });
     });
 
     test("widgets identifier set from spec", function() {
         var aWidget = widget({id : 'anId'});
-        equal(aWidget.id(), 'anId', 'id() set to id in spec()');
+        assert.equal(aWidget.id(), 'anId', 'id() set to id in spec()');
     });
 
     test("widgets supports events", function() {
@@ -60,7 +62,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery"], function(widget, ht
 
         // Assert: that callback is executed when
         aWidget.on('anEvent', function() {
-            ok(true, 'event triggered on widget()');
+            assert.ok(true, 'event triggered on widget()');
         });
 
         // event is triggered
@@ -71,7 +73,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery"], function(widget, ht
         var my = {}; // reference to protected methods using 'my';
         var aWidget = widget({}, my);
 
-        equal(my.linkTo('foo/bar'), '#!/foo/bar', 'Hash-bang convention hidden in hash.js');
+        assert.equal(my.linkTo('foo/bar'), '#!/foo/bar', 'Hash-bang convention hidden in hash.js');
     });
 
     test("redirectTo() redirects to paths in app", function() {
@@ -79,12 +81,12 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery"], function(widget, ht
         var aWidget = widget({}, my);
 
         my.redirectTo('foo/bar');
-        equal(window.location.hash, my.linkTo('foo/bar'), 'Use hash-bang convention hidden in hash.js');
+        assert.equal(window.location.hash, my.linkTo('foo/bar'), 'Use hash-bang convention hidden in hash.js');
     });
 
     test("Render", function() {
         withWidget(function(aWidget) {
-            ok(jQuery("#" + aWidget.id()).get(0), "appends widget to DOM");
+            assert.ok(jQuery("#" + aWidget.id()).get(0), "appends widget to DOM");
         });
     });
 
@@ -96,18 +98,18 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery"], function(widget, ht
 
             aWidget.update();
 
-            ok(jQuery("#foo").get(0), "updates widget");
+            assert.ok(jQuery("#foo").get(0), "updates widget");
         });
     });
 
     test("Remove", function() {
         withWidget(function(aWidget, my) {
             var id = "#" + aWidget.id();
-            ok(jQuery(id).get(0), "widget in DOM before remove()");
+            assert.ok(jQuery(id).get(0), "widget in DOM before remove()");
 
             aWidget.asJQuery().remove();
 
-            ok(!jQuery(id).get(0), "widget removed after remove()");
+            assert.ok(!jQuery(id).get(0), "widget removed after remove()");
         });
     });
 
@@ -131,7 +133,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery"], function(widget, ht
             aWidget.appendTo(divQuery);
 
             // Assert: that widget was appended last to DIV
-            equal(divQuery.children().get(1).id, aWidget.id(), "widget appended as last element");
+            assert.equal(divQuery.children().get(1).id, aWidget.id(), "widget appended as last element");
 
         });
     });
@@ -156,8 +158,8 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery"], function(widget, ht
             aWidget.replace(divQuery);
 
             // Assert: that widget was appended to DIV
-            equal(divQuery.children().length, 1, "only one child element");
-            equal(divQuery.children().get(0).id, aWidget.id(), "child is widget");
+            assert.equal(divQuery.children().length, 1, "only one child element");
+            assert.equal(divQuery.children().get(0).id, aWidget.id(), "child is widget");
         });
     });
 
@@ -179,7 +181,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery"], function(widget, ht
             html.render(aWidget);
 
             // Assert: that widget was rendered in canvas
-            ok(html.root.asJQuery().find('.aDiv').get(0), "widget rendered inside canvas");
+            assert.ok(html.root.asJQuery().find('.aDiv').get(0), "widget rendered inside canvas");
         });
     });
 
@@ -197,13 +199,13 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery"], function(widget, ht
             })();
 
             // Assert: false before render
-            ok(!aWidget.isRendered(), 'isRendered() is false when not rendered');
+            assert.ok(!aWidget.isRendered(), 'isRendered() is false when not rendered');
 
             // Act: render widget
             html.render(aWidget);
 
             // Assert: true ehrn rendered
-            ok(aWidget.isRendered(), 'isRendered() is true when rendereded');
+            assert.ok(aWidget.isRendered(), 'isRendered() is true when rendereded');
         });
     });
 
@@ -228,7 +230,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery"], function(widget, ht
             html.render(aWidget);
 
             // Assert: that form is rendered with id
-            equal(html.root.asJQuery().find('FORM').get(0).id, aWidget.id(), "root rendered as FORM");
+            assert.equal(html.root.asJQuery().find('FORM').get(0).id, aWidget.id(), "root rendered as FORM");
 
         });
     });
