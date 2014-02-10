@@ -61,14 +61,14 @@ module.exports = function(grunt) {
                 dest: './dist/xunit.out'
             },
         },
-		docco: {
-			src: {
-				src: ['src/**/*.js'],
-				options: {
-					output: 'docs/docco/'
-				}
-			}
-		},
+        jsdoc : {
+            dist : {
+                src: ['src/**/*.js'],
+                options: {
+                    destination: 'docs/jsdoc'
+                }
+            }
+        },
 		watch: {
 			files: ['<%= jshint.src %>', '<%= jshint.test %>', '<%= jshint.sample %>'],
 			tasks: ['jshint:src', 'qunit']
@@ -80,12 +80,12 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-mocha');
     //grunt.loadNpmTasks('grunt-requirejs');
 	grunt.loadNpmTasks('grunt-contrib-requirejs');
-	grunt.loadNpmTasks('grunt-docco');
 	grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-jsdoc');
 
 	// Default task(s).
 	grunt.registerTask('default', ['jshint', 'test']);
-	grunt.registerTask('dist', ['default', 'requirejs', 'docco']);
+	grunt.registerTask('dist', ['default', 'requirejs', 'jsdoc']);
 
 	// Test task
 	grunt.registerTask('test', 'mocha:test');

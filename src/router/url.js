@@ -1,46 +1,72 @@
+/**
+ * @exports url
+ */
 define(
-	[
-		'./route'
-	],
-	function (route) {
+	[],
+	function () {
 
-		var urlSeparator = '/';
+        /**
+         * Token separating URL segments
+         */
+        var urlSeparator = '/';
 
-		// ### Url definition
-		//
-		// A `url` actually represents the fragment part of the actual url.
-		// A `url` has a `path` and a `query`, parsed upon creation.
-		//
-		// ### Route matching
-		//
-		// Urls can be tested against routes with `matchRoute(route)`.
-		// Actual matching only takes the `path` into account, omitting the
-		// `query`, and is delegated to the `route` (passed as argument).
-		// See also `route.js`.
+        /**
+         * Token separating path from query
+         */
+        var querySeparator = '?';
 
+        /**
+         * A `url` actually represents the fragment part of the actual url.
+         * A `url` has a `path` and a `query`, parsed upon creation.
+         *
+         * @constructs url
+         * @param rawUrl {string}
+         */
 		var url = function (rawUrl) {
+            var path = parsePath(rawUrl);
+
+            var segments = parseSegments(path);
+
+            var query = parseQuery(rawUrl);
+
+            /** @typedef url */
 			var that = {};
 
 			rawUrl = rawUrl || '';
 
-			var path = urlParser.parsePath(rawUrl);
+            /**
+             * Path part of URL
+             * @returns {string}
+             */
+            that.getPath = function () { return path; };
 
-			var segments = urlParser.parseSegments(path);
-
-			// Query part of the url (?a=1&b=2)
-			var query = urlParser.parseQuery(rawUrl);
-
-			// Public accessing methods
-
-			that.getPath = function () { return path; };
+            /**
+             * Query part of url as hash
+             * @returns {{}}
+             */
 			that.getQuery = function () { return query; };
+
+            /**
+             * Path as a segment array
+             * @returns {string[]}
+             */
 			that.getSegments = function () { return segments; };
 
 			// Answer true if the route is a match for the receiver
-			that.matchRoute = function (route) {
+
+            /**
+             * Match URL against route.
+             * @param route
+             * @returns {bool}
+             */
+            that.matchRoute = function (route) {
 				return route.matchUrl(that);
 			};
 
+            /**
+             * Return raw url
+             * @returns {string}
+             */
 			that.toString = function() {
 				return rawUrl;
 			};
@@ -48,6 +74,14 @@ define(
 			return that;
 		};
 
+        /**
+         * Build URL from path and query
+         *
+         * @function
+         * @param path {string}
+         * @param query {{}}
+         * @returns {url}
+         */
 		url.build = function(path, query) {
 			if (typeof(path) === 'undefined' || path === null || typeof path !== "string") {
 				throw 'accepts only string paths';
@@ -56,54 +90,56 @@ define(
 			if (query) {
                 var queryPart = decodeURIComponent(jQuery.param(query));
                 if(queryPart) {
-                    return url((path + '?' + queryPart));
+                    return url(path + querySeparator + queryPart);
                 }
             }
 
 			return url(path);
 		};
 
+        /**
+         * Split path into segments
+         *
+         * @param path {string}
+         * @returns {string[]}
+         */
+        function parseSegments (path) {
+            var sanitizedPath = path;
+            //Remove the first / if any and duplicated / in the path and trailing slash
+            sanitizedPath = sanitizedPath.replace(/^\//, '');
+            sanitizedPath = sanitizedPath.replace(/\/\//g, '/');
+            sanitizedPath = sanitizedPath.replace(/\/+$/, '');
 
-		// ### Url parser definition
-		//
-		// A parser can parse the path URL with `parsePath()` and
-		// the query with `parseQuery()`.
-		//
-		// Both parsing methods answer the parsed result.
-		var urlParser = (function() {
-			var that = {};
+            return sanitizedPath.split(urlSeparator).filter(Boolean);
+        }
 
-			that.parseSegments = function(path) {
-				var sanitizedPath = path;
-				//Remove the first / if any and duplicated / in the path and trailing slash
-				sanitizedPath = sanitizedPath.replace(/^\//, '');
-				sanitizedPath = sanitizedPath.replace(/\/\//g, '/');
-				sanitizedPath = sanitizedPath.replace(/\/+$/, '');
+        /**
+         * Extract path part from raw url
+         * @param rawUrl
+         * @returns {string}
+         */
+        function parsePath (rawUrl) {
+            return rawUrl.replace(/\?.*$/g, '');
+        }
 
-				return sanitizedPath.split(urlSeparator).filter(Boolean);
-			};
+        /**
+         * Extract query part from raw url and parse key/values into an object
+         * @param rawUrl
+         * @returns {{}}
+         */
+        function parseQuery(rawUrl) {
+            var result = /[^?]+\?(.*)$/g.exec(rawUrl);
+            var query = {};
+            var pair;
+            if (result) {
+                (result[1].split("&")).forEach(function (each) {
+                    pair = each.split("=");
+                    query[pair[0]] = pair[1];
+                });
+            }
 
-			that.parsePath = function(rawUrl) {
-				return rawUrl.replace(/\?.*$/g, '');
-			};
-
-			that.parseQuery = function(string) {
-				// Extract query key/value(s) from a string and add them to `query` object.
-				var result = /[^?]+\?(.*)$/g.exec(string);
-				var query = {};
-				var pair;
-				if (result) {
-					(result[1].split("&")).forEach(function (each) {
-						pair = each.split("=");
-						query[pair[0]] = pair[1];
-					});
-				}
-
-				return query;
-			};
-
-			return that;
-		}());
+            return query;
+        }
 
 		return url;
 	}

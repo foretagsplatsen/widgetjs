@@ -1,3 +1,6 @@
+/**
+ * @module route
+ */
 define(
 	['./segments', '../events', 'jquery'],
 	function(routeSegments, events, jQuery) {
@@ -46,6 +49,15 @@ define(
 		//		var url = route('/user/#id').expand({id: 'john'});
 		//		console.log(url); // => '/user/john'
 		//
+
+        /**
+         * Routes represent the path for which an action should be taken (see `matched` event).
+         *
+         * @alias module:route
+         * @param spec
+         * @param my
+         * @returns {route}
+         */
 		var route = function(spec, my) {
 			if(Object.prototype.toString.call(spec) === '[object String]') {
 				var routePattern = spec;
@@ -71,6 +83,7 @@ define(
             // but URL still contain trailing segments (default false)
             var ignoreTrailingSegments = spec.ignoreTrailingSegments || false;
 
+            /** @alias route.prototype */
 			var that = {};
 
 			// Mixin events
@@ -80,6 +93,12 @@ define(
 				return segments;
 			};
 
+            /**
+             * Match route against URL
+             * @method
+             * @param url
+             * @returns {boolean}
+             */
 			that.matchUrl = function(url) {
 				var match = findMatch(url);
 				if(!match) {
