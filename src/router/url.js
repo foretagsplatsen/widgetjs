@@ -30,7 +30,7 @@ define(
 
             var query = parseQuery(rawUrl);
 
-            /** @lends module:widgetjs/router/url.prototype */
+            /** @lends module:widgetjs/router/url# */
 			var that = {};
 
 			rawUrl = rawUrl || '';
