@@ -1,5 +1,5 @@
 /**
- * @exports url
+ * @module widgetjs/router/url
  */
 define(
 	[],
@@ -19,8 +19,9 @@ define(
          * A `url` actually represents the fragment part of the actual url.
          * A `url` has a `path` and a `query`, parsed upon creation.
          *
-         * @constructs url
+         * @alias module:widgetjs/router/url
          * @param rawUrl {string}
+		 * @returns {url}
          */
 		var url = function (rawUrl) {
             var path = parsePath(rawUrl);
@@ -29,7 +30,7 @@ define(
 
             var query = parseQuery(rawUrl);
 
-            /** @typedef url */
+            /** @lends module:widgetjs/router/url.prototype */
 			var that = {};
 
 			rawUrl = rawUrl || '';

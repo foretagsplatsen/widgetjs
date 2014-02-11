@@ -1,5 +1,5 @@
 /**
- * @module route
+ * @module widgetjs/router/route
  */
 define(
 	['./segments', '../events', 'jquery'],
@@ -53,7 +53,7 @@ define(
         /**
          * Routes represent the path for which an action should be taken (see `matched` event).
          *
-         * @alias module:route
+         * @alias module:widgetjs/router/route
          * @param spec
          * @param my
          * @returns {route}
@@ -83,7 +83,7 @@ define(
             // but URL still contain trailing segments (default false)
             var ignoreTrailingSegments = spec.ignoreTrailingSegments || false;
 
-            /** @alias route.prototype */
+            /** @lends module:widgetjs/router/route.prototype */
 			var that = {};
 
 			// Mixin events
