@@ -295,7 +295,7 @@ define(
 
                 parameters = parameters || {};
 
-				var newQuery = {};
+				var newQuery = my.location.getUrl().getQuery();
                 var newParameters = {};
                 var currentRoute;
 
@@ -308,10 +308,8 @@ define(
                 }
 
 				// Use current route as template and pre-fill parameters
-                // and query with current url values
                 else if(my.lastMatch) {
 					currentRoute = my.lastMatch.getRoute();
-					newQuery = Object.create(my.lastMatch.getUrl().getQuery());
 					newParameters = Object.create(my.lastMatch.getRouteParameters());
 				}
 
@@ -344,7 +342,18 @@ define(
 			};
 
             that.getRouteParameters = function () {
-                return my.lastMatch ? my.lastMatch.getParameters() : {};
+                // Start with route parameters from latest matched route
+                var parameters = my.lastMatch ? my.lastMatch.getParameters() : {};
+
+                // Fill with query parameters from current URL
+                var queryParameters = my.location.getUrl().getQuery();
+                for (var queryParameterName in queryParameters) {
+                    if(queryParameters.hasOwnProperty(queryParameterName)) {
+                        parameters[queryParameterName] = queryParameters[queryParameterName];
+                    }
+                }
+
+                return parameters;
             };
 
             that.getParameter = function (parameterKey) {
