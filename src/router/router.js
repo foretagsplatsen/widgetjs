@@ -288,15 +288,16 @@ define(
 
 			that.getParameterPath = function(routeName, parameters) {
                 // routeName can be omitted
+                var suppliedParameters;
                 if(!(typeof routeName == 'string' || routeName instanceof String)) {
-                    parameters = routeName;
-                    routeName = null;
+                    suppliedParameters = routeName;
+                    routeName = undefined;
+                } else {
+                    suppliedParameters = parameters;
                 }
 
-                // Don't include query parameters for current route
-                var includeCurrentQueryParameters = routeName !== undefined;
-
-                parameters = parameters || {};
+                // Don't include query parameters for named route
+                var includeCurrentQueryParameters = routeName === undefined;
 
                 // Pick a template route
                 var currentRoute;
@@ -311,30 +312,41 @@ define(
                     currentRoute = route();
                 }
 
-                // Merge current parameters with supplied parameters
+                // Clone parameters
+                var allParameters = {};
+                Object.keys(suppliedParameters).forEach(function(param) {
+                    allParameters[param] = suppliedParameters[param];
+                });
+
+                // Merge in current parameters
                 var currentParameters = that.getParameters();
-                Object.keys(parameters).forEach(function(param) {
+                Object.keys(currentParameters).forEach(function(param) {
                     if(!includeCurrentQueryParameters &&
                         !currentRoute.hasParameter(param)) {
                         return;
                     }
 
-                    currentParameters[param] = parameters[param];
+                    // Keep supplied parameters
+                    if(allParameters[param] !== undefined) {
+                        return;
+                    }
+
+                    allParameters[param] = currentParameters[param];
                 });
 
-				// If parameter exist in route add to parameters otherwise to query.
+                // If parameter exist in route add to parameters otherwise to query.
                 var newParameters = {}, newQuery = {};
-				Object.keys(currentParameters).forEach(function(param){
-					if(currentRoute.hasParameter(param)) {
-						newParameters[param] = currentParameters[param];
-					} else {
-						newQuery[param] = currentParameters[param];
-					}
-				});
+                Object.keys(allParameters).forEach(function(param){
+                    if(currentRoute.hasParameter(param)) {
+                        newParameters[param] = allParameters[param];
+                    } else {
+                        newQuery[param] = allParameters[param];
+                    }
+                });
 
-				var aRawUrl = currentRoute.expand(newParameters);
+                var aRawUrl = currentRoute.expand(newParameters);
 
-				return url.build(aRawUrl, newQuery);
+                return url.build(aRawUrl, newQuery);
 			};
 
 			that.linkToParameters = function(routeName, parameters) {

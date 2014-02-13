@@ -452,7 +452,7 @@ define(
 
             // Assert that route parameters was injected in url and
             // other parameters was set in query
-            assert.equal(url.toString(), 'user/john?includeCompanies=true&includeDetails=true', 'URL match pattern and data');
+            assert.equal(url.toString(), 'user/john?includeDetails=true&includeCompanies=true', 'URL match pattern and data');
         });
 
         test("GetParameters from current URL", function () {
@@ -517,7 +517,7 @@ define(
 					aRouter.setParameters({extra : 'fun'});
 				},
 				function () {
-					assert.equal(aRouter.getUrl().toString(), 'a/hello?foo=world&extra=fun', 'extra parameter added');
+					assert.equal(aRouter.getUrl().toString(), 'a/hello?extra=fun&foo=world', 'extra parameter added');
 				},
 				function () {
 					start();
