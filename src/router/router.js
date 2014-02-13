@@ -295,37 +295,32 @@ define(
 
                 parameters = parameters || {};
 
-				var newQuery = {};
-                var newParameters = {};
+                // Pick a template route
                 var currentRoute;
-
-                // Lookup named route if name supplied
                 if(routeName) {
                     currentRoute = that.getRouteByName(routeName);
                     if(!currentRoute) {
                         throw new Error("No route found with name " + routeName);
                     }
+                } else if(my.lastMatch) {
+                    currentRoute = my.lastMatch.getRoute();
+                } else {
+                    currentRoute = route();
                 }
 
-				// Use current route as template and pre-fill parameters
-                // and query with current url values
-                else if(my.lastMatch) {
-					currentRoute = my.lastMatch.getRoute();
-					newQuery = Object.create(my.lastMatch.getUrl().getQuery());
-					newParameters = Object.create(my.lastMatch.getRouteParameters());
-				}
-
-                // otherwise put everything in query parameters
-                else {
-					currentRoute = route();
-				}
+                // Merge current parameters with supplied parameters
+                var currentParameters = that.getParameters();
+                Object.keys(parameters).forEach(function(param) {
+                    currentParameters[param] = parameters[param];
+                });
 
 				// If parameter exist in route add to parameters otherwise to query.
-				Object.keys(parameters).forEach(function(param){
+                var newParameters = {}, newQuery = {};
+				Object.keys(currentParameters).forEach(function(param){
 					if(currentRoute.hasParameter(param)) {
-						newParameters[param] = parameters[param];
+						newParameters[param] = currentParameters[param];
 					} else {
-						newQuery[param] = parameters[param];
+						newQuery[param] = currentParameters[param];
 					}
 				});
 
@@ -333,7 +328,6 @@ define(
 
 				return url.build(aRawUrl, newQuery);
 			};
-
 
 			that.linkToParameters = function(routeName, parameters) {
 				return my.location.linkToUrl(that.getParameterPath(routeName, parameters));
@@ -343,12 +337,21 @@ define(
 				that.redirectToUrl(that.getParameterPath(routeName, parameters));
 			};
 
-            that.getRouteParameters = function () {
-                return my.lastMatch ? my.lastMatch.getParameters() : {};
+            that.getParameters = function () {
+                // Start with route parameters from latest matched route
+                var parameters = my.lastMatch ? my.lastMatch.getParameters() : {};
+
+                // Fill with query parameters from current URL
+                var queryParameters = my.location.getUrl().getQuery();
+                Object.keys(queryParameters).forEach(function(queryParameterName) {
+                    parameters[queryParameterName] = queryParameters[queryParameterName];
+                });
+
+                return parameters;
             };
 
             that.getParameter = function (parameterKey) {
-                var parameters = that.getRouteParameters();
+                var parameters = that.getParameters();
                 return parameters[parameterKey];
             };
 
