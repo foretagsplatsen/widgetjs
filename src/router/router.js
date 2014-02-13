@@ -294,7 +294,7 @@ define(
                 }
 
                 // Don't include query parameters for current route
-                var includeCurrentQueryParameters = route !== undefined;
+                var includeCurrentQueryParameters = routeName !== undefined;
 
                 parameters = parameters || {};
 
