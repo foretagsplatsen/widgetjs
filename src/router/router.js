@@ -293,6 +293,9 @@ define(
                     routeName = null;
                 }
 
+                // Don't include query parameters for current route
+                var includeCurrentQueryParameters = route !== undefined;
+
                 parameters = parameters || {};
 
                 // Pick a template route
@@ -311,6 +314,11 @@ define(
                 // Merge current parameters with supplied parameters
                 var currentParameters = that.getParameters();
                 Object.keys(parameters).forEach(function(param) {
+                    if(!includeCurrentQueryParameters &&
+                        !currentRoute.hasParameter(param)) {
+                        return;
+                    }
+
                     currentParameters[param] = parameters[param];
                 });
 
