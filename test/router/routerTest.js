@@ -463,7 +463,7 @@ define(
             aRouter.redirectTo('/user/john', {includeCompanies : true});
 
             // Act: get parameters from URL
-            var parameters = aRouter.getRouteParameters();
+            var parameters = aRouter.getParameters();
 
             // Assert that parameters contains both query and URL parameters
             assert.deepEqual(parameters, {userId : 'john', includeCompanies: 'true'}, 'Parameters contains query and URL parameters');
