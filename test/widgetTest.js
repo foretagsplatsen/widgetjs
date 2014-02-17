@@ -51,10 +51,11 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
         // Arrange: a widget with a public method
         // that triggers an event when executed.
         var aWidget = (function() {
-            var that = widget();
+            var my = {};
+            var that = widget({}, my);
 
             that.aMethod = function() {
-                that.trigger('anEvent');
+                my.trigger('anEvent');
             };
 
             return that;
@@ -62,6 +63,31 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
 
         // Assert: that callback is executed when
         aWidget.on('anEvent', function() {
+            assert.ok(true, 'event triggered on widget()');
+        });
+
+        // event is triggered
+        aWidget.aMethod();
+    });
+
+    test("widgets supports event methods", function() {
+        // Arrange: a widget with a public method
+        // that triggers an event when executed.
+        var aWidget = (function() {
+            var my = {};
+            var that = widget({}, my);
+
+            that.onAnEvent = my.events.createEvent('anEvent');
+
+            that.aMethod = function() {
+                my.trigger('anEvent');
+            };
+
+            return that;
+        })();
+
+        // Assert: that callback is executed when
+        aWidget.onAnEvent(function() {
             assert.ok(true, 'event triggered on widget()');
         });
 
