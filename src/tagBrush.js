@@ -23,44 +23,48 @@ define(
 		 * // Children are appended to brush one-by-one.
 		 * tagBrush({jQuery : '#heading', canvas : html, children : [headingBrush, bodyBrush, footerBrush]});
 		 */
-		function tagBrush(spec) {
+		var tagBrush = function(spec) {
 
 			/** @lends module:widgetjs/tagBrush# */
 			var that = {};
 
-			// Supported HTML events
+			/** Supported HTML events */
 			var attributes = 'href for id media rel src style title type'.split(' ');
 
-			// Supported HTML attributes
+			/** Supported HTML attributes */
 			var events = ('blur focus focusin focusout load resize scroll unload ' +
-						  'click dblclick mousedown mouseup mousemove mouseover ' +
-						  'mouseout mouseenter mouseleave change select submit ' +
-						  'keydown keypress keyup error dragstart dragenter dragover dragleave drop dragend').split(' ');
+						'click dblclick mousedown mouseup mousemove mouseover ' +
+						'mouseout mouseenter mouseleave change select submit ' +
+						'keydown keypress keyup error dragstart dragenter dragover dragleave drop dragend').split(' ');
 
 			var jquery = spec.jQuery;
 			var elementTagName = spec.tag;
 			var children = spec.children;
 			var canvas = spec.canvas;
 
-			// DOM element - Is set on initilization to first DOM element matched by
-			// 'jquery'. if no jQuery is given, element is created from tag name.
+			/** 
+			 * DOM element - Is set on initialization to first DOM element matched by
+			 * 'jquery'. if no jQuery is given, element is created from tag name.
+			 */
 			var element;
 
 			function createElement(tagName) {
 				return document.createElement(tagName);
 			}
 
-			// Appends objects to the brush element. A tag brush knows how to append:
-			//
-			// - strings
-			// - functions (that take a htmlCanvas as argument)
-			// - other brushes and widgets (that implements `appendToBrush()`)
-			// - map / object literal with attributes (eg. {id: 'aId', 'class' : 'aClass'})
-			// - array of valid objects (see above)
-			//
-			// all other objects are appended using:
-			// `jQuery(element).append(object);`
-			//
+			/**
+			 * Appends objects to the brush element. A tag brush knows how to append:
+			 *
+			 * - strings
+			 * - functions (that take a htmlCanvas as argument)
+			 * - other brushes and widgets (that implements `appendToBrush()`)
+			 * - map / object literal with attributes (eg. {id: 'aId', 'class' : 'aClass'})
+			 * - array of valid objects (see above)
+			 *
+			 * all other objects are appended using:
+			 * `jQuery(element).append(object);`
+			 *
+			 */
 			function append(object) {
 				if (typeof(object) === 'undefined' || object === null) {
 					throw new Error('cannot append null or undefined to brush');
@@ -76,7 +80,7 @@ define(
 				} else if (typeof object === "function") {
 					appendFunction(object);
 				} else if (typeof object === "object" &&
-						   object.appendToBrush /* eg. widget and tagBrush implement appendToBrush */) {
+						object.appendToBrush /* eg. widget and tagBrush implement appendToBrush */) {
 					object.appendToBrush(that); // double dispatch
 				}
 				else if (typeof object === "object") {
@@ -299,7 +303,7 @@ define(
 			}
 
 			return that;
-		}
+		};
 
 		return tagBrush;
 	}
