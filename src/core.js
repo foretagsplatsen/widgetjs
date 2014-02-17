@@ -1,13 +1,14 @@
 define(
 	[
 		'./htmlCanvas',
+		'./tagBrush',
 		'./widget',
 		'./widget-extensions',
 		'./router',
 		'./events'
 	],
 
-	function (htmlCanvas, widget, ext, router, events) {
+	function (htmlCanvas, tagBrush, widget, ext, router, events) {
 		return {
 			htmlCanvas : htmlCanvas,
 			widget : widget,
