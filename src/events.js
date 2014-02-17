@@ -107,6 +107,15 @@ define([], function () {
                 return binding;
             };
 
+            that.createEvent = function (name) {
+                return function(callback) {
+                    var binding = eventBinding({ callback: callback });
+                    ensureEventHolderFor(name);
+                    that.events[name].push(binding);
+                    return binding;
+                };
+            };
+
             // Removed 'binding' attached to event.
             that.off = function (name, binding) {
                 ensureEventHolderFor(name);

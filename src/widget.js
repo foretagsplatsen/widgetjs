@@ -49,6 +49,20 @@ define(
         //      widget();
         //      widget({ id : 'unique_identifier'});
         //
+        // Trigger events using:
+        //
+        //      my.trigger('event_id', event_data)
+        //
+        // Listen for events:
+        //
+        //      that.on('event_id', function(event_data) { });
+        //
+        // or more commonly:
+        //
+        //      var w = widget();
+        //      w.on('event_id', function(event_data) { });
+        //
+        //
         var widget = function (spec, my) {
             my = my || {};
             spec = spec || {};
@@ -60,22 +74,14 @@ define(
 
             // #### Public/Protected API
 
-            // **Mix in Events** (See [events.js](events.html))
-            //
-            // Trigger events using:
-            //
-            //      that.trigger('event_id', event_data)
-            //
-            // Listen for events:
-            //
-            //      that.on('event_id', function(event_data) { });
-            //
-            // or more commonly:
-            //
-            //      var w = widget();
-            //      w.on('event_id', function(event_data) { });
-            //
-            jQuery.extend(that, events.eventhandler());
+            // **Events** (See [events.js](events.html))
+
+            my.events = events.eventhandler();
+            my.trigger = my.events.trigger;
+            that.on = my.events.trigger;
+
+            // TODO: Deprecated. Use my.trigger
+            that.trigger = my.events.trigger;
 
             // Returns sub widgets of the widget. Needed
             // to traverse widget tree. Override in concrete widgets!
