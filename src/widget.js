@@ -78,7 +78,9 @@ define(
 
             my.events = events.eventhandler();
             my.trigger = my.events.trigger;
-            that.on = my.events.trigger;
+            that.on = my.events.on;
+            that.onceOn = my.events.onceOn;
+            that.off = my.events.off;
 
             // TODO: Deprecated. Use my.trigger
             that.trigger = my.events.trigger;
