@@ -108,9 +108,14 @@ define([], function () {
             };
 
             that.createEvent = function (name) {
+                ensureEventHolderFor(name);
+
                 return function(callback) {
+                    if(!callback) {
+                        return that.events[name];
+                    }
+
                     var binding = eventBinding({ callback: callback });
-                    ensureEventHolderFor(name);
                     that.events[name].push(binding);
                     return binding;
                 };

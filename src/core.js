@@ -4,16 +4,18 @@ define(
 		'./widget',
 		'./widget-extensions',
 		'./router',
-		'./events'
+		'./events',
+        './property'
 	],
 
-	function (htmlCanvas, widget, ext, router, events) {
+	function (htmlCanvas, widget, ext, router, events, property) {
 		return {
 			htmlCanvas : htmlCanvas,
 			widget : widget,
 			ext : ext,
 			router : router,
-			events : events
+			events : events,
+            property : property
 		};
 	}
 );

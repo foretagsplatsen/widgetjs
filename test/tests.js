@@ -18,6 +18,7 @@ require.config({
  'htmlCanvasTest',
  'widgetTest',
  'eventsTest',
+ 'propertyTest',
  'router/hashTest',
  'router/deprecatedRouterTest',
  'router/routerTest',
