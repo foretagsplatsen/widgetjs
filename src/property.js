@@ -50,9 +50,9 @@ define(['./events'], function(events) {
         };
 
         my.setValue = function(newValue) {
-            var oldValue = my.value;
+            var oldValue = my.getValue();
             if(my.setter) {
-                var context = valueContext(my.value, my.validator);
+				var context = valueContext(my.value, my.validator);
                 my.setter.call(context, newValue);
                 newValue = context.getValue();
             }
