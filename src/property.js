@@ -43,7 +43,7 @@ define(['./events'], function(events) {
         my.getValue = function() {
             if(my.getter) {
                 var context = valueContext(my.value, my.validator);
-                my.value = my.getter.call(context);
+                return my.getter.call(context);
             }
 
             return my.value;
