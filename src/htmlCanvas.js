@@ -195,22 +195,22 @@ define(
 				}
 
 				if (typeof object === "object" && object.constructor === Array) {
-					for (var i = 0; i < object.length; i++) {
-						append(object[i]);
-					}
+					return object.map (function(item) {
+						return append(item);
+					});
 				}
 				else if (typeof object === "string") {
-					appendString(object);
+					return appendString(object);
 				} else if (typeof object === "function") {
-					appendFunction(object);
+					return appendFunction(object);
 				} else if (typeof object === "object" &&
 					object.appendToBrush /* eg. widget and tagBrush implement appendToBrush */) {
-					object.appendToBrush(that); // double dispatch
+					return object.appendToBrush(that); // double dispatch
 				}
 				else if (typeof object === "object") {
-					that.attr(object); // assume attributes if none of above
+					return that.attr(object); // assume attributes if none of above
 				} else {
-					jQuery(element).append(object); // default to jquery
+					return jQuery(element).append(object); // default to jquery
 				}
 			}
 
@@ -270,10 +270,10 @@ define(
 				return that;
 			};
 
-			// Implemention for `appendToBrush()` to allow a brush to be
+			// Implementation for `appendToBrush()` to allow a brush to be
             // appended to another brush.
             //
-            // Basicly it allows us to do:
+            // Basically it allows us to do:
             //
             //		var h1Brush = html.span('test');
             //      html.div(h1Brush);
@@ -284,15 +284,19 @@ define(
 
 			// Appends a property object
 			that.appendProperty = function(property) {
-				append(property.get());
-				// Listen to value changes
-
-				// TODO We should stop listening to changes when the brush
-				// is removed, to make it GCed
-				property.onChange(function(newValue) {
-					that.asJQuery().empty();
-					append(newValue);
+				var brush = tagBrush({
+					tag: 'widgetjs-property',
+					children: [ property.get() ]
 				});
+
+				// Listen to value changes
+				// TODO We should stop listening to changes when the brush is removed, to make it GCed
+				property.onChange(function(newValue) {
+					brush.asJQuery().empty();
+					brush.render(newValue);
+				});
+
+				return append(brush);
 			};
 
 			// Appends brush `element()` to this element.
