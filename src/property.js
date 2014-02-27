@@ -79,6 +79,11 @@ define(['./events'], function(events) {
             }
         };
 
+		// Double-dispatch with the htmlCanvas' tagBrush
+		that.appendToBrush = function(brush) {
+			brush.appendProperty(that);
+		};
+
         that.isValid = function() {
             try {
                 that.validate();

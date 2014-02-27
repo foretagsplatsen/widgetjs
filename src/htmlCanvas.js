@@ -242,6 +242,7 @@ define(
 				canvas.root = root;
 			}
 
+
 			// #### Public API
 
 			// Returns DOM element created by brush.
@@ -281,6 +282,19 @@ define(
 				aTagBrush.addBrush(that);
 			};
 
+			// Appends a property object
+			that.appendProperty = function(property) {
+				append(property.get());
+				// Listen to value changes
+
+				// TODO We should stop listening to changes when the brush
+				// is removed, to make it GCed
+				property.onChange(function(newValue) {
+					that.asJQuery().empty();
+					append(newValue);
+				});
+			};
+
 			// Appends brush `element()` to this element.
 			that.addBrush = appendBrush;
 
@@ -295,6 +309,7 @@ define(
 				that.asJQuery().bind(event, callback);
 				return that;
 			};
+
 
 			// Event functions are added dynamically on object creation.
 			// Each supported event is added as a public method on brush
