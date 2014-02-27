@@ -10,7 +10,7 @@ requirejs.config({
 	shim: {
 		bootstrap: { deps: ['jquery'], exports: 'jQuery' },
 		jstorage: ['jquery', 'json2']
-	},
+	}
 });
 
 define(['app', 'jquery'], function(app, jQuery) {
