@@ -195,22 +195,22 @@ define(
 				}
 
 				if (typeof object === "object" && object.constructor === Array) {
-					return object.map (function(item) {
+					object.map (function(item) {
 						return append(item);
 					});
 				}
 				else if (typeof object === "string") {
-					return appendString(object);
+					appendString(object);
 				} else if (typeof object === "function") {
-					return appendFunction(object);
+					appendFunction(object);
 				} else if (typeof object === "object" &&
 					object.appendToBrush /* eg. widget and tagBrush implement appendToBrush */) {
-					return object.appendToBrush(that); // double dispatch
+					object.appendToBrush(that); // double dispatch
 				}
 				else if (typeof object === "object") {
-					return that.attr(object); // assume attributes if none of above
+					that.attr(object); // assume attributes if none of above
 				} else {
-					return jQuery(element).append(object); // default to jquery
+					jQuery(element).append(object); // default to jquery
 				}
 			}
 
@@ -296,7 +296,23 @@ define(
 					brush.render(newValue);
 				});
 
-				return append(brush);
+				append(brush);
+			};
+
+			that.appendCollectionProperty = function(property) {
+				var brush = tagBrush({
+					tag: 'widgetjs-property',
+					children: property.get()
+				});
+
+				// Listen to value changes
+				// TODO We should stop listening to changes when the brush is removed, to make it GCed
+				property.onChange(function(newValue) {
+					brush.asJQuery().empty();
+					brush.render(newValue);
+				});
+
+				append(brush);
 			};
 
 			// Appends brush `element()` to this element.
