@@ -1,7 +1,8 @@
 define([
 	'widgetjs/property',
+	'widgetjs/collectionProperty',
 	'widgetjs/widget'
-], function(property, widget) {
+], function(property, collectionProperty, widget) {
 
 	/**
 	 *    `counter` is an example of how to use `properties`
@@ -23,16 +24,52 @@ define([
 		return that;
 	};
 
+	var counterCollection = function() {
+		var that = {};
+	
+		that.items = collectionProperty({
+			value: [counterModel(), counterModel()]
+		});
+
+		that.increase = function() {
+			that.items.forEach(function(item) {
+				item.increase();
+			});
+		};
+
+		that.decrease = function() {
+			that.items.forEach(function(item) {
+				item.decrease();
+			});
+		};
+
+		that.addCounter = function() {
+			that.items.push(counterModel());
+		};
+
+		return that;
+	};
+
+
 	var counterWidget = function() {
 		var that = widget();
-		var count = counterModel();
+		var count = counterCollection();
+
 		that.renderContentOn = function(html) {
-			html.h1(count.count, ' hello');
+
+			html.div(count.items.map(function(counter) {
+				return html.h1(counter.count, ' hello');
+			}));
+							
+
 			html.button('+').click(function() {
 				count.increase();
 			});
 			html.button('-').click(function() {
 				count.decrease();
+			});
+			html.button('add').click(function() {
+				count.addCounter();
 			});
 		};
 

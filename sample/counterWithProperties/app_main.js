@@ -16,6 +16,5 @@ requirejs.config({
 define(['./counter', 'jquery'], function(counter, jQuery) {
 	jQuery(document).ready(function() {
 		counter().appendToBody();
-		counter().appendToBody();
 	});
 });
