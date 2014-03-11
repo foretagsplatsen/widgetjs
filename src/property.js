@@ -28,6 +28,7 @@ define(['./events'], function(events) {
         my = my || {};
 
         my.value = spec.value;
+        my.options = spec.options;
         my.type = spec.type;
         my.validator = spec.validator;
         my.getter = spec.get;
@@ -69,6 +70,8 @@ define(['./events'], function(events) {
 
         that.type = my.type;
 
+        that.options = my.options;
+
         that.label = my.label;
 
         that.onChange = my.changeEvent;
@@ -83,6 +86,10 @@ define(['./events'], function(events) {
 		that.appendToBrush = function(brush) {
 			brush.appendProperty(that);
 		};
+
+        that.appendToForm = function(form) {
+            form.appendProperty(that);
+        };
 
         that.isValid = function() {
             try {

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Forms Sample</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="chrome=1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	<script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+    <script type='text/javascript' src='../../bower_components/requirejs/require.js'></script>
+
+    <script type="text/javascript">
+        requirejs.config({
+            baseUrl: '.',
+            paths:   {
+                'jquery':   '../../bower_components/jquery/jquery',
+                'widgetjs': '../../src/',
+                'bootstrap': 'http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min'
+            },
+            shim:    {
+                bootstrap: { deps: ['jquery'], exports: 'jQuery' }
+            }
+        });
+
+        require(['widgetjs/core', 'jquery'], function(widgetjs, jQuery) {
+            jQuery(document).ready(function() {
+
+                function user(spec) {
+                    var that = {};
+
+                    that.name = widgetjs.property({ value: spec.name, label: 'Name'});
+                    that.age = widgetjs.property({ value: spec.age, label: 'Age', type: 'number'});
+                    that.isAdmin = widgetjs.property({ value: spec.isAdmin, label: 'Is Administrator', type: 'boolean'});
+                    that.password = widgetjs.property({ value: spec.password, label: 'Password', type: 'password'});
+                    that.role = widgetjs.property({ value: spec.role, label: 'Role in company', options: ['limited', 'normal', 'admin'], type: 'options'});
+
+                    return that;
+                }
+
+                var john = user({ name: 'Johan Doe', age: 95, isAdmin: true, role: 'admin' });
+
+                window.user = john;
+
+                var html = widgetjs.htmlCanvas('body');
+
+
+                // Render user
+                html.h1('Model')
+                html.dl(
+                    html.dt('Name'),
+                    html.dd(john.name),
+                    html.dt('Age'),
+                    html.dd(john.age),
+                    html.dt('Is Administrator'),
+                    html.dd(john.isAdmin ? 'YES' : 'NO'), //TODO: Computed property
+                    html.dt('Role'),
+                    html.dd(john.role)
+                );
+
+
+                // Form generated from model
+                html.h1('Properties');
+                var userForm = widgetjs.formWidget({model: john});
+                userForm.appendTo('body');
+
+
+                // Form
+                html.h1('Values');
+                var valueForm = widgetjs.formWidget();
+                valueForm.input({value: john.name.get() });
+                valueForm.checkbox({value: john.isAdmin.get() });
+                valueForm.password({value: john.password.get() });
+                valueForm.select({value: john.role.get(), options: ['limited', 'normal', 'admin']});
+                valueForm.appendTo('body');
+
+                // Mutator/Accessor
+                html.h1('Mutator/Accessor');
+                var customForm = widgetjs.formWidget();
+                customForm.input({
+                    accessor: user.name.get,
+                    mutator: user.name.set
+                });
+                customForm.checkbox({
+                    accessor: user.name.get,
+                    mutator: user.name.set
+                });
+                customForm.password({
+                    accessor: user.name.get,
+                    mutator: user.name.set
+                });
+                customForm.select({
+                    accessor: user.name.get,
+                    mutator: user.name.set,
+                    options: ['limited', 'normal', 'admin']
+                });
+
+                customForm.appendTo('body');
+
+            });
+        });
+
+    </script>
+</head>
+<body></body>
+</html>

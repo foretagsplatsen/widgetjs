@@ -5,17 +5,19 @@ define(
 		'./widget-extensions',
 		'./router',
 		'./events',
-        './property'
+        './property',
+        './formWidget'
 	],
 
-	function (htmlCanvas, widget, ext, router, events, property) {
+	function (htmlCanvas, widget, ext, router, events, property, formWidget) {
 		return {
 			htmlCanvas : htmlCanvas,
 			widget : widget,
 			ext : ext,
 			router : router,
 			events : events,
-            property : property
+            property : property,
+            formWidget: formWidget
 		};
 	}
 );

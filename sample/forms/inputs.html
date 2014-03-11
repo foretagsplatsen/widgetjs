@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Forms Sample</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="chrome=1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	<script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+    <script type='text/javascript' src='../../bower_components/requirejs/require.js'></script>
+
+    <script type="text/javascript">
+        requirejs.config({
+            baseUrl: '.',
+            paths:   {
+                'jquery':   '../../bower_components/jquery/jquery',
+                'widgetjs': '../../src/',
+                'bootstrap': 'http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min'
+            },
+            shim:    {
+                bootstrap: { deps: ['jquery'], exports: 'jQuery' }
+            }
+        });
+
+        require(['widgetjs/core', 'widgetjs/inputs', 'jquery'], function(widgetjs, inputs, jQuery) {
+            jQuery(document).ready(function() {
+
+                var html = widgetjs.htmlCanvas('body');
+
+                var roles = inputs.select({ items: ['normal', 'limited', 'admin'] });
+
+                html.render(roles);
+
+            });
+        });
+
+    </script>
+</head>
+<body></body>
+</html>

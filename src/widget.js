@@ -165,9 +165,9 @@ define(
                 return that.asJQuery().length > 0;
             };
 
-            // Renders a wrapper/root for widget - a div as default
+            // Renders a wrapper/root for widget
             my.renderRootOn = function (html) {
-                return html.div().id(id);
+                return html.tag('widgetjs-widget').id(id);
             };
 
             // Renders the acctual content inside the wrapper div. Override in concrete widgets!
