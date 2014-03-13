@@ -3,12 +3,8 @@ define([
     'htmlparser'
 ], function(widget) {
 
-    function isBlank(str) {
-        return (!str || /^\s*$/.test(str));
-    }
-
-    function isBlankline(str) {
-        return (/^\s*[\r\n]/).test(str);
+    function isNonBlank(str) {
+        return str && !/^\s*$/.test(str);
     }
 
     var attributes = ('href for id media rel src style title type blur focus focusin focusout load resize scroll unload ' +
@@ -125,21 +121,29 @@ define([
 
                     },
                     chars: function(str) {
-                        var text = str.replace(/^\s+|\s+$/g, ' '); // allow only one blank before/after
-                        if(isBlankline(text) || isBlank(text)) {
-                            return;
-                        }
+                        // Split into lines and filter out blank lines
+                        var lines = str.split(/[\r\n]/)
+                            .map(function(line) {
+                                // allow only one blank before/after
+                                return line.replace(/^\s+|\s+$/g, ' ');
+                            })
+                            .filter(isNonBlank);
+
 
                         // If we have a sibling or parent have attrs
                         if(current.children.length > 1 || (current.attrs && current.attrs.length > 0)) {
                             writeSeparator();
                         }
 
-                        current.children.push(text.trim());
+                        // Write each line on it's own line
+                        lines.forEach(function(line) {
+                            current.children.push(line);
+                            newline();
+                            indent();
+                            writeText(line);
+                        });
 
-                        newline();
-                        indent();
-                        writeText(text);
+
                     }
                 });
 
