@@ -96,7 +96,7 @@ define(['widgetjs/core'], function(widgetjs) {
             });
         };
 
-        that.selectItem = function(item) {
+        that.setSelectItem = function(item) {
             var match = my.options.filter(function(option) {
                 return option.getItem() === item;
             });

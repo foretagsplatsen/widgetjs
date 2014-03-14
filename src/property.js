@@ -87,8 +87,8 @@ define(['./events'], function(events) {
 			brush.appendProperty(that);
 		};
 
-        that.appendToForm = function(form) {
-            form.appendProperty(that);
+        that.appendToForm = function(form, options) {
+            form.appendProperty(that, options);
         };
 
         that.isValid = function() {

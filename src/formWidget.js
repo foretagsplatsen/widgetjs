@@ -1,5 +1,7 @@
 define(['widgetjs/widget'], function(widget) {
 
+    //TODO: All options, Field Overrides, Submit, Validation, Get Values, Multi level, Separate Inputsm Complex Properties, Selects with model options
+
     /**
      * Base for all forms
      *
@@ -16,117 +18,313 @@ define(['widgetjs/widget'], function(widget) {
         var that = widget(spec, my);
 
         my.fields = [];
+        my.model = spec.model; //TODO: will not create fields from properties. Conciser
 
-        my.registerField = function (field) {
-            my.fields.push(field);
-            return field;
-        };
-
-        that.appendProperty = function(property) {
-            // TODO: move into property
-            if(property.type === 'boolean') {
-                that.checkbox({ value: property.get() });
-            } else if(property.type === 'password') {
-                that.password({ value: property.get() });
-            } else if(property.type === 'number') {
-                that.number({ value: property.get() });
-            } else if(property.type === 'options') {
-                that.select({ value: property.get(), options: property.options });
-            } else {
-                that.input({ value: property.get() });
-            }
-        };
-
-        that.addField = function(field, options) {
-            my.registerField(field);
-            return field;
-        };
+        // Public API
 
         that.setModel = function (model) {
+            my.model = model;
+        };
+
+        that.appendModelProperties = function(model) {
+            model = model || my.model;
+            // TODO: traverse into sub properties of properties?
             for(var propertyName in model) {
                 if(model[propertyName] && model[propertyName].appendToForm) {
-                    model[propertyName].appendToForm(that);
+                    model[propertyName].appendToForm(that, { name: propertyName});
                 }
             }
         };
 
-        that.renderContentOn = function(html) {
-            var form = html.form();
-
-            if (formClass) {
-                form.addClass(spec.klass);
+        that.appendProperty = function(property, options) {
+            options = options || {};
+            // TODO: Double Dispatch and/or Factory
+            if(property.type === 'boolean') {
+                that.checkbox({ property : property, name : options.name, label: property.label });
+            } else if(property.type === 'password') {
+                that.password({ property : property, name : options.name, label: property.label });
+            } else if(property.type === 'number') {
+                that.number({ property : property, name : options.name, label: property.label  });
+            } else if(property.type === 'options') {
+                that.select({ property : property, options : property.options, name : options.name, label: property.label  });
+            } else {
+                that.input({ property : property, name : options.name, label: property.label });
             }
-
-            form.render(my.fields);
         };
 
+
+        that.addField = function(field, options) {
+            var property = options.property;
+            var mutator = options.mutator;
+            var accessor = options.accessor;
+            var attribute = options.attribute;
+
+            if(property) {
+                mutator = property.set;
+                accessor = property.get;
+
+                property.onChange(function(newValue) {
+                    field.setValue(newValue, true);
+                });
+            } else if(attribute) {
+                var attr = modelAttribute({ attribute : attribute, model: my.model});
+                mutator = attr.set;
+                accessor = attr.get;
+            }
+
+            if(mutator) {
+                field.on('change', function(newValue) {
+                    mutator(newValue);
+                });
+            }
+
+            if(accessor) {
+                var value = accessor();
+                field.setValue(value, true);
+            }
+
+            my.fields.push(field);
+            return field;
+        };
+
+        // TODO: better solution?
+
         that.checkbox = function(options) {
-            return that.addField(checkboxField(options), options);
+            return that.addField(checkboxField(my.prepareFieldOptions(options)), options);
         };
 
         that.input = function(options) {
-            return that.addField(inputField(options), options);
+            var inputOptions = my.prepareFieldOptions(options);
+            return that.addField(inputField(inputOptions), options);
         };
 
         that.password = function(options) {
             var fieldOptions = Object.create(options);
             fieldOptions.type = options.type || 'password';
 
-            return that.addField(inputField(fieldOptions), options);
+            return that.addField(inputField(my.prepareFieldOptions(fieldOptions)), options);
         };
 
         that.number = function(options) {
             var fieldOptions = Object.create(options);
             fieldOptions.type = options.type || 'number';
 
-            return that.addField(inputField(fieldOptions), options);
+            return that.addField(inputField(my.prepareFieldOptions(fieldOptions)), options);
         };
 
         that.select = function(options) {
-            return that.addField(selectField(options), options);
+            return that.addField(selectField(my.prepareFieldOptions(options)), options);
         };
 
-        // Init
-        if(spec.model) {
-            that.setModel(spec.model);
-        }
+
+        // Protected
+
+        //TODO: crapy solution
+        my.prepareFieldOptions = function(options) {
+            return options;
+        };
+
+        my.findField = function(predicate) {
+            for(var fieldIndex = 0; fieldIndex < my.fields.length; fieldIndex++) {
+                if(predicate(my.fields[fieldIndex])) {
+                    return my.fields[fieldIndex];
+                }
+            }
+        };
+
+        my.getFieldByName = function(name) {
+            return my.findField(function(field) {
+                return field.getName && field.getName() === name;
+            });
+        };
+
+        //TODO: needed?
+        my.getGroups = function() {
+            return my.fields.reduce( function (groups, field) {
+                var name = field && field.getGroup && field.getGroup();
+                if(name) {
+                    groups[name] = groups[name] || [];
+                    groups[name].push(field);
+                }
+            }, {} );
+        };
+
+        that.renderContentOn = function(html) {
+            var form = html.form();
+
+            if (formClass) {
+                form.addClass(formClass);
+            }
+
+            form.render(my.fields);
+        };
 
         return that;
     };
 
-    function inputField(spec, my) {
+
+    // BOOTSTRAP FORMS
+    //TODO: Move to separate files
+
+    function basicForm (spec, my) {
+        spec = spec || {};
+        my = my || {};
+
+        var controlGroupClass = spec.controlGroupClass || 'form-group';
+        var controlGroupLabelClass = spec.controlGroupLabelClass || '';
+
+        var that = formWidget(spec, my);
+
+        that.renderContentOn = function(html) {
+            var form = html.form();
+
+            if (spec.formClass) {
+                form.addClass(spec.formClass);
+            }
+
+            form.render(my.fields.map(my.fieldRenderer));
+        };
+
+        my.fieldRenderer = function(field) {
+            return function (html) {
+                html.div().addClass(controlGroupClass).render(function (html) {
+                    if (field.getLabel && field.getLabel()) {
+                        html.label({ 'for': field.getName() }, field.getLabel()).addClass(controlGroupLabelClass);
+                    }
+                    html.render(field);
+                });
+            };
+        };
+
+        my.prepareFieldOptions = function(options) {
+            var fieldOptions = Object.create(options);
+            fieldOptions.inputClass = options.inputClass || 'form-control';
+
+            return fieldOptions;
+        };
+
+        return that;
+    }
+
+    function horizontalForm (spec, my) {
+        spec = spec || {};
+        my = my || {};
+
+        var controlGroupClass = spec.controlGroupClass || 'form-group';
+        var controlGroupLabelClass = spec.controlGroupLabelClass || 'col-sm-2 control-label';
+        var controlGroupFieldWrapperClass = spec.controlGroupFieldWrapperClass || 'col-sm-10';
+        spec.formClass = spec.formClass || 'form-horizontal';
+
+        var that = basicForm(spec, my);
+
+        my.fieldRenderer = function(field) {
+            return function (html) {
+                html.div().addClass(controlGroupClass).render(function (html) {
+                    if (field.getLabel && field.getLabel()) {
+                        html.label({ 'for': field.getName() }, field.getLabel()).addClass(controlGroupLabelClass);
+                    }
+                    html.div({ 'class' : controlGroupFieldWrapperClass}, field);
+                });
+            };
+        };
+        return that;
+    }
+
+    function inlineForm (spec, my) {
+        spec = spec || {};
+        my = my || {};
+
+        spec.controlGroupLabelClass = spec.controlGroupLabelClass || 'sr-only';
+        spec.formClass = spec.formClass || 'form-inline';
+
+        var that = basicForm(spec, my);
+        return that;
+    }
+
+    formWidget.basicForm = basicForm;
+    formWidget.horizontalForm = horizontalForm;
+    formWidget.inlineForm = inlineForm;
+
+    function formField(spec, my) {
         spec = spec || {};
         my = my || {};
 
         var that = widget(spec, my);
 
-        var id = spec.id || (that.getId() + '_input');
+        var name = spec.name;
         var value = spec.value;
-        var type = spec.type || 'text';
-        var validateWhileTyping = spec.validateWhileTyping !== undefined ? spec.validateWhileTyping : true;
+        var label = spec.label;
+        var fieldId = spec.id || (that.getId() + '_field');
 
-        my.getFieldValue = function() {
-            return jQuery(id).val();
-        };
+        // Protected API
 
-        my.setFieldValue = function(val) {
-            jQuery(id).val(val);
-            that.trigger('change', val, that);
-        };
+        my.fieldId = fieldId;
 
         my.updateFieldValue = function() {
-            my.setFieldValue(my.getFieldValue ());
+            that.update();
         };
 
         my.validate = function() {
+            console.log('Validate', that.getValue());
+        };
 
+        // Public API
+
+        that.getName = function() {
+            return name || fieldId;
+        };
+
+        that.setValue = function(newValue, omitEvent) {
+            var previousValue = value;
+            value = newValue;
+            my.updateFieldValue();
+
+            if(omitEvent !== true) {
+                that.trigger('change', value, previousValue);
+            }
+        };
+
+        that.getValue = function() {
+            return value;
+        };
+
+        that.getLabel = function() {
+            return label;
+        };
+
+        return that;
+    }
+
+
+    function inputField(spec, my) {
+        spec = spec || {};
+        my = my || {};
+
+        var that = formField(spec, my);
+
+        var inputType = spec.type || 'text';
+        var inputClass = spec.inputClass || '';
+        var validateWhileTyping = spec.validateWhileTyping !== undefined ?
+            spec.validateWhileTyping : true;
+
+        // Protected API
+
+        my.updateFieldValue = function() {
+            jQuery('#' + my.fieldId).val(that.getValue());
+        };
+
+        my.updateFromFieldValue = function() {
+            var fieldValue = jQuery('#' + my.fieldId).val();
+            that.setValue(fieldValue);
         };
 
         that.renderContentOn = function(html) {
             var field = html.input({
-                id: id,
-                type: type,
-                value: value || ''
+                id: my.fieldId,
+                name: that.getName(),
+                type: inputType,
+                value: that.getValue() || '',
+                'class': inputClass
             });
 
             if (validateWhileTyping) {
@@ -135,8 +333,8 @@ define(['widgetjs/widget'], function(widget) {
                 });
             }
 
-            field.blur(my.updateFieldValue);
-            field.change(my.updateFieldValue);
+            field.blur(my.updateFromFieldValue);
+            field.change(my.updateFromFieldValue);
         };
 
         return that;
@@ -147,40 +345,34 @@ define(['widgetjs/widget'], function(widget) {
         spec = spec || {};
         my = my || {};
 
-        var that = widget(spec, my);
+        var that = formField(spec, my);
 
-        var id = spec.id || spec.attribute || (that.getId() + '_input');
-        var value = spec.value || spec.defaultValue;
+        var inputClass = spec.inputClass || '';
 
-        my.getFieldValue = function() {
-            return jQuery(id).val();
-        };
-
-        my.setFieldValue = function(val) {
-            jQuery(id).val(val);
-            that.trigger('change', val, that);
-        };
+        // Protected API
 
         my.updateFieldValue = function() {
-            that.setFieldValue(my.getFieldValue ());
+            jQuery('#' + my.fieldId).prop('checked', that.getValue());
         };
-
-        my.validate = function() {
-
-        };
-
 
         that.renderContentOn = function(html) {
             var input = html.input({
-                id: id,
-                type: 'checkbox'
+                id: my.fieldId,
+                name: that.getName(),
+                type: 'checkbox',
+                'class' : inputClass
             });
 
-            var label = html.label(input);
-
-            if (value) {
+            if (that.getValue()) {
                 input.asJQuery().prop('checked', true);
             }
+
+            input.click(function() {
+                var checked = jQuery(this).is(':checked');
+                that.setValue(checked);
+            });
+
+            //html.label(input);
 
             return input;
         };
@@ -192,35 +384,19 @@ define(['widgetjs/widget'], function(widget) {
         spec = spec || {};
         my = my || {};
 
-        var that = widget(spec, my);
+        var that = formField(spec, my);
 
-        var id = spec.id || spec.attribute || (that.getId() + '_input');
-        var value = spec.value || spec.defaultValue;
         var options = spec.options || [];
+        var inputClass = spec.inputClass || '';
 
-        my.getFieldValue = function() {
-            return jQuery(id).val();
-        };
-
-        my.setFieldValue = function(val) {
-            jQuery(id).val(val);
-            that.trigger('change', val, that);
-        };
-
-        my.updateFieldValue = function() {
-            that.setFieldValue(my.getFieldValue ());
-        };
-
-        my.validate = function() {
-
-        };
+        // Protected API
 
         that.renderContentOn = function(html) {
-            var select = html.select({ id: id}, options.map(function(item) {
+            var select = html.select({ id: my.fieldId, class: inputClass}, options.map(function(item) {
                 var option = html.option(item);
                 option.setAttribute('value', item);
 
-                if (item === value) {
+                if (item === that.getValue()) {
                     option.setAttribute('selected', 'selected');
                 }
 
@@ -231,6 +407,51 @@ define(['widgetjs/widget'], function(widget) {
                 var value = jQuery(this).val();
                 that.trigger('change', value, that);
             });
+        };
+
+        return that;
+    }
+
+    function modelAttribute (spec) {
+        spec = spec || {};
+
+        var model = spec.model;
+        var path = spec.attribute;
+
+        if (typeof path === "string") {
+            path = path.split('.');
+        }
+
+        var that = {};
+
+        that.get = function() {
+            var value = model;
+            path.forEach(function (attr) {
+                if (value !== null && value.hasOwnProperty(attr)) {
+                    value = value[attr];
+                }
+                else {
+                    value = null;
+                }
+            });
+
+            return value;
+        };
+
+        that.set = function(val) {
+            var node = model;
+            for (var i = 0; i < path.length; i++) {
+                var attr = path[i];
+                if (i < path.length - 1) {
+                    if (typeof node[attr] === 'undefined') {
+                        node[attr] = {};
+                    }
+                }
+                else {
+                    node[attr] = val;
+                }
+                node = node[attr];
+            }
         };
 
         return that;
