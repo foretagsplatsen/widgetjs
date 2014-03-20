@@ -11,27 +11,17 @@ define(["widgetjs/events", "jquery", "chai"], function(manager, jquery, chai) {
     test("named events", function() {
         var triggered = false;
 
-        manager.on('foo', function() { triggered = true; });
+        manager.at('default').on('foo', function() { triggered = true; });
         assert.ok(!triggered, 'should only be executed once triggered');
 
-        manager.trigger('bar');
+        manager.at('default').trigger('bar');
         assert.ok(!triggered, 'should not be executed on other events');
 
         manager.at('2').trigger('foo');
         assert.ok(!triggered, 'should not be executed on event with same name in other category');
 
-        manager.trigger('foo');
+        manager.at('default').trigger('foo');
         assert.ok(triggered, 'callback should be executed when event triggered');
-    });
-
-    test("default event category", function() {
-        var triggered = false;
-        manager.on('foo', function() {triggered = true;});
-
-        assert.ok(!triggered, 'should only be executed once triggered');
-
-        manager.trigger('foo');
-        assert.ok(triggered, 'should be when event triggered');
     });
 
     test("named event categories", function() {
@@ -48,8 +38,8 @@ define(["widgetjs/events", "jquery", "chai"], function(manager, jquery, chai) {
 
         assert.ok(!triggered2 && !triggered1, 'should only be executed once triggered');
 
-        manager.trigger('foo');
-        assert.ok(!triggered1 && !triggered2, 'should not on event with same name in default category');
+        manager.at('another').trigger('foo');
+        assert.ok(!triggered1 && !triggered2, 'should not on event with same name in another category');
 
 
         manager.at('2').trigger('bar');
@@ -68,14 +58,14 @@ define(["widgetjs/events", "jquery", "chai"], function(manager, jquery, chai) {
     test("passing data", function() {
         var params;
 
-        var fooEvent = manager.on('foo', function() {
+        var fooEvent = manager.at('default').on('foo', function() {
             params = arguments;
         });
 
-        manager.trigger('foo', {a: 1});
+        manager.at('default').trigger('foo', {a: 1});
         assert.equal(params[0].a, 1, 'can pass single argument to callback');
 
-        manager.trigger('foo', {a: 2}, {b: 3});
+        manager.at('default').trigger('foo', {a: 2}, {b: 3});
         assert.ok(params[0].a === 2 && params[1].b === 3, 'can pass multiple arguments to callback');
 
         // clean-up
@@ -84,7 +74,7 @@ define(["widgetjs/events", "jquery", "chai"], function(manager, jquery, chai) {
 
     test("mixin into any object", function() {
         var anyObject = {};
-        jQuery.extend(anyObject, manager.eventhandler());
+        jQuery.extend(anyObject, manager.eventHandler());
 
         // methods added to anyObject
         assert.ok(anyObject.on, 'object get on method');
@@ -121,5 +111,37 @@ define(["widgetjs/events", "jquery", "chai"], function(manager, jquery, chai) {
 
         anyObject.trigger('anotherEvent', 'triggered another again');
         assert.ok(val !== 'triggered another again', 'callback only triggered first time');
+    });
+
+    test("testing stuff", function() {
+
+        function aWidget(){
+            var events = manager.eventHandler();
+
+            var that = {};
+
+            that.onClick = events.createEvent();
+
+            that.do = function() {
+                that.onClick.trigger();
+            };
+
+            return that;
+        }
+
+        var daWidget = aWidget();
+
+        daWidget.onClick(function() {
+            assert.ok(true);
+        });
+
+        var binding = daWidget.onClick.on(function() {
+            assert.ok(true);
+        });
+
+        daWidget.onClick.off(binding);
+
+
+        daWidget.do();
     });
 });

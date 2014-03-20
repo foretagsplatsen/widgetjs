@@ -76,7 +76,7 @@ define(
 
             // **Events** (See [events.js](events.html))
 
-            my.events = events.eventhandler();
+            my.events = events.eventHandler();
             my.trigger = my.events.trigger;
             that.on = my.events.on;
             that.onceOn = my.events.onceOn;
@@ -117,6 +117,10 @@ define(
             my.getParameters = router.router.getParameters;
             my.getParameter = router.router.getParameter;
             my.setParameters = router.router.setParameters;
+
+            that.dispose = function() {
+                my.events.dispose();
+            };
 
             // #### Render extensions
 
