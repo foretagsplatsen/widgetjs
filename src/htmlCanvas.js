@@ -284,6 +284,7 @@ define(
 			// Appends brush `element()` to this element.
 			that.addBrush = appendBrush;
 
+			// Set unescaped html contents
 			that.html = function (htmlContents) {
 				that.asJQuery().html(htmlContents);
 			};
