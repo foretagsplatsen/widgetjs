@@ -197,7 +197,7 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
                 var that = {};
 
                 that.appendToBrush = function(aTagBrush) {
-                    aTagBrush.render('<div id="aDiv">content</div>');
+                    aTagBrush.render('content');
                 };
 
                 return that;
@@ -207,35 +207,69 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
             html.render(appendableObject());
 
             // Assert
-            assert.ok(jQuery("#aDiv").get(0), 'div was rendered');
+            assert.equal(jQuery("#sandbox").html(), 'content',  'div was rendered');
         });
     });
 
-    test("delegates rendering to widgets implementing appendToBrush()", function() {
+    test("delegates rendering to objects implementing appendToBrush()", function() {
         withCanvas(function(html) {
-            // Arrange simplest possible widget that
-            // implements 'appendToBrush()' and renders a DIV
-            var simpleWidget = function() {
+            var appendableObject = function() {
                 var that = {};
 
-                that.renderOn = function(html2) {
-                    html2.div('Test').id('aDiv');
-                };
-
                 that.appendToBrush = function(aTagBrush) {
-                    that.renderOn(htmlCanvas(aTagBrush.asJQuery()));
+                    aTagBrush.render('content');
                 };
 
                 return that;
             };
 
-            // Act: render widget
-            html.render(simpleWidget());
+            // Act: render object
+            html.render(appendableObject());
 
             // Assert
-            assert.ok(jQuery("#aDiv").get(0), 'div was rendered');
+            assert.equal(jQuery("#sandbox").html(), 'content',  'div was rendered');
         });
     });
+
+    test("rendering html strings not allowed by default", function() {
+        withCanvas(function(html) {
+			// Arrange:
+			var htmlString = '<div id="unescaped">foo</div>';
+
+            // Act: render the string
+			var result = html.render(htmlString);
+
+            // Assert
+            assert.notOk(jQuery("#unescaped").get(0), 'div was not injected');
+		});
+    });
+
+    test("rendering of strings is escaped ", function() {
+        withCanvas(function(html) {
+			// Arrange:
+			var htmlString = '<>&foo';
+
+            // Act: render the string
+			var result = html.render(htmlString);
+
+            // Assert
+            assert.equal(jQuery("#sandbox").html(), '&lt;&gt;&amp;foo', 'content was escaped');
+		});
+    });
+
+    test("rendering using `html()` does not escape ", function() {
+        withCanvas(function(html) {
+			// Arrange:
+			var htmlString = '<div>hello</div>';
+
+            // Act: render the string
+			var result = html.div({id: 'not-escaped'}).html(htmlString);
+
+            // Assert
+            assert.equal(jQuery("#not-escaped").html(), htmlString, 'content was not escaped');
+		});
+    });
+
 
     test("element() returns brush element", function() {
         withCanvas(function(html) {
