@@ -76,7 +76,7 @@ define([],
                     }
                 });
 
-                my.push(onceBinding);
+                bindings.push(onceBinding);
                 return onceBinding;
             };
 
@@ -105,7 +105,7 @@ define([],
              * Unbind all callbacks bound to this event.
              */
             that.dispose = function() {
-                bindings.forEach(function(binding) {
+                bindings.slice().forEach(function(binding) {
                     binding.unbind();
                 });
             };
@@ -122,11 +122,7 @@ define([],
              * @param binding {eventBinding}
              */
             my.remove = function (binding) {
-                for (var i = 0; i < bindings.length; i++) {
-                    if (binding === bindings[i]) {
-                        bindings.splice(i, 1);
-                    }
-                }
+                bindings.splice(bindings.indexOf(binding), 1);
             };
 
             /**
@@ -136,8 +132,8 @@ define([],
              * @returns {eventBinding}
              */
             function bindCallback(callback) {
-                var binding = eventBinding({ callback: callback });
-                my.push(binding);
+                var binding = eventBinding({ callback: callback, event: that });
+                bindings.push(binding);
                 return binding;
             }
 
@@ -149,7 +145,7 @@ define([],
          *
          * @returns {{}}
          */
-        var eventHandler = function () {
+        var eventCategory = function () {
             var that = {};
 
             // Map of events with name as key
@@ -316,50 +312,51 @@ define([],
         };
 
         /**
-         * Singleton object that keeps a list of named event categories/holders.
+         * Singleton object that keeps a list of named event categories.
          */
         var eventManager = (function () {
             var that = {};
 
-            // Map of event handlers (categories of events) with (category) name as key
-            var eventHandlers = {};
+            // Map of event categories with (category) name as key
+            var categories = {};
 
             /**
-             * Register a new event handler with 'name'.
+             * Register a new event category with 'name'.
              * @param name
-             * @returns {eventHandler}
+             * @returns {eventCategory}
              */
             that.register = function (name) {
-                if (eventHandlers[name]) {
-                    throw ('A event handler is already registered for ' + name);
+                if (categories[name]) {
+                    throw ('A event category is already registered for ' + name);
                 }
-                eventHandlers[name] = eventHandler();
+                categories[name] = eventCategory();
 
-                return eventHandlers[name];
+                return categories[name];
             };
 
             /**
-             * Returns event handler by name. Creates a new handler if not already registered.
+             * Returns event category by name. Creates a new category if not already
+             * registered.
              * @param name
              * @returns {*}
              */
             that.at = function (name) {
-                if (!eventHandlers[name]) {
+                if (!categories[name]) {
                     that.register(name);
                 }
 
-                return eventHandlers[name];
+                return categories[name];
             };
 
             return that;
         })();
 
         // Exports Singleton event manager
-        // but also expose event and event handler
+        // but also expose event and event category
 
-        eventManager.eventHandler = eventHandler;
+        eventManager.eventCategory = eventCategory;
         //@deprecated Spelling mistake
-        eventManager.eventhandler = eventHandler;
+        eventManager.eventhandler = eventCategory;
         eventManager.event = event;
 
         return eventManager;

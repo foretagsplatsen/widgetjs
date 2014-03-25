@@ -76,13 +76,11 @@ define(
 
             // **Events** (See [events.js](events.html))
 
-            my.events = events.eventHandler();
+            my.events = events.eventCategory();
             my.trigger = my.events.trigger;
             that.on = my.events.on;
             that.onceOn = my.events.onceOn;
             that.off = my.events.off;
-
-            // TODO: Deprecated. Use my.trigger
             that.trigger = my.events.trigger;
 
             // Returns sub widgets of the widget. Needed

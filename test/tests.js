@@ -29,6 +29,7 @@ require(testModules, function () {
         window.mochaPhantomJS.run();
     }
     else {
+        mocha.checkLeaks();
         mocha.run();
     }
 });
