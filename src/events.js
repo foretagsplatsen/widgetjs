@@ -96,9 +96,9 @@ define([],
              */
             that.trigger = function () {
                 var params = Array.prototype.slice.call(arguments);
-                for (var i = 0; i < bindings.length; i++) {
-                    bindings[i].execute(params);
-                }
+                bindings.forEach(function(binding) {
+                    binding.execute(params);
+                });
             };
 
             /**

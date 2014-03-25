@@ -108,15 +108,22 @@ define(
 			my.lastMatch = undefined;
 
 			// Listen for URL changes and resolve URL when changed
-			my.location.on('changed', function() { my.resolveUrl(); });
+			my.location.onChanged(function() { my.resolveUrl(); });
 
-			// Mixin events
-			jQuery.extend(that, events.eventhandler());
+			// Events
+            my.events = events.eventCategory();
+
+            that.onRouteMatched = my.events.createEvent('routeMatched');
+            that.onRouteNotFound = my.events.createEvent('routeNotFound');
+            that.onResolveUrl = my.events.createEvent('resolveUrl');
+
+            // @deprecated Use event property instead
+            that.on = my.events.on;
 
 			my.resolveUrl = function(aUrl) {
 				var currentUrl = aUrl === undefined ? my.location.getUrl() : aUrl;
 
-				that.trigger('resolveUrl', currentUrl);
+				that.onResolveUrl.trigger(currentUrl);
 
 				var numMatched = 0;
 				my.routeTable.some(function(candidateRoute) {
@@ -124,7 +131,7 @@ define(
 					if(result.matched()) {
 						my.lastMatch = result;
 						numMatched++;
-						that.trigger('routeMatched', result);
+                        that.onRouteMatched.trigger(result);
 
 						if(candidateRoute.fallThrough === undefined || 
 							candidateRoute.fallThrough === false) {
@@ -134,7 +141,7 @@ define(
 				});
 
 				if (numMatched === 0) {
-					that.trigger('routeNotFound', currentUrl.toString());
+                    that.onRouteNotFound.trigger(currentUrl.toString());
 				}
 			};
 
@@ -157,7 +164,7 @@ define(
 				var newRoute = route(routeSpec.pattern, routeSpec);
 
 				if(routeSpec.action) {
-					newRoute.on('matched', function(result) {
+					newRoute.onMatched(function(result) {
 						routeSpec.action.apply(this, result.getCallbackArguments());
 					});
 				}
@@ -209,7 +216,7 @@ define(
 				}
 
 				var aRoute = that.addRoute(routeSpec);
-				aRoute.on('matched', function(result) {
+				aRoute.onMatched(function(result) {
 					router.resolveUrl(result.getUrl());
 				});
 
@@ -217,7 +224,7 @@ define(
 			};
 
 			that.pipeNotFound = function (router) {
-				return that.on('routeNotFound', function(aRawUrl) {
+				return that.onRouteNotFound(function(aRawUrl) {
 					router.resolveUrl(aRawUrl);
 				});
 			};

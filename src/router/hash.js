@@ -40,11 +40,10 @@ define([
 
 		my.currentHash = undefined; // last hash fragment
 		my.history = []; // history of visited hash fragments
+        my.events = events.eventCategory();
 
 		var that = {};
 
-		// Mixin events
-		jQuery.extend(that, events.eventhandler());
 
 
 		// Handle Window Hash
@@ -112,7 +111,7 @@ define([
 				}
 			}
 
-			that.trigger('changed', urlFromHash(my.currentHash));
+            that.onChanged.trigger(urlFromHash(my.currentHash));
 		}
 
 		function check() {
@@ -138,6 +137,8 @@ define([
 
 
 		// ### Public API
+
+        that.onChanged = my.events.createEvent('changed');
 
 		that.setUrl = function(aUrl) {
 			var aHash = urlToHash(aUrl);
