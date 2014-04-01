@@ -186,12 +186,12 @@ define(
                     return;
                 }
 
-                // clear content of root
-                that.asJQuery().empty();
+                // Re-render
+                var html = htmlCanvas();
+                that.renderOn(html);
 
-                // re-render content on root
-                var html = htmlCanvas(that.asJQuery());
-                that.renderContentOn(html);
+                // Replace our self
+                that.asJQuery().replaceWith(html.root.element);
             };
 
             // **Third party protected extensions** added to `my`.

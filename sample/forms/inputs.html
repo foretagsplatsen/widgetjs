@@ -15,7 +15,58 @@
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
     <script type='text/javascript' src='../../bower_components/requirejs/require.js'></script>
 
+    <style>
+        .styled-select select {
+            background: transparent;
+            width: 268px;
+            padding: 5px;
+            font-size: 16px;
+            line-height: 1;
+            border: 0;
+            border-radius: 0;
+            height: 34px;
+            -webkit-appearance: none;
+        }
+    </style>
+
     <script type="text/javascript">
+/*
+        //
+        // <input type=radio name='view' value='icon' />
+        // <input type=radio name='view' value='list' />
+        //
+
+        var listView = null, iconView = null;
+        var radioButtonList = function() {};
+        var radioButton = function() {};
+
+
+        var newReactiveList = reactiveListOfUsers.map(function(user) {
+            return radioButton({value: user.name});
+        });
+
+        var viewSwitch = radioButtonList({
+            inputs : [
+                radioButton({ value: 'icon', item: listView}).onSelect(function() {}),
+                radioButton({ value: 'list', item: iconView}).onSelect(function() {}),
+            ]
+        });
+        viewSwitch.onChange(function(view, button) {
+            view.show();
+        });
+
+        var viewSwitch2 = radioButtonList({
+            inputs : [iconView, listView],
+            radioValue: function (view) {
+                return view.name;
+            }
+        });
+        viewSwitch.onChange(function(view, button) {
+            view.show();
+        });
+
+        */
+
         requirejs.config({
             baseUrl: '.',
             paths:   {
@@ -33,14 +84,193 @@
 
                 var html = widgetjs.htmlCanvas('body');
 
-                var roles = inputs.select({ items: ['normal', 'limited', 'admin'] });
+                html.h1('SELECT');
 
+                var items = [{ name: 'normal'}, {name: 'limited'}, { name: 'admin' }];
+                var selectedItem = items[1];
+
+                // Configure from outside
+                var roles = inputs.select({
+                    items: items,
+                    selection: selectedItem,
+                    cssClass: '',
+                    optionLabel: function(item) {
+                        return function(html) {
+                            html.b(item.name);
+                        };
+                    },
+                    optionValue: function(item) {
+                        return item.name;
+                    }
+                });
+                window.roles = roles;
+                html.h2('Configure');
                 html.render(roles);
+
+                // Manually create options
+                var manual = inputs.select({
+                    options: items.map(function(item) {
+                        return inputs.option({
+                            item: item,
+                            label: function(item) {
+                                return item.name;
+                            },
+                            value: function(item) {
+                                return item.name;
+                            },
+                            isSelected: item === selectedItem
+                        })
+                    })
+                });
+
+                html.h2('Manual');
+                html.render(manual);
+
+                // Manually create options in groups
+                var manualOptionGroup = inputs.select({
+                    options: [
+                        inputs.optionGroup({
+                            label: 'Built-in',
+                            options: [
+                                inputs.option({ item: 'admin'}),
+                                inputs.option({ item: 'normal'})
+                            ]
+                        }),
+                        inputs.optionGroup({
+                            label: 'External',
+                            options: [
+                                inputs.option({ item: 'xadmin'}),
+                                inputs.option({ item: 'xnormal'})
+                            ]
+                        }),
+                        inputs.option({ item: 'unknown'})
+                    ]
+                });
+
+                html.h2('Manual with groups');
+                html.render(manualOptionGroup);
+
+
+                // Sub-class select
+                function rolesSelect(spec, my) {
+                    spec = spec || {};
+                    my = my || {};
+
+                    var that = inputs.select(spec, my);
+
+                    my.optionValue = function(item) {
+                        return item.name;
+                    };
+
+                    my.optionLabel = function(item) {
+                        return function(html) {
+                            html.b(item.name);
+                        };
+                    };
+
+                    return that;
+                }
+
+                var specialRoles = rolesSelect({
+                    items: items,
+                    selection: selectedItem
+                });
+
+                html.h2('Sub-class');
+                html.render(specialRoles);
+
+                // Properties
+
+                var role = function(spec) {
+
+                };
+
+                var user = {
+                  roles: widgetjs.collectionProperty({
+                      value: items
+                  })
+                };
+
+
+                var aPropertySelect = inputs.select({
+                    items: user.roles,
+                    selection: user.roles.get()[1],
+                    isMultipleSelect: true,
+                    optionLabel: function (userRole) {
+                        return function (html) {
+                            html.b(userRole.name);
+                        };
+                    },
+                    optionValue: function (userRole) {
+                        return userRole.name;
+                    }
+                });
+                html.h2('Properties');
+                html.render(aPropertySelect);
+
+                window.testUser = user;
+                window.testSelect = aPropertySelect;
+
+                // API
+                html.h2('API');
+                var aSelect = inputs.select({
+                    items: items,
+                    selection: selectedItem,
+                    isMultipleSelect: true,
+                    optionLabel: function (item) {
+                        return function (html) {
+                            html.b(item.name);
+                        };
+                    },
+                    optionValue: function (item) {
+                        return item.name;
+                    }
+                });
+                html.render(aSelect);
+
+                function apiWidget() {
+
+                    var that = widgetjs.widget();
+                    aSelect.onChange(function() {
+                        that.update();
+                    });
+
+                    that.renderContentOn = function(html) {
+                        html.h3('getItems()');
+                        html.ul(aSelect.getItems().map(function (item) {
+                            return html.li(item.name);
+                        }));
+
+
+                        html.h3('getSelectedItems()');
+                        html.ul(aSelect.getSelectedItems().map(function (item) {
+                            return html.li(item.name);
+                        }));
+
+                        html.button('Select first').click(function() {
+                            aSelect.selectItem(items[0]);
+                        });
+                        html.button('Select last').click(function() {
+                            aSelect.selectItem(items[items.length -1]);
+                        });
+                    };
+
+                    return that;
+                }
+
+                html.render(apiWidget());
+
+
+                // Multi Select
+
+
+
 
             });
         });
 
     </script>
 </head>
-<body></body>
+<body>
+</body>
 </html>

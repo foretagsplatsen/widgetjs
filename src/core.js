@@ -7,10 +7,11 @@ define(
 		'./events',
         './property',
         './computedProperty',
-        './formWidget'
+        './formWidget',
+        './collectionProperty'
 	],
 
-	function (htmlCanvas, widget, ext, router, events, property, computedProperty, formWidget) {
+	function (htmlCanvas, widget, ext, router, events, property, computedProperty, formWidget, collectionProperty) {
 		return {
 			htmlCanvas : htmlCanvas,
 			widget : widget,
@@ -18,6 +19,7 @@ define(
 			router : router,
 			events : events,
             property : property,
+            collectionProperty: collectionProperty,
             computedProperty : computedProperty,
             formWidget: formWidget
 		};

@@ -37,7 +37,7 @@ define(['./events'], function(events) {
         my.events = events.eventhandler();
         my.changeEvent = my.events.createEvent('change');
 
-        var that = {};
+        var that = spec.base || {};
 
         // Protected API
 

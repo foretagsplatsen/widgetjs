@@ -4,6 +4,8 @@ define(['./property'], function(property) {
 		spec = spec || {};
 		my = my || {};
 
+        spec.base = []; //TODO: Hack
+
 		var that = property(spec, my);
 
 		// TODO; splice it
@@ -19,6 +21,7 @@ define(['./property'], function(property) {
 			that.get().forEach(iterator);
 		};
 
+
 		// Returns a new instance of `collectionProperty`, that
 		// listens for the collection changes and updates itself
 		that.map = function(iterator) {
@@ -33,7 +36,20 @@ define(['./property'], function(property) {
 			return mapped;
 		};
 
-		that.push = function(item) {
+        that.filter = function(iterator) {
+            var filtered = collectionProperty({
+                value: that.get().filter(iterator)
+            });
+
+            that.onChange(function(newValue) {
+                filtered.set(newValue.filter(iterator));
+            });
+
+            return filtered;
+        };
+
+
+        that.push = function(item) {
 			var value = that.get();
 			value.push(item);
 			that.set(value);

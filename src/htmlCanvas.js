@@ -75,6 +75,13 @@ define(
 		// brushes and create a tree.
 		//
 		var htmlCanvas = function (aJQuery) {
+
+            // Render on fragment if no element/query supplied
+            if(aJQuery === undefined) {
+                var fragment = document.createDocumentFragment();
+                aJQuery = jQuery(fragment);
+            }
+
 			var that = {};
 
 			// Supported HTML 'tags'
@@ -194,7 +201,8 @@ define(
 					throw new Error('cannot append null or undefined to brush');
 				}
 
-				if (typeof object === "object" && object.constructor === Array) {
+                // Array or object that answer map
+				if (typeof object === "object" && object.map !== undefined) {
 					object.map (function(item) {
 						return append(item);
 					});

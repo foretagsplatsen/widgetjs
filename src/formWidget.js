@@ -1,4 +1,4 @@
-define(['widgetjs/widget'], function(widget) {
+define(['./widget', './inputs'], function(widget, inputs) {
 
     //TODO: All options, Field Overrides, Submit, Validation, Get Values, Multi level, Separate Inputsm Complex Properties, Selects with model options
 
@@ -119,7 +119,7 @@ define(['widgetjs/widget'], function(widget) {
 
         // Protected
 
-        //TODO: crapy solution
+        //TODO: crappy solution
         my.prepareFieldOptions = function(options) {
             return options;
         };
@@ -389,24 +389,22 @@ define(['widgetjs/widget'], function(widget) {
         var options = spec.options || [];
         var inputClass = spec.inputClass || '';
 
-        // Protected API
+        // Sub widgets
+
+        var select = inputs.select({
+            items : options,
+            selectedItem: that.getValue()
+        });
+
+        select.onChange(function(item) {
+            that.setValue(item);
+        });
+
+
+        // Render
 
         that.renderContentOn = function(html) {
-            var select = html.select({ id: my.fieldId, class: inputClass}, options.map(function(item) {
-                var option = html.option(item);
-                option.setAttribute('value', item);
-
-                if (item === that.getValue()) {
-                    option.setAttribute('selected', 'selected');
-                }
-
-                return option;
-            }));
-
-            select.change(function() {
-                var value = jQuery(this).val();
-                that.trigger('change', value, that);
-            });
+            html.render(select);
         };
 
         return that;
