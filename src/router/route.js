@@ -60,11 +60,11 @@ define(
 			var segments = spec.segments || [];
 
 			// Array with all optional sequences, ie. all combinations
-			// of optional perameters. Array must be orderd to match URL:s
+			// of optional parameters. Array must be ordered to match URL:s
 			// left to right.
 			var optionalSequences = [];
 
-			// Pre-caluclate optional sequences.
+			// Pre-calculate optional sequences.
 			ensureOptionalSequences();
 
             // Route match URL if all route segments match
@@ -73,8 +73,13 @@ define(
 
 			var that = {};
 
-			// Mixin events
-			jQuery.extend(that, events.eventhandler());
+			// Events
+            my.events = events.eventCategory();
+
+            that.onMatched = my.events.createEvent('matched');
+
+            // @deprecated Use event property instead
+            that.on = my.events.on;
 
 			my.getSegments = function() {
 				return segments;
@@ -88,7 +93,7 @@ define(
 
 				var result = createMatchResult(match, url);
 
-				that.trigger('matched', result);
+                my.events.trigger('matched', result);
 
 				return result;
 			};
@@ -154,15 +159,16 @@ define(
 				// Match URL segments against route segments
 				var urlSegments = url.getSegments();
 
-				// Try match orignial segements
+				// Try match url segments
 				if(isMatch(urlSegments)) {
 					return segments;
 				}
 
-				// then optionals
-				for(var i = 0; i < optionalSequences.length; i++) {
-					if(isMatch(urlSegments, optionalSequences[i])) {
-						return optionalSequences[i];
+				// then optional sequences
+                var sequenceIndex;
+				for(sequenceIndex = 0; sequenceIndex < optionalSequences.length; sequenceIndex++) {
+					if(isMatch(urlSegments, optionalSequences[sequenceIndex])) {
+						return optionalSequences[sequenceIndex];
 					}
 				}
 
@@ -258,7 +264,7 @@ define(
 			});
 		};
 
-		// Generates all subsets of aray with same internal order
+		// Generates all subsets of array with same internal order
 		// Returned subsets are ordered in right to left order.
 		// Examples:
 		// [1,2,3] => [1,2,3],[2,3],[1,3],[3],[1,2],[2],[1])

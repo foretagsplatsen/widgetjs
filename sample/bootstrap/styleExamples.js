@@ -827,9 +827,9 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
         label: 'Images',
         links: ['http://getbootstrap.com/css/#images'],
         example : function(html) {
-            html.img({ 'data-src': 'holder.js/140x140',  klass: 'img-rounded',  alt: '140x140',  src: imageData,  style: 'width: 140px; height: 140px;'}),
-            html.img({ 'data-src': 'holder.js/140x140',  klass: 'img-circle',  alt: '140x140',  src: imageData,  style: 'width: 140px; height: 140px;'}),
-            html.img({ 'data-src': 'holder.js/140x140',  klass: 'img-thumbnail',  alt: '140x140',  src: imageData,  style: 'width: 140px; height: 140px;'})
+            html.img({ 'data-src': 'holder.js/140x140',  klass: 'img-rounded',  alt: '140x140',  src: imageData,  style: 'width: 140px; height: 140px;'});
+            html.img({ 'data-src': 'holder.js/140x140',  klass: 'img-circle',  alt: '140x140',  src: imageData,  style: 'width: 140px; height: 140px;'});
+            html.img({ 'data-src': 'holder.js/140x140',  klass: 'img-thumbnail',  alt: '140x140',  src: imageData,  style: 'width: 140px; height: 140px;'});
         }
     });
 

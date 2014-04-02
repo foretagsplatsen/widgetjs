@@ -76,13 +76,11 @@ define(
 
             // **Events** (See [events.js](events.html))
 
-            my.events = events.eventhandler();
+            my.events = events.eventCategory();
             my.trigger = my.events.trigger;
             that.on = my.events.on;
             that.onceOn = my.events.onceOn;
             that.off = my.events.off;
-
-            // TODO: Deprecated. Use my.trigger
             that.trigger = my.events.trigger;
 
             // Returns sub widgets of the widget. Needed
@@ -117,6 +115,10 @@ define(
             my.getParameters = router.router.getParameters;
             my.getParameter = router.router.getParameter;
             my.setParameters = router.router.setParameters;
+
+            that.dispose = function() {
+                my.events.dispose();
+            };
 
             // #### Render extensions
 
