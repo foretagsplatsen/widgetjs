@@ -237,9 +237,9 @@ define(
 				appendChild(aTagBrush.element());
 			}
 
-			// Append text or HTML text to element
+			// Append text to element. `string` is escaped
 			function appendString(string) {
-				jQuery(element).append(string);
+				jQuery(element).append(document.createTextNode(string));
 			}
 
 			// Append function by executing function with this element as canvas.
@@ -325,6 +325,11 @@ define(
 
 			// Appends brush `element()` to this element.
 			that.addBrush = appendBrush;
+
+			// Set unescaped html contents
+			that.html = function (htmlContents) {
+				that.asJQuery().html(htmlContents);
+			};
 
 			// Events are delegated to jQuery
 			//

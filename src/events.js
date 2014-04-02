@@ -30,232 +30,334 @@
 //
 //
 
-define([], function () {
+define([],
+    function () {
 
-        // - - -
+        /**
+         * Keeps a list of bindings/callbacks that can be added using **push()** and
+         * removed using **remove()**. *trigger()* executes all callbacks one by one in registration order.
+         *
+         * @param [spec] {Object}
+         * @param [my] {Object}
+         * @returns {event}
+         */
+        var event = function (spec, my) {
+            my = my || {};
 
-        // ### Event
-        // Represents an event. Keeps a list of bindings/callbacks that can be added using **push()** and
-        // removed using **remove()**. *trigger()* executes all callbacks one by one in registration order.
-        var event = function () {
-            var that = {};
+            var that = function(callback) {
+                return bindCallback(callback);
+            };
 
             var bindings = [];
 
             // #### Public API
 
-            // Add binding
-            that.push = function (binding) {
-                bindings.push(binding);
-                binding.event = that;
+            /**
+             * Binds callback to event. The callback will be invoked whenever the event is fired.
+             *
+             * @param callback {function}
+             * @returns {eventBinding}
+             */
+            that.on = function(callback) {
+                return bindCallback(callback);
             };
 
-            // Remove binding
-            that.remove = function (binding) {
-                if (!binding || !binding.event) {
-                    throw "not a binding for event";
-                }
-
-                for (var i = 0; i < bindings.length; i++) {
-                    if (binding === bindings[i]) {
-                        bindings.splice(i, 1);
-                    }
-                }
-                binding.event = null;
-            };
-
-            // Trigger event by executing all callbacks one by one in registration order.
-            // 'params' can be an object or an array, and will be passed as parameter to
-            // the callback functions of each binding.
-            that.trigger = function (params) {
-                if (params.constructor !== Array) {
-                    params = [params];
-                }
-                for (var i = 0; i < bindings.length; i++) {
-                    bindings[i].trigger(params);
-                }
-            };
-
-            return that;
-        };
-
-        // - - -
-
-        // ### EventHandler
-        // Keeps a list of named events. You may bind callbacks to an event with **on()**
-        // or **onceOn()** and remove with **off()**. Use **trigger()** to execute all callbacks for an event.
-        var eventHandler = function () {
-            var that = {};
-
-            // Map of events with name as key
-            that.events = {};
-
-            // Lazily makes sure that an event exists for 'name'.
-            var ensureEventHolderFor = function (name) {
-                if (!that.events[name]) {
-                    that.events[name] = event();
-                }
-            };
-
-            // #### Public API
-
-            // Binds callback to a named event. The callback will be invoked whenever the event is fired.
-            that.on = function (name, callback) {
-                var binding = eventBinding({ callback: callback });
-                ensureEventHolderFor(name);
-                that.events[name].push(binding);
-                return binding;
-            };
-
-            that.createEvent = function (name) {
-                ensureEventHolderFor(name);
-
-                return function(callback) {
-                    if(!callback) {
-                        return that.events[name];
-                    }
-
-                    var binding = eventBinding({ callback: callback });
-                    that.events[name].push(binding);
-                    return binding;
-                };
-            };
-
-            // Removed 'binding' attached to event.
-            that.off = function (name, binding) {
-                ensureEventHolderFor(name);
-                that.events[name].remove(binding);
-            };
-
-            // Like **on()** except only triggered once then removed from the event.
-            that.onceOn = function (name, callback) {
-                ensureEventHolderFor(name);
-                var onceEvent = eventBinding({
+            /**
+             * Like on() except callback will only be fired once
+             *
+             * @param callback {function}
+             * @returns {eventBinding}
+             */
+            that.onceOn = function(callback) {
+                var onceBinding = eventBinding({
                     callback: function () {
-                        that.events[name].remove(onceEvent);
-                        callback.apply(that.events[name], arguments);
+                        my.remove(onceBinding);
+                        callback.apply(that, arguments);
                     }
                 });
 
-                that.events[name].push(onceEvent);
-                return onceEvent;
+                bindings.push(onceBinding);
+                return onceBinding;
             };
 
-            // Trigger all callbacks attached to event.
-            // Any arguments to trigger is sent as arguments to callback.
-            that.trigger = function (name) {
-                var params = Array.prototype.slice.call(arguments, 1);
-                if (that.events[name]) {
-                    that.events[name].trigger(params);
-                }
+            /**
+             * Removed 'binding' attached to event.
+             * @param name {String} Name of event
+             * @param binding {eventBinding} Binding
+             */
+            that.off = function (binding) {
+                my.remove(binding);
             };
+
+            /**
+             * Trigger event by executing all callbacks one by one in registration order.
+             *
+             * @param arguments {Object|Object[]} Arguments passed to callback of each binding
+             */
+            that.trigger = function () {
+                var params = Array.prototype.slice.call(arguments);
+                bindings.forEach(function(binding) {
+                    binding.execute(params);
+                });
+            };
+
+            /**
+             * Unbind all callbacks bound to this event.
+             */
+            that.dispose = function() {
+                bindings.slice().forEach(function(binding) {
+                    binding.unbind();
+                });
+            };
+
+            /**
+             * @param binding {eventBinding}
+             */
+            my.push = function (binding) {
+                bindings.push(binding);
+                binding.bind(that);
+            };
+
+            /**
+             * @param binding {eventBinding}
+             */
+            my.remove = function (binding) {
+                bindings.splice(bindings.indexOf(binding), 1);
+            };
+
+            /**
+             * Create and add callback binding to event
+             *
+             * @param callback
+             * @returns {eventBinding}
+             */
+            function bindCallback(callback) {
+                var binding = eventBinding({ callback: callback, event: that });
+                bindings.push(binding);
+                return binding;
+            }
 
             return that;
         };
 
-        // - - -
+        /**
+         * Keeps a list of events.
+         *
+         * @returns {{}}
+         */
+        var eventCategory = function () {
+            var that = {};
 
-        // ### Event Binding
-        // Binds a callback to an event
+            // Map of events with name as key
+            var namedEvents = {};
+            var events = [];
+
+            /**
+             * Lazily makes sure that an event exists for 'name'.
+             *
+             * @param name {String}
+             * @returns {event} Also return the event
+             */
+            function ensureEventHolderFor(name) {
+                if (!hasEventNamed(name)) {
+                    addEvent(event(), name);
+                }
+                return namedEvents[name];
+            }
+
+            /**
+             * Create a new event and if name i supplied adds it to event manager
+             *
+             * @param [name] {string} Name of event in eventHandler
+             * @returns {event}
+             */
+            that.createEvent = function (name) {
+                return addEvent(event(), name);
+            };
+
+            /**
+             * Binds callback to a named event. The callback will be invoked whenever the event is fired.
+             *
+             * @param name {String}
+             * @param callback {function}
+             */
+            that.on = function (name, callback) {
+                return ensureEventHolderFor(name).on(callback);
+            };
+
+            /**
+             * Removed 'binding' attached to event.
+             * @param name {String} Name of event
+             * @param binding {eventBinding} Binding
+             */
+            that.off = function (name, binding) {
+                return ensureEventHolderFor(name).off(binding);
+            };
+
+            /**
+             * Like on() except callback will only be fired once
+             *
+             * @param name
+             * @param callback
+             * @returns {*}
+             */
+            that.onceOn = function (name, callback) {
+                return ensureEventHolderFor(name).onceOn(callback);
+            };
+
+            /**
+             * Trigger all callbacks attached to event
+             * @param name
+             * @param arguments Any arguments to trigger is sent as arguments to callback.
+             */
+            that.trigger = function (name) {
+                var params = Array.prototype.slice.call(arguments, 1);
+                var event = ensureEventHolderFor(name);
+                event.trigger.apply(that, params);
+            };
+
+            /**
+             * Dispose all events.
+             */
+            that.dispose = function() {
+                events.forEach(function(event) {
+                    event.dispose();
+                });
+
+                namedEvents = {};
+                events = [];
+            };
+
+
+            /**
+             * Answers true if an event with name exists
+             *
+             * @param name {String}
+             * @returns {boolean}
+             */
+            function hasEventNamed(name) {
+                return namedEvents[name] !== undefined;
+            }
+
+            /**
+             * @param event {event}
+             * @param [name] {string}
+             * @returns {event}
+             */
+            function addEvent(event, name) {
+                events.push(event);
+                if(name) {
+                    namedEvents[name] = event;
+                }
+                return event;
+            }
+
+            return that;
+        };
+
+        /**
+         * Binds a callback to an event
+         *
+         * @param spec.callback {function} Callback to execute on event
+         * @param spec.event {event} Event to bind callback to
+
+         * @returns {eventBinding}
+         */
         var eventBinding = function (spec) {
             spec = spec || {};
             var that = {};
 
             var callback = spec.callback;
+            var event = spec.event;
 
-            // #### Public API
-
-            // Event
-            that.event = spec.event;
-
-            // True if bound to an event
-            that.isBound = function () {
-                return that.event;
+            /**
+             * Is bound to an event
+             * @returns {boolean}
+             */
+            that.isBound = function() {
+                return event !== undefined;
             };
 
-            // Remove itself from event, if bound.
+            /**
+             * Remove itself from event, if bound.
+             */
             that.unbind = function () {
                 if (that.isBound()) {
-                    that.event.remove(that);
+                    event.off(that);
+                    event = undefined;
                 }
             };
 
-            // Trigger callback with supplied parameters
-            that.trigger = function (params) {
+            /**
+             * @param anEvent
+             */
+            that.bind = function (anEvent) {
+                that.unbind();
+                if (anEvent) {
+                    event = anEvent;
+                }
+            };
+
+            /**
+             * Executes connected callback
+             * @param params
+             */
+            that.execute = function (params) {
                 if (callback) {
-                    callback.apply(this, params);
+                    callback.apply(that, params);
                 }
             };
 
             return that;
         };
 
-
-        // - - -
-
-        // ### EventManager
-        // Singleton object that keeps a list of named event categories/holders.
+        /**
+         * Singleton object that keeps a list of named event categories.
+         */
         var eventManager = (function () {
             var that = {};
 
-            // Map of event handlers (categories of events) with (category) name as key
-            var eventHandlers = {};
+            // Map of event categories with (category) name as key
+            var categories = {};
 
-            // #### Public API
-
-            // Register a new event handler with 'name'.
+            /**
+             * Register a new event category with 'name'.
+             * @param name
+             * @returns {eventCategory}
+             */
             that.register = function (name) {
-                if (eventHandlers[name]) {
-                    throw ('A event handler is already registered for ' + name);
+                if (categories[name]) {
+                    throw ('A event category is already registered for ' + name);
                 }
-                eventHandlers[name] = eventHandler();
+                categories[name] = eventCategory();
 
-                return eventHandlers[name];
+                return categories[name];
             };
 
-            // Returns event handler by name. Creates a new handler if
-            // not already registered.
+            /**
+             * Returns event category by name. Creates a new category if not already
+             * registered.
+             * @param name
+             * @returns {*}
+             */
             that.at = function (name) {
-                if (!eventHandlers[name]) {
+                if (!categories[name]) {
                     that.register(name);
                 }
 
-                return eventHandlers[name];
+                return categories[name];
             };
-
-            // Forward **on()**, **onceOn()**, **off()** and **trigger()** to the default event handler
-
-            that.on = function (name, callback) {
-                return that.at('default').on(name, callback);
-            };
-
-            that.onceOn = function (name, callback) {
-                return that.at('default').onceOn(name, callback);
-            };
-
-            that.off = function (name, binding) {
-                return that.at('default').off(name, binding);
-            };
-
-            that.trigger = function (name) {
-                var params = Array.prototype.slice.call(arguments, 1);
-                if (that.at('default').events[name]) {
-                    that.at('default').events[name].trigger(params);
-                }
-            };
-
-            // Expose event handler function (to be mixedin into objects and widgets)
-            that.eventhandler = eventHandler;
 
             return that;
         })();
 
+        // Exports Singleton event manager
+        // but also expose event and event category
 
-        // ### Default event handler
-        // Ensure that 'default' category always exists.
-        eventManager.register('default');
+        eventManager.eventCategory = eventCategory;
+        //@deprecated Spelling mistake
+        eventManager.eventhandler = eventCategory;
+        eventManager.event = event;
 
-        // ### Exports
-        // Singleton event manager
         return eventManager;
     });

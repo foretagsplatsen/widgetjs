@@ -46,7 +46,7 @@ module.exports = function(grunt) {
 		jshint: {
 			src: ['src/**/*.js'],
 			test: ['test/**/*.js'],
-			sample: ['sample/**/*.js']
+			sample: ['sample/**/*.js', '!sample/converter/htmlparser.js']
 		},
         mocha: {
             test: {

@@ -46,7 +46,7 @@ define(
 			// Arrange a router with options set
 			var anotherMy = {};
 			var anotherRouter = router({
-				locationHandler: { isFake: true, on: function() {} }
+				locationHandler: { isFake: true, onChanged: function() {} }
 			}, anotherMy);
 
 			// Assert that options where applied
@@ -183,7 +183,7 @@ define(
 
 		test("resolveUrl pass values to action", function (start) {
 			// Arrange a route that have two mandatory parameters
-			var userRoute = aRouter.addRoute({
+			aRouter.addRoute({
 				pattern: '/user/#userid/order/#orderid',
 				action: function(userid, orderid) {
 					assert.ok(userid === 'john' && orderid === '1', 'parameters passed in same order as defined');
@@ -198,7 +198,7 @@ define(
 
 		test("resolveUrl pass optional values to action", function (start) {
 			// Arrange a route that have two mandatory parameters
-			var userRoute = aRouter.addRoute({
+			aRouter.addRoute({
 				pattern: '/user/?userid/order/?orderid',
 				action: function(userid, orderid) {
 					assert.equal(userid, undefined, 'optional parameters without values is undefined');

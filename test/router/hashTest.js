@@ -1,7 +1,8 @@
 define([
+    'jquery',
 	'widgetjs/router/hash',
     'chai'
-], function (hash, chai) {
+], function (jQuery, hash, chai) {
 
         var assert = chai.assert;
 
@@ -80,11 +81,11 @@ define([
 			assert.equal(my.history[0], my.currentHash, 'history entry is current hash');
 		});
 
-		if(!($.browser.msie  && parseInt($.browser.version, 10) === 7)) {
+		if(!(jQuery.browser.msie  && parseInt(jQuery.browser.version, 10) === 7)) {
 			test("triggers changed event when URL is changed", function (done) {
 				// Arrange: listen for url changes
 				var capturedUrls = [];
-				hashLocation.on('changed', function(url) {
+				hashLocation.onChanged(function(url) {
 					capturedUrls.push(url.toString());
 					if(capturedUrls.length === 3) {
 						done();
@@ -136,7 +137,7 @@ define([
 
 			// Arrange: listen for url changes
 			var capturedUrl;
-            anotherHashLocation.on('changed', function(url) {
+            anotherHashLocation.onChanged(function(url) {
 				capturedUrl = url;
 				done();
 			});
@@ -196,7 +197,4 @@ define([
 				}
 			);
 		});
-
-
-
 });

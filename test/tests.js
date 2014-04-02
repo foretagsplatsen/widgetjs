@@ -14,22 +14,22 @@ require.config({
     //, urlArgs: 'bust=' + (new Date()).getTime()
 });
 
- var testModules = [
- 'htmlCanvasTest',
- 'widgetTest',
- 'eventsTest',
- 'propertyTest',
- 'router/hashTest',
- 'router/deprecatedRouterTest',
- 'router/routerTest',
- 'router/routeTest'
- ];
+var testModules = [
+    'htmlCanvasTest',
+    'widgetTest',
+    'eventsTest',
+    'router/hashTest',
+    'router/deprecatedRouterTest',
+    'router/routerTest',
+    'router/routeTest'
+];
 
 require(testModules, function () {
     if (window.mochaPhantomJS) {
         window.mochaPhantomJS.run();
     }
     else {
+        //mocha.checkLeaks();
         mocha.run();
     }
 });
