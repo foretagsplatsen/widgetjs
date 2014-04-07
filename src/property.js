@@ -34,6 +34,8 @@ define(['./events'], function(events) {
         my.getter = spec.get;
         my.setter = spec.set;
         my.label = spec.label;
+        my.optionLabel = spec.optionLabel;
+        my.optionValue = spec.optionValue;
         my.events = events.eventhandler();
         my.changeEvent = my.events.createEvent('change');
 
@@ -71,6 +73,9 @@ define(['./events'], function(events) {
         that.type = my.type;
 
         that.options = my.options;
+
+        that.optionLabel = my.optionLabel;
+        that.optionValue = my.optionValue;
 
         that.label = my.label;
 
@@ -163,10 +168,25 @@ define(['./events'], function(events) {
         return that;
     }
 
+    function objectProperty (spec, my) {
+        spec = spec || {};
+        my = my || {};
+
+        var that = property(spec, my);
+
+        that.appendPropertyToForm = function(form, options) {
+            //TODO: Wrapp in Group?
+            form.appendModelProperties(my.value, options);
+        };
+
+        return that;
+    }
+
     property.bool = booleanProperty;
     property.number = numberProperty;
     property.password = passwordProperty;
     property.string = stringProperty;
+    property.object = objectProperty;
 
     return property;
 });

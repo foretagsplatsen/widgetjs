@@ -1,6 +1,6 @@
 define(['./widget', './inputs'], function(widget, inputs) {
 
-    //TODO: Complex Properties, Clean-up fieldBase, etc- Validation, Submit, Get Values,
+    //TODO: Complex Properties, Clean-up fieldBase, etc- Validation, Submit, Get Values, Groups
 
     /**
      * Base for all forms
@@ -33,7 +33,6 @@ define(['./widget', './inputs'], function(widget, inputs) {
 
         that.appendModelProperties = function(model) {
             model = model || my.model;
-            // TODO: traverse into sub properties of properties?
             for(var propertyName in model) {
                 if(model[propertyName] && model[propertyName].appendToForm) {
                     model[propertyName].appendToForm(that, { name: propertyName});
@@ -47,7 +46,9 @@ define(['./widget', './inputs'], function(widget, inputs) {
                 name: options.name,
                 label: property.label,
                 validator: property.validator,
-                options : property.options
+                options : property.options,
+                optionLabel: property.optionLabel,
+                optionValue: property.optionValue
             };
 
             // Overrides
@@ -426,7 +427,9 @@ define(['./widget', './inputs'], function(widget, inputs) {
 
         var select = inputs.select({
             items : options,
-            selection: that.getValue()
+            selection: that.getValue(),
+            optionLabel: spec.optionLabel,
+            optionValue: spec.optionValue
         });
 
         select.onChange(function(selection) {

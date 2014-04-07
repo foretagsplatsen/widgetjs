@@ -33,6 +33,26 @@
         require(['widgetjs/core', 'jquery'], function(widgetjs, jQuery) {
             jQuery(document).ready(function() {
 
+                function address (spec) {
+                    var that = {};
+
+                    that.street = widgetjs.property.string({ value: spec.street, label: 'Street'});
+                    that.city = widgetjs.property.string({ value: spec.city, label: 'City'});
+
+                    return that;
+                }
+
+                function role (spec) {
+                    var that = {};
+
+                    that.name = spec.name;
+                    that.id = spec.id || spec.name;
+
+                    return that;
+                }
+
+                var roles = [role({ name: 'Limited'}), role({ name: 'Normal'}), role({ name: 'Admin'})];
+
                 function user(spec) {
                     var that = {};
 
@@ -41,12 +61,27 @@
                     that.age = widgetjs.property.number({ value: spec.age, label: 'Age'});
                     that.isAdmin = widgetjs.property.bool({ value: spec.isAdmin, label: 'Is Administrator'});
                     that.password = widgetjs.property.password({ value: spec.password, label: 'Password'});
-                    that.role = widgetjs.property.string({ value: spec.role, label: 'Role in company', options: ['limited', 'admin', 'normal']});
+
+                   that.role = widgetjs.property.object({
+                        value: spec.role,
+                        label: 'Role in company',
+                        options: roles,
+                        optionLabel: function(role) {
+                            return role.name;
+                        },
+                        optionValue: function(role) {
+                            return role.id;
+                        }
+                    });
+
+                    // ?
+                    that.address = widgetjs.property.object({ value: spec.address, label: 'Address'});
 
                     return that;
                 }
 
-                var john = user({ name: 'Johan Doe', age: 95, isAdmin: true, password: 'secret', role: 'admin' });
+                var john = user({ name: 'Johan Doe', age: 95, isAdmin: true,
+                    password: 'secret', role: roles[1], address: address({street: 'Skeppsbron 26', city: 'Stockholm'}) });
 
                 window.user = john;
 
@@ -67,7 +102,9 @@
                                 return isAdmin ? 'YES' : 'NO';
                             }})),
                             html.dt('Role'),
-                            html.dd(john.role)
+                            html.dd(widgetjs.computedProperty({properties : [john.role], fn : function(role) {
+                                return role.name;
+                            }}))
                     );
 
 
@@ -111,7 +148,13 @@
                     customForm.select({
                         accessor: john.role.get,
                         mutator: john.role.set,
-                        options: john.role.options
+                        options: john.role.options,
+                        optionLabel: function(role) {
+                            return role.name;
+                        },
+                        optionValue: function(role) {
+                            return role.id;
+                        }
                     });
 
                     html.render(customForm);
@@ -125,7 +168,16 @@
                     valueForm.number({value: john.age.get() });
                     valueForm.checkbox({value: john.isAdmin.get() });
                     valueForm.password({value: john.password.get() });
-                    valueForm.select({value: john.role.get(), options: john.role.options});
+                    valueForm.select({
+                        value: john.role.get(),
+                        options: john.role.options,
+                        optionLabel: function(role) {
+                            return role.name;
+                        },
+                        optionValue: function(role) {
+                            return role.id;
+                        }
+                    });
                     html.render(valueForm);
 
                     html.h1('Attributes');
@@ -155,7 +207,13 @@
                     });
                     attributeForm.select({
                         attribute: 'settings.role',
-                        options: john.role.options
+                        options: john.role.options,
+                        optionLabel: function(role) {
+                            return role.name;
+                        },
+                        optionValue: function(role) {
+                            return role.id;
+                        }
                     });
                     html.render(attributeForm);
 
