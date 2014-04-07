@@ -30,43 +30,6 @@
     </style>
 
     <script type="text/javascript">
-/*
-        //
-        // <input type=radio name='view' value='icon' />
-        // <input type=radio name='view' value='list' />
-        //
-
-        var listView = null, iconView = null;
-        var radioButtonList = function() {};
-        var radioButton = function() {};
-
-
-        var newReactiveList = reactiveListOfUsers.map(function(user) {
-            return radioButton({value: user.name});
-        });
-
-        var viewSwitch = radioButtonList({
-            inputs : [
-                radioButton({ value: 'icon', item: listView}).onSelect(function() {}),
-                radioButton({ value: 'list', item: iconView}).onSelect(function() {}),
-            ]
-        });
-        viewSwitch.onChange(function(view, button) {
-            view.show();
-        });
-
-        var viewSwitch2 = radioButtonList({
-            inputs : [iconView, listView],
-            radioValue: function (view) {
-                return view.name;
-            }
-        });
-        viewSwitch.onChange(function(view, button) {
-            view.show();
-        });
-
-        */
-
         requirejs.config({
             baseUrl: '.',
             paths:   {
@@ -83,6 +46,41 @@
             jQuery(document).ready(function() {
 
                 var html = widgetjs.htmlCanvas('body');
+
+                //
+                // <input type=radio name='view' value='icon' />
+                // <input type=radio name='view' value='list' />
+                //
+
+                var listView = null, iconView = null;
+                var radioButtonList = function() {};
+                var radioButton = function() {};
+
+
+                /*        var newReactiveList = reactiveListOfUsers.map(function(user) {
+                 return radioButton({value: user.name});
+                 });
+                 */
+                var viewSwitch = inputs.radioButtonList({
+                    inputs : [
+                        inputs.radioButton({ value: 'icon', item: listView, onSelect: function() {}}),
+                        inputs.radioButton({ value: 'list', item: iconView, onSelect: function() {}}),
+                    ]
+                });
+                viewSwitch.onChange(function(view, button) {
+                    view.show();
+                });
+
+                var viewSwitch2 = inputs.radioButtonList({
+                    items : [iconView, listView],
+                    radioValue: function (view) {
+                        return view.name;
+                    }
+                });
+                viewSwitch.onChange(function(view, button) {
+                    view.show();
+                });
+
 
                 html.h1('SELECT');
 
@@ -109,16 +107,16 @@
 
                 // Manually create options
                 var manual = inputs.select({
-                    options: items.map(function(item) {
+                    options: items.map(function(role) {
                         return inputs.option({
-                            item: item,
-                            label: function(item) {
-                                return item.name;
+                            data: role,
+                            label: function(aRole) {
+                                return aRole.name;
                             },
-                            value: function(item) {
-                                return item.name;
+                            value: function(aRole) {
+                                return aRole.name;
                             },
-                            isSelected: item === selectedItem
+                            isSelected: role === selectedItem
                         })
                     })
                 });
@@ -132,24 +130,23 @@
                         inputs.optionGroup({
                             label: 'Built-in',
                             options: [
-                                inputs.option({ item: 'admin'}),
-                                inputs.option({ item: 'normal'})
+                                inputs.option({ data: 'admin'}),
+                                inputs.option({ data: 'normal'})
                             ]
                         }),
                         inputs.optionGroup({
                             label: 'External',
                             options: [
-                                inputs.option({ item: 'xadmin'}),
-                                inputs.option({ item: 'xnormal'})
+                                inputs.option({ data: 'xadmin'}),
+                                inputs.option({ data: 'xnormal'})
                             ]
                         }),
-                        inputs.option({ item: 'unknown'})
+                        inputs.option({ data: 'unknown'})
                     ]
                 });
 
                 html.h2('Manual with groups');
                 html.render(manualOptionGroup);
-
 
                 // Sub-class select
                 function rolesSelect(spec, my) {

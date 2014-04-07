@@ -36,11 +36,12 @@
                 function user(spec) {
                     var that = {};
 
-                    that.name = widgetjs.property({ value: spec.name, label: 'Name'});
-                    that.age = widgetjs.property({ value: spec.age, label: 'Age', type: 'number'});
-                    that.isAdmin = widgetjs.property({ value: spec.isAdmin, label: 'Is Administrator', type: 'boolean'});
-                    that.password = widgetjs.property({ value: spec.password, label: 'Password', type: 'password'});
-                    that.role = widgetjs.property({ value: spec.role, label: 'Role in company', options: ['limited', 'admin', 'normal'], type: 'options'});
+                    that.id = widgetjs.property.string({ value: spec.name, label: 'Id'});
+                    that.name = widgetjs.property.string({ value: spec.name, label: 'Name'});
+                    that.age = widgetjs.property.number({ value: spec.age, label: 'Age'});
+                    that.isAdmin = widgetjs.property.bool({ value: spec.isAdmin, label: 'Is Administrator'});
+                    that.password = widgetjs.property.password({ value: spec.password, label: 'Password'});
+                    that.role = widgetjs.property.string({ value: spec.role, label: 'Role in company', options: ['limited', 'admin', 'normal']});
 
                     return that;
                 }
@@ -72,7 +73,19 @@
 
                     // Form generated from model
                     html.h1('Properties');
-                    var userForm = widgetjs.formWidget({ model: john });
+                    var userForm = widgetjs.formWidget({
+                        model: john,
+                        generateFields: false,
+                        fieldOptions: {
+                            name: { // overrides
+                                label: 'Secret Name',
+                                field: 'password'
+                            }
+                        }
+                        //exclude: ['id']
+                        //include: ['name', 'isAdmin', 'role']
+                    });
+
                     userForm.appendModelProperties();
                     html.render(userForm);
 
@@ -98,7 +111,7 @@
                     customForm.select({
                         accessor: john.role.get,
                         mutator: john.role.set,
-                        options: ['limited', 'normal', 'admin']
+                        options: john.role.options
                     });
 
                     html.render(customForm);
@@ -112,7 +125,7 @@
                     valueForm.number({value: john.age.get() });
                     valueForm.checkbox({value: john.isAdmin.get() });
                     valueForm.password({value: john.password.get() });
-                    valueForm.select({value: john.role.get(), options: ['limited', 'normal', 'admin']});
+                    valueForm.select({value: john.role.get(), options: john.role.options});
                     html.render(valueForm);
 
                     html.h1('Attributes');
@@ -142,7 +155,7 @@
                     });
                     attributeForm.select({
                         attribute: 'settings.role',
-                        options: ['limited', 'normal', 'admin']
+                        options: john.role.options
                     });
                     html.render(attributeForm);
 
@@ -158,7 +171,7 @@
                             html.form(
                                     html.dl(
                                             html.dt('Name'),
-                                            html.dd(my.getFieldByName('name')), //TODO: my.fields['name'] syntax?
+                                            html.dd(my.getFieldByName('name')),
                                             html.dt('Age'),
                                             html.dd(my.getFieldByName('age')),
                                             html.dt('Is Administrator'),

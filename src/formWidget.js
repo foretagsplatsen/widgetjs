@@ -1,6 +1,6 @@
 define(['./widget', './inputs'], function(widget, inputs) {
 
-    //TODO: All options, Field Overrides, Submit, Validation, Get Values, Multi level, Separate Inputsm Complex Properties, Selects with model options
+    //TODO: Complex Properties, Clean-up fieldBase, etc- Validation, Submit, Get Values,
 
     /**
      * Base for all forms
@@ -18,13 +18,18 @@ define(['./widget', './inputs'], function(widget, inputs) {
         var that = widget(spec, my);
 
         my.fields = [];
-        my.model = spec.model; //TODO: will not create fields from properties. Conciser
+        my.model = spec.model;
+        my.fieldOptions = spec.fieldOptions || {};
 
+        //
         // Public API
+        //
 
         that.setModel = function (model) {
             my.model = model;
         };
+
+        // Properties
 
         that.appendModelProperties = function(model) {
             model = model || my.model;
@@ -36,22 +41,50 @@ define(['./widget', './inputs'], function(widget, inputs) {
             }
         };
 
-        that.appendProperty = function(property, options) {
-            options = options || {};
-            // TODO: Double Dispatch and/or Factory
-            if(property.type === 'boolean') {
-                that.checkbox({ property : property, name : options.name, label: property.label });
-            } else if(property.type === 'password') {
-                that.password({ property : property, name : options.name, label: property.label });
-            } else if(property.type === 'number') {
-                that.number({ property : property, name : options.name, label: property.label  });
-            } else if(property.type === 'options') {
-                that.select({ property : property, options : property.options, name : options.name, label: property.label  });
-            } else {
-                that.input({ property : property, name : options.name, label: property.label });
+        my.appendPropertyInput = function(property, fieldFactory, options) {
+            var spec = {
+                property: property,
+                name: options.name,
+                label: property.label,
+                validator: property.validator,
+                options : property.options
+            };
+
+            // Overrides
+            var overrides = my.fieldOptions[options.name];
+            if(overrides) {
+                fieldFactory = that[overrides.field] || fieldFactory; //TODO: put fields in a map?
+                jQuery.extend(spec, overrides);
             }
+
+            return fieldFactory(spec);
         };
 
+        that.appendProperty = function(property, options) {
+            return my.appendPropertyInput(property, that.input, options);
+        };
+
+        that.appendOptionsProperty = function(property, options) {
+            return my.appendPropertyInput(property, that.select, options);
+        };
+
+        that.appendStringProperty = function(property, options) {
+            return my.appendPropertyInput(property, that.input, options);
+        };
+
+        that.appendNumberProperty = function(property, options) {
+            return my.appendPropertyInput(property, that.number, options);
+        };
+
+        that.appendPasswordProperty = function(property, options) {
+            return my.appendPropertyInput(property, that.password, options);
+        };
+
+        that.appendBooleanProperty = function(property, options) {
+            return my.appendPropertyInput(property, that.checkbox, options);
+        };
+
+        // Fields
 
         that.addField = function(field, options) {
             var property = options.property;
@@ -393,13 +426,22 @@ define(['./widget', './inputs'], function(widget, inputs) {
 
         var select = inputs.select({
             items : options,
-            selectedItem: that.getValue()
+            selection: that.getValue()
         });
 
-        select.onChange(function(item) {
-            that.setValue(item);
+        select.onChange(function(selection) {
+            if(!selection || !selection[0] || selection[0] === that.getValue()) {
+                return;
+            }
+
+            that.setValue(selection[0]);
         });
 
+        // Protected
+
+        my.updateFieldValue = function() {
+            select.selectItem(that.getValue());
+        };
 
         // Render
 

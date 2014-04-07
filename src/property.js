@@ -88,6 +88,14 @@ define(['./events'], function(events) {
 		};
 
         that.appendToForm = function(form, options) {
+            if(my.options) {
+                form.appendOptionsProperty(that, options);
+            } else {
+                that.appendPropertyToForm(form, options);
+            }
+        };
+
+        that.appendPropertyToForm = function(form, options) {
             form.appendProperty(that, options);
         };
 
@@ -103,6 +111,62 @@ define(['./events'], function(events) {
         return that;
     }
 
-    return property;
+    function stringProperty (spec, my) {
+        spec = spec || {};
+        my = my || {};
 
+        var that = property(spec, my);
+
+        that.appendPropertyToForm = function(form, options) {
+            form.appendStringProperty(that, options);
+        };
+
+        return that;
+    }
+
+    function numberProperty (spec, my) {
+        spec = spec || {};
+        my = my || {};
+
+        var that = property(spec, my);
+
+        that.appendPropertyToForm = function(form, options) {
+            form.appendNumberProperty(that, options);
+        };
+
+        return that;
+    }
+
+    function passwordProperty (spec, my) {
+        spec = spec || {};
+        my = my || {};
+
+        var that = property(spec, my);
+
+        that.appendPropertyToForm = function(form, options) {
+            form.appendPasswordProperty(that, options);
+        };
+
+        return that;
+    }
+
+    function booleanProperty (spec, my) {
+        spec = spec || {};
+        my = my || {};
+
+        var that = property(spec, my);
+
+        that.appendPropertyToForm = function(form, options) {
+            form.appendBooleanProperty(that, options);
+        };
+
+        return that;
+    }
+
+    property.bool = booleanProperty;
+    property.number = numberProperty;
+    property.password = passwordProperty;
+    property.string = stringProperty;
+
+    return property;
 });
