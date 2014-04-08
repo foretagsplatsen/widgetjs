@@ -1,6 +1,6 @@
 define(['./widget', './inputs'], function(widget, inputs) {
 
-    //TODO: Complex Properties, Clean-up fieldBase, etc- Validation, Submit, Get Values, Groups
+    //TODO: Clean-up fieldBase, etc- Validation, Submit, Get Values, Groups
 
     /**
      * Base for all forms
@@ -20,6 +20,8 @@ define(['./widget', './inputs'], function(widget, inputs) {
         my.fields = [];
         my.model = spec.model;
         my.fieldOptions = spec.fieldOptions || {};
+        my.exludeProperties= spec.exclude || [];
+        my.includeProperties= spec.include;
 
         //
         // Public API
@@ -33,11 +35,27 @@ define(['./widget', './inputs'], function(widget, inputs) {
 
         that.appendModelProperties = function(model) {
             model = model || my.model;
+
+            // Get all properties in model including those in prototype chain
+            var properties = [];
             for(var propertyName in model) {
                 if(model[propertyName] && model[propertyName].appendToForm) {
-                    model[propertyName].appendToForm(that, { name: propertyName});
+                    properties.push(propertyName);
                 }
             }
+
+            // Filter
+            var filteredProperties = properties.filter(function(propertyName) {
+                return my.exludeProperties.indexOf(propertyName) === -1;
+            }).filter(function(propertyName) {
+                return my.includeProperties === undefined ||
+                    my.includeProperties.indexOf(propertyName) >= 0;
+            });
+
+            // Append to form
+            filteredProperties.forEach(function(propertyName) {
+                model[propertyName].appendToForm(that, { name: propertyName});
+            });
         };
 
         my.appendPropertyInput = function(property, fieldFactory, options) {
