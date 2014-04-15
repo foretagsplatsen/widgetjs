@@ -391,42 +391,43 @@ define(['./widget', './inputs'], function(widget, inputs) {
 
         return that;
     }
-
-
+    
     function checkboxField(spec, my) {
         spec = spec || {};
         my = my || {};
 
         var that = formField(spec, my);
 
-        var inputClass = spec.inputClass || '';
+        // Sub widgets
 
-        // Protected API
+        var checkbox = inputs.checkbox({
+            item: that.getValue()
+        });
+
+        checkbox.onChange(function(checkbox) {
+            var checkboxState = checkbox.isSelected(); //TODO: value should be first argument
+            if(checkboxState === undefined || checkboxState === that.getValue()) {
+                return;
+            }
+            that.setValue(checkboxState);
+        });
+
+        // Protected
 
         my.updateFieldValue = function() {
-            jQuery('#' + my.fieldId).prop('checked', that.getValue());
+            // TODO: Toggle / Set Value?
+            var newState = that.getValue();
+            if(newState) {
+                checkbox.select();
+            } else {
+                checkbox.deselect();
+            }
         };
 
+        // Render
+
         that.renderContentOn = function(html) {
-            var input = html.input({
-                id: my.fieldId,
-                name: that.getName(),
-                type: 'checkbox',
-                'class' : inputClass
-            });
-
-            if (that.getValue()) {
-                input.asJQuery().prop('checked', true);
-            }
-
-            input.click(function() {
-                var checked = jQuery(this).is(':checked');
-                that.setValue(checked);
-            });
-
-            //html.label(input);
-
-            return input;
+            html.render(checkbox);
         };
 
         return that;

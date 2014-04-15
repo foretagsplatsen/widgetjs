@@ -1,5 +1,6 @@
 define(['./widget'], function(widget) {
 
+    //TODO: Should widget set backend data?
     //TODO: TESTS
     //TODO: PROPERTIES
     //TODO: documentation
@@ -64,9 +65,8 @@ define(['./widget'], function(widget) {
         return that;
     }
 
-
     /**
-     * A HTML OPTION - An item within a optionGroup, select or dataList
+     * Base for all selectable controls (eg. option, radioButton and checkbox)
      *
      * NOTE: All parameters that take a function is called with item as argument
      *
@@ -75,18 +75,17 @@ define(['./widget'], function(widget) {
      * var mercedesOption = option({ label: 'Mercedes-Benz', value: 'mercedes', isSelected: true });
      *
      * @param {string|function} spec.label - Text to display.
-     * @param {bool|function} [spec.iSelected=false] - Indicates that the option is selected.
+     * @param {boolean|function} [spec.iSelected=false] - Indicates that the option is selected.
      * @param [my={}]
      * @returns {optionWidget}
      */
-    function optionWidget (spec, my) {
+    function selectableControlWidget (spec, my) {
         spec = spec || {};
         my = my || {};
 
-        /** @typedef {controlWidget} optionWidget */
+        /** @typedef {controlWidget} selactableControlWidget */
         var that = controlWidget(spec, my);
 
-        // TODO: make a shared base "class" for option, radioButton, checkbox
         var isSelected = spec.isSelected;
         var label = spec.label;
 
@@ -94,8 +93,6 @@ define(['./widget'], function(widget) {
 
         that.onSelect = my.events.createEvent('select');
         that.onDeselect = my.events.createEvent('deselect');
-        that.onChange = my.events.createEvent('select');
-        //that.onChange = that.onSelect.or(that.onDeselect);
 
         that.isSelected = function() {
             return my.isSelected();
@@ -109,7 +106,7 @@ define(['./widget'], function(widget) {
             isSelected = true;
             that.trigger('change', that);
             that.trigger('select', that);
-            my.updateChecked();
+            my.updateSelect();
         };
 
         that.deselect = function(force) {
@@ -120,7 +117,15 @@ define(['./widget'], function(widget) {
             isSelected = false;
             that.trigger('change', that);
             that.trigger('deselect', that);
-            my.updateChecked();
+            my.updateSelect();
+        };
+
+        that.toggle = function (newState) {
+            if(newState) {
+                that.select();
+            } else {
+                that.deselect();
+            }
         };
 
         // Protected
@@ -139,13 +144,42 @@ define(['./widget'], function(widget) {
 
         // Protected
 
-        my.updateChecked = function() {
+        my.updateSelect = function() {
+            that.update();
+        };
+
+        return that;
+    }
+
+
+
+    /**
+     * A HTML OPTION - An item within a optionGroup, select or dataList
+     *
+     * NOTE: All parameters that take a function is called with item as argument
+     *
+     * @example
+     * var bmwOption = option({ label: 'Bayerische Motoren Werke ', value: 'bmw' });
+     * var mercedesOption = option({ label: 'Mercedes-Benz', value: 'mercedes', isSelected: true });
+     *
+     * @returns {optionWidget}
+     */
+    function optionWidget (spec, my) {
+        spec = spec || {};
+        my = my || {};
+
+        /** @typedef {selectableControlWidget} optionWidget */
+        var that = selectableControlWidget(spec, my);
+
+        // Protected
+
+        my.updateSelect = function() {
             var isElementSelected = that.asJQuery().attr('selected');
-            if(isElementSelected === isSelected) {
+            if(isElementSelected === my.isSelected()) {
                 return;
             }
 
-            if(isSelected) {
+            if(my.isSelected()) {
                 that.asJQuery().attr('selected', 'selected');
             } else {
                 that.asJQuery().removeAttr('selected');
@@ -569,92 +603,18 @@ define(['./widget'], function(widget) {
         spec = spec || {};
         my = my || {};
 
-        /** @typedef {widget} radioButton */
-        var that = widget(spec, my);
-
-        var name = spec.name;
-        var checked = spec.checked;
-        var isChecked = spec.isChecked;
-        var label = spec.label;
-        var value = spec.value;
-
-        my.item = spec.item;
-
-        my.attributes = spec.attributes || {};
-        my.style = spec.style || {};
-
-        // Public
-
-       // that.onChecked  = my.events.createEvent('checked');
-        that.onChange  = my.events.createEvent('change');
-
-        that.getItem = function () {
-            return my.item;
-        };
-
-        that.setItem = function(newItem) {
-            my.item = newItem;
-            that.trigger('change', that);
-            that.update();
-        };
-
-        that.isChecked = function() {
-            return my.isChecked();
-        };
-
-        that.getValue = function() {
-            return my.getValue();
-        };
-
-        that.select = function(force) {
-            if(my.isChecked() && force !== undefined) {
-                return;
-            }
-
-            isChecked = true;
-            that.trigger('change', that);
-            my.updateChecked();
-        };
-
-        that.deselect = function(force) {
-            if(!my.isChecked() && force !== undefined) {
-                return;
-            }
-
-            isChecked = false;
-            that.trigger('change', that);
-            my.updateChecked();
-        };
+        /** @typedef {selectableControlWidget} radioButton */
+        var that = selectableControlWidget(spec, my);
 
         // Protected
 
-        my.getValue = function() {
-            if(!value) {
-                return my.item;
-            }
-
-            return resultOrValue(value, my.item, that);
-        };
-
-        my.getLabel = function() {
-            if(!label) {
-                return my.item;
-            }
-
-            return resultOrValue(label, my.item, that);
-        };
-
-        my.isChecked = function () {
-            return resultOrValue(isChecked, my.item, that);
-        };
-
-        my.updateChecked = function() {
+        my.updateSelect = function() {
             var isElementChecked = that.asJQuery().attr('checked');
-            if(isElementChecked === isChecked) {
+            if(isElementChecked === my.isSelected()) {
                 return;
             }
 
-            if(isChecked) {
+            if(my.isSelected()) {
                 that.asJQuery().attr('checked', 'checked');
             } else {
                 that.asJQuery().removeAttr('checked');
@@ -675,7 +635,55 @@ define(['./widget'], function(widget) {
             el.attr(my.attributes);
             el.style(my.style);
 
-            if (my.isChecked()) {
+            if (my.isSelected()) {
+                el.setAttribute('checked', 'checked');
+            }
+        };
+
+        return that;
+    }
+
+    function checkbox (spec, my) {
+        spec = spec || {};
+        my = my || {};
+
+        /** @typedef {selectableControlWidget} radioButton */
+        var that = selectableControlWidget(spec, my);
+
+        // Protected
+
+        my.updateSelect = function() {
+            var isElementChecked = that.asJQuery().attr('checked');
+            if(isElementChecked === my.isSelected()) {
+                return;
+            }
+
+            if(my.isSelected()) {
+                that.asJQuery().attr('checked', 'checked');
+            } else {
+                that.asJQuery().removeAttr('checked');
+            }
+        };
+
+        // Render
+
+        that.renderOn = function(html) {
+            var el = html.input({
+                    type: 'checkbox',
+                    id: that.getId()
+                },
+                my.getLabel() || ''
+            );
+
+            el.click(function() {
+                var checked = jQuery(this).is(':checked');
+                that.toggle(checked);
+            });
+
+            el.attr(my.attributes);
+            el.style(my.style);
+
+            if (my.isSelected()) {
                 el.setAttribute('checked', 'checked');
             }
         };
@@ -705,6 +713,7 @@ define(['./widget'], function(widget) {
         option: optionWidget,
         select: selectWidget,
         optionGroup: optionGroupWidget,
+        checkbox: checkbox,
         radioButtonList: radioButtonList,
         radioButton: radioButton
     };
