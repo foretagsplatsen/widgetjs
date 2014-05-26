@@ -3,7 +3,6 @@ define(['./widget',
         './inputs/selectableControlWidget',
         './inputs/selectionWidget',
         './inputs/optionWidget',
-        './inputs/optionSetWidget',
         './inputs/optionGroupWidget',
         './inputs/selectWidget',
         './inputs/radioButtonWidget',
@@ -12,7 +11,7 @@ define(['./widget',
         './inputs/checkboxListWidget'
     ],
     function(widget, controlWidget,selectableControlWidget, selectionWidget, optionWidget,
-             optionSetWidget, optionGroupWidget, selectWidget, radioButtonWidget,
+             optionGroupWidget, selectWidget, radioButtonWidget,
              radioButtonListWidget, checkboxWidget, checkboxListWidget) {
 
 

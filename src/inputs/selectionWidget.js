@@ -14,14 +14,27 @@ define(['./controlWidget'],
             spec = spec || {};
             my = my || {};
 
+            //TODO: require controlFactory?
+            //TODO: Validat input in general?
+
             /** @typedef {controlWidget} selectionWidget */
             var that = controlWidget(spec, my);
 
-            var controlFactory = spec.controlFactory;
+            //TODO: Document
+            var widget = spec.widget;
+            var controlFactory = spec.controlFactory || createControl;
+
+            var selection = spec.selection;
+
+            my.isMultipleSelect = spec.isMultipleSelect;
+
+            my.controlAttributes = spec.controlAttributes;
+            my.controlStyle = spec.controlStyle;
+            my.controlLabel = spec.controlLabel;
+            my.controlValue = spec.controlValue;
             my.controls = spec.controls || (spec.items || []).map(controlFactory);
 
-            var isMultipleSelect = spec.isMultipleSelect;
-            var selection = spec.selection;
+            //TODO: Update after setItems / setControls
 
             // Observe options if observable
             if (my.controls.onChange) {
@@ -30,18 +43,18 @@ define(['./controlWidget'],
                 });
             }
 
+            //TODO: Watch and trigger events
+
             // Public
 
-            //TODO: get/Set value?
-
             that.getItems = function () {
-                return my.controls.map(function (option) {
-                    return option.getData();
+                return my.controls.map(function (control) {
+                    return control.getData();
                 });
             };
 
             that.setItems = function (newItems) {
-                my.controls = newItems.map(controlFactory);
+                my.setControls(newItems.map(controlFactory));
                 that.update();
             };
 
@@ -66,13 +79,15 @@ define(['./controlWidget'],
             };
 
             that.getSelected = function () {
-                return my.options.filter(function (option) {
-                    return option.isSelected();
+                return my.controls.filter(function (control) {
+                    return control.isSelected();
                 });
             };
 
             that.setSelected = function (newSelection) {
                 var currentSelection = that.getSelected();
+
+                //TODO: Explain
 
                 var controlsToDeselect = currentSelection.filter(function (currentlySelected) {
                     return !newSelection.some(function (newSelected) {
@@ -94,6 +109,8 @@ define(['./controlWidget'],
                     option.select();
                 });
 
+                //TODO: Check if selection did change (for event loops)?
+
                 that.trigger('change', that.getSelectedItems(), currentSelection);
             };
 
@@ -103,19 +120,22 @@ define(['./controlWidget'],
                 that.update();
             };
 
+            //TODO: needed and working?
             that.selectItem = function (item) {
-                var controlToSelect = my.getOptionForItem(item);
+                var controlToSelect = my.getControlForItem(item);
                 if (!controlToSelect) {
                     throw new Error('Item to select must exist in list of items');
                 }
 
                 var currentSelection = that.getSelected();
-                if (!isMultipleSelect) {
+                if (!my.isMultipleSelect) {
                     currentSelection.forEach(function (option) {
                         option.deselect();
                     });
                 }
                 controlToSelect.select();
+
+                //TODO: Check if selection did change (for event loops)?
 
                 that.trigger('change', that.getSelectedItems(), currentSelection);
             };
@@ -140,6 +160,27 @@ define(['./controlWidget'],
                 });
 
                 return match && match[0];
+            };
+
+            function createControl(item) {
+                return widget({
+                    data: item,
+                    label: function () {
+                        return my.resultOrValue(my.controlLabel, item, that);
+                    },
+                    value: function () {
+                        return my.resultOrValue(my.controlValue, item, that);
+                    },
+                    isSelected: function () {
+                        return my.resultOrValue(my.isSelected, item, that);
+                    }
+                });
+            }
+
+            // Render
+
+            that.renderOn = function (html) {
+                html.render(my.controls);
             };
 
             return that;

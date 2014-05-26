@@ -72,12 +72,12 @@
                     items: items,
                     selection: selectedItem,
                     cssClass: '',
-                    checkboxLabel: function(item) {
+                    controlLabel: function(item) {
                         return function(html) {
                             html.b(item.name);
                         };
                     },
-                    checkboxValue: function(item) {
+                    controlValue: function(item) {
                         return item.name;
                     }
                 });
@@ -106,53 +106,17 @@
                     items: items,
                     selection: selectedItem,
                     cssClass: '',
-                    radioButtonLabel: function(item) {
+                    controlLabel: function(item) {
                         return function(html) {
                             html.i(item.name);
                         };
                     },
-                    radioButtonValue: function(item) {
+                    controlValue: function(item) {
                         return item.name;
                     }
                 });
 
                 html.render(rolesRadioButtons);
-
-
-                //
-                // <input type=radio name='view' value='icon' />
-                // <input type=radio name='view' value='list' />
-                //
-
-                var listView = null, iconView = null;
-                var radioButtonList = function() {};
-                var radioButton = function() {};
-
-
-                /*        var newReactiveList = reactiveListOfUsers.map(function(user) {
-                 return radioButton({value: user.name});
-                 });
-                 */
-                var viewSwitch = inputs.radioButtonList({
-                    inputs : [
-                        inputs.radioButton({ value: 'icon', item: listView, onSelect: function() {}}),
-                        inputs.radioButton({ value: 'list', item: iconView, onSelect: function() {}}),
-                    ]
-                });
-                viewSwitch.onChange(function(view, button) {
-                    view.show();
-                });
-
-                var viewSwitch2 = inputs.radioButtonList({
-                    items : [iconView, listView],
-                    radioValue: function (view) {
-                        return view.name;
-                    }
-                });
-                viewSwitch2.onChange(function(view, button) {
-                    view.show();
-                });
-
 
                 html.h1('SELECT');
 
@@ -161,12 +125,12 @@
                     items: items,
                     selection: selectedItem,
                     cssClass: '',
-                    optionLabel: function(item) {
+                    controlLabel: function(item) {
                         return function(html) {
                             html.b(item.name);
                         };
                     },
-                    optionValue: function(item) {
+                    controlValue: function(item) {
                         return item.name;
                     }
                 });
@@ -176,7 +140,7 @@
 
                 // Manually create options
                 var manual = inputs.select({
-                    options: items.map(function(role) {
+                    controls: items.map(function(role) {
                         return inputs.option({
                             data: role,
                             label: function(aRole) {
@@ -195,7 +159,7 @@
 
                 // Manually create options in groups
                 var manualOptionGroup = inputs.select({
-                    options: [
+                    controls: [
                         inputs.optionGroup({
                             label: 'Built-in',
                             options: [
@@ -224,11 +188,11 @@
 
                     var that = inputs.select(spec, my);
 
-                    my.optionValue = function(item) {
+                    my.controlValue = function(item) {
                         return item.name;
                     };
 
-                    my.optionLabel = function(item) {
+                    my.controlLabel = function(item) {
                         return function(html) {
                             html.b(item.name);
                         };
@@ -262,12 +226,12 @@
                     items: user.roles,
                     selection: user.roles.get()[1],
                     isMultipleSelect: true,
-                    optionLabel: function (userRole) {
+                    controlLabel: function (userRole) {
                         return function (html) {
                             html.b(userRole.name);
                         };
                     },
-                    optionValue: function (userRole) {
+                    controlValue: function (userRole) {
                         return userRole.name;
                     }
                 });
@@ -283,12 +247,12 @@
                     items: items,
                     selection: selectedItem,
                     isMultipleSelect: true,
-                    optionLabel: function (item) {
+                    controlLabel: function (item) {
                         return function (html) {
                             html.b(item.name);
                         };
                     },
-                    optionValue: function (item) {
+                    controlValue: function (item) {
                         return item.name;
                     }
                 });
@@ -325,13 +289,6 @@
                 }
 
                 html.render(apiWidget());
-
-
-                // Multi Select
-
-
-
-
             });
         });
 

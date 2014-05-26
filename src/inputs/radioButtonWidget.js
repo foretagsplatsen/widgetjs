@@ -2,7 +2,8 @@ define(['./selectableControlWidget'],
     function (selectableControlWidget) {
 
         /**
-         * A button in a radioButtonList
+         * A button in a radioButtonList.Radio buttons let a user select
+         * ONLY ONE of a limited number of choice.
          *
          * @param spec
          * @param [my]
@@ -32,6 +33,8 @@ define(['./selectableControlWidget'],
 
             // Render
 
+            //TODO: Exactly the same render code as checkbox button except checkbox
+
             that.renderOn = function (html) {
                 var el = html.input({
                         type: 'radio',
@@ -45,6 +48,12 @@ define(['./selectableControlWidget'],
 
                 el.attr(my.attributes);
                 el.css(my.style);
+
+                el.click(function () {
+                    var checked = jQuery(this).is(':checked');
+                    //TODO: fire event or modify value? What value?
+                    that.setIsSelected(checked);
+                });
 
                 if (my.isSelected()) {
                     el.setAttribute('checked', 'checked');

@@ -1,5 +1,5 @@
-define(['./optionSetWidget'],
-    function (optionSetWidget) {
+define(['./selectionWidget', './optionWidget'],
+    function (selectionWidget, optionWidget) {
     // TODO: Function vs array selection
     // If selection is a function. Selected items will first be calculated
     // from function but when selection change the selection will be set to
@@ -21,18 +21,11 @@ define(['./optionSetWidget'],
         spec = spec || {};
         my = my || {};
 
+        spec.widget = spec.widget || optionWidget;
+
         /** @typedef {optionSetWidget} selectWidget */
-        var that = optionSetWidget(spec, my);
+        var that = selectionWidget(spec, my);
 
-        var isMultipleSelect = spec.isMultipleSelect;
-        var selection = spec.selection;
-
-        // Observe options if observable
-        if(my.options.onChange) {
-            my.options.onChange(function() {
-                that.update();
-            });
-        }
 
         // Public API
 
@@ -46,69 +39,16 @@ define(['./optionSetWidget'],
             });
         };
 
-        that.getSelectedItems = function() {
-            return that.getSelected().map(function(option) {
-                return option.getData();
-            });
-        };
-
-        that.setSelectedItems = function(items) {
-            var options = items.map(my.getOptionForItem);
-            that.setSelected(options);
-        };
-
         that.getSelected = function() {
             return my.getAllOptions().filter(function(option) {
                 return option.isSelected();
             });
         };
 
-        that.setSelected = function(newSelection) {
-            var currentSelection = that.getSelected();
-
-            var optionsToDeselect = currentSelection.filter(function(currentlySelected) {
-                return !newSelection.some(function(newSelected) {
-                    return currentlySelected.getId() === newSelected.getId();
-                });
-            });
-
-            var optionsToSelect = newSelection.filter(function(newSelected) {
-                return !currentSelection.some(function(currentlySelected) {
-                    return newSelected.getId() == currentlySelected.getId();
-                });
-            });
-
-            optionsToDeselect.forEach(function(option) {
-                option.deselect();
-            });
-
-            optionsToSelect.forEach(function(option) {
-                option.select();
-            });
-
-            that.trigger('change', that.getSelectedItems(), currentSelection);
-        };
-
-        that.selectItem = function(item) {
-            var optionToSelect = my.getOptionForItem(item);
-            if(!optionToSelect) {
-                throw new Error('Item to select must exist in list of items');
-            }
-
-            var currentSelection = that.getSelected();
-            if(!isMultipleSelect) {
-                currentSelection.forEach(function(option) {
-                    option.deselect();
-                });
-            }
-            optionToSelect.select();
-            that.trigger('change', that.getSelectedItems(), currentSelection);
-        };
-
         // Protected API
 
         my.getAllOptions = function() {
-            return my.options.reduce(function(options, item) {
+            return my.controls.reduce(function(options, item) {
                 // group
                 if(item.getOptions) {
                     return options.concat(item.getOptions());
@@ -118,36 +58,16 @@ define(['./optionSetWidget'],
             },[]);
         };
 
-        my.isSelected = function(item) {
-            if(Array.isArray(selection)) {
-                return selection.indexOf(item) > 0;
-            }
-
-            if(typeof selection === "function") {
-                return selection(item);
-            }
-
-            return item === selection;
-        };
-
-        my.getOptionForItem = function(item) {
-            var match = my.getAllOptions().filter(function(option) {
-                return option.getData() === item;
-            });
-
-            return match && match[0];
-        };
-
         // Render
 
-        that.renderContentOn = function(html) {
-            var el = html.select(my.options.get ? my.options.get() : my.options);
+        that.renderOn = function(html) {
+            var el = html.select({id: that.getId()}, my.controls.get ? my.controls.get() : my.controls);
 
             if(name) {
                 el.setAttribute('name', name);
             }
 
-            if(isMultipleSelect) {
+            if(my.isMultipleSelect) {
                 el.setAttribute('multiple');
             }
 
@@ -161,7 +81,7 @@ define(['./optionSetWidget'],
                         return option.id;
                     });
 
-                var selected = my.options.filter(function(option) {
+                var selected = my.controls.filter(function(option) {
                     return identifiersOfSelectedOptions.indexOf(option.getId()) >= 0;
                 });
 

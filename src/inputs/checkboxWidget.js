@@ -1,24 +1,8 @@
 define(['./selectableControlWidget'],
     function (selectableControlWidget) {
-        /**
-         * If first argument is a function it's executed with the rest of the arguments. If not
-         * a function first argument is returned as value.
-         *
-         * @param arg
-         * @returns {*}
-         */
-        function resultOrValue(arg) {
-            if (typeof arg === "function") {
-                var params = Array.prototype.slice.call(arguments, 1);
-                return arg.apply(this, params);
-            }
-
-            return arg;
-        }
 
         /**
-         * The Input Checkbox object represents an HTML <input> element
-         * with type="checkbox".
+         * Checkboxes let a user select ZERO or MORE options of a limited number of choices.
          *
          * @param [spec] selectableControlWidget spec
          * @param [my]
@@ -48,10 +32,14 @@ define(['./selectableControlWidget'],
 
             // Render
 
+            //TODO: Exactly the same render code as radio button except type checkbox
+
             that.renderOn = function (html) {
                 var el = html.input({
                         type: 'checkbox',
-                        id: that.getId()
+                        id: that.getId(),
+                        name: my.name,
+                        value: my.getValue()
                     }
                 );
 
@@ -62,7 +50,8 @@ define(['./selectableControlWidget'],
 
                 el.click(function () {
                     var checked = jQuery(this).is(':checked');
-                    that.toggle(checked);
+                    //TODO: fire event or modify value? What value?
+                    that.setIsSelected(checked);
                 });
 
                 if (my.isSelected()) {
@@ -74,6 +63,5 @@ define(['./selectableControlWidget'],
         }
 
         return checkboxWidget;
-
     }
 );
