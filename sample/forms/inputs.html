@@ -47,6 +47,78 @@
 
                 var html = widgetjs.htmlCanvas('body');
 
+                var items = [{ name: 'normal'}, {name: 'limited'}, { name: 'admin' }];
+                var selectedItem = items[1];
+
+                html.h1('CHECKBOX');
+
+                var c1 = inputs.checkbox({
+                    data: 'Foo',
+                    isSelected: false,
+                    name: 'r'
+                });
+                var c2 = inputs.checkbox({
+                    data: 'Bar',
+                    isSelected: true,
+                    name: 'r'
+                });
+
+                html.render(c1);
+                html.render(c2);
+
+                html.br();
+
+                var rolesCheckboxes = inputs.checkboxList({
+                    items: items,
+                    selection: selectedItem,
+                    cssClass: '',
+                    checkboxLabel: function(item) {
+                        return function(html) {
+                            html.b(item.name);
+                        };
+                    },
+                    checkboxValue: function(item) {
+                        return item.name;
+                    }
+                });
+
+                html.render(rolesCheckboxes);
+
+                html.h1('RADIOBUTTON');
+
+                var r1 = inputs.radioButton({
+                    data: 'Foo',
+                    isSelected: false,
+                    name: 'r'
+                });
+                var r2 = inputs.radioButton({
+                    data: 'Bar',
+                    isSelected: true,
+                    name: 'r'
+                });
+
+                html.render(r1);
+                html.render(r2);
+
+                html.br();
+
+                var rolesRadioButtons = inputs.radioButtonList({
+                    items: items,
+                    selection: selectedItem,
+                    cssClass: '',
+                    radioButtonLabel: function(item) {
+                        return function(html) {
+                            html.i(item.name);
+                        };
+                    },
+                    radioButtonValue: function(item) {
+                        return item.name;
+                    }
+                });
+
+                html.render(rolesRadioButtons);
+
+
                 //
                 // <input type=radio name='view' value='icon' />
                 // <input type=radio name='view' value='list' />
@@ -77,15 +149,12 @@
                         return view.name;
                     }
                 });
-                viewSwitch.onChange(function(view, button) {
+                viewSwitch2.onChange(function(view, button) {
                     view.show();
                 });
 
 
                 html.h1('SELECT');
-
-                var items = [{ name: 'normal'}, {name: 'limited'}, { name: 'admin' }];
-                var selectedItem = items[1];
 
                 // Configure from outside
                 var roles = inputs.select({
