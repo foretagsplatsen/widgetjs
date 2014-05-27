@@ -48,7 +48,7 @@ define(["widgetjs/property", "jquery", "chai"], function(property, jquery, chai)
         // Arrange a property with a value
         var name = property({
             set: function(newValue) {
-                this.setValue(newValue.toLowerCase());
+                return newValue.toLowerCase();
             }
         });
 

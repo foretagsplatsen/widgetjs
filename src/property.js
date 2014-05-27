@@ -7,10 +7,6 @@ define(['./events'], function(events) {
             return variable;
         };
 
-        that.setValue = function(value) {
-            variable = value;
-        };
-
         that.isValid = function(value) {
             try {
                 validator(value);
@@ -56,8 +52,7 @@ define(['./events'], function(events) {
             var oldValue = my.getValue();
             if(my.setter) {
 				var context = valueContext(my.value, my.validator);
-                my.setter.call(context, newValue);
-                newValue = context.getValue();
+                newValue = my.setter.call(context, newValue);
             }
 
             my.value = newValue;
