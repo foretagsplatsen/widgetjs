@@ -23,9 +23,6 @@ define(['../widget', '../property'],
 
             // Variables
 
-            var value = spec.value;
-            var isDisabled = spec.isDisabled;
-
             my.name = spec.name;
             my.attributes = spec.attributes || {};
             my.style = spec.style || {};
@@ -37,52 +34,32 @@ define(['../widget', '../property'],
                 }
             });
 
+            my.value = dataProperty({ value: spec.value});
+
+            my.isDisabled = dataProperty({ value:  spec.isDisabled, default: false });
+
             // Public
 
             that.onChange = my.events.createEvent('change');
 
             that.data = property.proxy({
                 property: my.data,
-                onChange: function() {
-                    that.update();
-                }
+                onChange: that.update
             });
 
-            that.getValue = function () {
-                return my.getValue();
-            };
+            that.value = property.proxy({
+                property: my.value,
+                onChange: that.update
+            });
 
-            that.setValue = function (newValue) {
-                my.setValue(newValue);
-                that.update();
-            };
+            that.isDisabled = property.proxy({
+                property: my.isDisabled,
+                onChange: that.update
+            });
 
             // Protected
 
-            my.value = property({
-                value: spec.value,
-                onChange: function() {
-                    that.onChange.trigger(that);
-                }
-            });
-
-
-            my.getValue = function () {
-                if (!value) {
-                    return my.data.get();
-                }
-
-                return my.resultOrValue(value, my.data.get(), that);
-            };
-
-            my.setValue = function (newValue) {
-                value = newValue;
-                that.onChange.trigger(that);
-            };
-
-            my.isDisabled = function () {
-                return my.resultOrValue(isDisabled, my.data, that);
-            };
+            my.dataProperty = dataProperty;
 
             /**
              * If first argument is a function it's executed with the rest of the arguments. If not
@@ -99,6 +76,41 @@ define(['../widget', '../property'],
 
                 return arg;
             };
+
+            my.dataVariable = function(value, defaultValue) {
+                if (typeof value === 'undefined') {
+                    return typeof defaultValue === 'undefined' ? my.data.get() : defaultValue;
+                }
+
+                if (typeof value === "function") {
+                    return value.call(this, my.data.get(), that);
+                }
+
+                return value;
+            };
+
+            /**
+             * Creates a property computed from the data property. The value can be either a function or
+             * a value. Functions will be applied on data but values are returned as they are.
+             *
+             * @param options Same as property options
+             * @param options.default A default value if value is undefined (otherwise my.data)
+             *
+             * @returns {property}
+             */
+            function dataProperty(options) {
+                var propertyOptions = Object.create(options);
+
+                propertyOptions.get = options.get || function(currentValue) {
+                    return my.dataVariable(currentValue, options.default);
+                };
+
+                propertyOptions.onChange = options.onChange || function() {
+                    that.onChange.trigger(that);
+                };
+
+                return property(propertyOptions);
+            }
 
             return that;
         }

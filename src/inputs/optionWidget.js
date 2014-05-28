@@ -22,11 +22,11 @@ define(['./selectableControlWidget'],
 
             my.updateSelect = function () {
                 var isElementSelected = that.asJQuery().attr('selected');
-                if (isElementSelected === my.isSelected()) {
+                if (isElementSelected === my.isSelected.get()) {
                     return;
                 }
 
-                if (my.isSelected()) {
+                if (my.isSelected.get()) {
                     that.asJQuery().attr('selected', 'selected');
                 } else {
                     that.asJQuery().removeAttr('selected');
@@ -38,18 +38,18 @@ define(['./selectableControlWidget'],
             that.renderOn = function (html) {
                 var el = html.option({
                         id: that.getId(),
-                        value: my.getValue()
+                        value: my.value.get()
                     },
-                    my.getLabel()
+                    my.label.get()
                 );
 
                 el.attr(my.attributes);
                 el.css(my.style);
 
-                if (my.isSelected()) {
+                if (my.isSelected.get()) {
                     el.setAttribute('selected', 'selected');
                 }
-                if (my.isDisabled()) {
+                if (my.isDisabled.get()) {
                     el.setAttribute('disabled', 'disabled');
                 }
             };

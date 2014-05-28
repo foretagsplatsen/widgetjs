@@ -30,6 +30,7 @@ define(['./events'], function(events) {
         my.getter = spec.get;
         my.setter = spec.set;
         my.label = spec.label;
+        my.alwaysSet = spec.alwaysSet;
         my.optionLabel = spec.optionLabel;
         my.optionValue = spec.optionValue;
         my.events = events.eventhandler();
@@ -40,17 +41,28 @@ define(['./events'], function(events) {
             my.changeEvent.on(spec.onChange);
         }
 
-        var that = spec.base || {};
+        var that = function(value) {
+            // Set value if we get an argument
+            if (typeof value !== 'undefined') {
+                my.setValue(value);
+            }
+
+            return my.getValue();
+        };
 
         // Protected API
 
-        my.getValue = function() {
+        my.calculateValue = function(value) {
             if(my.getter) {
-                var context = valueContext(my.value, my.validator);
-                return my.getter.call(context);
+                var context = valueContext(value, my.validator);
+                return my.getter.call(context, value);
             }
 
-            return my.value;
+            return value;
+        };
+
+        my.getValue = function() {
+            return my.calculateValue(my.value);
         };
 
         my.setValue = function(newValue) {
@@ -58,6 +70,10 @@ define(['./events'], function(events) {
             if(my.setter) {
 				var context = valueContext(my.value, my.validator);
                 newValue = my.setter.call(context, newValue);
+            }
+
+            if(my.calculateValue(newValue) === oldValue && !my.alwaysSet) {
+                return;
             }
 
             my.value = newValue;

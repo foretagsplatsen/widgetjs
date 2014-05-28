@@ -16,20 +16,14 @@ define(['./selectionWidget', './optionWidget'],
             /** @typedef {selectionWidget} optionGroupWidget */
             var that = selectionWidget(spec, my);
 
-            var label = spec.label || '';
-
-            // Protected
-
-            my.getLabel = function () {
-                return my.resultOrValue(label, that);
-            };
+            my.label = my.dataProperty({ value: spec.label });
 
             // Render
 
             that.renderOn = function (html) {
                 html.optgroup({
                         id: that.getId(),
-                        label: my.getLabel()
+                        label: my.label.get()
                     },
                     my.controls
                 );

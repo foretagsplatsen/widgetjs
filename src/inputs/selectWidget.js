@@ -41,7 +41,7 @@ define(['./selectionWidget', './optionWidget'],
 
         that.getSelected = function() {
             return my.getAllOptions().filter(function(option) {
-                return option.isSelected();
+                return option.isSelected.get();
             });
         };
 

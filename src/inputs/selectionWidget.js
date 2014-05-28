@@ -80,7 +80,7 @@ define(['./controlWidget'],
 
             that.getSelected = function () {
                 return my.controls.filter(function (control) {
-                    return control.isSelected();
+                    return control.isSelected.get();
                 });
             };
 
