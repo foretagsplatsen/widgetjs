@@ -35,7 +35,7 @@ define(['./selectionWidget', './optionWidget'],
 
         that.getItems = function() {
             return my.getAllOptions().map(function(option) {
-                return option.getData();
+                return option.data.get();
             });
         };
 

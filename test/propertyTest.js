@@ -59,6 +59,20 @@ define(["widgetjs/property", "jquery", "chai"], function(property, jquery, chai)
         assert.equal(val, 'tony two times');
     });
 
+    test("property onChange", function(start) {
+        // Arrange a property with a value
+        var name = property({
+            value: 1,
+            onChange: function(newValue, oldValue) {
+                assert.equal(oldValue, 1, 'onChange get old value');
+                assert.equal(newValue, 2, 'onChange get new value');
+                start();
+            }
+        });
+
+        name.set(2);
+    });
+
     test("property type", function() {
         // Arrange a property with a value
         var name = property({

@@ -52,15 +52,29 @@
 
                 html.h1('CHECKBOX');
 
+                var test = {
+                    foo: true,
+                    bar: true
+                }
+
                 var c1 = inputs.checkbox({
-                    data: 'Foo',
-                    isSelected: false,
-                    name: 'r'
+                    data: test.foo,
+                    label: 'Foo',
+                    isSelected: function(data) {
+                        return data;
+                    },
+                    name: 'bar'
                 });
                 var c2 = inputs.checkbox({
-                    data: 'Bar',
-                    isSelected: true,
-                    name: 'r'
+                    data: test.bar,
+                    value: function(data) {
+                        return data.toString();
+                    },
+                    label: 'Bar',
+                    isSelected: function(data) {
+                        return data;
+                    },
+                    name: 'bar'
                 });
 
                 html.render(c1);
@@ -96,6 +110,8 @@
                     isSelected: true,
                     name: 'r'
                 });
+
+                window.r2 = r2;
 
                 html.render(r1);
                 html.render(r2);

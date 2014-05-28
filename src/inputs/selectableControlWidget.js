@@ -40,7 +40,7 @@ define(['./controlWidget'],
             that.setIsSelected = function (newState, force) {
                 //TODO: reusable?
                 // Only update if value changed
-                var newStateValue = my.resultOrValue(newState, my.data, that);
+                var newStateValue = my.resultOrValue(newState, my.data.get(), that);
                 if (newStateValue === my.isSelected() && force !== undefined) {
                     return;
                 }
@@ -65,14 +65,14 @@ define(['./controlWidget'],
 
             my.getLabel = function () {
                 if (!label) {
-                    return my.data;
+                    return my.data.get();
                 }
 
-                return my.resultOrValue(label, my.data, that);
+                return my.resultOrValue(label, my.data.get(), that);
             };
 
             my.isSelected = function () {
-                return my.resultOrValue(isSelected, my.data, that);
+                return my.resultOrValue(isSelected, my.data.get(), that);
             };
 
             // Protected

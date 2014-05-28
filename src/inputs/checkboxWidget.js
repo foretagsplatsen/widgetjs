@@ -34,10 +34,9 @@ define(['./selectableControlWidget'],
 
             //TODO: Exactly the same render code as radio button except type checkbox
 
-            that.renderOn = function (html) {
+            that.renderContentOn = function (html) {
                 var el = html.input({
                         type: 'checkbox',
-                        id: that.getId(),
                         name: my.name,
                         value: my.getValue()
                     }

@@ -1,5 +1,5 @@
-define(['../widget'],
-    function (widget) {
+define(['../widget', '../property'],
+    function (widget, property) {
 
         /**
          * Base for all input controls. Controls must return a current value, trigger a change event when value is modified.
@@ -26,28 +26,27 @@ define(['../widget'],
             var value = spec.value;
             var isDisabled = spec.isDisabled;
 
-            my.data = spec.data;
             my.name = spec.name;
-
             my.attributes = spec.attributes || {};
             my.style = spec.style || {};
 
+            my.data = property({
+                value: spec.data,
+                onChange: function() {
+                    that.onChange.trigger(that);
+                }
+            });
 
             // Public
 
             that.onChange = my.events.createEvent('change');
 
-            // TODO: Should we use properties instead?
-
-            that.getData = function () {
-                return my.data;
-            };
-
-            that.setData = function (data) {
-                my.data = data;
-                that.onChange.trigger(that);
-                that.update();
-            };
+            that.data = property.proxy({
+                property: my.data,
+                onChange: function() {
+                    that.update();
+                }
+            });
 
             that.getValue = function () {
                 return my.getValue();
@@ -60,17 +59,24 @@ define(['../widget'],
 
             // Protected
 
+            my.value = property({
+                value: spec.value,
+                onChange: function() {
+                    that.onChange.trigger(that);
+                }
+            });
+
+
             my.getValue = function () {
                 if (!value) {
-                    return my.data;
+                    return my.data.get();
                 }
 
-                return my.resultOrValue(value, my.data, that);
+                return my.resultOrValue(value, my.data.get(), that);
             };
 
             my.setValue = function (newValue) {
                 value = newValue;
-                //TODO: Should event be triggered here or on that?
                 that.onChange.trigger(that);
             };
 

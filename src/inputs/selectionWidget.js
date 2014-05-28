@@ -49,7 +49,7 @@ define(['./controlWidget'],
 
             that.getItems = function () {
                 return my.controls.map(function (control) {
-                    return control.getData();
+                    return control.data.get();
                 });
             };
 
@@ -69,7 +69,7 @@ define(['./controlWidget'],
 
             that.getSelectedItems = function () {
                 return that.getSelected().map(function (option) {
-                    return option.getData();
+                    return option.data.get();
                 });
             };
 
@@ -156,7 +156,7 @@ define(['./controlWidget'],
 
             my.getControlForItem = function (item) {
                 var match = my.controls.filter(function (control) {
-                    return control.getData() === item;
+                    return control.data.get() === item;
                 });
 
                 return match && match[0];

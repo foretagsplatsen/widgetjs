@@ -33,7 +33,12 @@ define(['./events'], function(events) {
         my.optionLabel = spec.optionLabel;
         my.optionValue = spec.optionValue;
         my.events = events.eventhandler();
+
         my.changeEvent = my.events.createEvent('change');
+
+        if(spec.onChange) {
+            my.changeEvent.on(spec.onChange);
+        }
 
         var that = spec.base || {};
 
@@ -56,7 +61,7 @@ define(['./events'], function(events) {
             }
 
             my.value = newValue;
-            my.events.trigger('change', newValue, oldValue);
+            my.changeEvent.trigger(newValue, oldValue);
         };
 
         // Public API
@@ -177,11 +182,25 @@ define(['./events'], function(events) {
         return that;
     }
 
+    function proxyProperty (spec, my) {
+        spec = spec || {};
+        my = my || {};
+
+        my.property = spec.property;
+        spec.get = spec.get || my.property.get;
+        spec.set = spec.set || my.property.set;
+
+        var that = property(spec, my);
+
+        return that;
+    }
+
     property.bool = booleanProperty;
     property.number = numberProperty;
     property.password = passwordProperty;
     property.string = stringProperty;
     property.object = objectProperty;
+    property.proxy = proxyProperty;
 
     return property;
 });
