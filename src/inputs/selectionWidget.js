@@ -100,9 +100,13 @@ define(['./controlWidget'],
                     option.select();
                 });
 
+                var value = my.isMultipleSelect ?
+                    that.getSelectedItems() :
+                    that.getSelectedItems()[0];
+
                 //TODO: Check if selection did change (for event loops)?
 
-                that.trigger('change', that.getSelectedItems(), currentSelection);
+                that.trigger('change', value, currentSelection);
             };
 
 
@@ -128,7 +132,13 @@ define(['./controlWidget'],
 
                 //TODO: Check if selection did change (for event loops)?
 
-                that.trigger('change', that.getSelectedItems(), currentSelection);
+                //TODO: improve. should behave as controlWidget
+                // my.value.set(xx)?
+                var value = my.isMultipleSelect ?
+                    that.getSelectedItems() :
+                    that.getSelectedItems()[0];
+
+                that.trigger('change', value, currentSelection);
             };
 
             // Protected API

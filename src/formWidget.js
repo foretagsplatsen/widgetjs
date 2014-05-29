@@ -28,6 +28,7 @@ define(['./widget', './inputs'], function(widget, inputs) {
         //
 
         that.setModel = function (model) {
+            //TODO: Append properties?
             my.model = model;
         };
 
@@ -107,7 +108,7 @@ define(['./widget', './inputs'], function(widget, inputs) {
 
         that.addField = function(field, options) {
             var property = options.property;
-            var mutator = options.mutator;
+            var mutator = options.mutator; //TODO: Create a property like wrapper like for attributes?
             var accessor = options.accessor;
             var attribute = options.attribute;
 
@@ -132,7 +133,7 @@ define(['./widget', './inputs'], function(widget, inputs) {
 
             if(accessor) {
                 var value = accessor();
-                field.setValue(value, true);
+                field.setValue(value, true); //TODO: Should be an argument when field is created
             }
 
             my.fields.push(field);
@@ -142,7 +143,19 @@ define(['./widget', './inputs'], function(widget, inputs) {
         // TODO: better solution?
 
         that.checkbox = function(options) {
-            return that.addField(checkboxField(my.prepareFieldOptions(options)), options);
+            var preparedOptions = my.prepareFieldOptions(options);
+
+            var checkbox = inputs.checkbox({
+                //data: that.getValue()
+                name: preparedOptions.name
+            });
+
+            //TODO: Monkey patch
+            checkbox.setValue = function(value) {
+                checkbox.isSelected.set(value);
+            };
+
+            return that.addField(checkbox, options);
         };
 
         that.input = function(options) {
@@ -165,7 +178,17 @@ define(['./widget', './inputs'], function(widget, inputs) {
         };
 
         that.select = function(options) {
-            return that.addField(selectField(my.prepareFieldOptions(options)), options);
+            var preparedOptions = my.prepareFieldOptions(options);
+
+            var select = inputs.select({
+                items : preparedOptions.options,
+                name: preparedOptions.name,
+                //selection: value, //TODO: how get value
+                controlLabel: preparedOptions.optionLabel,
+                controlValue: preparedOptions.optionValue
+            });
+
+            return that.addField(select, options);
         };
 
 
@@ -387,88 +410,6 @@ define(['./widget', './inputs'], function(widget, inputs) {
 
             field.blur(my.updateFromFieldValue);
             field.change(my.updateFromFieldValue);
-        };
-
-        return that;
-    }
-    
-    function checkboxField(spec, my) {
-        spec = spec || {};
-        my = my || {};
-
-        var that = formField(spec, my);
-
-        // Sub widgets
-
-        var checkbox = inputs.checkbox({
-            data: that.getValue()
-        });
-
-        checkbox.onChange(function(checkbox) {
-            var checkboxState = checkbox.isSelected.get(); //TODO: value should be first argument
-            if(checkboxState === undefined || checkboxState === that.getValue()) {
-                return;
-            }
-            that.setValue(checkboxState);
-        });
-
-        // Protected
-
-        my.updateFieldValue = function() {
-            // TODO: Toggle / Set Value?
-            var newState = that.getValue();
-            if(newState) {
-                checkbox.select();
-            } else {
-                checkbox.deselect();
-            }
-        };
-
-        // Render
-
-        that.renderContentOn = function(html) {
-            html.render(checkbox);
-        };
-
-        return that;
-    }
-
-    function selectField(spec, my) {
-        spec = spec || {};
-        my = my || {};
-
-        var that = formField(spec, my);
-
-        var options = spec.options || [];
-        var inputClass = spec.inputClass || '';
-
-        // Sub widgets
-
-        var select = inputs.select({
-            items : options,
-            selection: that.getValue(),
-            controlLabel: spec.optionLabel,
-            controlValue: spec.optionValue
-        });
-
-        select.onChange(function(selection) {
-            if(!selection || !selection[0] || selection[0] === that.getValue()) {
-                return;
-            }
-
-            that.setValue(selection[0]);
-        });
-
-        // Protected
-
-        my.updateFieldValue = function() {
-            select.selectItem(that.getValue());
-        };
-
-        // Render
-
-        that.renderContentOn = function(html) {
-            html.render(select);
         };
 
         return that;

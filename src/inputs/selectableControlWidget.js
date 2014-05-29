@@ -28,8 +28,9 @@ define(['./controlWidget', '../property'],
             my.isSelected = my.dataProperty({
                 value: spec.isSelected,
                 onChange: function() {
-                    that.trigger('change', that, my.isSelected.get());
-                    that.trigger(my.isSelected.get() ? 'select' : 'deselect',that, my.isSelected.get());
+                    that.trigger('change', my.isSelected.get(), that);
+                    that.trigger(my.isSelected.get() ? 'select' : 'deselect',
+                        my.isSelected.get(), that);
                 }
             });
 

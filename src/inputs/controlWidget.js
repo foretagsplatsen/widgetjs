@@ -26,7 +26,7 @@ define(['../widget', '../property'],
             my.data = property({
                 value: spec.data,
                 onChange: function() {
-                    that.onChange.trigger(that);
+                    that.onChange.trigger(my.data.get(), that);
                 }
             });
 
@@ -49,6 +49,10 @@ define(['../widget', '../property'],
                 property: my.value,
                 onChange: that.update
             });
+
+            //TODO: Remove when form is fixed
+            that.setValue = my.data.set;
+            that.getName = my.name.get;
 
             that.isDisabled = property.proxy({
                 property: my.isDisabled,
@@ -98,7 +102,7 @@ define(['../widget', '../property'],
                 };
 
                 propertyOptions.onChange = options.onChange || function() {
-                    that.onChange.trigger(that);
+                    that.onChange.trigger(my.data.get(), that);
                 };
 
                 return property(propertyOptions);
