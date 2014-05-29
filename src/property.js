@@ -41,14 +41,7 @@ define(['./events'], function(events) {
             my.changeEvent.on(spec.onChange);
         }
 
-        var that = function(value) {
-            // Set value if we get an argument
-            if (typeof value !== 'undefined') {
-                my.setValue(value);
-            }
-
-            return my.getValue();
-        };
+        var that = {};
 
         // Protected API
 

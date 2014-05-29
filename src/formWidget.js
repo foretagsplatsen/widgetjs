@@ -401,11 +401,11 @@ define(['./widget', './inputs'], function(widget, inputs) {
         // Sub widgets
 
         var checkbox = inputs.checkbox({
-            item: that.getValue()
+            data: that.getValue()
         });
 
         checkbox.onChange(function(checkbox) {
-            var checkboxState = checkbox.isSelected(); //TODO: value should be first argument
+            var checkboxState = checkbox.isSelected.get(); //TODO: value should be first argument
             if(checkboxState === undefined || checkboxState === that.getValue()) {
                 return;
             }
@@ -447,8 +447,8 @@ define(['./widget', './inputs'], function(widget, inputs) {
         var select = inputs.select({
             items : options,
             selection: that.getValue(),
-            optionLabel: spec.optionLabel,
-            optionValue: spec.optionValue
+            controlLabel: spec.optionLabel,
+            controlValue: spec.optionValue
         });
 
         select.onChange(function(selection) {
