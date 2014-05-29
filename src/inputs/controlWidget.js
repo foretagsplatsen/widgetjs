@@ -33,6 +33,7 @@ define(['../widget', '../property'],
             my.value = dataProperty({ value: spec.value});
             my.name = dataProperty({ value: spec.name, default: '' });
             my.attributes = dataProperty({ value: spec.attributes, default: {}});
+            my.class = dataProperty({ value: spec.class, default: {} });
             my.style = dataProperty({ value: spec.style, default: {} });
             my.isDisabled = dataProperty({ value:  spec.isDisabled, default: false });
 
@@ -51,7 +52,7 @@ define(['../widget', '../property'],
             });
 
             //TODO: Remove when form is fixed
-            that.setValue = my.data.set;
+            that.setValue = that.data.set;
             that.getName = my.name.get;
 
             that.isDisabled = property.proxy({

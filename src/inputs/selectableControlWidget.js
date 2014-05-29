@@ -35,6 +35,7 @@ define(['./controlWidget', '../property'],
             });
 
             // Public
+            that.getLabel = my.label.get; //TODO: needed by form
 
             that.onSelect = my.events.createEvent('select');
             that.onDeselect = my.events.createEvent('deselect');

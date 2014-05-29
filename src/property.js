@@ -66,11 +66,12 @@ define(['./events'], function(events) {
             }
 
             if(my.calculateValue(newValue) === oldValue && !my.alwaysSet) {
-                return;
+                return oldValue;
             }
 
             my.value = newValue;
             my.changeEvent.trigger(newValue, oldValue);
+            return newValue;
         };
 
         // Public API

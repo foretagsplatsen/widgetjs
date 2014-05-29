@@ -8,11 +8,12 @@ define(['./widget',
         './inputs/radioButtonWidget',
         './inputs/radioButtonListWidget',
         './inputs/checkboxWidget',
-        './inputs/checkboxListWidget'
+        './inputs/checkboxListWidget',
+        './inputs/inputWidget'
     ],
     function(widget, controlWidget,selectableControlWidget, selectionWidget, optionWidget,
              optionGroupWidget, selectWidget, radioButtonWidget,
-             radioButtonListWidget, checkboxWidget, checkboxListWidget) {
+             radioButtonListWidget, checkboxWidget, checkboxListWidget, inputWidget) {
 
 
     //TODO: TESTS
@@ -27,6 +28,7 @@ define(['./widget',
         radioButtonList: radioButtonListWidget,
         radioButton: radioButtonWidget,
         checkbox: checkboxWidget,
-        checkboxList: checkboxListWidget
+        checkboxList: checkboxListWidget,
+        input: inputWidget
     };
 });

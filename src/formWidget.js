@@ -159,22 +159,31 @@ define(['./widget', './inputs'], function(widget, inputs) {
         };
 
         that.input = function(options) {
-            var inputOptions = my.prepareFieldOptions(options);
-            return that.addField(inputField(inputOptions), options);
+            var preparedOptions = my.prepareFieldOptions(options);
+
+            var textInput = inputs.input({
+                name: preparedOptions.name,
+                type: 'text',
+                label: preparedOptions.label,
+                'class': preparedOptions.inputClass //TODO: Why input class
+                //value, //TODO: how get value
+            });
+
+            return that.addField(textInput, options);
         };
 
         that.password = function(options) {
             var fieldOptions = Object.create(options);
             fieldOptions.type = options.type || 'password';
 
-            return that.addField(inputField(my.prepareFieldOptions(fieldOptions)), options);
+            return that.input(fieldOptions);
         };
 
         that.number = function(options) {
             var fieldOptions = Object.create(options);
             fieldOptions.type = options.type || 'number';
 
-            return that.addField(inputField(my.prepareFieldOptions(fieldOptions)), options);
+            return that.input(fieldOptions);
         };
 
         that.select = function(options) {
@@ -320,100 +329,6 @@ define(['./widget', './inputs'], function(widget, inputs) {
     formWidget.horizontalForm = horizontalForm;
     formWidget.inlineForm = inlineForm;
 
-    function formField(spec, my) {
-        spec = spec || {};
-        my = my || {};
-
-        var that = widget(spec, my);
-
-        var name = spec.name;
-        var value = spec.value;
-        var label = spec.label;
-        var fieldId = spec.id || (that.getId() + '_field');
-
-        // Protected API
-
-        my.fieldId = fieldId;
-
-        my.updateFieldValue = function() {
-            that.update();
-        };
-
-        my.validate = function() {
-            console.log('Validate', that.getValue());
-        };
-
-        // Public API
-
-        that.getName = function() {
-            return name || fieldId;
-        };
-
-        that.setValue = function(newValue, omitEvent) {
-            var previousValue = value;
-            value = newValue;
-            my.updateFieldValue();
-
-            if(omitEvent !== true) {
-                that.trigger('change', value, previousValue);
-            }
-        };
-
-        that.getValue = function() {
-            return value;
-        };
-
-        that.getLabel = function() {
-            return label;
-        };
-
-        return that;
-    }
-
-
-    function inputField(spec, my) {
-        spec = spec || {};
-        my = my || {};
-
-        var that = formField(spec, my);
-
-        var inputType = spec.type || 'text';
-        var inputClass = spec.inputClass || '';
-        var validateWhileTyping = spec.validateWhileTyping !== undefined ?
-            spec.validateWhileTyping : true;
-
-        // Protected API
-
-        my.updateFieldValue = function() {
-            jQuery('#' + my.fieldId).val(that.getValue());
-        };
-
-        my.updateFromFieldValue = function() {
-            var fieldValue = jQuery('#' + my.fieldId).val();
-            that.setValue(fieldValue);
-        };
-
-        that.renderContentOn = function(html) {
-            var field = html.input({
-                id: my.fieldId,
-                name: that.getName(),
-                type: inputType,
-                value: that.getValue() || '',
-                'class': inputClass
-            });
-
-            if (validateWhileTyping) {
-                field.keyup(function() {
-                    my.validate();
-                });
-            }
-
-            field.blur(my.updateFromFieldValue);
-            field.change(my.updateFromFieldValue);
-        };
-
-        return that;
-    }
 
     function modelAttribute (spec) {
         spec = spec || {};
