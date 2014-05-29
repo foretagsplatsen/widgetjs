@@ -28,7 +28,6 @@ define(['./controlWidget', '../property'],
             my.isSelected = my.dataProperty({
                 value: spec.isSelected,
                 onChange: function() {
-                    //TODO: Change that.onChange = that.onSelect.or.that.onDeselect
                     that.trigger('change', that, my.isSelected.get());
                     that.trigger(my.isSelected.get() ? 'select' : 'deselect',that, my.isSelected.get());
                 }
@@ -41,7 +40,9 @@ define(['./controlWidget', '../property'],
 
             that.isSelected = property.proxy({
                 property: my.isSelected,
-                onChange: that.updateSelect
+                onChange: function() {
+                    my.updateSelect();
+                }
             });
 
             that.select = function () {

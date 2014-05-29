@@ -23,10 +23,6 @@ define(['../widget', '../property'],
 
             // Variables
 
-            my.name = spec.name;
-            my.attributes = spec.attributes || {};
-            my.style = spec.style || {};
-
             my.data = property({
                 value: spec.data,
                 onChange: function() {
@@ -35,7 +31,9 @@ define(['../widget', '../property'],
             });
 
             my.value = dataProperty({ value: spec.value});
-
+            my.name = dataProperty({ value: spec.name, default: '' });
+            my.attributes = dataProperty({ value: spec.attributes, default: {}});
+            my.style = dataProperty({ value: spec.style, default: {} });
             my.isDisabled = dataProperty({ value:  spec.isDisabled, default: false });
 
             // Public
@@ -77,18 +75,6 @@ define(['../widget', '../property'],
                 return arg;
             };
 
-            my.dataVariable = function(value, defaultValue) {
-                if (typeof value === 'undefined') {
-                    return typeof defaultValue === 'undefined' ? my.data.get() : defaultValue;
-                }
-
-                if (typeof value === "function") {
-                    return value.call(this, my.data.get(), that);
-                }
-
-                return value;
-            };
-
             /**
              * Creates a property computed from the data property. The value can be either a function or
              * a value. Functions will be applied on data but values are returned as they are.
@@ -99,10 +85,16 @@ define(['../widget', '../property'],
              * @returns {property}
              */
             function dataProperty(options) {
+                var defaultValue = options.default;
+
                 var propertyOptions = Object.create(options);
 
                 propertyOptions.get = options.get || function(currentValue) {
-                    return my.dataVariable(currentValue, options.default);
+                    if (typeof currentValue === 'undefined') {
+                        return typeof defaultValue === 'undefined' ? my.data.get() : defaultValue;
+                    }
+
+                    return my.resultOrValue(currentValue, my.data.get(), that);
                 };
 
                 propertyOptions.onChange = options.onChange || function() {

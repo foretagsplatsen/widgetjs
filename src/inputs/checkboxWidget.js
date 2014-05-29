@@ -37,15 +37,15 @@ define(['./selectableControlWidget'],
             that.renderContentOn = function (html) {
                 var el = html.input({
                         type: 'checkbox',
-                        name: my.name,
+                        name: my.name.get(),
                         value: my.value.get()
                     }
                 );
 
                 html.render(my.label.get() || '');
 
-                el.attr(my.attributes);
-                el.css(my.style);
+                el.attr(my.attributes.get());
+                el.css(my.style.get());
 
                 el.click(function () {
                     var checked = jQuery(this).is(':checked');

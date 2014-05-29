@@ -14,38 +14,29 @@ define(['./controlWidget'],
             spec = spec || {};
             my = my || {};
 
-            //TODO: require controlFactory?
-            //TODO: Validat input in general?
-
             /** @typedef {controlWidget} selectionWidget */
             var that = controlWidget(spec, my);
 
-            //TODO: Document
+            // TODO: Explain
             var widget = spec.widget;
             var controlFactory = spec.controlFactory || createControl;
 
             var selection = spec.selection;
+            var eventBindings = [];
 
+            //TODO: Properties? or rename?
             my.isMultipleSelect = spec.isMultipleSelect;
-
             my.controlAttributes = spec.controlAttributes;
             my.controlStyle = spec.controlStyle;
             my.controlLabel = spec.controlLabel;
             my.controlValue = spec.controlValue;
             my.controls = spec.controls || (spec.items || []).map(controlFactory);
 
-            //TODO: Update after setItems / setControls
-
-            // Observe options if observable
-            if (my.controls.onChange) {
-                my.controls.onChange(function () {
-                    that.update();
-                });
-            }
-
-            //TODO: Watch and trigger events
+            observeControls(my.controls);
 
             // Public
+
+            //TODO: Properties?
 
             that.getItems = function () {
                 return my.controls.map(function (control) {
@@ -54,8 +45,7 @@ define(['./controlWidget'],
             };
 
             that.setItems = function (newItems) {
-                my.setControls(newItems.map(controlFactory));
-                that.update();
+                that.setControls(newItems.map(controlFactory));
             };
 
             that.getControls = function () {
@@ -63,7 +53,8 @@ define(['./controlWidget'],
             };
 
             that.setControls = function (someControls) {
-                my.setControls(someControls.slice());
+                my.controls = someControls.slice();
+                observeControls(my.controls);
                 that.update();
             };
 
@@ -182,6 +173,26 @@ define(['./controlWidget'],
             that.renderOn = function (html) {
                 html.render(my.controls);
             };
+
+            // Private
+
+            function unbindEventBindings() {
+                eventBindings.forEach(function(binding) {
+                    binding.unbind();
+                });
+            }
+
+            function observeControls(controls) {
+                unbindEventBindings();
+
+                if (controls.onChange) {
+                    var binding = controls.onChange(function () {
+                        that.update();
+                    });
+
+                    eventBindings.push(binding);
+                }
+            }
 
             return that;
         }

@@ -43,8 +43,8 @@ define(['./selectableControlWidget'],
                     my.label.get()
                 );
 
-                el.attr(my.attributes);
-                el.css(my.style);
+                el.attr(my.attributes.get());
+                el.css(my.style.get());
 
                 if (my.isSelected.get()) {
                     el.setAttribute('selected', 'selected');

@@ -72,8 +72,8 @@ define(['./selectionWidget', './optionWidget'],
             }
 
             // Extra attributes/styles
-            el.attr(my.attributes);
-            el.css(my.style);
+            el.attr(my.attributes.get());
+            el.css(my.style.get());
 
             el.change(function () {
                 var identifiersOfSelectedOptions = Array.prototype.slice.call(this.selectedOptions)
