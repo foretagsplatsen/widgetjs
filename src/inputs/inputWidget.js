@@ -25,11 +25,14 @@ define(['./controlWidget'],
             // Render
 
             that.renderOn = function(html) {
+
+                var data = my.data.get() ||'';
+
                 var field = html.input({
                     id: that.getId(),
                     name: my.name.get(),
                     type: my.type,
-                    value: my.data.get() || '', //TODO: should be value?
+                    value: (data.get ? data.get() : data) || '',
                     'class' : my.class.get() || ''
                 });
 

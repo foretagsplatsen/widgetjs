@@ -193,12 +193,17 @@ define(['./events'], function(events) {
     }
 
     function proxyProperty (spec, my) {
-        spec = spec || {};
+        spec = spec
+            || {};
         my = my || {};
 
-        my.property = spec.property;
-        spec.get = spec.get || my.property.get;
-        spec.set = spec.set || my.property.set;
+        if(spec.property && spec.property.set) {
+            my.property = spec.property;
+            spec.get = spec.get || my.property.get;
+            spec.set = spec.set || my.property.set;
+        } else {
+            spec.value = spec.property;
+        }
 
         var that = property(spec, my);
 

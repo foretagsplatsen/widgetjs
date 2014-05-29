@@ -23,12 +23,19 @@ define(['../widget', '../property'],
 
             // Variables
 
-            my.data = property({
-                value: spec.data,
+            my.setToDOMValue = function(value) {
+              // If value is a function
+
+
+            };
+
+            my.data = property.proxy({
+                property: spec.data,
                 onChange: function() {
                     that.onChange.trigger(my.data.get(), that);
                 }
             });
+
 
             my.value = dataProperty({ value: spec.value});
             my.name = dataProperty({ value: spec.name, default: '' });

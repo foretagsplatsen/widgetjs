@@ -107,47 +107,19 @@ define(['./widget', './inputs'], function(widget, inputs) {
         // Fields
 
         that.addField = function(field, options) {
-            var property = options.property;
-            var mutator = options.mutator; //TODO: Create a property like wrapper like for attributes?
-            var accessor = options.accessor;
-            var attribute = options.attribute;
-
-            if(property) {
-                mutator = property.set;
-                accessor = property.get;
-
-                property.onChange(function(newValue) {
-                    field.setValue(newValue, true);
-                });
-            } else if(attribute) {
-                var attr = modelAttribute({ attribute : attribute, model: my.model});
-                mutator = attr.set;
-                accessor = attr.get;
-            }
-
-            if(mutator) {
-                field.on('change', function(newValue) {
-                    mutator(newValue);
-                });
-            }
-
-            if(accessor) {
-                var value = accessor();
-                field.setValue(value, true); //TODO: Should be an argument when field is created
-            }
 
             my.fields.push(field);
             return field;
         };
 
-        // TODO: better solution?
-
         that.checkbox = function(options) {
             var preparedOptions = my.prepareFieldOptions(options);
 
             var checkbox = inputs.checkbox({
-                //data: that.getValue()
-                name: preparedOptions.name
+                data: preparedOptions.data,
+                value: preparedOptions.value,
+                name: preparedOptions.name,
+                label: preparedOptions.label
             });
 
             //TODO: Monkey patch
@@ -162,11 +134,12 @@ define(['./widget', './inputs'], function(widget, inputs) {
             var preparedOptions = my.prepareFieldOptions(options);
 
             var textInput = inputs.input({
+                data: preparedOptions.data,
+                value: preparedOptions.value,
                 name: preparedOptions.name,
                 type: 'text',
                 label: preparedOptions.label,
                 'class': preparedOptions.inputClass //TODO: Why input class
-                //value, //TODO: how get value
             });
 
             return that.addField(textInput, options);
@@ -190,9 +163,11 @@ define(['./widget', './inputs'], function(widget, inputs) {
             var preparedOptions = my.prepareFieldOptions(options);
 
             var select = inputs.select({
-                items : preparedOptions.options,
+                data: preparedOptions.data,
+                value: preparedOptions.value,
                 name: preparedOptions.name,
-                //selection: value, //TODO: how get value
+                //selection: value, //TODO: enough with value?
+                items : preparedOptions.options,
                 controlLabel: preparedOptions.optionLabel,
                 controlValue: preparedOptions.optionValue
             });
@@ -203,9 +178,30 @@ define(['./widget', './inputs'], function(widget, inputs) {
 
         // Protected
 
-        //TODO: crappy solution
-        my.prepareFieldOptions = function(options) {
+        my.prepareDataOption = function(options) {
+            var property = options.property;
+
+            if(options.mutator) {
+                property = accesorProperty({
+                    mutator: options.mutator,
+                    accessor: options.accessor
+                });
+            }
+
+            if(options.attribute) {
+                property = modelAttribute({
+                    attribute : options.attribute,
+                    model: my.model
+                });
+            }
+
+            options.data = options.data || property;
+
             return options;
+        };
+
+        my.prepareFieldOptions = function(options) {
+            return my.prepareDataOption(options);
         };
 
         my.findField = function(predicate) {
@@ -281,6 +277,8 @@ define(['./widget', './inputs'], function(widget, inputs) {
         };
 
         my.prepareFieldOptions = function(options) {
+            options = my.prepareDataOption(options);
+
             var fieldOptions = Object.create(options);
             fieldOptions.inputClass = options.inputClass || 'form-control';
 
@@ -329,6 +327,17 @@ define(['./widget', './inputs'], function(widget, inputs) {
     formWidget.horizontalForm = horizontalForm;
     formWidget.inlineForm = inlineForm;
 
+
+    function accesorProperty (spec) {
+        spec = spec || {};
+
+        var that = {};
+
+        that.get = spec.accessor;
+        that.set = spec.mutator;
+
+        return that;
+    }
 
     function modelAttribute (spec) {
         spec = spec || {};
