@@ -24,6 +24,7 @@ define(['./events'], function(events) {
         my = my || {};
 
         my.value = spec.value;
+        my.defaultValue = spec.default;
         my.options = spec.options;
         my.type = spec.type;
         my.validator = spec.validator;
@@ -55,7 +56,7 @@ define(['./events'], function(events) {
         };
 
         my.getValue = function() {
-            return my.calculateValue(my.value);
+            return my.calculateValue(my.value) || my.defaultValue;
         };
 
         my.setValue = function(newValue) {

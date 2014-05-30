@@ -29,19 +29,19 @@ define(['./selectionWidget', './optionWidget'],
 
         // Public API
 
-        that.getOptions = function() {
+        that.getControls = function() {
             return my.getAllOptions(); // including those in option groups
         };
 
         that.getItems = function() {
             return my.getAllOptions().map(function(option) {
-                return option.data.get();
+                return option.value.get();
             });
         };
 
         that.getSelected = function() {
             return my.getAllOptions().filter(function(option) {
-                return option.isSelected.get();
+                return option.value.get();
             });
         };
 
@@ -50,8 +50,8 @@ define(['./selectionWidget', './optionWidget'],
         my.getAllOptions = function() {
             return my.controls.reduce(function(options, item) {
                 // group
-                if(item.getOptions) {
-                    return options.concat(item.getOptions());
+                if(item.getControls) {
+                    return options.concat(item.getControls());
                 }
 
                 return options.concat([item]);

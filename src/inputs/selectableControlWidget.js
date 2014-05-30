@@ -23,36 +23,33 @@ define(['./controlWidget', '../property'],
 
             // Variables
 
-            my.label = my.dataProperty({ value: spec.label });
-
-            my.isSelected = my.dataProperty({
-                value: spec.isSelected,
-                onChange: function() {
-                    that.trigger('change', my.isSelected.get(), that);
-                    that.trigger(my.isSelected.get() ? 'select' : 'deselect',
-                        my.isSelected.get(), that);
-                }
-            });
+            my.label = property({ value: spec.label });
 
             // Public
-            that.getLabel = my.label.get; //TODO: needed by form
 
             that.onSelect = my.events.createEvent('select');
             that.onDeselect = my.events.createEvent('deselect');
 
-            that.isSelected = property.proxy({
-                property: my.isSelected,
-                onChange: function() {
-                    my.updateSelect();
-                }
+            my.value.onChange(function(newValue, oldValue) {
+                that.trigger(newValue ? 'select' : 'deselect', newValue, that);
+            });
+
+            that.value = property.proxy({
+                property: my.value,
+                onChange: that.updateSelect
+            });
+
+            that.label = property.proxy({
+                property: my.value,
+                onChange: that.update
             });
 
             that.select = function () {
-                that.isSelected.set(true);
+                that.value.set(true);
             };
 
             that.deselect = function () {
-                that.isSelected.set(false);
+                that.value.set(false);
             };
 
             // Protected

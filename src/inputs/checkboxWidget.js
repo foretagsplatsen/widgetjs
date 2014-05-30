@@ -19,11 +19,11 @@ define(['./selectableControlWidget'],
 
             my.updateSelect = function () {
                 var isElementChecked = that.asJQuery().attr('checked');
-                if (isElementChecked === my.isSelected.get()) {
+                if (isElementChecked === my.value.get()) {
                     return;
                 }
 
-                if (my.isSelected.get()) {
+                if (my.value.get()) {
                     that.asJQuery().attr('checked', 'checked');
                 } else {
                     that.asJQuery().removeAttr('checked');
@@ -37,8 +37,7 @@ define(['./selectableControlWidget'],
             that.renderContentOn = function (html) {
                 var el = html.input({
                         type: 'checkbox',
-                        name: my.name.get(),
-                        value: my.value.get()
+                        name: my.name.get()
                     }
                 );
 
@@ -49,11 +48,10 @@ define(['./selectableControlWidget'],
 
                 el.click(function () {
                     var checked = jQuery(this).is(':checked');
-                    //TODO: fire event or modify value? What value?
-                    that.isSelected.set(checked);
+                    that.value.set(checked);
                 });
 
-                if (my.isSelected.get()) {
+                if (my.value.get()) {
                     el.setAttribute('checked', 'checked');
                 }
             };

@@ -58,22 +58,13 @@
                 }
 
                 var c1 = inputs.checkbox({
-                    data: test.foo,
                     label: 'Foo',
-                    isSelected: function(data) {
-                        return data;
-                    },
+                    value: test.foo,
                     name: 'bar'
                 });
                 var c2 = inputs.checkbox({
-                    data: test.bar,
-                    value: function(data) {
-                        return data.toString();
-                    },
                     label: 'Bar',
-                    isSelected: function(data) {
-                        return data;
-                    },
+                    value: test.bar,
                     name: 'bar'
                 });
 
@@ -86,13 +77,13 @@
                     items: items,
                     selection: selectedItem,
                     cssClass: '',
-                    controlLabel: function(item) {
+                    checkboxLabel: function(item) {
                         return function(html) {
                             html.b(item.name);
                         };
                     },
-                    controlValue: function(item) {
-                        return item.name;
+                    checkboxValue: function(item) {
+                        return item.name === 'limited';
                     }
                 });
 
@@ -101,14 +92,12 @@
                 html.h1('RADIOBUTTON');
 
                 var r1 = inputs.radioButton({
-                    data: 'Foo',
                     isSelected: false,
-                    name: 'r'
+                    label: 'Foo'
                 });
                 var r2 = inputs.radioButton({
-                    data: 'Bar',
                     isSelected: true,
-                    name: 'r'
+                    label: 'bar'
                 });
 
                 window.r2 = r2;
@@ -122,13 +111,13 @@
                     items: items,
                     selection: selectedItem,
                     cssClass: '',
-                    controlLabel: function(item) {
+                    radioButtonLabel: function(item) {
                         return function(html) {
                             html.i(item.name);
                         };
                     },
-                    controlValue: function(item) {
-                        return item.name;
+                    radioButtonValue: function(item) {
+                        return item.name === 'limited';
                     }
                 });
 
@@ -141,31 +130,27 @@
                     items: items,
                     selection: selectedItem,
                     cssClass: '',
-                    controlLabel: function(item) {
+                    controlLabel: function(item) { //TODO: optionLabel
                         return function(html) {
                             html.b(item.name);
                         };
                     },
-                    controlValue: function(item) {
+                    controlValue: function(item) { //TODO: optionValue
                         return item.name;
                     }
                 });
+
                 window.roles = roles;
+
                 html.h2('Configure');
                 html.render(roles);
 
                 // Manually create options
                 var manual = inputs.select({
-                    controls: items.map(function(role) {
+                    controls: items.map(function(role) { // TODO: options
                         return inputs.option({
-                            data: role,
-                            label: function(aRole) {
-                                return aRole.name;
-                            },
-                            value: function(aRole) {
-                                return aRole.name;
-                            },
-                            isSelected: role === selectedItem
+                            label: role.name,
+                            value: role === selectedItem
                         })
                     })
                 });
@@ -175,22 +160,22 @@
 
                 // Manually create options in groups
                 var manualOptionGroup = inputs.select({
-                    controls: [
+                    controls: [ // TODO: options
                         inputs.optionGroup({
                             label: 'Built-in',
-                            options: [
-                                inputs.option({ data: 'admin'}),
-                                inputs.option({ data: 'normal'})
+                            controls: [
+                                inputs.option({ label: 'admin'}),
+                                inputs.option({ label: 'normal'})
                             ]
                         }),
                         inputs.optionGroup({
                             label: 'External',
-                            options: [
-                                inputs.option({ data: 'xadmin'}),
-                                inputs.option({ data: 'xnormal'})
+                            controls: [
+                                inputs.option({ label: 'xadmin'}),
+                                inputs.option({ label: 'xnormal'})
                             ]
                         }),
-                        inputs.option({ data: 'unknown'})
+                        inputs.option({ label: 'unknown'})
                     ]
                 });
 
@@ -205,10 +190,11 @@
                     var that = inputs.select(spec, my);
 
                     my.controlValue = function(item) {
-                        return item.name;
+                        return item.name === 'normal';
                     };
 
                     my.controlLabel = function(item) {
+                        debugger;
                         return function(html) {
                             html.b(item.name);
                         };
@@ -226,10 +212,6 @@
                 html.render(specialRoles);
 
                 // Properties
-
-                var role = function(spec) {
-
-                };
 
                 var user = {
                   roles: widgetjs.collectionProperty({
@@ -283,14 +265,14 @@
 
                     that.renderContentOn = function(html) {
                         html.h3('getItems()');
-                        html.ul(aSelect.getItems().map(function (item) {
-                            return html.li(item.name);
+                        html.ul(aSelect.getControls().map(function (option) {
+                            return html.li(option.value.get() || '');
                         }));
 
 
                         html.h3('getSelectedItems()');
-                        html.ul(aSelect.getSelectedItems().map(function (item) {
-                            return html.li(item.name);
+                        html.ul(aSelect.getSelected().map(function (option) {
+                            return html.li(option.value.get() || '');
                         }));
 
                         html.button('Select first').click(function() {

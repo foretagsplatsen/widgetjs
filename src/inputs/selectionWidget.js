@@ -40,7 +40,7 @@ define(['./controlWidget'],
 
             that.getItems = function () {
                 return my.controls.map(function (control) {
-                    return control.data.get();
+                    return control.value.get();
                 });
             };
 
@@ -60,7 +60,7 @@ define(['./controlWidget'],
 
             that.getSelectedItems = function () {
                 return that.getSelected().map(function (option) {
-                    return option.data.get();
+                    return option.value.get();
                 });
             };
 
@@ -157,7 +157,7 @@ define(['./controlWidget'],
 
             my.getControlForItem = function (item) {
                 var match = my.controls.filter(function (control) {
-                    return control.data.get() === item;
+                    return control.value.get() === item;
                 });
 
                 return match && match[0];
@@ -165,20 +165,30 @@ define(['./controlWidget'],
 
             function createControl(item) {
                 return widget({
-                    data: item,
-                    label: function () {
-                        return my.resultOrValue(my.controlLabel, item, that);
-                    },
-                    value: function () {
-                        return my.resultOrValue(my.controlValue, item, that);
-                    },
-                    isSelected: function () {
-                        return my.resultOrValue(my.isSelected, item, that);
-                    }
+                    label: resultOrValue(my.controlLabel, item, that),
+                    value: resultOrValue(my.controlValue, item, that)
                 });
             }
 
-            // Render
+            /**
+             * If first argument is a function it's executed with the rest of the arguments. If not
+             * a function first argument is returned as value.
+             *
+             * @param arg
+             * @returns {*}
+             */
+            function resultOrValue(arg) {
+                if (typeof arg === "function") {
+                    var params = Array.prototype.slice.call(arguments, 1);
+                    return arg.apply(this, params);
+                }
+
+                return arg;
+            }
+
+            my.resultOrValue = resultOrValue;
+
+                // Render
 
             that.renderOn = function (html) {
                 html.render(my.controls);

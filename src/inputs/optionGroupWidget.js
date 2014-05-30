@@ -1,5 +1,5 @@
-define(['./selectionWidget', './optionWidget'],
-    function (selectionWidget, optionWidget) {
+define(['./selectionWidget', './optionWidget', '../property'],
+    function (selectionWidget, optionWidget, property) {
 
         /**
          * A HTML OPTGROUP - A grouping of options within a select element
@@ -16,7 +16,7 @@ define(['./selectionWidget', './optionWidget'],
             /** @typedef {selectionWidget} optionGroupWidget */
             var that = selectionWidget(spec, my);
 
-            my.label = my.dataProperty({ value: spec.label });
+            my.label = property({ value: spec.label });
 
             // Render
 

@@ -7,7 +7,7 @@ define(['./selectableControlWidget'],
          *
          * @example
          * var bmwOption = option({ label: 'Bayerische Motoren Werke ', value: 'bmw' });
-         * var mercedesOption = option({ label: 'Mercedes-Benz', value: 'mercedes', isSelected: true });
+         * var mercedesOption = option({ label: 'Mercedes-Benz', value: 'mercedes', value: true });
          *
          * @returns {optionWidget}
          */
@@ -22,11 +22,11 @@ define(['./selectableControlWidget'],
 
             my.updateSelect = function () {
                 var isElementSelected = that.asJQuery().attr('selected');
-                if (isElementSelected === my.isSelected.get()) {
+                if (isElementSelected === my.value.get()) {
                     return;
                 }
 
-                if (my.isSelected.get()) {
+                if (my.value.get()) {
                     that.asJQuery().attr('selected', 'selected');
                 } else {
                     that.asJQuery().removeAttr('selected');
@@ -36,17 +36,17 @@ define(['./selectableControlWidget'],
             // Render
 
             that.renderOn = function (html) {
+                console.log(spec, my, that);
                 var el = html.option({
-                        id: that.getId(),
-                        value: my.value.get()
+                        id: that.getId()
                     },
-                    my.label.get()
+                    my.label.get() || ''
                 );
 
                 el.attr(my.attributes.get());
                 el.css(my.style.get());
 
-                if (my.isSelected.get()) {
+                if (my.value.get()) {
                     el.setAttribute('selected', 'selected');
                 }
                 if (my.isDisabled.get()) {
