@@ -89,7 +89,7 @@ define(
 
 			that.parseQuery = function(string) {
 				// Extract query key/value(s) from a string and add them to `query` object.
-				var result = /[^?]+\?(.*)$/g.exec(string);
+				var result = /[^?]*\?(.*)$/g.exec(string);
 				var query = {};
 				var pair;
 				if (result) {
