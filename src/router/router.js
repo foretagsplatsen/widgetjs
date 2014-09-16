@@ -300,7 +300,7 @@ define(
                     suppliedParameters = routeName;
                     routeName = undefined;
                 } else {
-                    suppliedParameters = parameters;
+                    suppliedParameters = parameters || {};
                 }
 
                 // Don't include query parameters for named route
