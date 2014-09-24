@@ -276,10 +276,10 @@ define(
 				return that;
 			};
 
-			// Implemention for `appendToBrush()` to allow a brush to be
+			// Implementation for `appendToBrush()` to allow a brush to be
             // appended to another brush.
             //
-            // Basicly it allows us to do:
+            // Basically it allows us to do:
             //
             //		var h1Brush = html.span('test');
             //      html.div(h1Brush);
