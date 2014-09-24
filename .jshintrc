@@ -13,6 +13,8 @@
 
     "loopfunc"      : true,
 
+    "smarttabs"     : true,
+
 
     "supernew"      : false,     // true: Tolerate `new function () { ... };` and `new Object;`
 
