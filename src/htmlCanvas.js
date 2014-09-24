@@ -75,6 +75,13 @@ define(
 		// brushes and create a tree.
 		//
 		var htmlCanvas = function (aJQuery) {
+
+            // Render on fragment if no element/query supplied
+            if(aJQuery === undefined) {
+                var fragment = document.createDocumentFragment();
+                aJQuery = jQuery(fragment);
+            }
+
 			var that = {};
 
 			// Supported HTML 'tags'
