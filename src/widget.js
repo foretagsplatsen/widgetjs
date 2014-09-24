@@ -71,6 +71,8 @@ define(
                 return id;
             };
 
+            that.id = that.getId; //TODO: deprecated
+
             /**
              * Performance tasks need for freeing/releasing/cleaning-up resources used by widget.
              *
