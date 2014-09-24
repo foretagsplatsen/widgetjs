@@ -18,10 +18,10 @@ define(
          *      var titleWidget = function(spec) {
          *          var that = widget(spec);
          *
-         *          var title = spec.title;
+         *          var title = spec.title || 'Hello World';
          *
          *          that.renderContentOn = function(html) {
-         *              html.h1('Hello World')
+         *              html.h1(title)
          *          }
          *
          *          return that;
@@ -29,7 +29,7 @@ define(
          *
          *      var helloWorldWidget = titleWidget({title: 'Hello Widget!'});
          *
-         *          $(document).ready(function() {
+         *      $(document).ready(function() {
          *          helloWorldWidget.appendTo('BODY');
          *      });
          *
@@ -51,6 +51,7 @@ define(
             my = my || {};
             spec = spec || {};
 
+			/** @typedef {{}} widget */
             var that = {};
 
             var id = spec.id || idGenerator.newId();
@@ -77,17 +78,20 @@ define(
              * Performance tasks need for freeing/releasing/cleaning-up resources used by widget.
              *
              * Should always be executed before a widget is disposed. Especially
-             * if the widget register events to avoid memory leaks,
+             * if the widget register events to avoid memory leaks.
+             *
+             * If overridden in a subclass, make sure to execute `my.disposeWidget()`.
+             *
              */
             that.dispose = function() {
-                my.events.dispose();
+                my.disposeWidget();
             };
 
             /**
              * Renders the widget on a JQuery / DOM
              *
              * @example
-             * widget.appendTo('BODY');
+             *    widget.appendTo('BODY');
              *
              * @param aJQuery
              */
@@ -141,15 +145,15 @@ define(
                 that.appendTo(aTagBrush.asJQuery());
             };
 
-
             // Expose events
             that.on = my.events.on;
             that.onceOn = my.events.onceOn;
             that.off = my.events.off;
             that.trigger = my.events.trigger;
 
-
+			//
             // Protected
+			//
 
             /**
              * Exposes the internal ID generator. Generates new unique IDs to be used
@@ -161,8 +165,14 @@ define(
                 return idGenerator.newId();
             };
 
-            my.trigger = my.events.trigger;
+            /**
+             * Widget specific dispose.
+             */
+            my.disposeWidget = function() {
+              my.events.dispose();
+            };
 
+            my.trigger = my.events.trigger;
 
             // Route / Controller extensions
 
@@ -178,8 +188,9 @@ define(
             my.getParameter = router.router.getParameter;
             my.setParameters = router.router.setParameters;
 
-
+			//
             // Render
+			//
 
             /**
              * Main entry point for rendering. For convenience 'renderOn' will  wrap the content
@@ -267,7 +278,6 @@ define(
 
             return that;
         };
-
 
         /**
          * Creates unique ids used by widgets to identify their root div.
