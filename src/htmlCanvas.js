@@ -75,6 +75,13 @@ define(
 		// brushes and create a tree.
 		//
 		var htmlCanvas = function (aJQuery) {
+
+            // Render on fragment if no element/query supplied
+            if(aJQuery === undefined) {
+                var fragment = document.createDocumentFragment();
+                aJQuery = jQuery(fragment);
+            }
+
 			var that = {};
 
 			// Supported HTML 'tags'
@@ -269,10 +276,10 @@ define(
 				return that;
 			};
 
-			// Implemention for `appendToBrush()` to allow a brush to be
+			// Implementation for `appendToBrush()` to allow a brush to be
             // appended to another brush.
             //
-            // Basicly it allows us to do:
+            // Basically it allows us to do:
             //
             //		var h1Brush = html.span('test');
             //      html.div(h1Brush);
