@@ -1,35 +1,3 @@
-// Events.js that lets us bind callbacks to named events. It also lets us group named events into categories.
-//
-// #### Usage:
-//
-// **As an event buss/dispatcher**. Eg. register and trigger a callback for a named event 'login' in the 'authentication' category:
-//
-//      events.at('authentication').on('login', function(userName) { alert('User ' + userName + ' signed in.');})
-//
-//      events.at('authentication').trigger('login', 'kalle');
-//
-//
-// _Note:_ If no category is given the 'default' eventhandler is used. Eg.
-//
-//      events.on('xyz', function() { ... });
-//
-//      is equivalent to:
-//
-//      events.at('default').on('xyz', function() { ... });
-//
-// Events can also be **mixed into any object**, giving the object the ability to bind and trigger custom named events.
-//
-//      var obj = {};
-//      jQuery.extend(obj, events.eventhandler());
-//      obj.on('notification', function(msg) { alert(msg); });
-//
-//      obj.trigger('notification', 'tada!');
-//
-// _Note:_ that this will bypass the global eventManager, so local events should be used only
-// when other objects aren't supposed to capture the events triggered locally.
-//
-//
-
 define([],
     function () {
 
