@@ -49,7 +49,7 @@ define(
 		 *		html.a({ id: 'id', href: 'http://www.google.se'}, 'Google');
 		 *
 		 *		// Callbacks can be attached to events:
-		 *		html.a('Click me!').click(function() { alert('Hello World!')});
+		 *		html.a({click: function() { alert('Hello World!')} 'Click me!');
 		 *
 		 *		// Tags can be nested:
 		 *		html.div({'class' : 'outer_div'},

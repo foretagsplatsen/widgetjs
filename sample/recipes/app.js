@@ -127,9 +127,9 @@ define([
 				doc = options.doc;
 
 			var route = my.router.addRoute({ pattern: options.pattern, name: options.name});
-			route.on('matched', function(result) {
+			route.onMatched(function(result) {
 				if(options.action) {
-					options.action.apply(my.router, [doc].concat(result.getCallbackArguments()));
+					options.action.apply(my.router, [doc].concat(result.getActionArguments()));
 				}
 
 				navigation.activate(menuId);

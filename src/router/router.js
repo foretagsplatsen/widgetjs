@@ -8,9 +8,12 @@ define(
 	],
 	function(jQuery, events, route, url, hash) {
 
-		// Even if we create multiple routers
-		// we usualy only want one hash-fragment
-		// listner.
+		/**
+		 * Lazily creates a singleton instance of
+		 * hash-fragment listener `hash()`.
+		 *
+		 * @returns {hash}
+		 */
 		var hashSingleton = function() {
 			if(!hashSingleton.instance) {
 				hashSingleton.instance = hash();
@@ -19,85 +22,87 @@ define(
 			return hashSingleton.instance;
 		};
 
-		// ### Router
-		//
-		// Router allow you to keep state in the URL. When a user visits a specific URL the application
-		// can be transformed accordingly.
-		//
-		// Router have a routing table concisting of an array of routes. When the router resolves a URL
-		// each route is matched against the URL one-by-one. The order is defined by the route priority
-		// property (lower first). If two routes have the same priority or if priority is omitted, routes
-		// are matched in registration order.
-		//
-		// Routes are added using 'addRoute'
-		//
-		// Eg:
-		//
-		//		aRouter.addRoute({
-		//			pattern: '/user/#id',
-		//			action: function(id) { console.log(id);},
-		//			priority: 4000
-		//		});
-		//
-		// The action callback is triggered when a URL match pattern. Values for matched parameterers are
-		// supplied as arguments in the same order as they are defined in the pattern. Priority is optional.
-		//
-		// Add router accept the same options as [route](route.js)
-		//
-		//		var aRoute = aRouter.addRoute({
-		//			pattern: '/user/?id',
-		//			defaults: {
-		//				id: 'john'
-		//			},
-		//			constraints: {
-		//				id :  ['john', 'olle']
-		//			}
-		//		});
-		//
-		//		aRoute.on('matched', function(result) {
-		//			console.dir(result.getRouteParameters());
-		//		});
-		//
-		// Routes are removed using 'removeRoute'
-		//
-		// Eg:
-		//
-		//		aRouter.removeRoute(aRoute);
-		//
-		//
-		// Url's can be resolved manualy using the 'resolveRoute' method or automaticly when the URL change. The URL
-		// location handler can be set when the router is constructed
-		//
-		//Eg:
-		//
-		//	var aHashRouter = router({locationHandler: hash()});
-		//	var aPushStateRouter = router({locationHandler: pushState()});
-		//
-		// _Note:_ By default router use [hash.js]('hash.js') to listen for URL changes.
-		//
-		// Events are triggered on each resolve, on match and when a route is 'not found' with url as argument.
-		//
-		// Usage:
-		//
-		//		router.on('resolveUrl', function(url) {
-		//			console.log(url.toString()); // or log to google analytics / mixpanel / etc
-		//		});
-		//
-		//		router.on('routeMatched', function(result) {
-		//			alert('Route match: ' + result.getUrl().getPath());
-		//		});
-		//
-		//		router.on('routeNotFound', function(url) {
-		//			alert('404 - Url not found: ' + url);
-		//		});
-		//
-		// Routers can be chained using `pipeRoute` and  `pipeNotFound`
-		//
-		//		router.pipeNotFound(anotherRouter);
-		//		router.pipeRoute({ pattern: '/module/#feature'}, anotherRouter);
-		//
-		//
-		var router = function(spec, my) {
+		/**
+		* Router allow you to keep state in the URL. When a user visits a specific URL the application
+		* can be transformed accordingly.
+		*
+		* Router have a routing table consisting of an array of routes. When the router resolves a URL
+		* each route is matched against the URL one-by-one. The order is defined by the route priority
+		* property (lower first). If two routes have the same priority or if priority is omitted, routes
+		* are matched in registration order.
+		*
+		* Routes are added using 'addRoute'
+		*
+		* Eg:
+		*
+		*		aRouter.addRoute({
+		*			pattern: '/user/#id',
+		*			action: function(id) { console.log(id);},
+		*			priority: 4000
+		*		});
+		*
+		* The action callback is triggered when a URL match pattern. Values for matched parameters are
+		* supplied as arguments in the same order as they are defined in the pattern. Priority is optional.
+		*
+		* Add router accept the same options as [route](route.js)
+		*
+		*		var aRoute = aRouter.addRoute({
+		*			pattern: '/user/?id',
+		*			defaults: {
+		*				id: 'john'
+		*			},
+		*			constraints: {
+		*				id :  ['john', 'dennis']
+		*			}
+		*		});
+		*
+		*		aRoute.on('matched', function(result) {
+		*			console.dir(result.getValues());
+		*		});
+		*
+		* Routes are removed using 'removeRoute'
+		*
+		* Eg:
+		*
+		*		aRouter.removeRoute(aRoute);
+		*
+		*
+		* Urls can be resolved manually using the 'resolveRoute' method or automatically when the URL change. The URL
+		* location handler can be set when the router is constructed
+		*
+		*Eg:
+		*
+		*	var aHashRouter = router({locationHandler: hash()});
+		*	var aPushStateRouter = router({locationHandler: pushState()});
+		*
+		* _Note:_ By default router use [hash.js]('hash.js') to listen for URL changes.
+		*
+		* Events are triggered on each resolve, on match and when a route is 'not found' with url as argument.
+		*
+		* Usage:
+		*
+		*		router.on('resolveUrl', function(url) {
+		*			console.log(url.toString()); // or log to google analytics / mixpanel / etc
+		*		});
+		*
+		*		router.on('routeMatched', function(result) {
+		*			alert('Route match: ' + result.getUrl().getPath());
+		*		});
+		*
+		*		router.on('routeNotFound', function(url) {
+		*			alert('404 - Url not found: ' + url);
+		*		});
+		*
+		* Routers can be chained using `pipeRoute` and  `pipeNotFound`
+		*
+		*		router.pipeNotFound(anotherRouter);
+		*		router.pipeRoute({ pattern: '/module/#feature'}, anotherRouter);
+		*
+		* @param spec
+		* @param my
+		* @returns {{}}
+		*/
+		function router(spec, my) {
 			spec = spec || {};
 			my = my || {};
 
@@ -128,7 +133,7 @@ define(
 				var numMatched = 0;
 				my.routeTable.some(function(candidateRoute) {
 					var result = currentUrl.matchRoute(candidateRoute);
-					if(result.matched()) {
+					if(result.isMatch()) {
 						my.lastMatch = result;
 						numMatched++;
                         that.onRouteMatched.trigger(result);
@@ -156,7 +161,10 @@ define(
 				my.routeTable.splice(routeIndex, 0, route);
 			};
 
-			// #### Public API
+			//
+			// Public
+			//
+
 
 			that.addRoute = function(routeSpec) {
 				routeSpec = routeSpec || {};
@@ -165,7 +173,7 @@ define(
 
 				if(routeSpec.action) {
 					newRoute.onMatched(function(result) {
-						routeSpec.action.apply(this, result.getCallbackArguments());
+						routeSpec.action.apply(this, result.getActionArguments());
 					});
 				}
 
@@ -396,7 +404,7 @@ define(
 			};
 
 			return that;
-		};
+		}
 
 		return router;
 	});
