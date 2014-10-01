@@ -31,75 +31,9 @@ define(
 		* property (lower first). If two routes have the same priority or if priority is omitted, routes
 		* are matched in registration order.
 		*
-		* Routes are added using 'addRoute'
+		* @param [spec]
+		* @param [spec.locationHandler] hashSingleton by default
 		*
-		* Eg:
-		*
-		*		aRouter.addRoute({
-		*			pattern: '/user/#id',
-		*			action: function(id) { console.log(id);},
-		*			priority: 4000
-		*		});
-		*
-		* The action callback is triggered when a URL match pattern. Values for matched parameters are
-		* supplied as arguments in the same order as they are defined in the pattern. Priority is optional.
-		*
-		* Add router accept the same options as [route](route.js)
-		*
-		*		var aRoute = aRouter.addRoute({
-		*			pattern: '/user/?id',
-		*			defaults: {
-		*				id: 'john'
-		*			},
-		*			constraints: {
-		*				id :  ['john', 'dennis']
-		*			}
-		*		});
-		*
-		*		aRoute.on('matched', function(result) {
-		*			console.dir(result.getValues());
-		*		});
-		*
-		* Routes are removed using 'removeRoute'
-		*
-		* Eg:
-		*
-		*		aRouter.removeRoute(aRoute);
-		*
-		*
-		* Urls can be resolved manually using the 'resolveRoute' method or automatically when the URL change. The URL
-		* location handler can be set when the router is constructed
-		*
-		*Eg:
-		*
-		*	var aHashRouter = router({locationHandler: hash()});
-		*	var aPushStateRouter = router({locationHandler: pushState()});
-		*
-		* _Note:_ By default router use [hash.js]('hash.js') to listen for URL changes.
-		*
-		* Events are triggered on each resolve, on match and when a route is 'not found' with url as argument.
-		*
-		* Usage:
-		*
-		*		router.on('resolveUrl', function(url) {
-		*			console.log(url.toString()); // or log to google analytics / mixpanel / etc
-		*		});
-		*
-		*		router.on('routeMatched', function(result) {
-		*			alert('Route match: ' + result.getUrl().getPath());
-		*		});
-		*
-		*		router.on('routeNotFound', function(url) {
-		*			alert('404 - Url not found: ' + url);
-		*		});
-		*
-		* Routers can be chained using `pipeRoute` and  `pipeNotFound`
-		*
-		*		router.pipeNotFound(anotherRouter);
-		*		router.pipeRoute({ pattern: '/module/#feature'}, anotherRouter);
-		*
-		* @param spec
-		* @param my
 		* @returns {{}}
 		*/
 		function router(spec, my) {
@@ -118,54 +52,100 @@ define(
 			// Events
             my.events = events.eventCategory();
 
+			//
+			// Public
+			//
+
+			/**
+			 * Triggered when a route is matched with `routeMatchResult` as argument.
+			 * @type {event}
+			 */
             that.onRouteMatched = my.events.createEvent('routeMatched');
+
+			/**
+			 * Triggered when a route is not matched with 'url' as argument.
+			 * @type {event}
+			 */
             that.onRouteNotFound = my.events.createEvent('routeNotFound');
+
+			/**
+			 * Triggered each time a URL is resolved with `url` as argument
+			 * @type {event}
+			 */
             that.onResolveUrl = my.events.createEvent('resolveUrl');
 
             // @deprecated Use event property instead
             that.on = my.events.on;
 
-			my.resolveUrl = function(aUrl) {
-				var currentUrl = aUrl === undefined ? my.location.getUrl() : aUrl;
-
-				that.onResolveUrl.trigger(currentUrl);
-
-				var numMatched = 0;
-				my.routeTable.some(function(candidateRoute) {
-					var result = currentUrl.matchRoute(candidateRoute);
-					if(result.isMatch()) {
-						my.lastMatch = result;
-						numMatched++;
-                        that.onRouteMatched.trigger(result);
-
-						if(candidateRoute.fallThrough === undefined || 
-							candidateRoute.fallThrough === false) {
-							return true;
-						}
-					}
-				});
-
-				if (numMatched === 0) {
-                    that.onRouteNotFound.trigger(currentUrl.toString());
-				}
-			};
-
-			var sortedInsert = function (route) {
-				var routeIndex = my.routeTable.length;
-				if(route.priority !== undefined) {
-					do { --routeIndex; } while (my.routeTable[routeIndex] &&
-						(my.routeTable[routeIndex].priority === undefined ||
-						route.priority < my.routeTable[routeIndex].priority));
-					routeIndex += 1;
-				}
-				my.routeTable.splice(routeIndex, 0, route);
-			};
 
 			//
 			// Public
 			//
 
+			/**
+			 * Tries to resolve URL by matching the URL against all routes in
+			 * route table. Unless `fallThrough` is set on the matched route, router
+			 * will stop on first match.
+			 *
+			 * Last match is also stored as `my.lastMatch`
+			 *
+			 * @param {url} [aUrl] A URL or current url as default
+			 */
+			that.resolveUrl = function(aUrl) {
+				if(typeof aUrl === "string") {
+					aUrl = url(aUrl);
+				}
 
+				my.resolveUrl(aUrl);
+			};
+
+
+			/**
+			 * Creates and adds a new route to the routing table.
+			 *
+			 * @example
+			 *
+			 *		// Simplest possible route
+			 *		aRouter.addRoute({
+			 *			pattern: '/user/#id',
+			 *			action: function(id, query) { console.log(id, query);},
+			 *		});
+			 *
+			 *		// Route with name and priority,
+			 *		aRouter.addRoute({
+			 *			name: 'user',
+			 *			pattern: '/user/#id',
+			 *			priority: 4000,
+			 *			action: function(id) { console.log(id);},
+			 *		});
+			 *
+			 *		// Route with only pattern and custom onMatched event handler,
+			 *		var route = aRouter.addRoute({ pattern: ''/user/#id''});
+			 *		route.onMatched(function(result) {
+			 *			console.dir(result.getValues());
+			 *		});
+			 *
+			 *		// Route with route options,
+			 *		aRouter.addRoute({
+			 *			pattern: '/user/#id',
+			 *			priority: 4000,
+			 *			defaults: {
+			 *				id: 'john_doe'
+			 *			},
+			 *			constraints: {
+			 *				id: ['john_doe', 'jane_doe']
+			 *			}
+			 *		});
+			 *
+			 *
+			 * @param {routeSpec} routeSpec Options passed to route plus options below
+			 * @param {string} routeSpec.pattern Route pattern as string
+			 * @param {function} routeSpec.action Executed when route is matched with parameters as arguments +
+			 * query object as the last argument.
+			 * @param {string} routeSpec.pattern Route pattern as string
+			 *
+			 * @returns {route}
+			 */
 			that.addRoute = function(routeSpec) {
 				routeSpec = routeSpec || {};
 
@@ -181,11 +161,18 @@ define(
 				newRoute.fallThrough = routeSpec.fallThrough;
 
 				newRoute.priority = routeSpec.priority;
-				sortedInsert(newRoute);
+				my.addRoute(newRoute);
 
 				return newRoute;
 			};
 
+			/**
+			 * Find a route using a predicate function. The function is applied on routes
+			 * on-by-one until match.
+			 *
+			 * @param {function} predicate
+			 * @returns {route} Matched route or null if not matched
+			 */
             that.findRoute = function(predicate) {
                 var numRoutes = my.routeTable.length;
                 for(var routeIndex = 0; routeIndex < numRoutes; routeIndex++) {
@@ -198,12 +185,23 @@ define(
                 return null;
             };
 
+			/**
+			 * Finds route by name
+			 *
+			 * @param {string} routeName
+			 * @returns {route}
+			 */
             that.getRouteByName = function(routeName) {
                 return that.findRoute(function(route) {
                     return route.name && route.name === routeName;
                 });
             };
 
+			/**
+			 * Removes a route from routing table
+			 *
+			 * @param route
+			 */
 			that.removeRoute = function(route) {
 				var index = my.routeTable.indexOf(route);
 				if(index === -1) {
@@ -213,11 +211,22 @@ define(
 				my.routeTable.splice(index, 1);
 			};
 
+			/**
+			 * Removes all routes from routing table.
+			 */
             that.clear = function() {
                 my.routeTable = [];
                 my.lastMatch = undefined;
             };
 
+			/**
+			 * Pipes URL matching 'routeSpec' to another router.
+			 *
+			 * @param {{}} routeSpec Same options as `addRoute`
+			 * @param {router} router
+			 *
+			 * @returns {route}
+			 */
 			that.pipeRoute = function (routeSpec, router) {
 				if(!routeSpec || !routeSpec.pattern) {
 					throw new Error('Route pattern required');
@@ -231,177 +240,346 @@ define(
 				return aRoute;
 			};
 
+			/**
+			 * Pipe not found to a different router
+			 *
+			 * @param {router} router
+			 * @returns {route}
+			 */
 			that.pipeNotFound = function (router) {
 				return that.onRouteNotFound(function(aRawUrl) {
 					router.resolveUrl(aRawUrl);
 				});
 			};
 
-			that.resolveUrl = function(aUrl) {
-				if(typeof aUrl === "string") {
-					aUrl = url(aUrl);
-				}
-
-				my.resolveUrl(aUrl);
-			};
-
+			/**
+			 * Returns the current URL
+			 * @returns {url}
+			 */
 			that.getUrl = function() {
 				return my.location.getUrl();
 			};
 
-            that.linkTo = function(path, query) {
-                // TODO: Clean-up this code when deprecated code can be removed.
-
-                // If path is an object assume it's a parameter object
-                if(!(typeof path == 'string' || path instanceof String)) {
-                    return that.linkToParameters(path);
-                }
-
-                // If path match a route name assume it's a routeName
-                var route = that.getRouteByName(path);
+			/**
+			 * Constructs a link that can be used eg. in href.
+			 *
+			 * @example
+			 *  // Link to a route by name (recommended)
+			 *	aRouter.linkTo('users-list', {user: 'jane'});
+			 *
+			 *	// Link to a path
+			 *	aRouter.linkTo('/user/mikael');
+			 *	aRouter.linkTo('/user/', {sortBy: 'name'});
+			 *
+			 * @param {string} routeName Name of route or path
+			 * @param {{}} [parameters]
+			 * @param {boolean} [includeCurrentParameters=false] Merge parameters with parameters in current match.
+			 *
+			 * @returns {string}
+			 */
+            that.linkTo = function(routeName, parameters, includeCurrentParameters) {
+                var route = that.getRouteByName(routeName);
                 if(route) {
-                    return that.linkToParameters(route.name, query);
+					return my.location.linkToUrl(that.expand({
+						routeName: route.name,
+						parameters: parameters,
+						excludeCurrentParameters: !includeCurrentParameters
+					}));
                 }
 
-                // TODO: deprecated. Should be used directly using linkToPath not linkTo
-                return that.linkToPath(path, query);
+                // fallback to path (eg. /user/john) if route is not defined
+				return that.linkToPath(routeName, parameters);
             };
 
+			/**
+			 * Link to a path
+			 *
+			 * @example
+			 *	aRouter.linkToPath('/user/mikael');
+			 *	aRouter.linkToPath('/user/', {sortBy: 'name'});
+			 *
+			 * @param {string} path
+			 * @param {{}} query
+			 * @returns {string}
+			 */
             that.linkToPath = function(path, query) {
 				return that.linkToUrl(url.build(path, query));
 			};
 
+			/**
+			 * Link from url
+			 *
+			 * @param {url} aUrl
+			 * @returns {string}
+			 */
 			that.linkToUrl = function(aUrl) {
 				return my.location.linkToUrl(aUrl);
 			};
 
-            that.redirectTo = function(path, query) {
-                // TODO: Clean-up this code when deprecated code can be removed.
-
-                // If path is an object assume it's a parameter object
-                if(!(typeof path == 'string' || path instanceof String)) {
-                    return that.setParameters(path);
-                }
-
-                // If path match a route name assume it's a routeName
-                var route = that.getRouteByName(path);
+			/**
+			 * Redirects browser to route or path.
+			 *
+			 * @example
+			 *	// Redirect to a route by name
+			 *	aRouter.redirectTo('users-list', {user: 'jane'});
+			 *
+			 *	// Redirect to a path
+			 *	aRouter.redirectTo('/user/mikael');
+			 *	aRouter.redirectTo('/user/', {sortBy: 'name'});
+			 *
+			 * @param {string} routeName
+			 * @param {{}} [parameters]
+			 * @param {boolean} [includeCurrentParameters=false] Merge parameters with parameters in current match.
+			 *
+			 * @returns {string}
+			 */
+			that.redirectTo = function(routeName, parameters, includeCurrentParameters) {
+                var route = that.getRouteByName(routeName);
                 if(route) {
-                    return that.setParameters(route.name, query);
+					return my.location.redirectToUrl(that.expand({
+						routeName: route.name,
+						parameters: parameters,
+						excludeCurrentParameters: !includeCurrentParameters
+					}));
                 }
 
-                // TODO: deprecated. Should be used directly using redirectToPath not redirectTo
-                return that.redirectToPath(path, query);
+                return that.redirectToPath(routeName, parameters);
             };
 
+			/**
+			 * Redirect to a path
+			 *
+			 * @example
+			 *	aRouter.redirectToPath('/user/mikael');
+			 *	aRouter.redirectToPath('/user/', {sortBy: 'name'});
+			 *
+			 * @param {string} path
+			 * @param {{}} query
+			 * @returns {string}
+			 */
 			that.redirectToPath = function(path, query) {
 				return that.redirectToUrl(url.build(path, query));
 			};
 
+			/**
+			 * Redirect to url
+			 *
+			 * @param {url} aUrl
+			 * @returns {string}
+			 */
 			that.redirectToUrl = function(aUrl) {
 				return my.location.setUrl(aUrl);
 			};
 
-			that.getParameterPath = function(routeName, parameters) {
-                // routeName can be omitted
-                var suppliedParameters;
-                if(!(typeof routeName == 'string' || routeName instanceof String)) {
-                    suppliedParameters = routeName;
-                    routeName = undefined;
-                } else {
-                    suppliedParameters = parameters || {};
-                }
+			/**
+			 * Constructs a new URL from parameters with a route as template. If no route is
+			 * supplied the last matched route is used.
+			 *
+			 * Parameters are merged with parameters from last match unless `excludeCurrentParameters`
+			 * is set to true.
+			 *
+			 * @param {{}} [options]
+			 * @param {string} [options.routeName] Name of route to link to. Default route from last match.
+			 * @param {{}} [options.parameters={}]
+			 * @param {boolean} [options.excludeCurrentParameters=false]
+			 *
+			 * @returns {url}
+			 */
+			that.expand = function(options) {
+				var routeName = options.routeName;
+				var suppliedParameters = options.parameters || {};
+				var excludeCurrentParameters = options.excludeCurrentParameters || false;
 
-                // Don't include query parameters for named route
-                var includeCurrentQueryParameters = routeName === undefined;
+				// Pick a template route
+				var templateRoute;
+				if(routeName) {
+					templateRoute = that.getRouteByName(routeName) || route();
+				} else if(my.lastMatch) {
+					templateRoute = my.lastMatch.getRoute();
+				} else {
+					templateRoute = route();
+				}
 
-                // Pick a template route
-                var currentRoute;
-                if(routeName) {
-                    currentRoute = that.getRouteByName(routeName);
-                    if(!currentRoute) {
-                        throw new Error("No route found with name " + routeName);
-                    }
-                } else if(my.lastMatch) {
-                    currentRoute = my.lastMatch.getRoute();
-                } else {
-                    currentRoute = route();
-                }
+				// Merge current parameters with supplied parameters
+				var currentParameters = !excludeCurrentParameters ? that.getParameters() : {};
+				var allParameters = merge(currentParameters, suppliedParameters);
 
-                // Clone parameters
-                var allParameters = {};
-                Object.keys(suppliedParameters).forEach(function(param) {
-                    allParameters[param] = suppliedParameters[param];
-                });
+				// Separate parameters in templateRoute (parameter name exist in route) from
+				// query parameters.
+				var newParameters = {}, newQuery = {};
+				Object.keys(allParameters).forEach(function(param){
+					if(templateRoute.hasParameter(param)) {
+						newParameters[param] = allParameters[param];
+					} else {
+						newQuery[param] = allParameters[param];
+					}
+				});
 
-                // Merge in current parameters
-                var currentParameters = that.getParameters();
-                Object.keys(currentParameters).forEach(function(param) {
-                    if(!includeCurrentQueryParameters &&
-                        !currentRoute.hasParameter(param)) {
-                        return;
-                    }
-
-                    // Keep supplied parameters
-                    if(allParameters[param] !== undefined) {
-                        return;
-                    }
-
-                    allParameters[param] = currentParameters[param];
-                });
-
-                // If parameter exist in route add to parameters otherwise to query.
-                var newParameters = {}, newQuery = {};
-                Object.keys(allParameters).forEach(function(param){
-                    if(currentRoute.hasParameter(param)) {
-                        newParameters[param] = allParameters[param];
-                    } else {
-                        newQuery[param] = allParameters[param];
-                    }
-                });
-
-                var aRawUrl = currentRoute.expand(newParameters);
-
-                return url.build(aRawUrl, newQuery);
+				// Expand template route and construct URL
+				var aRawUrl = templateRoute.expand(newParameters);
+				return url.build(aRawUrl, newQuery);
 			};
 
-			that.linkToParameters = function(routeName, parameters) {
-				return my.location.linkToUrl(that.getParameterPath(routeName, parameters));
+			/**
+			 * Constructs a link from supplied parameters.
+			 *
+			 * @param {{}} [parameters={}]
+			 * @param {boolean} [excludeCurrentParameters=false]
+			 *
+			 * @returns {string}
+			 */
+			that.linkToParameters = function(parameters, excludeCurrentParameters) {
+				return my.location.linkToUrl(that.expand({
+					parameters: parameters,
+					excludeCurrentParameters: excludeCurrentParameters
+				}));
 			};
 
-			that.setParameters = function(routeName, parameters) {
-				that.redirectToUrl(that.getParameterPath(routeName, parameters));
+			/**
+			 * Constructs a link from supplied parameters.
+			 *
+			 * @param {{}} [parameters={}]
+			 * @param {boolean} [excludeCurrentParameters=false]
+			 *
+			 * @returns {string}
+			 */
+			that.setParameters = function(parameters, excludeCurrentParameters) {
+				that.redirectToUrl(that.expand({
+					parameters: parameters,
+					excludeCurrentParameters: excludeCurrentParameters
+				}));
 			};
 
+			/**
+			 * Return current parameters, ether from last match or if no match
+			 * from query in current URL.
+			 *
+			 * @returns {{}} Parameter values with parameter names as keys
+			 */
             that.getParameters = function () {
-                // Start with route parameters from latest matched route
-                var parameters = my.lastMatch ? my.lastMatch.getParameters() : {};
+				if (!my.lastMatch) {
+					return my.location.getUrl().getQuery();
+				}
 
-                // Fill with query parameters from current URL
-                var queryParameters = my.location.getUrl().getQuery();
-                Object.keys(queryParameters).forEach(function(queryParameterName) {
-                    parameters[queryParameterName] = queryParameters[queryParameterName];
-                });
-
-                return parameters;
+				return my.lastMatch.getParameters();
             };
 
-            that.getParameter = function (parameterKey) {
+			/**
+			 * Returns parameter value by name
+			 *
+			 * @param {string} parameterName
+			 * @returns {*}
+			 */
+            that.getParameter = function (parameterName) {
                 var parameters = that.getParameters();
-                return parameters[parameterKey];
+                return parameters[parameterName];
             };
 
+			/**
+			 * Navigate back to previous location in history. If history is empty
+			 * the location will be changed to fallback URL.
+			 *
+			 * @param {string|url} aFallbackUrl
+			 * @returns {string} URL
+			 */
             that.back = function(aFallbackUrl) {
 				return my.location.back(aFallbackUrl);
 			};
 
+			/**
+			 * Start listening for location changes and automatically
+			 * resolve new URLs (including the current)
+			 */
 			that.start = function() {
 				my.location.start();
 				my.resolveUrl(); // resolve current url
 			};
 
+			/**
+			 * Stop listening for location changes.
+			 */
 			that.stop = function() {
 				my.location.stop();
 			};
+
+			//
+			// Protected
+			//
+
+			/**
+			 * Tries to resolve URL by matching the URL against all routes in
+			 * route table. Unless  `fallThrough`is set on the matched route router
+			 * will stop on first match.
+			 *
+			 * Last match is also stored as `my.lastMatch`
+			 *
+			 * @param {url} [aUrl] A URL or current url as default
+			 */
+			my.resolveUrl = function(aUrl) {
+				var currentUrl = aUrl === undefined ? my.location.getUrl() : aUrl;
+
+				that.onResolveUrl.trigger(currentUrl);
+
+				var numMatched = 0;
+				my.routeTable.some(function(candidateRoute) {
+					var result = currentUrl.matchRoute(candidateRoute);
+					if(result.isMatch()) {
+						my.lastMatch = result;
+						numMatched++;
+						that.onRouteMatched.trigger(result);
+
+						if(candidateRoute.fallThrough === undefined ||
+							candidateRoute.fallThrough === false) {
+							return true;
+						}
+					}
+				});
+
+				if (numMatched === 0) {
+					that.onRouteNotFound.trigger(currentUrl.toString());
+				}
+			};
+
+			/**
+			 * Injects route in route table. Routes are ordered by priority (lower first) with
+			 * routes without priority last. Routes with same priority are order in
+			 * registration order.
+			 *
+			 * @param {route} route
+			 */
+			my.addRoute = function (route) {
+				var routeIndex = my.routeTable.length;
+				if(route.priority !== undefined) {
+					do { --routeIndex; } while (my.routeTable[routeIndex] &&
+					(my.routeTable[routeIndex].priority === undefined ||
+					route.priority < my.routeTable[routeIndex].priority));
+					routeIndex += 1;
+				}
+				my.routeTable.splice(routeIndex, 0, route);
+			};
+
+			//
+			// Private
+			//
+
+			/**
+			 * Shallow merge all objects in arguments. Properties in later objects overwrites
+			 * properties.
+			 *
+			 * @returns {{}}
+			 */
+			function merge() {
+				var objects = Array.prototype.slice.call(arguments);
+
+				var target = {};
+				objects.forEach(function(obj) {
+					Object.keys(obj).forEach(function (key) {
+						target[key] = obj[key];
+					});
+				});
+
+				return target;
+			}
 
 			return that;
 		}

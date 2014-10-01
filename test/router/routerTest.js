@@ -412,32 +412,36 @@ define(
 			);
 		});
 
-         test("Path from parameters for named route", function () {
+        test("Expand parameters for named route", function () {
             // Arrange: a named route
             aRouter.addRoute({name: 'user', pattern: '/user/#userId'});
 
             // Act: get path from parameters
-            var url = aRouter.getParameterPath('user', { userId: 'john', includeDetails : true});
+            var url = aRouter.expand({
+				routeName: 'user',
+				parameters: {userId: 'john', includeDetails: true}
+			});
 
             // Assert that route parameters was injected in url and
             // other parameters was set in query
             assert.equal(url.toString(), 'user/john?includeDetails=true', 'URL match pattern and data');
         });
 
-        test("Path from parameters for empty route", function () {
+        test("Expand parameters for empty route", function () {
             // Arrange: empty hash route
             window.location.hash = ''; // start path
 
             // Act: get path from parameters
-            var url = aRouter.getParameterPath({ userId: 'john', includeDetails : true});
+            var url = aRouter.expand({
+				parameters: { userId: 'john', includeDetails : true}
+			});
 
             // Assert that all parameters was set as query parameters
             assert.equal(url.toString(), '?userId=john&includeDetails=true', 'URL match pattern and data');
         });
 
 
-
-         test("Path from parameters for current route", function () {
+        test("Expand parameters for current route", function () {
             // Arrange: a named route
             aRouter.addRoute({
                 name: 'user',
@@ -448,11 +452,13 @@ define(
             aRouter.redirectTo('/user/john', { includeCompanies : true});
 
             // Act: get path from parameters for current location
-            var url = aRouter.getParameterPath({ includeDetails : true});
+            var url = aRouter.expand({
+				parameters: { includeDetails : true}
+			});
 
             // Assert that route parameters was injected in url and
             // other parameters was set in query
-            assert.equal(url.toString(), 'user/john?includeDetails=true&includeCompanies=true', 'URL match pattern and data');
+            assert.equal(url.toString(), 'user/john?includeCompanies=true&includeDetails=true', 'URL match pattern and data');
         });
 
         test("GetParameters from current URL", function () {
@@ -517,7 +523,7 @@ define(
 					aRouter.setParameters({extra : 'fun'});
 				},
 				function () {
-					assert.equal(aRouter.getUrl().toString(), 'a/hello?extra=fun&foo=world', 'extra parameter added');
+					assert.equal(aRouter.getUrl().toString(), 'a/hello?foo=world&extra=fun', 'extra parameter added');
 				},
 				function () {
 					start();

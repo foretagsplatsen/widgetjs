@@ -23,7 +23,7 @@ define(
 		 */
 		function url (rawUrl) {
 
-			/** @typedef {url} url */
+			/** @typedef {{}} url */
 			var that = {};
 
 			rawUrl = rawUrl || '';
