@@ -6,12 +6,12 @@ define(
 
         function assertMatch(url, route, message) {
 			var assertMessage = (message ? message + '. ': '') + 'Url "' + url + '" should match route "' + route + '". ';
-			assert.ok(router.url(url).matchRoute(router.route(route)).isMatch(), assertMessage);
+			assert.ok(router.url(url).matchRoute(router.route({ pattern: route })).isMatch(), assertMessage);
 		}
 
 		function assertNoMatch(url, route, message) {
 			var assertMessage = (message ? message + '. ' : '') + 'Url "' + url + '" should not match route "' + route + '". ';
-			assert.ok(!router.url(url).matchRoute(router.route(route)).isMatch(), assertMessage);
+			assert.ok(!router.url(url).matchRoute(router.route({ pattern: route })).isMatch(), assertMessage);
 		}
 
 		suite("route");
@@ -150,7 +150,7 @@ define(
 		// Parameter binding tests
 
 		test("Route match result", function() {
-			var route = router.route("#a/#b");
+			var route = router.route({ pattern: "#a/#b" });
 			var url = router.url("hello/world");
 
 			var result = url.matchRoute(route);
@@ -165,7 +165,7 @@ define(
 		});
 
 		test("Route match capture parameters", function() {
-			var result = router.url("/hello/world").matchRoute(router.route("#foo/#bar"));
+			var result = router.url("/hello/world").matchRoute(router.route({pattern: "#foo/#bar" }));
 			var props = result.getRouteParameters();
 
 			assert.ok(props, 'contains parameters');
@@ -175,7 +175,7 @@ define(
 		});
 
 		test("Route match capture parameters mixed with statics", function() {
-			var result = router.url("/hello/static/world").matchRoute(router.route("#foo/static/#bar"));
+			var result = router.url("/hello/static/world").matchRoute(router.route({ pattern: "#foo/static/#bar" }));
 			var props = result.getRouteParameters();
 
 			assert.ok(props, 'contains parameters');
@@ -185,7 +185,7 @@ define(
 		});
 
 		test("Route parameter capture optional parameters", function() {
-			var result = router.url("/hello/world").matchRoute(router.route("?foo/?bar"));
+			var result = router.url("/hello/world").matchRoute(router.route({ pattern: "?foo/?bar"}));
 			var props = result.getRouteParameters();
 
 			assert.ok(props, 'contains parameters');
@@ -194,23 +194,26 @@ define(
 		});
 
 		test("Route parameter capture optional parameters mixed with parameters", function() {
-			var firstOptionalBothMatch = router.url("hello/world").matchRoute(router.route("?foo/#bar")).getRouteParameters();
+			var firstOptionalBothMatch = router.url("hello/world").matchRoute(router.route({ pattern:  "?foo/#bar"})).getRouteParameters();
 			assert.deepEqual(firstOptionalBothMatch, { foo: 'hello', bar : 'world'}, 'match all segments if possible');
 
-			var firstOptionalOneMatch = router.url("/world").matchRoute(router.route("?foo/#bar")).getRouteParameters();
+			var firstOptionalOneMatch = router.url("/world").matchRoute(router.route({ pattern: "?foo/#bar"})).getRouteParameters();
 			assert.deepEqual(firstOptionalOneMatch, { foo: undefined, bar : 'world'}, 'match mandatory parameter first');
 
-			var optionalInPath = router.url("hello/world").matchRoute(router.route("#foo/?bar/#bro")).getRouteParameters();
+			var optionalInPath = router.url("hello/world").matchRoute(router.route({ pattern: "#foo/?bar/#bro" })).getRouteParameters();
 			assert.deepEqual(optionalInPath, { foo: 'hello', bar: undefined,bro : 'world'}, 'match mandatory parameters even if not first');
 
-			var trailingOptionals = router.url("hello/world").matchRoute(router.route("#foo/?bar/?bro")).getRouteParameters();
+			var trailingOptionals = router.url("hello/world").matchRoute(router.route({ pattern: "#foo/?bar/?bro" })).getRouteParameters();
 			assert.deepEqual(trailingOptionals, { foo: 'hello', bar : 'world', bro: undefined}, 'match optional from left');
 		});
 
 		test("Route parameter can have defaults", function() {
-			var route = router.route("?foo/?bar", {
-				defaults: {
-					bar: 'world'
+			var route = router.route({
+				pattern: "?foo/?bar",
+				options: {
+					defaults: {
+						bar: 'world'
+					}
 				}
 			});
 
@@ -232,7 +235,7 @@ define(
 		// Expand
 
 		test("Expand parameters", function() {
-			var route = router.route("#a/test/#b");
+			var route = router.route({ pattern: "#a/test/#b"});
 
 			var url = route.expand({a : 'hello', b: 'world'});
 
@@ -240,7 +243,7 @@ define(
 		});
 
 		test("Expand optionals", function() {
-			var route = router.route("#a/?c/#b/?d");
+			var route = router.route({ pattern: "#a/?c/#b/?d"});
 
 			assert.equal(route.expand({a : 'hello', b: 'world', d: 'd'}), 'hello/world/d');
 			assert.equal(route.expand({a : 'hello', b: 'world' }), 'hello/world');
@@ -248,7 +251,7 @@ define(
 		});
 
 		test("Expand throws not valid URL error", function() {
-			var route = router.route("#a/#b");
+			var route = router.route({ pattern: "#a/#b" });
 
 			assert.throws(function() { route.expand({a : 'hello'});}, Error, 'Could not generate a valid URL', 'error since required parameter missing');
 		});
@@ -256,10 +259,13 @@ define(
 		// Constraints
 
 		test("Route with function constraint", function() {
-			var aRoute = router.route('/hello/#foo/', {
-				constraints : {
-					foo: function(value) {
-						return value.length === 5;
+			var aRoute = router.route({
+				pattern: '/hello/#foo/',
+				options: {
+					constraints : {
+						foo: function(value) {
+							return value.length === 5;
+						}
 					}
 				}
 			});
@@ -269,9 +275,12 @@ define(
 		});
 
 		test("Route with array constraint", function() {
-			var aRoute = router.route('hello/#foo', {
-				constraints : {
-					foo: ['world', 'sweden']
+			var aRoute = router.route({
+				pattern: 'hello/#foo',
+				options: {
+					constraints : {
+						foo: ['world', 'sweden']
+					}
 				}
 			});
 
@@ -280,9 +289,12 @@ define(
 		});
 
 		test("Route with RegExp constraint", function() {
-			var aRoute = router.route('hello/#foo', {
-				constraints : {
-					foo: /(^[a-z]+$)/
+			var aRoute = router.route({
+				pattern: 'hello/#foo',
+				options: {
+					constraints : {
+						foo: /(^[a-z]+$)/
+					}
 				}
 			});
 
@@ -291,13 +303,16 @@ define(
 		});
 
 		test("Route with mixed constraints", function() {
-			var aRoute = router.route('#a/#b/#c', {
-				constraints : {
-					a: function(value) {
-						return value.length > 5;
-					},
-					b: ['nicolas', 'Mikael'],
-					c: /(^[h-w]+$)/
+			var aRoute = router.route({
+				pattern: '#a/#b/#c',
+				options: {
+					constraints : {
+						a: function(value) {
+							return value.length > 5;
+						},
+						b: ['nicolas', 'Mikael'],
+						c: /(^[h-w]+$)/
+					}
 				}
 			});
 
@@ -308,13 +323,16 @@ define(
 		});
 
 		test("Route constraints on optional parameters", function() {
-			var aRoute = router.route('?a/?b/?c', {
-				constraints : {
-					a: function(value) {
-						return value.length > 5;
-					},
-					b: ['nicolas', 'micke'],
-					c: /(^[h-w]+$)/
+			var aRoute = router.route({
+				pattern: '?a/?b/?c',
+				options: {
+					constraints : {
+						a: function(value) {
+							return value.length > 5;
+						},
+						b: ['nicolas', 'micke'],
+						c: /(^[h-w]+$)/
+					}
 				}
 			});
 
@@ -340,9 +358,12 @@ define(
 
 
         test("Ignore trailing segments route option", function() {
-            var aRoute = router.route('hello/#foo', {
-                ignoreTrailingSegments: true
-            });
+            var aRoute = router.route({
+				pattern: 'hello/#foo',
+				options: {
+					ignoreTrailingSegments: true
+				}
+			});
 
             assert.ok(aRoute.matchUrl(router.url('/hello/world')).isMatch(), 'match as normal route');
             assert.ok(aRoute.matchUrl(router.url('/hello/world/and/some/extra')).isMatch(), 'ignores trailing segments');

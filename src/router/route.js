@@ -1,12 +1,6 @@
 define(
-	['./segments', '../events', './routeMatchResult', 'jquery'],
-	function(routeSegments, events, routeMatchResult, jQuery) {
-
-		/**
-		 * Token/Char used to separate segments in route patterns.
-		 * @type {string}
-		 */
-		var routePatternSeparator = '/';
+	['./routeFactory', '../events', './routeMatchResult', 'jquery'],
+	function(routeFactory, events, routeMatchResult, jQuery) {
 
 		/**
 		 * Routes represent the path for which an action should be taken (see `matched` event).
@@ -60,17 +54,16 @@ define(
 		 * @returns {route}
 		 */
 		function route(spec, my) {
-			if(Object.prototype.toString.call(spec) === '[object String]') {
-				var routePattern = spec;
-				var routeSpec = my;
-				return routeFactory(routePattern, routeSpec);
-			}
-
 			spec = spec || {};
 			my = my || {};
 
-			// Segments to match
-			var segments = spec.segments || [];
+			// Build segments from pattern
+			var segments = routeFactory(spec.pattern, spec.options);
+
+			// Route match URL if all route segments match
+			// but URL still contain trailing segments (default false)
+			var ignoreTrailingSegments = (spec.options && spec.options.ignoreTrailingSegments) || false;
+
 
 			// Array with all optional sequences, ie. all combinations
 			// of optional parameters. Array must be ordered to match URL:s
@@ -79,10 +72,6 @@ define(
 
 			// Pre-calculate optional sequences.
 			ensureOptionalSequences();
-
-            // Route match URL if all route segments match
-            // but URL still contain trailing segments (default false)
-            var ignoreTrailingSegments = spec.ignoreTrailingSegments || false;
 
 			/** @typedef {{}} route */
 			var that = {};
@@ -294,35 +283,6 @@ define(
 			}
 
 			return that;
-		}
-
-		/**
-		 * Creates a route from pattern. A pattern is a string with route segments
-		 * separated by `routePatternSeparator`. See `segments.js`for valid segments.
-		 *
-		 * @example
-		 *	routeFactory(`/foo/#bar/?baz`);
-		 *
-		 * @param {string} routePattern
-		 * @param spec
-		 * @returns {*}
-		 */
-		function routeFactory(routePattern, spec) {
-            spec = spec || {};
-			var segmentStrings = routePattern.split(routePatternSeparator);
-
-			var nonEmptySegmentStrings = segmentStrings
-				.map(Function.prototype.call, String.prototype.trim)
-				.filter(Boolean);
-
-			var segmentArray = nonEmptySegmentStrings.map(function(segmentString) {
-				return routeSegments.segmentFactory(segmentString, spec);
-			});
-
-			return route({
-				segments: segmentArray,
-                ignoreTrailingSegments: spec.ignoreTrailingSegments
-			});
 		}
 
 		/**

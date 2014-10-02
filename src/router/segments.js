@@ -1,101 +1,117 @@
 define([], function() {
 
-	// ### Route segment
-	//
-	// A segment represents a single part of the route. All segments answer `match`
-	// that take a URL segments and answers if it match route segment.
-	//
-	// Three kind of segments are currently defined:
-	//
-	//	- **segment:** static segments in the URL
-	//	- **parameter:** parameter segment that can be replaced with values.
-	//	- **optional parameter:** parameter segments that does not have to exist in URL
-	//
+	/**
+	 * A segment represents a single part of a route that can be matched
+	 * against a URL segment using `match()`.
+	 *
+	 * @param {{}} spec
+	 * @param {string} segmentString
+	 * @param {{}} spec.options all route options
+	 * @param my
+	 * @returns {abstractSegment}
+	 */
+	function abstractSegment(spec, my) {
+		spec = spec || {};
+		my = my || {};
 
-	// #### Route Factory
-	//
-	// Creates segments from strings. Segment strings starting with:
-	//
-	//	- '**#**' will return parameter
-	//	- '**?**' will return optional parameter
-	//
-	// Default is a static **segment**.
-	//
-	// _Example:_
-	//
-	// `/foo/#bar/?baz` will be cut down into an array with 3 elements:
-	//
-	//	- **foo** -> segment
-	//	- **bar** -> parameter
-	//	- **baz** -> optional parameter
-	//
-	var segmentFactory = function(segmentString, options) {
-		options = options || {};
+		my.segmentString = spec.segmentString;
+		my.options = spec.options || {};
 
-		var prefix = segmentString.substr(0, 1);
-		var name = segmentString.substr(1);
-
-		// Default value
-		var defaultValue = options.defaults && options.defaults[name] !== undefined ?
-			options.defaults[name] : undefined;
-
-		// Constraints
-		var constraint = options.constraints && options.constraints[name] !== undefined ?
-			options.constraints[name] : undefined;
-
-
-		var segmentOptions = {
-			name: name,
-			defaultValue : defaultValue,
-			constraints: constraint ? [constraint] : []
-		};
-
-		switch (prefix) {
-		case '#':
-			return parameter(segmentOptions);
-		case '?':
-			return optionalParameter(segmentOptions);
-		default:
-			return segment(segmentString);
-		}
-	};
-
-	//
-	// #### Segment
-	//
-	// Static segments match URL segments that are equal to value.
-	// Eg. Route '/hello/world' match only URL '/hello/world'
-	//
-	function segment(value) {
+		/** @typedef {{}} abstractSegment */
 		var that = {};
 
-		that.getName = function () {
-			return value;
+		/**
+		 * Answers true if route segment match URL segment
+		 *
+		 * @param {string} urlSegment
+		 * @returns {boolean}
+		 */
+		that.match = function(urlSegment) {
+			return false;
 		};
 
+		/**
+		 * Value captured for urlSegment
+		 *
+		 * @param {string} urlSegment
+		 * @returns {*}
+		 */
 		that.getValue = function(urlSegment) {
-			return value;
+			return my.segmentString;
 		};
 
+		/**
+		 * Variable part of the route.
+		 *
+		 * @returns {boolean}
+		 */
 		that.isParameter = function() {
 			return false;
 		};
 
+		/**
+		 * Optional segments can be omitted in URLs and the
+		 * URL will still match the route if all other non
+		 * optional segments match.
+		 *
+		 * @returns {boolean}
+		 */
 		that.isOptional = function() {
 			return false;
 		};
 
-		that.match = function(string) {
-			return value === string;
-		};
-
+		/**
+		 * String representation for segment that can be used eg. when debugging.
+		 * @returns {*}
+		 */
 		that.toString = function() {
-			return value;
+			return my.segmentString;
 		};
 
 		return that;
 	}
 
+	/**
+	 * A static segment match URL segments that are identical
+	 * to segment string.
+	 *
+	 * @param spec abstractSegment spec
+	 * @param [my]
+	 * @returns {segment}
+	 */
+	function segment(spec, my) {
+		spec = spec || {};
+		my = my || {};
+
+		/** @typedef {abstractSegmen} segment */
+		var that = abstractSegment(spec, my);
+
+		/**
+		 * Static segment match if URL and route segment
+		 * strings are identical.
+		 *
+		 * @param {string} urlSegment
+		 * @returns {boolean}
+		 */
+		that.match = function(urlSegment) {
+			return that.getValue() === urlSegment;
+		};
+
+		return that;
+	}
+
+	/**
+	 * Abstract segments should be the last segment type to match
+	 * since it will match all segment strings.
+	 *
+	 * @param {string} segmentString
+	 * @returns {boolean}
+	 */
+	segment.match = function(segmentString) {
+		return true;
+	};
+
+	//TODO: Yes
 	function parameterValidator(constraint) {
 		// Custom function that take vale as argument
 		if(typeof constraint === 'function') {
@@ -120,41 +136,81 @@ define([], function() {
 		}
 	}
 
-	// #### Parameter
-	//
-	// Parameters always match a URL segment. The value is the URL segment.
-	// Route '/#foo/world' match URLs like '/hello/world', '/a/world', '/b/world'
-	// with 'foo' values 'hello', 'a', 'b'
-	//
-	// Note: the leading '#' is *not* part of the name of the
-	// segment.
-	//
+
+	/**
+	 * Parameter match URL segments if all constraints are met.
+	 *
+	 * @param {{}} spec abstractSegment spec
+	 * @param [my]
+	 * @returns {parameter}
+	 */
 	function parameter(spec, my) {
 		spec = spec || {};
 		my = my || {};
 
-		my.name = spec.name;
-		my.defaultValue = spec.defaultValue;
-		my.validators = spec.constraints.map(parameterValidator).filter(Boolean);
+		/** @typedef {abstractSegment} parameter */
+		var that = abstractSegment(spec, my);
 
-		var that = segment(my.name, my);
+		my.name = my.segmentString.substr(1); // strip of the leading #
+		my.constraints = my.options.constraints && my.options.constraints[my.name];
+		my.validators = my.constraints ?
+			[my.constraints].map(parameterValidator).filter(Boolean) :
+			[];
 
-		that.getValue = function(urlSegment) {
-			return urlSegment === undefined ? my.defaultValue : urlSegment;
+		/**
+		 * Name is segmentString without leading property type char.
+		 *
+		 * @returns {string}
+		 */
+		that.getName = function() {
+			return my.name;
 		};
 
+		/**
+		 * Value captured for urlSegment
+		 *
+		 * @param {string} urlSegment
+		 * @returns {*}
+		 */
+		that.getValue = function(urlSegment) {
+			return urlSegment;
+		};
+
+		/**
+		 * Always true
+		 *
+		 * @returns {boolean}
+		 */
 		that.isParameter = function() {
 			return true;
 		};
 
-		that.match = function(string) {
-			return typeof string === 'string' && that.isValid(string);
+		/**
+		 * Match urSegment if all constraints are met.
+		 *
+		 * @param {string} urlSegment
+		 * @returns {boolean|*}
+		 */
+		that.match = function(urlSegment) {
+			return urlSegment !== undefined && that.validate(urlSegment);
 		};
 
-		that.isValid = function (string) {
-			return my.validators.every(function(validator) { return validator(string);});
+		/**
+		 * Answers true if url segment meet all constraints for parameter.
+		 *
+		 * @param {string} urlSegment
+		 * @returns {boolean}
+		 */
+		that.validate = function(urlSegment) {
+			return my.validators.every(function(validator) {
+				return validator(urlSegment);
+			});
 		};
 
+		/**
+		 * String representation for segment that can be used eg. when debugging.
+		 * @returns {*}
+		 */
 		that.toString = function() {
 			return 'param(' + that.getName() + ')';
 		};
@@ -162,30 +218,55 @@ define([], function() {
 		return that;
 	}
 
-	// #### Optional Parameter
-	//
-	//
-	// Match same URL segments as regukar parameter5 except it's not required
-	// in the URL.
-	//
-	// Route '/?foo/world' match URLs like '/hello/world', '/a/world', '/b/world'
-	// but also '/world'
-	//
-	// and 'foo' values are 'hello', 'a', 'b' and undefined
-	//
-	// Note: the leading '?' is *not* part of the name of the
-	// segment.
-	//
+	/**
+	 * Match segment strings with a leading `#`.
+	 * @param {string} segmentString
+	 * @returns {boolean}
+	 */
+	parameter.match = function(segmentString) {
+		return segmentString.substr(0, 1) === '#';
+	};
+
+	/**
+	 * Optional parameters can have a default value.
+	 *
+	 * @param {{}} spec abstractSegment string
+	 * @param my
+	 * @returns {parameter}
+	 */
 	function optionalParameter(spec, my) {
 		spec = spec || {};
 		my = my || {};
 
+		/** @typedef {parameter} optionalParameter */
 		var that = parameter(spec, my);
 
+		my.defaultValue = my.options.defaults && my.options.defaults[my.name];
+
+		/**
+		 * Parameter value or default value if not matched.
+		 *
+		 * @param {string} urlSegment
+		 * @returns {*}
+		 */
+		that.getValue = function(urlSegment) {
+			return urlSegment === undefined ?
+				my.defaultValue :
+				urlSegment;
+		};
+
+		/**
+		 * Always true.
+		 * @returns {boolean}
+		 */
 		that.isOptional = function() {
 			return true;
 		};
 
+		/**
+		 * String representation for segment that can be used eg. when debugging.
+		 * @returns {*}
+		 */
 		that.toString = function() {
 			return 'optional(' + that.getName() + ')';
 		};
@@ -193,10 +274,19 @@ define([], function() {
 		return that;
 	}
 
+	/**
+	 * Match segment strings with a leading `?`.
+	 * @param {string} segmentString
+	 * @returns {boolean}
+	 */
+	optionalParameter.match = function(segmentString) {
+		return segmentString.substr(0, 1) === '?';
+	};
+
 	return {
-		segmentFactory: segmentFactory,
 		segment: segment,
 		parameter: parameter,
-		optionalParameter: optionalParameter
+		optionalParameter: optionalParameter,
+		all: [parameter, optionalParameter, segment]
 	};
 });

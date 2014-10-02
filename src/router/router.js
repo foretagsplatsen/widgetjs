@@ -149,7 +149,10 @@ define(
 			that.addRoute = function(routeSpec) {
 				routeSpec = routeSpec || {};
 
-				var newRoute = route(routeSpec.pattern, routeSpec);
+				var newRoute = route({
+					pattern: routeSpec.pattern,
+					options: routeSpec
+				});
 
 				if(routeSpec.action) {
 					newRoute.onMatched(function(result) {
@@ -406,7 +409,8 @@ define(
 
 				// Separate parameters in templateRoute (parameter name exist in route) from
 				// query parameters.
-				var newParameters = {}, newQuery = {};
+				var newParameters = {};
+				var newQuery = {};
 				Object.keys(allParameters).forEach(function(param){
 					if(templateRoute.hasParameter(param)) {
 						newParameters[param] = allParameters[param];
