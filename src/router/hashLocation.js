@@ -38,9 +38,9 @@ define([
 	 * @param {string} [spec.iFrameSrc='javascript:0']
 	 *
 	 * @param [my]
-	 * @returns {hash}
+	 * @returns {hashLocation}
 	 */
-	function hash(spec, my) {
+	function hashLocation(spec, my) {
 		spec = spec || {};
 		my = my || {};
 
@@ -52,7 +52,7 @@ define([
 		my.history = []; // history of visited hash fragments
         my.events = events.eventCategory();
 
-		/** @typedef {{}} hash */
+		/** @typedef {{}} hashLocation */
 		var that = {};
 
 		//
@@ -235,5 +235,5 @@ define([
 		return that;
 	}
 
-	return hash;
+	return hashLocation;
 });

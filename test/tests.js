@@ -18,7 +18,7 @@ var testModules = [
     'htmlCanvasTest',
     'widgetTest',
     'eventsTest',
-    'router/hashTest',
+    'router/hashLocationTest',
     'router/deprecatedRouterTest',
     'router/routerTest',
     'router/routeTest'

@@ -4,19 +4,19 @@ define(
 		'../events',
 		'./route',
 		'./url',
-		'./hash'
+		'./hashLocation'
 	],
-	function(jQuery, events, route, url, hash) {
+	function(jQuery, events, route, url, hashLocation) {
 
 		/**
 		 * Lazily creates a singleton instance of
-		 * hash-fragment listener `hash()`.
+		 * hash-fragment listener `hashLocation()`.
 		 *
-		 * @returns {hash}
+		 * @returns {hashLocation}
 		 */
 		var hashSingleton = function() {
 			if(!hashSingleton.instance) {
-				hashSingleton.instance = hash();
+				hashSingleton.instance = hashLocation();
 			}
 
 			return hashSingleton.instance;
