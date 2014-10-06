@@ -45,6 +45,7 @@ define(
 			my.location = spec.locationHandler || hashSingleton();
 			my.routeTable = [];
 			my.lastMatch = undefined;
+			my.defaultParameters = {};
 
 			// Listen for URL changes and resolve URL when changed
 			my.location.onChanged(function() { my.resolveUrl(); });
@@ -407,6 +408,15 @@ define(
 				var currentParameters = !excludeCurrentParameters ? that.getParameters() : {};
 				var allParameters = merge(currentParameters, suppliedParameters);
 
+				// Fill with defaults if needed
+				Object.keys(my.defaultParameters).forEach(function(parameterName){
+					if(!(parameterName in allParameters)) {
+						allParameters[parameterName] = typeof my.defaultParameters[parameterName] === "function" ?
+							my.defaultParameters[parameterName]() :
+							my.defaultParameters[parameterName];
+					}
+				});
+
 				// Separate parameters in templateRoute (parameter name exist in route) from
 				// query parameters.
 				var newParameters = {};
@@ -478,6 +488,10 @@ define(
                 var parameters = that.getParameters();
                 return parameters[parameterName];
             };
+
+			that.setDefaultParameter = function(parameterName, value) {
+				my.defaultParameters[parameterName] = value;
+			};
 
 			/**
 			 * Navigate back to previous location in history. If history is empty

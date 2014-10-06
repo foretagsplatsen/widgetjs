@@ -440,7 +440,6 @@ define(
             assert.equal(url.toString(), '?userId=john&includeDetails=true', 'URL match pattern and data');
         });
 
-
         test("Expand parameters for current route", function () {
             // Arrange: a named route
             aRouter.addRoute({
@@ -460,6 +459,25 @@ define(
             // other parameters was set in query
             assert.equal(url.toString(), 'user/john?includeCompanies=true&includeDetails=true', 'URL match pattern and data');
         });
+
+		test("LinkTo with default parameters", function () {
+			// Arrange: a route with non optional parameter #foo
+			aRouter.addRoute({
+				name: 'bar',
+				pattern: '/#foo/bar'
+			});
+
+			// and a default parameter getter for #foo
+			aRouter.setDefaultParameter('foo', function() {
+				return 'default';
+			});
+
+			// Act: link to without mandatory parameter #foo
+			var url = aRouter.linkTo('bar');
+
+			// Assert that foo is in second route as well
+			assert.equal(url.toString(), '#!/default/bar', 'Parameter value from default parameters used.');
+		});
 
         test("GetParameters from current URL", function () {
             // Arrange: a named route
