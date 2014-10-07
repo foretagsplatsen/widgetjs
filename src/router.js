@@ -2,17 +2,22 @@ define(
 	[
 		'./router/url',
 		'./router/route',
-		'./router/router',
-		'./router/deprecatedRouter'
+		'./router/router'
 	],
+	function (url, route, router) {
 
-	function (url, route, router, deprecatedRouter) {
+		var routerSingleton = router();
+
 		return {
 			url: url,
 			route: route,
-			router: deprecatedRouter.router,
-			controller: deprecatedRouter.controller,
-			newRouter: router
+			router: router,
+			getRouter: function() {
+				return routerSingleton;
+			},
+			setRouter: function(newRouter) {
+				routerSingleton = newRouter;
+			}
 		};
 	}
 );

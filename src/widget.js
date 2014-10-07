@@ -176,17 +176,19 @@ define(
 
             // Route / Controller extensions
 
-            my.linkTo = router.router.linkTo;
-            my.linkToPath = router.router.linkToPath;
-            my.linkToUrl = router.router.linkToUrl;
+			my.router = router.getRouter();
 
-            my.redirectTo = router.router.redirectTo;
-            my.redirectToPath = router.router.redirectToPath;
-            my.redirectToUrl = router.router.redirectToUrl;
+            my.linkTo = my.router.linkTo;
+            my.linkToPath = my.router.linkToPath;
+            my.linkToUrl = my.router.linkToUrl;
 
-            my.getParameters = router.router.getParameters;
-            my.getParameter = router.router.getParameter;
-            my.setParameters = router.router.setParameters;
+            my.redirectTo = my.router.redirectTo;
+            my.redirectToPath = my.router.redirectToPath;
+            my.redirectToUrl = my.router.redirectToUrl;
+
+            my.getParameters = my.router.getParameters;
+            my.getParameter = my.router.getParameter;
+            my.setParameters = my.router.setParameters;
 
 			//
             // Render

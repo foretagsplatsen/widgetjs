@@ -19,7 +19,6 @@ var testModules = [
     'widgetTest',
     'eventsTest',
     'router/hashLocationTest',
-    'router/deprecatedRouterTest',
     'router/routerTest',
     'router/routeTest'
 ];
