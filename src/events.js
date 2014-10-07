@@ -78,6 +78,26 @@ define([],
                 });
             };
 
+			/**
+			 * Filter event by only executing it when predicate match.
+			 *
+			 * @param {function} predicate
+			 * @returns {Event|event}
+			 */
+			that.filter = function(predicate) {
+				var event = my.events.createEvent();
+
+				that.on(function() {
+					var params = Array.prototype.slice.call(arguments);
+					var triggerEvent = predicate.apply(that, params);
+					if(triggerEvent) {
+						event.trigger.apply(that, params);
+					}
+				});
+
+				return event;
+			};
+
             /**
              * @param binding {eventBinding}
              */

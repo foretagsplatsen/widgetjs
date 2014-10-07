@@ -190,6 +190,8 @@ define(
             my.getParameter = my.router.getParameter;
             my.setParameters = my.router.setParameters;
 
+			my.watchParameters = my.router.filterParameterChanges;
+
 			//
             // Render
 			//

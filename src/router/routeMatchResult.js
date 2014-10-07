@@ -97,6 +97,45 @@ define(
 				return actionArguments;
 			};
 
+			/**
+			 * Constructs a diff with added, removed and updated parameters. Modified parameters
+			 * contains parameters in any of the previous.
+			 *
+			 * @param {routeMatchResult} previousMatch
+			 * @returns {{added: {}, removed: {}, updated: {}, modified: {}}}
+			 */
+			that.diff = function(previousMatch) {
+				var addedParameters = {};
+				var updatedParameters = {};
+				var removedParameters = {};
+
+				var previousParameters = previousMatch.getParameters();
+				var parameters = that.getParameters();
+
+				Object.keys(parameters).forEach(function(parameterName) {
+					if(!(parameterName in previousParameters)) {
+						addedParameters[parameterName] = parameters[parameterName];
+					} else if(parameters[parameterName] !== previousParameters[parameterName]) {
+						updatedParameters[parameterName] = parameters[parameterName];
+					}
+				});
+
+				Object.keys(previousParameters).forEach(function(parameterName) {
+					if(!(parameterName in parameters)) {
+						removedParameters[parameterName] = previousParameters[parameterName];
+					}
+				});
+
+				var modifiedParameters = addedParameters.merge(updatedParameters).merge(removedParameters);
+
+				return {
+					added: addedParameters,
+					removed: removedParameters,
+					updated: updatedParameters,
+					modified: modifiedParameters
+				}
+			};
+
 			//
 			// Private
 			//
@@ -120,6 +159,26 @@ define(
 
 				return allValues;
 
+			}
+
+
+			/**
+			 * Shallow merge all objects in arguments. Properties in later objects overwrites
+			 * properties.
+			 *
+			 * @returns {{}}
+			 */
+			function merge() {
+				var objects = Array.prototype.slice.call(arguments);
+
+				var target = {};
+				objects.forEach(function(obj) {
+					Object.keys(obj).forEach(function (key) {
+						target[key] = obj[key];
+					});
+				});
+
+				return target;
 			}
 
 			return that;

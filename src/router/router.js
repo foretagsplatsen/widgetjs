@@ -64,6 +64,13 @@ define(
             that.onRouteMatched = my.events.createEvent('routeMatched');
 
 			/**
+			 * Triggered when one or more parameters change with added, updated and
+			 * removed parameters as arguments.
+			 * @type {event}
+			 */
+			that.onParametersChanged = my.events.createEvent('routeMatched');
+
+			/**
 			 * Triggered when a route is not matched with 'url' as argument.
 			 * @type {event}
 			 */
@@ -487,6 +494,36 @@ define(
                 return parameters[parameterName];
             };
 
+			/**
+			 * Filters `onParametersChanged`. Parameter watches are added as list of parameter names
+			 * per change type (added, removed, updated, deleted). If any parameter in `onParametersChanged`
+			 * match the watched parameters the event is forwarded.
+			 *
+			 * @example
+			 *
+			 * 	aRouter.filteredParameterChanges({
+			 * 		modified: ['userId', 'sortOrder']
+			 * 	}).on(that.update);
+			 *
+			 * @param {{added: string[], removed: string[], updated: string[], modified: string[]}} changeSpec
+			 * @returns {event}
+			 */
+			that.filterParameterChanges = function(changeSpec) {
+				return that.onParametersChanged.filter(function(parameters, diff) {
+					return Object.keys(changeSpec).some(function(changeType) {
+						if(diff[changeType] === undefined) {
+							throw new Error("Unsupported type of change: " + changeType);
+						}
+
+						var watchedParameters = changeSpec[changeType];
+						var changedParameters = Object.keys(diff[changeType]);
+						return watchedParameters.some(function(watchedParameter) {
+							return changedParameters.indexOf(watchedParameter) >= 0;
+						});
+					});
+				});
+			};
+
 			that.setDefaultParameter = function(parameterName, value) {
 				my.defaultParameters[parameterName] = value;
 			};
@@ -540,9 +577,8 @@ define(
 				my.routeTable.some(function(candidateRoute) {
 					var result = currentUrl.matchRoute(candidateRoute);
 					if(result.isMatch()) {
-						my.lastMatch = result;
+						my.setLastMatch(result);
 						numMatched++;
-						that.onRouteMatched.trigger(result);
 
 						if(candidateRoute.fallThrough === undefined ||
 							candidateRoute.fallThrough === false) {
@@ -554,6 +590,21 @@ define(
 				if (numMatched === 0) {
 					that.onRouteNotFound.trigger(currentUrl.toString());
 				}
+			};
+
+			/**
+			 * Replace last match result with a new and trigger change events.
+			 *
+			 * @param {routeMatchResult} match
+			 */
+			my.setLastMatch = function(match) {
+				// Match
+				var previousMatch = my.lastMatch;
+				my.lastMatch = match;
+
+				// Trigger events
+				that.onRouteMatched.trigger(match, previousMatch);
+				that.onParametersChanged.trigger(match.getParameters(), match.diff(previousMatch));
 			};
 
 			/**
