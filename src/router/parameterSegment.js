@@ -37,13 +37,13 @@ define(['./abstractSegment'], function(abstractSegment) {
 	 *
 	 * @param {{}} spec abstractSegment spec
 	 * @param [my]
-	 * @returns {parameter}
+	 * @returns {parameterSegment}
 	 */
 	function parameterSegment(spec, my) {
 		spec = spec || {};
 		my = my || {};
 
-		/** @typedef {abstractSegment} parameter */
+		/** @typedef {abstractSegment} parameterSegment */
 		var that = abstractSegment(spec, my);
 
 		my.name = my.segmentString.substr(1); // strip of the leading #

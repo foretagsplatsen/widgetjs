@@ -3,7 +3,7 @@ define([], function() {
 	 * A segment represents a single part of a route that can be matched
 	 * against a URL segment using `match()`.
 	 *
-	 * @param {{}} spec
+	 * @param {{}} spec
 	 * @param {string} segmentString
 	 * @param {{}} spec.options all route options
 	 * @param my
@@ -18,6 +18,10 @@ define([], function() {
 
 		/** @typedef {{}} abstractSegment */
 		var that = {};
+
+		//
+		// Public
+		//
 
 		/**
 		 * Answers true if route segment match URL segment

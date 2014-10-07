@@ -129,6 +129,8 @@ define(
 		 * Result to use when match does not match url
 		 */
 		routeMatchResult.routeNoMatchResult = (function() {
+
+			/** @typedef {routeMatchResult} routeNoMatchResult */
 			var that = routeMatchResult();
 
 			that.isMatch = function() {

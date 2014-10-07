@@ -78,7 +78,6 @@ define(
             // @deprecated Use event property instead
             that.on = my.events.on;
 
-
 			//
 			// Public
 			//
@@ -99,7 +98,6 @@ define(
 
 				my.resolveUrl(aUrl);
 			};
-
 
 			/**
 			 * Creates and adds a new route to the routing table.
