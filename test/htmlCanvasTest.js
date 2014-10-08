@@ -35,7 +35,7 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
         assert.throws(
             function() { htmlCanvas("#notfound"); },
             Error,
-            'jQuery did not match an element',
+            'htmlTagBrush requires an element',
             'throws exception if no matching element'
         );
     });
@@ -90,7 +90,12 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
             var clicked = false;
 
             // Arrange: a link with a click callback
-            html.a('Click me!').id('test_link').click(function() { clicked = true; });
+            html.a({
+					id: 'test_link',
+					click: function() { clicked = true; }
+				},
+				'Click me!'
+			);
 
             // Assert: that link was rendered
             var linkEl = jQuery("#test_link");
@@ -102,7 +107,25 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
         });
     });
 
-    test("tags can be nested", function() {
+	test("callbacks can be attached using attributes", function() {
+		withCanvas(function(html) {
+			var clicked = false;
+
+			// Arrange: a link with a click callback
+			html.a('Click me!').id('test_link').click(function() { clicked = true; });
+
+			// Assert: that link was rendered
+			var linkEl = jQuery("#test_link");
+			assert.ok(linkEl.get(0), 'element rendered');
+
+			// and click triggers callback
+			linkEl.click(); // execute click
+			assert.equal(clicked, true, 'click callback executed');
+		});
+	});
+
+
+	test("tags can be nested", function() {
         withCanvas(function(html) {
             // Arrange: a inner and outer div with a span as inner child
             html.div({'id' : 'outer_div'},

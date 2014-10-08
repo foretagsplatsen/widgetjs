@@ -1,6 +1,6 @@
 define([
     'jquery',
-	'widgetjs/router/hash',
+	'widgetjs/router/hashLocation',
     'chai'
 ], function (jQuery, hash, chai) {
 
@@ -32,7 +32,7 @@ define([
 
 		var my, hashLocation;
 
-		suite("hash");
+		suite("hashLocation");
 
         beforeEach(function() {
 				window.location.hash = '';
