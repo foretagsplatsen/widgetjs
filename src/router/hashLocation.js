@@ -106,7 +106,7 @@ define([
 		 * @returns {string} URL
 		 */
 		that.back = function(fallbackUrl) {
-			if (my.history.length > 1) {
+			if (!that.isHistoryEmpty()) {
 				my.history.pop();
 				setWindowHash(my.history.pop());
 			} else if (fallbackUrl) {
@@ -114,6 +114,13 @@ define([
 			}
 
 			setCurrentHash();
+		};
+
+		/**
+		 * Return `true` if the history is empty.
+		 */
+		that.isHistoryEmpty = function() {
+			return my.history.length <= 1;
 		};
 
 		/**

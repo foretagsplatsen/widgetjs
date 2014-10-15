@@ -503,6 +503,14 @@ define(
 			};
 
 			/**
+			 * Return `true` if the history is empty
+			 */
+			that.isHistoryEmpty = function() {
+				return my.location.isHistoryEmpty();
+			};
+
+
+			/**
 			 * Start listening for location changes and automatically
 			 * resolve new URLs (including the current)
 			 */
