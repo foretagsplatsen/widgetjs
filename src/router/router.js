@@ -338,7 +338,7 @@ define(
 			that.redirectTo = function(routeName, parameters, includeCurrentParameters) {
                 var route = that.getRouteByName(routeName);
                 if(route) {
-					return my.location.redirectToUrl(that.expand({
+					return my.location.setUrl(that.expand({
 						routeName: route.name,
 						parameters: parameters,
 						excludeCurrentParameters: !includeCurrentParameters
