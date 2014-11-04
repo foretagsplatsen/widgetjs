@@ -222,8 +222,32 @@ define(
              */
             that.renderOn = function (html) {
                 // Renders widget by wrapping `renderContentOn()` in a root element.
-                my.renderRootOn(html).render(that.renderContentOn);
+				my.withRenderingRegistration(function() {
+					my.renderRootOn(html).render(that.renderContentOn);
+				});
             };
+
+			my.withRenderingRegistration = function(fn) {
+				var parent = currentWidget;
+				if(parent) {
+					parent.registerChild(that);
+				}
+				currentWidget = that;
+				try {
+					that.clearChildren();
+					fn();
+				} finally {
+					currentWidget = parent;
+				}
+			};
+
+			that.registerChild = function(widget) {
+				my.children.push(widget);
+			};
+
+			that.clearChildren = function() {
+				my.children = [];
+			};
 
             /**
              * Renders a wrapper element (by default a 'widgetjs-widget' tag) and
@@ -304,6 +328,8 @@ define(
 
             return that;
         };
+
+		var currentWidget;
 
         /**
          * Creates unique ids used by widgets to identify their root div.
