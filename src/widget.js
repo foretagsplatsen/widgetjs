@@ -56,6 +56,9 @@ define(
 
             var id = spec.id || idGenerator.newId();
 
+            /** When within an update transaction, do not update the widget */
+            var inUpdateTransaction = false;
+
             /** Events for widget */
             my.events = events.eventCategory();
 
@@ -258,7 +261,7 @@ define(
              *
              */
             that.update = function () {
-                if (!that.isRendered()) {
+                if (inUpdateTransaction || !that.isRendered()) {
                     return;
                 }
 
@@ -268,6 +271,27 @@ define(
 
                 // Replace our self
                 that.asJQuery().replaceWith(html.root.element);
+            };
+
+            /**
+             * Evaluate `fn`, ensuring that an update will be
+             * performed after evaluating the function. Nested calls
+             * to `withUpdate` or `update` will result in updating the
+             * widget only once.
+             */
+            that.withUpdate = function(fn) {
+                if(inUpdateTransaction) {
+                    fn();
+                } else {
+                    try { 
+                        inUpdateTransaction = true;
+                        fn();
+                    } 
+                    finally {
+                        inUpdateTransaction = false;
+                        that.update();
+                    }
+                }
             };
 
             // Third party protected extensions** added to `my`.
