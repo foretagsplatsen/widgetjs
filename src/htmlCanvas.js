@@ -128,7 +128,7 @@ define(
 			 * Append an unescaped HTML string to the root brush
 			 */
 			that.raw = function(htmlString) {
-				root.html(htmlString);
+				root.raw(htmlString);
 			};
 
 			return that;
@@ -224,6 +224,16 @@ define(
 			 */
 			that.html = function (htmlContents) {
 				that.asJQuery().html(htmlContents);
+				return that;
+			};
+
+			/**
+			 * Append an unescaped html contents.
+			 *
+			 * @param {string} htmlContents
+			 */
+			that.raw = function (htmlContents) {
+				that.asJQuery().append(htmlContents);
 				return that;
 			};
 
