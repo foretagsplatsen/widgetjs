@@ -246,6 +246,14 @@ define(
 			};
 
 			/**
+			 * Append an unescaped string replacing all spaces by
+			 * non-breaking spaces
+			 */
+			that.renderNonBreaking = function(htmlString) {
+				that.raw(htmlString.replace(/\s/g, "&nbsp;"));
+			};
+
+			/**
 			 * Bind callback to DOM event
 			 *
 			 * @usage
