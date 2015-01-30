@@ -224,6 +224,7 @@ define(
 			 */
 			that.html = function (htmlContents) {
 				that.asJQuery().html(htmlContents);
+				return that;
 			};
 
 			/**
