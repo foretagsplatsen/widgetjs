@@ -124,6 +124,13 @@ define(
 				root.render(anObject);
 			};
 
+			/**
+			 * Append an unescaped HTML string to the root brush
+			 */
+			that.raw = function(htmlString) {
+				root.html(htmlString);
+			};
+
 			return that;
 		}
 
