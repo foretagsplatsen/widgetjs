@@ -1,11 +1,10 @@
 define([
 	'widgetjs/core',
-	'widgetjs/router',
 	'documents',
 	'widgets',
 	'jquery',
 	'boostrap'
-], function (widgetjs, router, documents, widgets, jQuery) {
+], function (widgetjs, documents, widgets, jQuery) {
 
 	/**
 	 * Recipe application concists of the following views/documents:
@@ -35,8 +34,6 @@ define([
 		 * Executed once on start-up to initilize the application.
 		 */
 		that.initialize = function () {
-			my.router = router.router;
-
 			that.addAction({
                 name: 'recipes',
 				pattern: '',
@@ -89,7 +86,7 @@ define([
                 name: 'about',
 				pattern: 'about',
 				doc: documents.aboutDocument,
-				menuLabel: 'About',
+				menuLabel: 'About'
 			});
 
 			// Render our self on BODY
