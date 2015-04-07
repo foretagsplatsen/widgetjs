@@ -11,7 +11,8 @@ define([
 
 		var that = abstractGridWidget(spec, my);
 
-		my.cardRenderer = spec.cardRenderer;
+		my.card = spec.card;
+		my.cardRenderer = spec.cardRenderer || defaultCardRenderer;
 
 		//
 		// Rendering
@@ -36,6 +37,14 @@ define([
 				}
 			});
 		};
+
+		function defaultCardRenderer(options) {
+			return my.card({
+				grid: that,
+				item: options.element,
+				index: options.index
+			});
+		}
 
 		return that;
 	}

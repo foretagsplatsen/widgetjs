@@ -99,8 +99,17 @@ define([], function () {
 			instructions.splice(index, 1);
 		};
 
+		that.match = function(search) {
+			return name.indexOf(search) > 0 ||
+				description.indexOf(search) > 0;
+		};
+
 		return that;
 	}
+
+	recipe.orderByName = function(a, b) {
+		return a.name > b.name ? 1 : (a.name > b.name ? -1 : 0);
+	};
 
 	return {
 		recipe: recipe,

@@ -101,7 +101,8 @@ define([
 		that.renderContentOn = function(html) {
 			var input = html.input({
 				type: 'text',
-				placeholder: placeholder
+				placeholder: placeholder,
+				value: searchString
 			});
 			input.keyup(function(event) {
 				var keyCode = event.keyCode || event.which;

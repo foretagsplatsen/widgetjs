@@ -12,8 +12,9 @@ define([
 
 		var that = widgetjs.widget(spec, my);
 
+		my.fields = spec.fields || [];
 		my.source = sourceBuilder(spec);
-		my.currentElements = [];
+		my.currentElements = []; //TODO: Let source keep?
 
 		//
 		// Events
@@ -34,6 +35,7 @@ define([
 		};
 
 		that.setOrderBy = function(newValue) {
+			//TODO: check if source is sortable
 			my.source.setOrderBy(newValue);
 			my.currentElements = [];
 			my.getNextElements();
@@ -45,6 +47,7 @@ define([
 		};
 
 		that.updateSearch = function(string) {
+			//TODO: check if source is searchable
 			my.source.setSearch(string);
 			my.currentElements = [];
 			my.getNextElements();
@@ -71,7 +74,60 @@ define([
 			});
 		};
 
-		my.getNextElements();
+		that.getFieldNames = function() {
+			return Object.keys(my.fields);
+		};
+
+		that.getFieldSettings = function(name) {
+			return my.fields[name] || {};
+		};
+
+		that.findFieldSettings = function(predicate, settingName) {
+			var names = that.getFieldNames();
+			for(var fieldIndex = 0; fieldIndex < names.length; fieldIndex++) {
+				var name = names[fieldIndex];
+				var settings = my.fields[name];
+				if(predicate(name, settings, fieldIndex)) {
+					if(settingName) {
+						return settings && settings[settingName];
+					}
+
+					return settings;
+				}
+			}
+		};
+
+		that.getFieldValue = function(name, item) {
+			var fieldSettings = that.getFieldSettings(name);
+			return that.getFieldSettingsValue(fieldSettings, item);
+		};
+
+		that.getFieldSettingsValue = function(fieldSettings, item) {
+			if(fieldSettings.content) {
+				return fieldSettings.content(item);
+			}
+
+			if(fieldSettings.value) {
+				return fieldSettings.value(item);
+			}
+
+			return fieldSettings(item);
+		};
+
+		that.getFieldTitle = function(name) {
+			var fieldSettings = that.getFieldSettings(name);
+
+			if(fieldSettings.title) {
+				return fieldSettings.title;
+			}
+
+			return name.charAt(0).toUpperCase() + name.slice(1);
+		};
+
+
+
+
+		my.getNextElements(); //TODO: should we fetch data when a widget is set-up? maybe only on render and when explicitly told to
 		return that;
 	}
 

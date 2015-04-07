@@ -43,6 +43,14 @@ define([
 
 			if (newValue) {
 				my.orderedSource = my.orderedSource.filter(function(item) {
+					if(my.searchOn) {
+						//TODO: check if function
+						var match = my.searchOn(item);
+						if(match) {
+							return match(my.search);
+						}
+					}
+
 					return my.searchableString(item).toLowerCase().indexOf(my.search) !== -1;
 				});
 

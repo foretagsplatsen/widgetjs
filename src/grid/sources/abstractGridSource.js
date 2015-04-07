@@ -16,6 +16,9 @@ define([], function() {
 		my.searchableString = spec.searchableString || function(item) {
 			return item.toString();
 		};
+		my.searchOn = spec.searchOn || function(item) {
+			return item && item.match;
+		};
 
 		my.search = "";
 
