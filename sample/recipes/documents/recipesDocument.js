@@ -38,6 +38,16 @@ define([
 			});
 		};
 
+/*
+		cardGrid.setSource(recipeRepository.findAll());
+		cardGrid.setSource(recipeRepository);
+
+
+		tableGrid.onSearch(function(word) {
+			cardGrid.setSource(recipeRepository.findAll(word));
+		});
+*/
+
 		var search = searchFieldWidget();
 
 		// TABLE GRID
@@ -45,10 +55,9 @@ define([
 			source: recipes,
 			orderBy: recipeModel.recipe.orderByName, // TODO: array with fields as argument
 			searchOn: property('match'),
-			//TODO: search: function(query) { return async... ]);
-			columns: {
+			fields: {
 				'name' : {
-					content: function(recipe) {
+					content: function(recipe) { //TODO: tableCellContent?
 						return function(html) {
 							html.a({href: my.linkTo('showRecipe', { recipeId: recipe.id })},
 								html.img({style: 'height:30px', klass: 'img-circle', src: recipe.image }),
@@ -78,13 +87,17 @@ define([
 			source: recipes,
 			searchOn: property('match'),
 			orderBy: recipeModel.recipe.orderByName,
+			//TODO: search: function(query) { return async... ]);
 			card: iconCardWidget,
 			fields: {
 				'link': function(item) {
 					return my.linkTo('showRecipe', { recipeId: item.id })
 				},
-				'label': property('name'),
-				'icon': property('image')
+				'name': {
+					isLabel: true, //TODO: isCardLabel: true
+					value: property('name')
+				},
+				'icon': property('image') // isCardIcon: true
 			}
 		});
 

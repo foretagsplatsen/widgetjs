@@ -1,7 +1,7 @@
 define([
 	'widgetjs/core',
-	'./sourceBuilder'
-], function(widgetjs, sourceBuilder) {
+	'./arrayGridSource'
+], function(widgetjs, arrayGridSource) {
 
 	/**
 	 * `abstractGridWidget` is
@@ -12,14 +12,15 @@ define([
 
 		var that = widgetjs.widget(spec, my);
 
+		my.source = undefined;
 		my.fields = spec.fields || [];
-		my.source = sourceBuilder(spec);
-		my.currentElements = []; //TODO: Let source keep?
+		my.itemRenderer = spec.itemRenderer || defaultItemRenderer;
 
 		//
 		// Events
 		//
 
+		// On pending?
 		that.onPending = my.events.createEvent();
 		that.onSuccess = my.events.createEvent();
 
@@ -30,14 +31,18 @@ define([
 		that.setSource = function(source) {
 			var sourceSpec = Object.create(spec);
 			sourceSpec.source = source;
+			//TODO: do not pass spec.
 			my.source = sourceBuilder(sourceSpec);
 			my.getNextElements();
+			//TODO: should we fetch data when a widget is set-up? maybe only on render and when explicitly told to
 		};
 
 		that.setOrderBy = function(newValue) {
-			//TODO: check if source is sortable
+			if(!my.isSourceOrderable()) {
+					return;
+			}
+
 			my.source.setOrderBy(newValue);
-			my.currentElements = [];
 			my.getNextElements();
 		};
 
@@ -46,10 +51,13 @@ define([
 			searchWidget.applySearchOnGrid(that);
 		};
 
+		//TODO: rename set search? Why update?
 		that.updateSearch = function(string) {
-			//TODO: check if source is searchable
+			if(!my.isSourceSearchable()) {
+					return;
+			}
+
 			my.source.setSearch(string);
-			my.currentElements = [];
 			my.getNextElements();
 		};
 
@@ -65,13 +73,27 @@ define([
 		// Protected
 		//
 
+		my.isSourceOrderable = function() {
+			return my.source.setOrderBy !== undefined;
+		};
+
+		my.isSourceSearchable = function() {
+			return my.source.setSearch  !== undefined;
+		};
+
+		//TODO: How to name?
 		my.getNextElements = function() {
 			that.onPending.trigger();
 			my.source.getNextElements(function(elements) {
 				that.onSuccess.trigger();
-				my.currentElements.push.apply(my.currentElements, elements);
 				that.update();
 			});
+		};
+
+		//TODO: not as async and nice as Nico and Bens
+		// and we should look at promisses and streams
+		my.getCurrentElements = function() {
+			return my.source.getCurrentElements();
 		};
 
 		that.getFieldNames = function() {
@@ -79,22 +101,18 @@ define([
 		};
 
 		that.getFieldSettings = function(name) {
-			return my.fields[name] || {};
+			return my.fields[name];
 		};
 
-		that.findFieldSettings = function(predicate, settingName) {
-			var names = that.getFieldNames();
-			for(var fieldIndex = 0; fieldIndex < names.length; fieldIndex++) {
-				var name = names[fieldIndex];
-				var settings = my.fields[name];
-				if(predicate(name, settings, fieldIndex)) {
-					if(settingName) {
-						return settings && settings[settingName];
-					}
+		that.getFieldTitle = function(name) {
+			var fieldSettings = that.getFieldSettings(name);
 
-					return settings;
-				}
+			if(fieldSettings && fieldSettings.title) {
+				return fieldSettings.title;
 			}
+
+			// Default to field name
+			return name.charAt(0).toUpperCase() + name.slice(1);
 		};
 
 		that.getFieldValue = function(name, item) {
@@ -114,20 +132,52 @@ define([
 			return fieldSettings(item);
 		};
 
-		that.getFieldTitle = function(name) {
-			var fieldSettings = that.getFieldSettings(name);
-
-			if(fieldSettings.title) {
-				return fieldSettings.title;
+		that.findFieldSettings = function(predicate) {
+			var names = that.getFieldNames();
+			for(var fieldIndex = 0; fieldIndex < names.length; fieldIndex++) {
+				var fieldName = names[fieldIndex];
+				var fieldSettings = my.fields[fieldName];
+				if(predicate(fieldName, fieldSettings, fieldIndex)) {
+					return settings;
+				}
 			}
-
-			return name.charAt(0).toUpperCase() + name.slice(1);
 		};
 
+		var sources = [arrayGridSource];
 
+		function sourceBuilder(options) {
+			//TODO: If it implements interface set it without builder
+			//TODO: why the builder
 
+			var source = options.source;
+			for(var i = 0; i < sources.length; i++) {
+				if (sources[i].validFor(source)) {
+					return sources[i](options);
+				}
+			}
 
-		my.getNextElements(); //TODO: should we fetch data when a widget is set-up? maybe only on render and when explicitly told to
+			throw new Error('No grid source for source');
+		}
+
+		function defaultCardRenderer(item) {
+			return function(html) {
+				html.ul(my.getFieldNames().map(function(field) {
+					html.li(field)
+				}));
+			}
+
+			return my.card({
+				grid: that,
+				item: options.element,
+				index: options.index
+			});
+		}
+
+		//
+		// Init
+		//
+
+		that.setSource(spec.source);
 		return that;
 	}
 

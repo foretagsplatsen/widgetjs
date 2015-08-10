@@ -17,10 +17,11 @@ define([
 
 
 		my.fieldValue = function(name)  {
+			//TODO: rename settings to fieldProperties
 			var settings = grid.getFieldSettings(name);
 			if(!settings) {
 				settings = grid.findFieldSettings(function (fieldName, fieldSettings) {
-					return fieldSettings && fieldSettings['is' + name.charAt(0).toUpperCase() + name.slice(1)];
+					return fieldSettings && fieldSettings['is' + (name.charAt(0).toUpperCase() + name.slice(1))];
 				});
 			}
 
