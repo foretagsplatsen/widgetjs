@@ -39,7 +39,7 @@ define([
 		};
 
 /*
-		cardGrid.setSource(recipeRepository.findAll());
+		cardGrid.setSource(recipeRepository.findAll()); // reactive stream/predicate
 		cardGrid.setSource(recipeRepository);
 
 
@@ -62,8 +62,8 @@ define([
 							html.a({href: my.linkTo('showRecipe', { recipeId: recipe.id })},
 								html.img({style: 'height:30px', klass: 'img-circle', src: recipe.image }),
 								html.b(' ', recipe.name)
-							)
-						}
+							);
+						};
 					}
 					//TODO: class: 'tada'
 				},
@@ -91,7 +91,7 @@ define([
 			card: iconCardWidget,
 			fields: {
 				'link': function(item) {
-					return my.linkTo('showRecipe', { recipeId: item.id })
+					return my.linkTo('showRecipe', { recipeId: item.id });
 				},
 				'name': {
 					isLabel: true, //TODO: isCardLabel: true
@@ -127,7 +127,7 @@ define([
 			card: detailedCardWidget,
 			fields: {
 				'link': function(item) {
-					return my.linkTo('showRecipe', { recipeId: item.id })
+					return my.linkTo('showRecipe', { recipeId: item.id });
 				},
 				'label': property('name'),
 				'icon': property('image'),
@@ -154,7 +154,7 @@ define([
 							}
 						},
 						viewName
-					)
+					);
 				})
 			);
 		};
@@ -199,7 +199,7 @@ define([
 		function linkify(url) {
 			return function(html) {
 				html.a({href: url}, url);
-			}
+			};
 		}
 
 		function property(name, formatter) {
@@ -208,7 +208,7 @@ define([
 					return formatter(item[name]);
 				}
 				return item[name];
-			}
+			};
 		}
 
 		return that;
