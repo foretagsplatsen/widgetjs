@@ -4,7 +4,7 @@ define([
 ], function(widgetjs, arrayGridSource) {
 
 	/**
-	 * `abstractGridWidget` is
+	 * `abstractGridWidget` is TODO: explain
 	 */
 	function abstractGridWidget(spec, my) {
 		spec = spec || {};
@@ -12,9 +12,20 @@ define([
 
 		var that = widgetjs.widget(spec, my);
 
+		/**
+		 * TODO: explain
+		 */
 		my.source = undefined;
+
+		/**
+		 * TODO: explain
+		 */
 		my.fields = spec.fields || [];
-		my.itemRenderer = spec.itemRenderer || defaultItemRenderer;
+
+		/**
+		 * TODO: explain
+		 */
+		my.itemRenderer = spec.itemRenderer || defaultCardRenderer;
 
 		//
 		// Events
@@ -138,7 +149,7 @@ define([
 				var fieldName = names[fieldIndex];
 				var fieldSettings = my.fields[fieldName];
 				if(predicate(fieldName, fieldSettings, fieldIndex)) {
-					return settings;
+					return fieldSettings;
 				}
 			}
 		};

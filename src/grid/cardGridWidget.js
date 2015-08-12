@@ -21,7 +21,7 @@ define([
 		that.renderContentOn = function(html) {
 			html.div({klass: 'card-grid'}).render(function(html) {
 				html.div({klass: 'cards'},
-					my.currentElements.map(function(element, index) {
+					my.getCurrentElements().map(function(element, index) {
 						return my.cardRenderer({
 							element: element,
 							grid: that,
