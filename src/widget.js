@@ -246,6 +246,12 @@ define(
                 });
             };
 
+            /**
+             * Keep track of the current rendered widget
+             */
+            var currentWidget;
+
+
             my.withRenderingRegistration = function(fn) {
                 var parent = currentWidget;
                 if(parent) {
@@ -344,8 +350,6 @@ define(
 
             return that;
         };
-
-        var currentWidget;
 
         /**
          * Creates unique ids used by widgets to identify their root div.
