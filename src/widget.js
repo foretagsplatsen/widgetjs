@@ -242,11 +242,7 @@ define(
 			};
 
 			that.registerChild = function(widget) {
-				my.children.push(widget);
-			};
-
-			that.clearChildren = function() {
-				my.children = [];
+				children.push(widget);
 			};
 
             /**
