@@ -62,6 +62,12 @@ define(
             /** Events for widget */
             my.events = events.eventCategory();
 
+			/**
+			 * Event triggered each time the widget is attached (or
+			 * reattached due to an update of rendering) to the DOM.
+			 */
+			that.didAttach = my.events.createEvent();
+
             //
             // Public
             //
@@ -100,6 +106,7 @@ define(
              */
             that.appendTo = function (aJQuery) {
                 that.renderOn(htmlCanvas(aJQuery));
+				that.triggerDidAttach();
             };
 
             /**
@@ -112,6 +119,7 @@ define(
                 var canvas = htmlCanvas(aJQuery);
                 canvas.root.asJQuery().empty();
                 that.renderOn(canvas);
+				that.triggerDidAttach();
             };
 
             /**
@@ -147,6 +155,17 @@ define(
             that.appendToBrush = function (aTagBrush) {
                 that.appendTo(aTagBrush.asJQuery());
             };
+
+			/**
+			 * Trigger the `didAttach` event on the receiver and all
+			 * rendered subwidgets.
+			 */
+			that.triggerDidAttach = function() {
+				that.didAttach.trigger();
+				children.forEach(function (widget) {
+					widget.triggerDidAttach();
+				});
+			};
 
             // Expose events
             that.on = my.events.on;
@@ -234,7 +253,7 @@ define(
 				}
 				currentWidget = that;
 				try {
-					that.clearChildren();
+					my.children = [];
 					fn();
 				} finally {
 					currentWidget = parent;
@@ -291,6 +310,7 @@ define(
 
                 // Replace our self
                 that.asJQuery().replaceWith(html.root.element);
+				that.triggerDidAttach();
             };
 
             /**
