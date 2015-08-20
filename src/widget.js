@@ -59,6 +59,11 @@ define(
             /** When within an update transaction, do not update the widget */
             var inUpdateTransaction = false;
 
+            /**
+             * Keep track of the rendered subwidgets
+             */
+            var children = [];
+
             /** Events for widget */
             my.events = events.eventCategory();
 
@@ -250,7 +255,6 @@ define(
              * Keep track of the current rendered widget
              */
             var currentWidget;
-
 
             my.withRenderingRegistration = function(fn) {
                 var parent = currentWidget;
