@@ -51,7 +51,7 @@ define(
             my = my || {};
             spec = spec || {};
 
-			/** @typedef {{}} widget */
+            /** @typedef {{}} widget */
             var that = {};
 
             var id = spec.id || idGenerator.newId();
@@ -59,8 +59,19 @@ define(
             /** When within an update transaction, do not update the widget */
             var inUpdateTransaction = false;
 
+            /**
+             * Keep track of the rendered subwidgets
+             */
+            var children = [];
+
             /** Events for widget */
             my.events = events.eventCategory();
+
+            /**
+             * Event triggered each time the widget is attached (or
+             * reattached due to an update of rendering) to the DOM.
+             */
+            that.didAttach = my.events.createEvent();
 
             //
             // Public
@@ -99,7 +110,8 @@ define(
              * @param aJQuery
              */
             that.appendTo = function (aJQuery) {
-                that.renderOn(htmlCanvas(aJQuery));
+                renderBasicOn(htmlCanvas(aJQuery));
+                that.triggerDidAttach();
             };
 
             /**
@@ -111,7 +123,8 @@ define(
             that.replace = function (aJQuery) {
                 var canvas = htmlCanvas(aJQuery);
                 canvas.root.asJQuery().empty();
-                that.renderOn(canvas);
+                renderBasicOn(canvas);
+                that.triggerDidAttach();
             };
 
             /**
@@ -145,7 +158,18 @@ define(
              * @param aTagBrush
              */
             that.appendToBrush = function (aTagBrush) {
-                that.appendTo(aTagBrush.asJQuery());
+                renderBasicOn(htmlCanvas(aTagBrush.asJQuery()));
+            };
+
+            /**
+             * Trigger the `didAttach` event on the receiver and all
+             * rendered subwidgets.
+             */
+            that.triggerDidAttach = function() {
+                that.didAttach.trigger();
+                children.forEach(function (widget) {
+                    widget.triggerDidAttach();
+                });
             };
 
             // Expose events
@@ -154,9 +178,9 @@ define(
             that.off = my.events.off;
             that.trigger = my.events.trigger;
 
-			//
+            //
             // Protected
-			//
+            //
 
             /**
              * Exposes the internal ID generator. Generates new unique IDs to be used
@@ -179,7 +203,7 @@ define(
 
             // Route / Controller extensions
 
-			my.router = router.getRouter();
+            my.router = router.getRouter();
 
             my.linkTo = my.router.linkTo;
             my.linkToPath = my.router.linkToPath;
@@ -193,9 +217,21 @@ define(
             my.getParameter = my.router.getParameter;
             my.setParameters = my.router.setParameters;
 
-			//
+            //
             // Render
-			//
+            //
+
+            /**
+             * Private rendering function.  This is the function
+             * internally called each time the widget is rendered, in
+             * `appendTo`, `replace` and `update`.
+             *
+             */
+            function renderBasicOn(html) {
+                my.withChildrenRegistration(function() {
+                    that.renderOn(html);
+                });
+            }
 
             /**
              * Main entry point for rendering. For convenience 'renderOn' will  wrap the content
@@ -223,6 +259,21 @@ define(
             that.renderOn = function (html) {
                 // Renders widget by wrapping `renderContentOn()` in a root element.
                 my.renderRootOn(html).render(that.renderContentOn);
+            };
+
+            my.withChildrenRegistration = function(fn) {
+                var parent = currentWidget.get();
+                if(parent) {
+                    parent.registerChild(that);
+                }
+                withCurrentWidget(function () {
+                    children = [];
+                    fn();
+                }, that);
+            };
+
+            that.registerChild = function(widget) {
+                children.push(widget);
             };
 
             /**
@@ -267,10 +318,11 @@ define(
 
                 // Re-render
                 var html = htmlCanvas();
-                that.renderOn(html);
+                renderBasicOn(html);
 
                 // Replace our self
                 that.asJQuery().replaceWith(html.root.element);
+                that.triggerDidAttach();
             };
 
             /**
@@ -283,10 +335,10 @@ define(
                 if(inUpdateTransaction) {
                     fn();
                 } else {
-                    try { 
+                    try {
                         inUpdateTransaction = true;
                         fn();
-                    } 
+                    }
                     finally {
                         inUpdateTransaction = false;
                         that.update();
@@ -319,6 +371,34 @@ define(
 
             return that;
         })();
+
+        /**
+         * Helpers for keeping track of the currently rendered widget.
+         */
+        var currentWidget = (function () {
+            var current;
+            return {
+                get: function () {
+                    return current;
+                },
+                set: function (widget) {
+                    current = widget;
+                }
+            };
+        })();
+
+        /**
+         * Set `widget` as the current widget while evaluating `fn`.
+         */
+        function withCurrentWidget(fn, widget) {
+            var current = currentWidget.get();
+            try {
+                currentWidget.set(widget);
+                fn();
+            } finally {
+                currentWidget.set(current);
+            }
+        }
 
         return widget;
     }
