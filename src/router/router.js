@@ -415,21 +415,9 @@ define(
 					}
 				});
 
-				// Separate parameters in templateRoute (parameter name exist in route) from
-				// query parameters.
-				var newParameters = {};
-				var newQuery = {};
-				Object.keys(allParameters).forEach(function(param){
-					if(templateRoute.hasParameter(param)) {
-						newParameters[param] = allParameters[param];
-					} else {
-						newQuery[param] = allParameters[param];
-					}
-				});
-
 				// Expand template route and construct URL
-				var aRawUrl = templateRoute.expand(newParameters);
-				return url.build(aRawUrl, newQuery);
+				var aRawUrl = templateRoute.expand(allParameters);
+				return url(aRawUrl);
 			};
 
 			/**
