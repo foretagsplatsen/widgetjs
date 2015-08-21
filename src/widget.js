@@ -110,7 +110,7 @@ define(
              * @param aJQuery
              */
             that.appendTo = function (aJQuery) {
-                that.renderOn(htmlCanvas(aJQuery));
+                renderBasicOn(htmlCanvas(aJQuery));
                 that.triggerDidAttach();
             };
 
@@ -123,7 +123,7 @@ define(
             that.replace = function (aJQuery) {
                 var canvas = htmlCanvas(aJQuery);
                 canvas.root.asJQuery().empty();
-                that.renderOn(canvas);
+                renderBasicOn(canvas);
                 that.triggerDidAttach();
             };
 
@@ -158,7 +158,7 @@ define(
              * @param aTagBrush
              */
             that.appendToBrush = function (aTagBrush) {
-                that.appendTo(aTagBrush.asJQuery());
+                renderBasicOn(htmlCanvas(aTagBrush.asJQuery()));
             };
 
             /**
@@ -222,6 +222,18 @@ define(
             //
 
             /**
+             * Private rendering function.  This is the function
+             * internally called each time the widget is rendered, in
+             * `appendTo`, `replace` and `update`.
+             *
+             */
+            function renderBasicOn(html) {
+                my.withChildrenRegistration(function() {
+                    that.renderOn(html);
+                });
+            }
+
+            /**
              * Main entry point for rendering. For convenience 'renderOn' will  wrap the content
              * rendered by 'renderContentOn' in a root element (renderRootOn) that will be matched
              * by asJQuery.
@@ -246,28 +258,18 @@ define(
              */
             that.renderOn = function (html) {
                 // Renders widget by wrapping `renderContentOn()` in a root element.
-                my.withRenderingRegistration(function() {
-                    my.renderRootOn(html).render(that.renderContentOn);
-                });
+                my.renderRootOn(html).render(that.renderContentOn);
             };
 
-            /**
-             * Keep track of the current rendered widget
-             */
-            var currentWidget;
-
-            my.withRenderingRegistration = function(fn) {
-                var parent = currentWidget;
+            my.withChildrenRegistration = function(fn) {
+                var parent = currentWidget.get();
                 if(parent) {
                     parent.registerChild(that);
                 }
-                currentWidget = that;
-                try {
-                    my.children = [];
+                withCurrentWidget(function () {
+                    children = [];
                     fn();
-                } finally {
-                    currentWidget = parent;
-                }
+                }, that);
             };
 
             that.registerChild = function(widget) {
@@ -316,7 +318,7 @@ define(
 
                 // Re-render
                 var html = htmlCanvas();
-                that.renderOn(html);
+                renderBasicOn(html);
 
                 // Replace our self
                 that.asJQuery().replaceWith(html.root.element);
@@ -369,6 +371,34 @@ define(
 
             return that;
         })();
+
+        /**
+         * Helpers for keeping track of the currently rendered widget.
+         */
+        var currentWidget = (function () {
+            var current;
+            return {
+                get: function () {
+                    return current;
+                },
+                set: function (widget) {
+                    current = widget;
+                }
+            };
+        })();
+
+        /**
+         * Set `widget` as the current widget while evaluating `fn`.
+         */
+        function withCurrentWidget(fn, widget) {
+            var current = currentWidget.get();
+            try {
+                currentWidget.set(widget);
+                fn();
+            } finally {
+                currentWidget.set(current);
+            }
+        }
 
         return widget;
     }
