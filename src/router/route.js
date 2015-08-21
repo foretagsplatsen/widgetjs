@@ -1,6 +1,6 @@
 define(
-	['./routeFactory', '../events', './routeMatchResult', 'jquery'],
-	function(routeFactory, events, routeMatchResult, jQuery) {
+	['./routeFactory', '../events', './routeMatchResult', 'jquery',	'./url'],
+	function(routeFactory, events, routeMatchResult, jQuery, url) {
 
 		/**
 		 * Routes represent the path for which an action should be taken (see `matched` event).
@@ -143,7 +143,15 @@ define(
 					urlSegments.push(urlSegment);
 				});
 
-				return urlSegments.join('/');
+				var query = {};
+
+				Object.keys(params).forEach(function(param) {
+					if(!that.hasParameter(param)) {
+						query[param] = params[param];
+					}
+				});
+
+				return url.build(urlSegments.join('/'), query).toString();
 			};
 
 			/**

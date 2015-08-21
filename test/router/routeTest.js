@@ -250,6 +250,14 @@ define(
 			assert.equal(route.expand({a : 'hello', b: 'world', c: 'c' }), 'hello/c/world');
 		});
 
+		test("Expand extra parameters to the query string", function() {
+			var route = router.route({ pattern: "#a/#b"});
+
+			assert.equal(route.expand({a : 'hello', b: 'world', c: 'foo'}), 'hello/world?c=foo');
+			assert.equal(route.expand({a : 'hello', b: 'world', c: 'foo', d: 'bar' }), 'hello/world?c=foo&d=bar');
+		});
+
+
 		test("Expand throws not valid URL error", function() {
 			var route = router.route({ pattern: "#a/#b" });
 
