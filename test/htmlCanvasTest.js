@@ -181,6 +181,20 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
         });
     });
 
+    test("can render several objects using html.render", function() {
+        withCanvas(function(html) {
+            // Arrange
+            var div = html.div(function(html) {
+				html.render(html.span('hello'), html.span('world'));
+			}).id('test_div');
+
+            // Assert:
+            assert.equal(jQuery("#test_div > SPAN").length, 2, 'div rendered with children from arguments');
+
+        });
+    });
+
+
     test("throws error if object to append is null or undefined", function () {
         withCanvas(function(html) {
             assert.throws(
