@@ -120,8 +120,9 @@ define(
 			 *
 			 * @param anObject
 			 */
-			that.render = function (anObject) {
-				root.render(anObject);
+			that.render = function () {
+				var args = Array.prototype.slice.call(arguments);
+				root.render(args);
 			};
 
 			/**
