@@ -35,8 +35,6 @@ define([
 		 * Executed once on start-up to initilize the application.
 		 */
 		that.initialize = function () {
-			my.router = router.router;
-
 			that.addAction({
                 name: 'recipes',
 				pattern: '',
