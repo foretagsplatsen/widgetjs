@@ -20,7 +20,7 @@ define(['../selectableControlWidget'],
 
 			that.update = function () {
 				var inputElement = that.asJQuery().find('input');
-				if (my.isSelected) {
+				if (that.isSelected()) {
 					inputElement.attr('checked', 'checked');
 				} else {
 					inputElement.removeAttr('checked');
@@ -47,7 +47,7 @@ define(['../selectableControlWidget'],
 					that.setSelected(checked);
 				});
 
-				if (my.isSelected) {
+				if (that.isSelected()) {
 					el.setAttribute('checked', 'checked');
 				}
 			};

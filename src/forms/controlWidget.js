@@ -1,6 +1,7 @@
 define([
-	'../widget'
-], function(widget) {
+	'../widget',
+	'./bindings'
+], function(widget, bindings) {
 
 	// TODO: convert value
 
@@ -27,7 +28,7 @@ define([
 
 		// Variables
 
-		my.value = spec.value;
+		var valueBinding = spec.valueBinding || bindings.value(spec.value);
 		my.name = spec.name || '';
 		my.attributes = spec.attributes || {};
 		my.class = spec.class || '';
@@ -39,37 +40,21 @@ define([
 		that.onChange = my.events.createEvent('change');
 
 		that.getValue = function() {
-			return my.value;
+			return valueBinding.accessor();
 		};
 
-		that.setValue = function(newValue) {
-			var oldValue = my.value;
+		that.setValue = function(newValue, noEvent) {
+			var oldValue = that.getValue();
 			if(oldValue === newValue) {
 				return;
 			}
 
-			my.value = newValue;
-			that.onChange.trigger(newValue, oldValue, that);
+			valueBinding.mutator(newValue);
+			if(!noEvent) {
+				that.onChange.trigger(newValue, oldValue, that);
+			}
 			that.update();
 		};
-
-		that.bindValue = function(binding) {
-			if(binding.mutator) {
-				that.onChange(function (newValue) {
-					binding.mutator(newValue);
-				});
-			}
-
-			if(binding.accessor) {
-				my.value = binding.accessor();
-			}
-		};
-
-		// Initialization
-
-		if(spec.valueBinding) {
-			that.bindValue(spec.valueBinding);
-		}
 
 		return that;
 	}

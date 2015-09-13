@@ -20,7 +20,7 @@ define(['../selectableControlWidget'],
 			// Protected
 
 			that.update = function () {
-				if (my.isSelected) {
+				if (that.isSelected()) {
 					that.asJQuery().attr('selected', 'selected');
 				} else {
 					that.asJQuery().removeAttr('selected');
@@ -36,7 +36,7 @@ define(['../selectableControlWidget'],
 					my.label || that.getValue()
 				);
 
-				if (my.isSelected) {
+				if (that.isSelected()) {
 					el.setAttribute('selected', 'selected');
 				}
 			};

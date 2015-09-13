@@ -32,7 +32,7 @@ define([
 				id: that.getId(),
 				name: my.name,
 				type: my.type,
-				value: my.value,
+				value: that.getValue(),
 				'class' : my.class
 			});
 

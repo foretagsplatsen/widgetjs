@@ -1,44 +1,42 @@
-define(['../selectionWidget', './optionWidget'],
-	function (selectionWidget, optionWidget) {
+define([
+	'../../widget'
+],function (widget) {
 
-		/**
-		 * A HTML OPTGROUP - A grouping of options within a select element
-		 *
-		 * @param my
-		 * @returns {optionGroupWidget}
-		 */
-		function optionGroupWidget(spec, my) {
-			spec = spec || {};
-			my = my || {};
+	/**
+	 * A HTML OPTGROUP - A grouping of options within a select element
+	 *
+	 * @param my
+	 * @returns {optionGroupWidget}
+	 */
+	function optionGroupWidget(spec, my) {
+		spec = spec || {};
+		my = my || {};
 
-			spec.widget = spec.widget || optionWidget;
+		var controls = spec.controls || [];
+		var label = spec.label;
 
-			/** @typedef {selectionWidget} optionGroupWidget */
-			var that = selectionWidget(spec, my);
+		/** @typedef {widget} optionGroupWidget */
+		var that = widget(spec, my);
 
-			my.label = spec.label;
+		// Public
 
-			that.onSelectionChange =  my.events.createEvent('selectionChange');
+		that.getControls = function() {
+			return controls;
+		};
 
-			//TODO: good enough
-			that.onChange(function(newValue, oldValue) {
-				that.onSelectionChange.trigger(newValue, oldValue);
-			});
+		// Render
 
-			// Render
+		that.renderOn = function (html) {
+			html.optgroup({
+					id: that.getId(),
+					label: label
+				},
+				controls
+			);
+		};
 
-			that.renderOn = function (html) {
-				html.optgroup({
-						id: that.getId(),
-						label: my.label
-					},
-					my.controls
-				);
-			};
-
-			return that;
-		}
-
-		return optionGroupWidget;
+		return that;
 	}
-);
+
+	return optionGroupWidget;
+});

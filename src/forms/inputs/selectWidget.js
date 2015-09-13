@@ -66,9 +66,20 @@ define(['../selectionWidget', './optionWidget'],
 						return identifiersOfSelectedOptions.indexOf(option.getId()) >= 0;
 					});
 
-					that.setSelectedControls(selected);
-					that.setValue(that.getValue()); // TODO: hack
+					var selectedValues = selected.map(function(control) {
+						return control.getValue();
+					});
+
+					var value = my.isMultipleSelect ? selectedValues : selectedValues[0];
+					that.setValue(value);
 				});
+			};
+
+			that.update = function() {
+				that.getControls().forEach(function(control) {
+					control.update();
+				});
+
 			};
 
 			return that;

@@ -17,8 +17,6 @@ define([
 		/** @typedef {controlWidget} selectionWidget */
 		var that = controlWidget(spec, my);
 
-		var eventBindings = [];
-
 		my.isMultipleSelect = spec.isMultipleSelect;
 		my.controls = spec.controls || [];
 
@@ -27,39 +25,16 @@ define([
 
 		// Public
 
-		that.getValue = function() {
-			var selection = that.getSelectedValues();
-
-			if(!my.isMultipleSelect) {
-				return selection[0];
-			}
-
-			return selection;
-		};
-
-		that.setValue = function(newSelection) {
-			if(!my.isMultipleSelect) {
-				newSelection = [newSelection];
-			}
-
-			var previousValue =  that.getValue();
-			that.setSelectedValues(newSelection);
-			var currentValue =  that.getValue();
-
-			that.onChange.trigger(currentValue, previousValue, that);
-			that.update();
-		};
-
 		that.getControls = function() {
 			return my.controls;
 		};
 
 		that.setControls = function(controls) {
-			unbindEventBindings();
 			my.controls = controls;
 			observeControls(my.controls);
 		};
 
+/*
 		that.getSelectedControls = function() {
 			return that.getControls().filter(function(control) {
 				return control.isSelected();
@@ -73,23 +48,10 @@ define([
 			});
 			ignoreEvents = false;
 		};
-
-		that.getSelectedValues = function() {
-			return that.getSelectedControls().map(function(control) {
-				return control.getValue();
-			});
-		};
-
-		that.setSelectedValues = function(values) {
-			var selected = that.getControls().filter(function(control) {
-				return values.indexOf(control.getValue()) >= 0;
-			});
-			that.setSelectedControls(selected);
-		};
-
+*/
 		// Protected
 
-		my.updateSelection = function(control) {
+	/*	my.updateSelection = function(control) {
 			//TODO: clean-up
 			var value = control.getValue();
 
@@ -113,36 +75,80 @@ define([
 					that.setValue(values);
 				}
 			}
-		};
+		};*/
 
 
 		// Render
 
-		that.renderOn = function (html) {
+		that.renderContentOn = function (html) {
 			html.render(my.controls);
 		};
 
 
 		// Private
 
-		function unbindEventBindings() {
-			eventBindings.forEach(function(binding) {
-				binding.unbind();
-			});
+		//TODO: solution below does not allow methods to be overriden
+
+		function isSelectedValue(value) {
+			if(!my.isMultipleSelect) {
+				return that.getValue() === value;
+			}
+
+			var values = that.getValue() || [];
+			return values.indexOf(value) >= 0;
+		}
+
+		function selectValue(value) {
+			if(!my.isMultipleSelect) {
+				that.setValue(value);
+				return;
+			}
+
+			var values = that.getValue().slice();
+			var indexOfValue = values.indexOf(value);
+
+			if (indexOfValue < 0) {
+				values.push(value);
+				that.setValue(values);
+			}
+		}
+
+		function deselectValue(value) {
+			if(!my.isMultipleSelect) {
+				that.setValue(undefined);
+				return;
+			}
+
+			var values = that.getValue().slice();
+			var indexOfValue = values.indexOf(value);
+			if (indexOfValue >= 0) {
+				values.splice(indexOfValue, 1);
+				that.setValue(values);
+			}
 		}
 
 		function observeControls(controls) {
-			unbindEventBindings();
-
 			controls.forEach(function(control) {
-				var binding = control.onSelectionChange(function () {
-					if(ignoreEvents) {
-						return;
+				// Observe grouped controls recursively
+				if(control.getControls) {
+					observeControls(control.getControls());
+					return;
+				}
+
+				// Update value when selection change
+				control.setSelectedBinding({
+					accessor: function () {
+						return isSelectedValue(control.getValue());
+					},
+					mutator: function (selected) {
+						if (selected) {
+							selectValue(control.getValue());
+						} else {
+							deselectValue(control.getValue());
+						}
 					}
-					my.updateSelection(control);
 				});
 
-				eventBindings.push(binding);
 			});
 		}
 

@@ -4,28 +4,53 @@ define([
 	'widgetjs/forms/inputs'
 ], function(widget, formWidget, inputs) {
 
+	// Sample data
+
+	var role = 'user';
+	var user = {
+		name: 'kalle',
+		age: 10,
+		gender: 'female',
+		getRole: function() {
+			return role;
+		},
+		setRole: function(newRole) {
+			role = newRole;
+		}
+	};
+
+	window.user = user;
+
+
     function formsExamples() {
         var that = widget();
 
-		var role = 'user';
-		var user = {
-			name: 'kalle',
-			age: 10,
-			gender: 'male',
-			getRole: function() {
-				return role;
-			},
-			setRole: function(newRole) {
-				role = newRole;
-			}
-		};
+		// Custom form
 
-		window.user = user;
+		function userFormWidget(spec, my) {
+			spec = spec || {};
+			my = my || {};
+
+			var that = formWidget(spec, my);
+
+			that.renderContentOn = function(html) {
+				html.form({class: 'form-horizontal'},
+					that.getFields().map(function(field) {
+						return html.div({class: 'form-group'},
+							html.label('test'),
+							field
+						);
+					})
+				);
+			};
+
+			return that;
+		}
+
 
 		// Form
 
 		var userForm = formWidget({
-			model: user
 			//? validations: [validation.required('name', 'age')]
 			//? fields: ['name', 'age', {name: 'role', accessor: user.getRole, mutator: user.setRole}]
 		});
@@ -53,6 +78,8 @@ define([
 			attribute: 'gender'
 		});
 
+		userForm.setModel(user);
+
 		// Single inputs
 
 		var userName = inputs.input({
@@ -74,24 +101,20 @@ define([
 		});
 
 		var gender = inputs.radiobuttonList({
-			controls: [
-				male = inputs.radiobutton({value: 'male', isSelected: true}),
-				inputs.radiobutton({value: 'female'})
-			]
+			value: 'male',
+			controls: ['male','female'].map(function(gender) {
+				return inputs.radiobutton({ value: gender });
+			})
 		});
 
 		gender.onChange(function(newValue) {
 			console.log('gender: ', newValue);
 		});
 
-		//TODO: use onChange instead of onSelectionChange?
-		male.onSelectionChange(function(newValue) {
-			console.log('male: ', newValue);
-		});
-
 		var someOptions = inputs.checkboxList({
+			value: [1, 4],
 			controls: [1,2,3,4].map(function(option) {
-				return inputs.checkbox({value: option, isSelected: option === 3});
+				return inputs.checkbox({value: option});
 			})
 		});
 
@@ -100,7 +123,8 @@ define([
 		});
 
 		var aDropDown = inputs.select({
-			// isMultipleSelect: true,
+			value: ['A2', 'B'],
+			//isMultipleSelect: true,
 			controls: [
 				inputs.optionGroup({
 					label: 'A',
@@ -110,7 +134,8 @@ define([
 					]
 				}),
 				inputs.option({value: 'B'}),
-				inputs.option({value: 'C'})
+				inputs.option({value: 'C'}),
+				inputs.option({value: 'D'})
 			]
 		});
 

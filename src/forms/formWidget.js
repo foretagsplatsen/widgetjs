@@ -1,7 +1,8 @@
 define([
 	'../widget',
-	'./inputs'
-], function(widget, inputs) {
+	'./inputs',
+	'./bindings'
+], function(widget, inputs, bindings) {
 
 	/**
 	 * Base for all forms
@@ -16,8 +17,23 @@ define([
 
 		var that = widget(spec, my);
 
-		my.fields = [];
-		my.model = spec.model;
+		my.fields = {};
+		my.model = spec.model || {};
+
+		// Protected
+
+		my.createValueBinding = function(options) {
+			if (options.mutator || options.accessor) {
+				return {
+					accessor: options.accessor,
+					mutator: options.mutator
+				};
+			} else if (options.attribute) {
+				return bindings.attribute(that.getModel, options.attribute, options.defaultValue);
+			}
+
+			return undefined;
+		};
 
 		//
 		// Public API
@@ -25,29 +41,34 @@ define([
 
 		that.setModel = function (model) {
 			my.model = model;
+			that.update();
 		};
 
+		that.getModel = function() {
+			return my.model;
+		};
 
-		// Fields
+		that.getFields = function() {
+			return Object.keys(my.fields).map(function(name) {
+				return my.fields[name];
+			});
+		};
+
+		that.getField = function(name) {
+			return my.fields[name];
+		};
 
 		that.addField = function (field, options) {
-			if (options.mutator || options.accessor) {
-				field.bindValue({
-					accessor: options.accessor,
-					mutator: options.mutator
-				});
-			}
-			else if (options.attribute) {
-				field.bindValue(inputs.attributeBinding(my.model, options.attribute));
-			}
-
-			my.fields.push(field);
+			my.fields[options.name] = field;
 			return field;
 		};
+
+		// Inputs
 
 		that.input = function (options) {
 			var textInput = inputs.input({
 				value: options.value,
+				valueBinding: my.createValueBinding(options),
 				name: options.name || my.nextId(),
 				type: options.type || 'text'
 			});
@@ -88,7 +109,9 @@ define([
 			});
 
 			var field = inputs.radiobuttonList({
-				controls: radiobuttons
+				controls: radiobuttons,
+				value: options.value,
+				valueBinding: my.createValueBinding(options)
 			});
 
 			return that.addField(field, options);
@@ -98,7 +121,7 @@ define([
 		// Protected
 
 		that.renderContentOn = function (html) {
-			html.form(my.fields);
+			html.form(that.getFields());
 		};
 
 		return that;
