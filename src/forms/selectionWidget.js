@@ -6,7 +6,7 @@ define([
 	 * Base for all widgets where you can select one or more
 	 * items.
 	 *
-	 * @param {*} spec
+	 * @param {{}} controlWidget spec
 	 * @param my
 	 * @returns {controlWidget}
 	 */
@@ -23,7 +23,9 @@ define([
 		var  ignoreEvents = false;
 		observeControls(my.controls);
 
+		//
 		// Public
+		//
 
 		that.getControls = function() {
 			return my.controls;
@@ -34,51 +36,9 @@ define([
 			observeControls(my.controls);
 		};
 
-/*
-		that.getSelectedControls = function() {
-			return that.getControls().filter(function(control) {
-				return control.isSelected();
-			});
-		};
-
-		that.setSelectedControls = function(controls) {
-			ignoreEvents = true;
-			that.getControls().forEach(function(control) {
-				control.setSelected(controls.indexOf(control) >= 0, true);
-			});
-			ignoreEvents = false;
-		};
-*/
-		// Protected
-
-	/*	my.updateSelection = function(control) {
-			//TODO: clean-up
-			var value = control.getValue();
-
-			if(!my.isMultipleSelect) {
-				that.setValue(value);
-				return;
-			}
-
-			var selected = control.isSelected();
-			var values = that.getValue().slice();
-			var indexOfValue = values.indexOf(value);
-
-			if(selected) {
-				if (indexOfValue < 0) {
-					values.push(value);
-					that.setValue(values);
-				}
-			} else {
-				if (indexOfValue >= 0) {
-					values.splice(indexOfValue, 1);
-					that.setValue(values);
-				}
-			}
-		};*/
-
-
+		//
 		// Render
+		//
 
 		that.renderContentOn = function (html) {
 			html.render(my.controls);

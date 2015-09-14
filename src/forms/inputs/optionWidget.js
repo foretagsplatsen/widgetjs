@@ -1,49 +1,51 @@
-define(['../selectableControlWidget'],
-	function (selectableControlWidget) {
+define([
+	'../selectableControlWidget'
+], function (selectableControlWidget) {
 
-		/**
-		 * A HTML OPTION - An item within a optionGroup, select or dataList
-		 *
-		 * @example
-		 * var bmwOption = option({ label: 'Bayerische Motoren Werke ', value: 'bmw' });
-		 * var mercedesOption = option({ label: 'Mercedes-Benz', value: 'mercedes', value: true });
-		 *
-		 * @returns {optionWidget}
-		 */
-		function optionWidget(spec, my) {
-			spec = spec || {};
-			my = my || {};
+	/**
+	 * A HTML OPTION - An item within a optionGroup, select or dataList
+	 *
+	 * @example
+	 * var bmwOption = option({ label: 'Bayerische Motoren Werke ', value: 'bmw' });
+	 * var mercedesOption = option({ label: 'Mercedes-Benz', value: 'mercedes', value: true });
+	 *
+	 * @param {{}} [spec] selectableControlWidget spec
+	 * @param [my]
+	 * @returns {optionWidget}
+	 */
+	function optionWidget(spec, my) {
+		spec = spec || {};
+		my = my || {};
 
-			/** @typedef {selectableControlWidget} optionWidget */
-			var that = selectableControlWidget(spec, my);
+		/** @typedef {selectableControlWidget} optionWidget */
+		var that = selectableControlWidget(spec, my);
 
-			// Protected
+		//
+		// Render
+		//
 
-			that.update = function () {
-				if (that.isSelected()) {
-					that.asJQuery().attr('selected', 'selected');
-				} else {
-					that.asJQuery().removeAttr('selected');
-				}
-			};
+		that.renderOn = function (html) {
+			var el = html.option({
+					id: that.getId()
+				},
+				my.label || that.getValue()
+			);
 
-			// Render
+			if (that.isSelected()) {
+				el.setAttribute('selected', 'selected');
+			}
+		};
 
-			that.renderOn = function (html) {
-				var el = html.option({
-						id: that.getId()
-					},
-					my.label || that.getValue()
-				);
+		that.update = function () {
+			if (that.isSelected()) {
+				that.asJQuery().attr('selected', 'selected');
+			} else {
+				that.asJQuery().removeAttr('selected');
+			}
+		};
 
-				if (that.isSelected()) {
-					el.setAttribute('selected', 'selected');
-				}
-			};
-
-			return that;
-		}
-
-		return optionWidget;
+		return that;
 	}
-);
+
+	return optionWidget;
+});

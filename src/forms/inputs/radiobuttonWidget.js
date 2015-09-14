@@ -6,9 +6,14 @@ define([
 	 * A button in a radioButtonList. Radio buttons let a user select
 	 * ONLY ONE of a limited number of choices.
 	 *
-	 * @param spec
+	 * @example
+	 * var male = radioButtonWidget({value: 'male', selected: true});
+	 * var female = radioButtonWidget({value: 'female'});
+	 *
+	 * @param {{}} [spec] selectableControlWidget spec
 	 * @param [my]
-	 * @returns {*}
+	 * @returns {radioButton}
+	 *
 	 */
 	function radioButtonWidget(spec, my) {
 		spec = spec || {};
@@ -19,18 +24,9 @@ define([
 		/** @typedef {selectableControlWidget} radioButton */
 		var that = selectableControlWidget(spec, my);
 
-		// Protected
-
-		that.update = function () {
-			var inputElement = that.asJQuery().find('input');
-			if (that.isSelected()) {
-				inputElement.attr('checked', 'checked');
-			} else {
-				inputElement.removeAttr('checked');
-			}
-		};
-
+		//
 		// Render
+		//
 
 		that.renderContentOn = function (html) {
 			var el = html.input({
@@ -51,6 +47,16 @@ define([
 				el.setAttribute('checked', 'checked');
 			}
 		};
+
+		that.update = function () {
+			var inputElement = that.asJQuery().find('input');
+			if (that.isSelected()) {
+				inputElement.attr('checked', 'checked');
+			} else {
+				inputElement.removeAttr('checked');
+			}
+		};
+
 
 		return that;
 	}

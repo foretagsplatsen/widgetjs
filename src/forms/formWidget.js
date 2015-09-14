@@ -97,19 +97,31 @@ define([
 			return that.input(inputOptions);
 		};
 
-		that.radiobuttonList = function(options) {
+		that.checkbox = function(options) {
+			var checkbox = inputs.checkbox({
+				selected: options.value,
+				selectedBinding: my.createValueBinding(options),
+				value: options.name,
+				name: options.name || my.nextId(),
+				type: options.type || 'text'
+			});
+
+			return that.addField(checkbox, options);
+		};
+
+		that.checkboxGroup = function(options) {
 			var name = options.name || my.nextId();
 			var items = options.items || [];
-			var radiobuttons = items.map(function(item) {
-				return inputs.radiobutton({
+			var buttons = items.map(function(item) {
+				return inputs.checkbox({
 					name: name,
 					label: item,
 					value: item
 				});
 			});
 
-			var field = inputs.radiobuttonList({
-				controls: radiobuttons,
+			var field = inputs.checkboxGroup({
+				controls: buttons,
 				value: options.value,
 				valueBinding: my.createValueBinding(options)
 			});
@@ -117,6 +129,25 @@ define([
 			return that.addField(field, options);
 		};
 
+		that.radioButtonGroup = function(options) {
+			var name = options.name || my.nextId();
+			var items = options.items || [];
+			var buttons = items.map(function(item) {
+				return inputs.radioButton({
+					name: name,
+					label: item,
+					value: item
+				});
+			});
+
+			var field = inputs.radioButtonGroup({
+				controls: buttons,
+				value: options.value,
+				valueBinding: my.createValueBinding(options)
+			});
+
+			return that.addField(field, options);
+		};
 
 		// Protected
 

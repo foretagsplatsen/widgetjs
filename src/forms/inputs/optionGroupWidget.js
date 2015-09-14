@@ -5,8 +5,20 @@ define([
 	/**
 	 * A HTML OPTGROUP - A grouping of options within a select element
 	 *
-	 * @param my
+	 * 	 *
+	 * @example
+	 * var swedishCars = optionGroupWidget({
+	 * 		label: 'Swedish cars'},
+	 * 		controls: [
+	 * 			optionWidget({value: 'Volvo'}),
+	 *	 		optionWidget({value: 'Saab'})
+	 * 		]
+	 * 	});
+	 *
+	 * @param [spec] widget spec
+	 * @param [my]
 	 * @returns {optionGroupWidget}
+	 *
 	 */
 	function optionGroupWidget(spec, my) {
 		spec = spec || {};
@@ -18,13 +30,17 @@ define([
 		/** @typedef {widget} optionGroupWidget */
 		var that = widget(spec, my);
 
+		//
 		// Public
+		//
 
 		that.getControls = function() {
 			return controls;
 		};
 
+		//
 		// Render
+		//
 
 		that.renderOn = function (html) {
 			html.optgroup({

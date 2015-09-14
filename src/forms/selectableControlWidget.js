@@ -7,9 +7,10 @@ define([
 	 * Base for all selectable controls (eg. option, radioButton and checkbox)
 	 *
 	 * @param [spec] controlWidget spec
-	 * @param {string|function} spec.label - Text to display.
-	 * @param {boolean|function} [spec.iSelected=false] - Indicates that the option is selected.
-	 * @param [my={}]
+	 * @param {boolean} [spec.iSelected=false] - Indicates that the option is selected.
+	 * @param {{}} [spec.isSelectedBinding] - Binding object that expose a `accessor` and `mutator` method.
+	 * @param {string} [spec.label] - Text to display.
+	 * @param [my]
 	 * @returns {selectableControlWidget}
 	 */
 	function selectableControlWidget(spec, my) {
@@ -23,7 +24,9 @@ define([
 
 		that.onSelectionChange =  my.events.createEvent('selectionChange');
 
+		//
 		// Public
+		//
 
 		that.isSelected = function() {
 			return isSelected.accessor();

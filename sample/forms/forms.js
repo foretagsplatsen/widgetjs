@@ -1,8 +1,9 @@
 define([
 	'widgetjs/widget',
 	'widgetjs/forms/formWidget',
-	'widgetjs/forms/inputs'
-], function(widget, formWidget, inputs) {
+	'widgetjs/forms/inputs',
+	'widgetjs/forms/bindings'
+], function(widget, formWidget, inputs, bindings) {
 
 	// Sample data
 
@@ -11,6 +12,8 @@ define([
 		name: 'kalle',
 		age: 10,
 		gender: 'female',
+		modules: ['a', 'b'],
+		active: true,
 		getRole: function() {
 			return role;
 		},
@@ -50,7 +53,7 @@ define([
 
 		// Form
 
-		var userForm = formWidget({
+		var userForm = userFormWidget({
 			//? validations: [validation.required('name', 'age')]
 			//? fields: ['name', 'age', {name: 'role', accessor: user.getRole, mutator: user.setRole}]
 		});
@@ -72,11 +75,23 @@ define([
 			mutator: user.setRole
 		});
 
-		userForm.radiobuttonList({
+		userForm.radioButtonGroup({
 			name: 'gender',
 			items: ['male', 'female'],
 			attribute: 'gender'
 		});
+
+		userForm.checkboxGroup({
+			name: 'modules',
+			items: ['a', 'b' , 'c', 'd'],
+			attribute: 'modules'
+		});
+
+		userForm.checkbox({
+			name: 'active',
+			attribute: 'active'
+		});
+
 
 		userForm.setModel(user);
 
@@ -84,8 +99,10 @@ define([
 
 		var userName = inputs.input({
 			name: 'userName',
-			valueBinding: inputs.attributeBinding(user, 'name')
+			valueBinding: bindings.attribute(user, 'name')
 		});
+
+		window.userName = userName;
 
 		var password = inputs.input({
 			name: 'password',
@@ -100,10 +117,10 @@ define([
 			console.log('password: ', newValue);
 		});
 
-		var gender = inputs.radiobuttonList({
+		var gender = inputs.radioButtonGroup({
 			value: 'male',
 			controls: ['male','female'].map(function(gender) {
-				return inputs.radiobutton({ value: gender });
+				return inputs.radioButton({ value: gender });
 			})
 		});
 
@@ -111,7 +128,7 @@ define([
 			console.log('gender: ', newValue);
 		});
 
-		var someOptions = inputs.checkboxList({
+		var someOptions = inputs.checkboxGroup({
 			value: [1, 4],
 			controls: [1,2,3,4].map(function(option) {
 				return inputs.checkbox({value: option});
