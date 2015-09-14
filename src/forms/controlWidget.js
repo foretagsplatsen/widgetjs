@@ -9,7 +9,9 @@ define([
 	 * @param {{}} [spec] widget spec
 	 * @param {string} [spec.type=text] Type of input
 	 * @param {*} spec.value Initial Value.
-	 * @param {*} [spec.valueBinding] Binding object that expose a `accessor` and `mutator` method.
+	 * @param {{}} [spec.valueBinding] Binding object that expose a `accessor` and `mutator` method.
+	 * @param {function} [spec.validator] Validation function that takes value and return true if valid
+	 * @param {boolean} [spec.validateOnChange=true] Perform validation on each change
 	 * @param {boolean} [spec.isDisabled=false]
 	 * @param {string} [spec.name='']
 	 * @param {{}} [spec.attributes={}]
@@ -30,6 +32,10 @@ define([
 		//
 
 		var valueBinding = spec.valueBinding || bindings.value(spec.value);
+
+		my.error = null;
+		my.validator = spec.validator || function(data) {};
+		my.validateOnChange = spec.validateOnChange === undefined ? true : spec.validateOnChange;
 		my.name = spec.name || '';
 		my.attributes = spec.attributes || {};
 		my.class = spec.class || '';
@@ -41,6 +47,7 @@ define([
 		//
 
 		that.onChange = my.events.createEvent('change');
+		that.onValidationStateChange = my.events.createEvent('validationStateChange');
 
 		that.getValue = function() {
 			return valueBinding.accessor();
@@ -53,11 +60,32 @@ define([
 			}
 
 			valueBinding.mutator(newValue);
+			var isValid = that.validate();
 			if(!noEvent) {
-				that.onChange.trigger(newValue, oldValue, that);
+				that.onChange.trigger(newValue, oldValue, that, isValid);
 			}
 			that.update();
 		};
+
+		that.validate = function(aValue) {
+			var value =  aValue === undefined ? that.getValue() : aValue;
+
+			my.error = null;
+			try {
+				my.validator(value);
+			} catch (validationError) {
+				my.error = validationError;
+			}
+
+			that.onValidationStateChange.trigger(!my.error, my.error);
+
+			return !my.error;
+		};
+
+		that.isValid = function() {
+			return !error;
+		};
+
 
 		return that;
 	}

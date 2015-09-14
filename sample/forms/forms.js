@@ -99,7 +99,18 @@ define([
 
 		var userName = inputs.input({
 			name: 'userName',
-			valueBinding: bindings.attribute(user, 'name')
+			valueBinding: bindings.attribute(user, 'name'),
+			validator: function(name) {
+				if(!name) {
+					throw new Error('Username is required');
+				}
+			}
+		});
+
+		userName.onValidationStateChange(function(isValid, error) {
+			if(!isValid) {
+				alert('Invalid username: ' + error);
+			}
 		});
 
 		window.userName = userName;
