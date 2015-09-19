@@ -36,15 +36,27 @@ define([
 
 			var that = formWidget(spec, my);
 
-			that.renderContentOn = function(html) {
-				html.form({class: 'form-horizontal'},
-					that.getFields().map(function(field) {
-						return html.div({class: 'form-group'},
-							html.label('test'),
-							field
-						);
-					})
-				);
+			my.class = '';
+
+
+			that.addField = function (field, options) {
+				my.registerField(field);
+
+				options.group = options.name;
+				if(options.group) {
+					var group = my.groups[options.group];
+					if(!group) {
+						group = my.createGroup(options);
+						my.groups[options.group] = group;
+					}
+
+					group.addField(field);
+					my.content.push(group);
+				} else {
+					my.content.push(field);
+				}
+
+				return field;
 			};
 
 			return that;
@@ -91,6 +103,8 @@ define([
 			name: 'active',
 			attribute: 'active'
 		});
+
+		window.userForm = userForm;
 
 
 		userForm.setModel(user);

@@ -4,6 +4,31 @@ define([
 	'./bindings'
 ], function(widget, inputs, bindings) {
 
+	function formGroupWidget(spec, my) {
+		my = my || {};
+		spec = spec || {};
+
+		var that = widget(spec, my);
+
+		var label = spec.label;
+		var objects = [];
+
+		that.addField = function(field) {
+			objects.push(field);
+		};
+
+		that.renderContentOn = function(html) {
+			html.div({ klass: 'control-group' },
+				html.label({ klass: 'control-label' }, label || ' '),
+				html.div({klass: 'controls'},
+					objects
+				)
+			);
+		};
+
+		return that;
+	}
+
 	/**
 	 * Base for all forms
 	 *
@@ -11,13 +36,16 @@ define([
 	 * @param my
 	 * @returns {*}
 	 */
-	var formWidget = function (spec, my) {
+	function formWidget(spec, my) {
 		my = my || {};
 		spec = spec || {};
 
 		var that = widget(spec, my);
 
-		my.fields = {};
+		my.class = spec.class || spec.klass;
+		my.fields = [];
+		my.groups = {};
+		my.content = [];
 		my.model = spec.model || {};
 
 		// Protected
@@ -36,7 +64,7 @@ define([
 		};
 
 		//
-		// Public API
+		// Public
 		//
 
 		that.setModel = function (model) {
@@ -49,19 +77,45 @@ define([
 		};
 
 		that.getFields = function() {
-			return Object.keys(my.fields).map(function(name) {
-				return my.fields[name];
-			});
-		};
-
-		that.getField = function(name) {
-			return my.fields[name];
+			return my.fields.slice();
 		};
 
 		that.addField = function (field, options) {
-			my.fields[options.name] = field;
+			my.registerField(field);
+
+			if(options.group) {
+				var group = my.groups[options.group];
+				if(!group) {
+					group = my.createGroup(options);
+					my.groups[options.group] = group;
+				}
+
+				group.addField(field);
+				my.content.push(group);
+			} else {
+				my.content.push(field);
+			}
+
 			return field;
 		};
+
+		//
+		// Protected
+		//
+
+		my.createGroup = function(options) {
+			return formGroupWidget({label: options.group });
+		};
+
+
+		my.registerField = function(field) {
+			if (!field || !field.validate) {
+				throw "Field must be a valid form field";
+			}
+
+			my.fields.push(field);
+		};
+
 
 		// Inputs
 
@@ -70,7 +124,8 @@ define([
 				value: options.value,
 				valueBinding: my.createValueBinding(options),
 				name: options.name || my.nextId(),
-				type: options.type || 'text'
+				type: options.type || 'text',
+				'class': 'form-control'
 			});
 
 			return that.addField(textInput, options);
@@ -152,7 +207,7 @@ define([
 		// Protected
 
 		that.renderContentOn = function (html) {
-			html.form(that.getFields());
+			html.form({'class': my.class}, my.content);
 		};
 
 		return that;
