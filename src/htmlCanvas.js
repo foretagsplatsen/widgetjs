@@ -26,6 +26,8 @@ define(
 		// Supported HTML events
 		var attributes = 'href for id media rel src style title type'.split(' ');
 
+		var omitSymbol = {};
+
 		// Supported HTML attributes
 		var events = ('blur focus focusin focusout load resize scroll unload ' +
 			'click dblclick mousedown mouseup mousemove mouseover ' +
@@ -114,6 +116,16 @@ define(
 					return that.tag(tagName, args);
 				};
 			});
+
+			/**
+			 * Returns omit symbol that is used to omit a attribute pair
+			 * and omit the object appended to brush.
+			 *
+			 * @returns {{}}
+			 */
+			that.omit = function() {
+				return omitSymbol;
+			};
 
 			/**
 			 * Append an object to the root brush
@@ -291,6 +303,11 @@ define(
 			 * @returns {{}}
 			 */
 			that.setAttribute = function (key, value) {
+				// Omit attribute if value is omit
+				if(value === omitSymbol) {
+					return that;
+				}
+
 				element.setAttribute(key, value);
 				return that;
 			};
@@ -421,6 +438,11 @@ define(
 			function append(object) {
 				if (typeof(object) === 'undefined' || object === null) {
 					throw new Error('cannot append null or undefined to brush');
+				}
+
+				// Ignore object if it's a omit symbol
+				if(object === omitSymbol) {
+					return;
 				}
 
 				if (typeof object === "object" && object.constructor === Array) {

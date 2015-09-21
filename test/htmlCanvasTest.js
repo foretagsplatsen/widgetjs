@@ -81,7 +81,21 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
             assert.equal(divEl.attr('class'), 'test_class', 'attribute class rendered');
 
             // and class was set
-            assert.equal(divEl.attr('special_attribute'), 'test', 'attribute special_attribute rendered');
+            assert.ok(divEl.is('[special_attribute]'), 'attribute special_attribute rendered');
+        });
+    });
+
+    test("can omit attributes", function() {
+        withCanvas(function(html) {
+            // Arrange: a div with attributes
+            html.div({id: 'test_div', 'special_attribute' : html.omit()}, 'content');
+
+            // Assert: that DIV was rendered
+            var divEl = jQuery("#test_div");
+            assert.ok(divEl.get(0), 'element rendered');
+
+            // and class was set
+            assert.ok(!divEl.is('[special_attribute]'), 'attribute special_attribute not rendered');
         });
     });
 
@@ -138,6 +152,24 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
             assert.ok(jQuery("#outer_div").get(0), 'outer div rendered');
             assert.ok(jQuery("#inner_div").get(0), 'inner div rendered');
             assert.ok(jQuery("#inner_div > SPAN").get(0), 'inner SPAN rendered');
+        });
+    });
+
+    test("can omit nested tags", function() {
+        withCanvas(function(html) {
+            // Arrange: a inner and outer div with a span as inner child
+            // where the child is omited based on a flag
+            var hasSomeText = false;
+            html.div({'id' : 'outer_div'},
+                html.div({'id' : 'inner_div'},
+                    hasSomeText ? html.span('Some text') : html.omit()
+                )
+            );
+
+            // Assert: that outer div rendered
+            assert.ok(jQuery("#outer_div").get(0), 'outer div rendered');
+            assert.ok(jQuery("#inner_div").get(0), 'inner div rendered');
+            assert.ok(!jQuery("#inner_div > SPAN").get(0), 'inner SPAN not rendered');
         });
     });
 
