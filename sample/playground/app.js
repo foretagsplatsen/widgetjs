@@ -26,7 +26,7 @@ define([
 				my.run();
 			}
 		});
-		my.code.setCode(my.editor.getCode());
+		my.code.evaluateCode(my.editor.getCode());
 
 		//
 		// Render
@@ -66,7 +66,7 @@ define([
 			);
 
 			// Run manually
-			html.a({klass: 'btn btn-success', click: function() { my.run(); }}, 'Run');
+			html.a({klass: 'btn btn-success', click: my.run}, 'Run');
 		};
 
 		my.renderEditorOn = function(html) {
@@ -95,7 +95,7 @@ define([
 		//
 
 		my.run = function() {
-			my.code.setCode(my.editor.getCode());
+			my.code.evaluateCode(my.editor.getCode());
 		};
 
 

@@ -22,9 +22,11 @@ define([
 		// Public
 		//
 
-		that.setCode = function(code) {
+		that.evaluateCode = function(code) {
 			try {
+				/* jshint evil:true */
 				my.output = eval("try { var _wrapper = function() {" + code + "}; _wrapper();} catch (error) { error.toString(); }");
+				/* jshint evil:false */
 			} catch (error) {
 				my.output = error.toString();
 			}
@@ -33,7 +35,7 @@ define([
 
 		//
 		// Render
-		// 
+		//
 
 		that.renderContentOn = function(html) {
 			try {
