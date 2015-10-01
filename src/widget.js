@@ -57,7 +57,7 @@ define(
             var id = spec.id || idGenerator.newId();
 
             /** When within an update transaction, do not update the widget */
-            var inUpdateTransaction = false;
+            my.inUpdateTransaction = false;
 
             /**
              * Keep track of the rendered subwidgets
@@ -312,7 +312,7 @@ define(
              *
              */
             that.update = function () {
-                if (inUpdateTransaction || !that.isRendered()) {
+                if (my.inUpdateTransaction || !that.isRendered()) {
                     return;
                 }
 
@@ -325,6 +325,24 @@ define(
                 that.triggerDidAttach();
             };
 
+            that.withinTransaction = function(fn, onDone) {
+                if(my.inUpdateTransaction) {
+                    fn();
+                } else {
+                    try {
+                        my.inUpdateTransaction = true;
+                        fn();
+                    }
+                    finally {
+                        my.inUpdateTransaction = false;
+                        if(onDone) {
+							onDone();
+						}
+                    }
+                }
+            };
+
+
             /**
              * Evaluate `fn`, ensuring that an update will be
              * performed after evaluating the function. Nested calls
@@ -332,19 +350,12 @@ define(
              * widget only once.
              */
             that.withUpdate = function(fn) {
-                if(inUpdateTransaction) {
-                    fn();
-                } else {
-                    try {
-                        inUpdateTransaction = true;
-                        fn();
-                    }
-                    finally {
-                        inUpdateTransaction = false;
-                        that.update();
-                    }
-                }
+				that.withinTransaction(fn, that.update);
             };
+
+			that.withNoUpdate = function(fn) {
+				that.withinTransaction(fn);
+			};
 
             // Third party protected extensions** added to `my`.
             // See widget-extensions.js
