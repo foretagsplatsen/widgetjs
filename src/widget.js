@@ -1,13 +1,13 @@
 define(
 	[
-		'./widget-extensions',
 		'./events',
 		'./htmlCanvas',
 		'./addons/routed',
+		'./addons/transactable',
 		'jquery'
 	],
 
-	function (ext, events, htmlCanvas, routed, jQuery) {
+	function (events, htmlCanvas, routed, transactable, jQuery) {
 
 		/**
 		 * Base for all widgets. A widget can keep state in variables, contain logic and
@@ -341,13 +341,6 @@ define(
 				that.withinTransaction(fn);
 			};
 
-			// Third party protected extensions** added to `my`.
-			// See widget-extensions.js
-			for (var extProperty in ext) {
-				if (ext.hasOwnProperty(extProperty)) {
-					my[extProperty] = ext[extProperty];
-				}
-			}
 
 			return that;
 		};
