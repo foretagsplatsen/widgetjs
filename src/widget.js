@@ -56,9 +56,6 @@ define(
 
 			var id = spec.id || idGenerator.newId();
 
-			/** When within an update transaction, do not update the widget */
-			my.inUpdateTransaction = false;
-
 			/**
 			 * Keep track of the rendered subwidgets
 			 */
@@ -296,7 +293,7 @@ define(
 			 *
 			 */
 			that.update = function () {
-				if (my.inUpdateTransaction || !that.isRendered()) {
+				if (!that.isRendered()) {
 					return;
 				}
 
@@ -308,39 +305,6 @@ define(
 				that.asJQuery().replaceWith(html.root.element);
 				that.triggerDidAttach();
 			};
-
-			that.withinTransaction = function(fn, onDone) {
-				if(my.inUpdateTransaction) {
-					fn();
-				} else {
-					try {
-						my.inUpdateTransaction = true;
-						fn();
-					}
-					finally {
-						my.inUpdateTransaction = false;
-						if(onDone) {
-							onDone();
-						}
-					}
-				}
-			};
-
-
-			/**
-			 * Evaluate `fn`, ensuring that an update will be
-			 * performed after evaluating the function. Nested calls
-			 * to `withUpdate` or `update` will result in updating the
-			 * widget only once.
-			 */
-			that.withUpdate = function(fn) {
-				that.withinTransaction(fn, that.update);
-			};
-
-			that.withNoUpdate = function(fn) {
-				that.withinTransaction(fn);
-			};
-
 
 			return that;
 		};
@@ -388,6 +352,6 @@ define(
 			}
 		}
 
-		return routed(widget);
+		return transactable(routed(widget));
 	}
 );
