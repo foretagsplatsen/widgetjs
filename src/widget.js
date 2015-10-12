@@ -42,7 +42,7 @@ define(
 		 *
 		 * @param {Object} spec
 		 * @param {String} [spec.id] Unique id for widget. Also used for root element when attached/rendered to DOM.
-		 *							 If not provided an ID will automatically be generated and assigned.
+		 *                           If not provided an ID will automatically be generated and assigned.
 		 * @param {Object} [my]
 		 *
 		 * @returns {widget}
@@ -105,7 +105,7 @@ define(
 			 * Renders the widget on a JQuery / DOM
 			 *
 			 * @example
-			 *	  widget.appendTo('BODY');
+			 * widget.appendTo('BODY');
 			 *
 			 * @param aJQuery
 			 */
