@@ -1,13 +1,13 @@
 define(
 	[
 		'./widget-extensions',
-		'./router',
 		'./events',
 		'./htmlCanvas',
+		'./addons/routed',
 		'jquery'
 	],
 
-	function (ext, router, events, htmlCanvas, jQuery) {
+	function (ext, events, htmlCanvas, routed, jQuery) {
 
 		/**
 		 * Base for all widgets. A widget can keep state in variables, contain logic and
@@ -200,22 +200,6 @@ define(
 			};
 
 			my.trigger = my.events.trigger;
-
-			// Route / Controller extensions
-
-			my.router = router.getRouter();
-
-			my.linkTo = my.router.linkTo;
-			my.linkToPath = my.router.linkToPath;
-			my.linkToUrl = my.router.linkToUrl;
-
-			my.redirectTo = my.router.redirectTo;
-			my.redirectToPath = my.router.redirectToPath;
-			my.redirectToUrl = my.router.redirectToUrl;
-
-			my.getParameters = my.router.getParameters;
-			my.getParameter = my.router.getParameter;
-			my.setParameters = my.router.setParameters;
 
 			//
 			// Render
@@ -411,6 +395,6 @@ define(
 			}
 		}
 
-		return widget;
+		return routed(widget);
 	}
 );
