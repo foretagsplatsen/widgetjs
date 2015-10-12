@@ -3,11 +3,13 @@
     "jquery"
   ],
   "loadEagerly": [
-    "**.*.js"
+    "./"
   ],
   "dontLoad": [
     "./dist/",
-    "./bower_components/*"
+    "./docs/",
+    "./node_modules/",
+    "./bower_components/"
   ],
   "plugins": {
     "requirejs": {
