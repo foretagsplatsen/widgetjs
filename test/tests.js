@@ -18,6 +18,7 @@ var testModules = [
     'htmlCanvasTest',
     'widgetTest',
     'eventsTest',
+    'addons/initializedTest',
     'router/hashLocationTest',
     'router/routerTest',
     'router/routeTest'
