@@ -368,7 +368,7 @@ define(
 							that.on(key, object[key]);
 						}
 
-						if (key === 'klass') {
+						else if (key === 'klass') {
 							that.addClass(object[key]);
 						} else {
 							that.setAttribute(key, object[key]);
