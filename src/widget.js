@@ -98,6 +98,9 @@ define(
 			 *
 			 */
 			that.dispose = function() {
+				children.forEach(function(child) {
+					child.dispose();
+				});
 				my.disposeWidget();
 			};
 
