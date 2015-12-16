@@ -16,11 +16,6 @@ define([
 	var pollInterval = 25;
 
 	/**
-	 * In old IE (< IE 8) a hidden IFrame is created to allow the back button and hash-based history to work.
-	 */
-	var requireIFrameHistory = jQuery.browser.msie && parseInt(jQuery.browser.version, 10) < 8;
-
-	/**
 	 * Manages and listens for changes in the hash fragment of the URL.
 	 *
 	 * @example
@@ -31,11 +26,7 @@ define([
 	 *		location.setUrl('anotherUrl');
 	 *		location.back();
 	 *
-	 * Note: Hash can be started before DOM is ready, but since it won’t be usable before then in
-	 * IE6/7 (due to the necessary IFrame), recommended usage is to start it inside a DOM ready handler.
-	 *
 	 * @param {{}} [spec]
-	 * @param {string} [spec.iFrameSrc='javascript:0']
 	 *
 	 * @param [my]
 	 * @returns {hashLocation}
@@ -45,8 +36,6 @@ define([
 		my = my || {};
 
 		var pollTimerId = null;
-		var iFrame;
-		var iFrameSrc = (spec.iFrameSrc || /*jshint scripturl:true*/ 'javascript:0'); /*jshint scripturl:false*/
 
 		my.currentHash = undefined; // last hash fragment
 		my.history = []; // history of visited hash fragments
@@ -134,10 +123,6 @@ define([
 			my.history = [my.currentHash];
 
 			if (noHashChangeSupport) {
-				if (requireIFrameHistory) {
-					createFrame();
-				}
-
 				pollTimerId = setInterval(check, pollInterval);
 			} else {
 				jQuery(window).bind('hashchange', check);
@@ -153,8 +138,6 @@ define([
 				pollTimerId = null;
 			}
 			jQuery(window).unbind('hashchange', check);
-			jQuery('#ie_my.history_iframe').remove(); // remove any IFRAME
-			iFrame = null;
 		};
 
 		//
@@ -181,38 +164,12 @@ define([
 			return url(aHash.replace(/^#!?[\/]?/, ''));
 		}
 
-		function createFrame() {
-			var idoc = jQuery('<iframe id="ie_history_iframe" src="' + iFrameSrc + '" style="display: none"></iframe>')
-				.prependTo('body')[0];
-				iFrame = idoc.contentWindow.document || idoc.document;
-			if (window.location.hash) {
-				iFrame.location.hash = my.currentHash.substr(1); // remove #
-			}
-			iFrame.location.title = window.title;
-		}
-
-		function setFrameHash(aHash) {
-			// Special hack for IE < 8 since hash changes is not added to history.
-			// IE will add a history entry when IFrame is opened/closed.
-			iFrame.open();
-			iFrame.close();
-			iFrame.location.hash = aHash.substr(1); // remove #
-		}
-
-		function getFrameHash() {
-			return iFrame.location.hash;
-		}
-
 		function setCurrentHash(newHash) {
 			newHash = newHash || getWindowHash();
 
 			if(my.currentHash !== newHash) {
 				my.currentHash = newHash;
 				my.history.push(my.currentHash);
-
-				if (requireIFrameHistory) {
-					setFrameHash(my.currentHash);
-				}
 			}
 
 			that.onChanged.trigger(urlFromHash(my.currentHash));
@@ -220,18 +177,6 @@ define([
 
 		function check() {
 			var windowHash = getWindowHash();
-
-			if(requireIFrameHistory) {
-				var frameHash = getFrameHash();
-
-				var isBackButtonClicked = frameHash !== my.currentHash &&
-					frameHash !== windowHash;
-
-				if(isBackButtonClicked) {
-					setWindowHash(frameHash);
-					windowHash = frameHash;
-				}
-			}
 
 			var urlChanged = my.currentHash !== windowHash;
 			if (urlChanged) {

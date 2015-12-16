@@ -81,28 +81,6 @@ define([
 			assert.equal(my.history[0], my.currentHash, 'history entry is current hash');
 		});
 
-		if(!(jQuery.browser.msie  && parseInt(jQuery.browser.version, 10) === 7)) {
-			test("triggers changed event when URL is changed", function (done) {
-				// Arrange: listen for url changes
-				var capturedUrls = [];
-				hashLocation.onChanged(function(url) {
-					capturedUrls.push(url.toString());
-					if(capturedUrls.length === 3) {
-						done();
-					}
-				});
-
-				// Act: start listening for changes and change URL 3 times
-				hashLocation.start();
-				setHash('#!/a');
-				setHash('#!/b');
-				setHash('#!/c');
-
-				// Assert that event was triggered for each url
-				assert.deepEqual(capturedUrls, ['a', 'b', 'c'], 'Event triggered');
-			});
-		}
-
 		test("getUrl() returns location.hash minus hash-bang", function () {
 			// Arrange: set a location hash
 			window.location.hash = '#!/test';
