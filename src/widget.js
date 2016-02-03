@@ -308,6 +308,11 @@ define(
 			that.renderContentOn = function (html) {};
 
 			/**
+			 * Hook evaluated before widget update.
+			 */
+			my.willUpdate = function() {};
+
+			/**
 			 * Re-renders the widget and replace it in the DOM
 			 *
 			 * Content is first re-rendered on a document fragment. Update then replace the element matched
@@ -318,6 +323,8 @@ define(
 				if (my.inUpdateTransaction || !that.isRendered()) {
 					return;
 				}
+
+				my.willUpdate();
 
 				// Re-render
 				var html = htmlCanvas();
