@@ -55,7 +55,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
             var that = widget({}, my);
 
             that.aMethod = function() {
-                my.trigger('anEvent');
+                that.trigger('anEvent');
             };
 
             return that;
@@ -80,7 +80,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
             that.onAnEvent = my.events.createEvent('anEvent');
 
             that.aMethod = function() {
-                my.trigger('anEvent');
+                that.trigger('anEvent');
             };
 
             return that;

@@ -202,8 +202,6 @@ define(
 				my.events.dispose();
 			};
 
-			my.trigger = my.events.trigger;
-
 			// Route / Controller extensions
 
 			my.router = router.getRouter();
