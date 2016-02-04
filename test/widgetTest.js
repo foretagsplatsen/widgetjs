@@ -260,4 +260,76 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
 
         });
     });
+
+	test("willAttach() and didAttach() are called upon rendering", function() {
+        withCanvas(function(html) {
+            var aWidget = (function() {
+                var my = {};
+                var that = widget({}, my);
+
+				that.willAttachCalled = false;
+				that.didAttachCalled = false;
+
+				my.willAttach = function() {
+					that.willAttachCalled = true;
+				};
+
+				my.didAttach = function() {
+					that.didAttachCalled = true;
+				};
+
+                return that;
+            })();
+
+            // Act: render widget
+            html.render(aWidget);
+
+            // Assert: that form is rendered with id
+            assert.ok(aWidget.willAttachCalled);
+            assert.ok(aWidget.didAttachCalled);
+        });
+    });
+
+	test("willUpdate() is not called when rendering", function() {
+        withCanvas(function(html) {
+            var aWidget = (function() {
+                var my = {};
+                var that = widget({}, my);
+
+				that.willUpdateCalled = false;
+
+				my.willUpdate = function() {
+					that.willUpdateCalled = true;
+				};
+
+                return that;
+            })();
+
+            html.render(aWidget);
+
+            assert.ok(!aWidget.willUpdateCalled);
+        });
+	});
+
+	test("willUpdate() is called when updating", function() {
+        withCanvas(function(html) {
+            var aWidget = (function() {
+                var my = {};
+                var that = widget({}, my);
+
+				that.willUpdateCalled = false;
+
+				my.willUpdate = function() {
+					that.willUpdateCalled = true;
+				};
+
+                return that;
+            })();
+
+            html.render(aWidget);
+			aWidget.update();
+
+            assert.ok(aWidget.willUpdateCalled);
+        });
+	});
 });
