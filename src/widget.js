@@ -67,12 +67,6 @@ define(
 			/** Events for widget */
 			my.events = events.eventCategory();
 
-			/**
-			 * Event triggered each time the widget is attached (or
-			 * reattached due to an update of rendering) to the DOM.
-			 */
-			that.didAttach = my.events.createEvent();
-
 			//
 			// Public
 			//
@@ -113,8 +107,9 @@ define(
 			 * @param aJQuery
 			 */
 			that.appendTo = function (aJQuery) {
-				renderBasicOn(htmlCanvas(aJQuery));
-				that.triggerDidAttach();
+				my.withAttachHooks(function() {
+					renderBasicOn(htmlCanvas(aJQuery));
+				});
 			};
 
 			/**
@@ -124,10 +119,11 @@ define(
 			 * @param aJQuery
 			 */
 			that.replace = function (aJQuery) {
-				var canvas = htmlCanvas(aJQuery);
-				canvas.root.asJQuery().empty();
-				renderBasicOn(canvas);
-				that.triggerDidAttach();
+				my.withAttachHooks(function() {
+					var canvas = htmlCanvas(aJQuery);
+					canvas.root.asJQuery().empty();
+					renderBasicOn(canvas);
+				});
 			};
 
 			/**
@@ -161,7 +157,20 @@ define(
 			 * @param aTagBrush
 			 */
 			that.appendToBrush = function (aTagBrush) {
-				renderBasicOn(htmlCanvas(aTagBrush.asJQuery()));
+				my.withAttachHooks(function() {
+					renderBasicOn(htmlCanvas(aTagBrush.asJQuery()));
+				});
+			};
+
+			/**
+			 * Trigger the `willAttach` event on the receiver and all
+			 * rendered subwidgets.
+			 */
+			that.triggerWillAttach = function() {
+				my.willAttach();
+				children.forEach(function (widget) {
+					widget.triggerWillAttach();
+				});
 			};
 
 			/**
@@ -169,10 +178,20 @@ define(
 			 * rendered subwidgets.
 			 */
 			that.triggerDidAttach = function() {
-				that.didAttach.trigger();
+				my.didAttach();
 				children.forEach(function (widget) {
 					widget.triggerDidAttach();
 				});
+			};
+
+			/**
+			 * Evaluate `fn`, calling `willAttach` before and `didAttach` after
+			 * the evaluation.
+			 */
+			my.withAttachHooks = function(fn) {
+				that.triggerWillAttach();
+				fn();
+				that.triggerDidAttach();
 			};
 
 			// Expose events
@@ -201,8 +220,6 @@ define(
 			my.disposeWidget = function() {
 				my.events.dispose();
 			};
-
-			my.trigger = my.events.trigger;
 
 			// Route / Controller extensions
 
@@ -308,6 +325,18 @@ define(
 			that.renderContentOn = function (html) {};
 
 			/**
+			 * Hook evaluated before the widget is attached (or reattached due
+			 * to an update of rendering) to the DOM.
+			 */
+			my.willAttach = function() {};
+
+			/**
+			 * Hook evaluated each time the widget is attached (or
+			 * reattached due to an update of rendering) to the DOM.
+			 */
+			my.didAttach = function() {};
+
+			/**
 			 * Hook evaluated before widget update.
 			 */
 			my.willUpdate = function() {};
@@ -325,14 +354,14 @@ define(
 				}
 
 				my.willUpdate();
+				my.withAttachHooks(function() {
+					// Re-render
+					var html = htmlCanvas();
+					renderBasicOn(html);
 
-				// Re-render
-				var html = htmlCanvas();
-				renderBasicOn(html);
-
-				// Replace our self
-				that.asJQuery().replaceWith(html.root.element);
-				that.triggerDidAttach();
+					// Replace our self
+					that.asJQuery().replaceWith(html.root.element);
+				});
 			};
 
 			that.withinTransaction = function(fn, onDone) {
