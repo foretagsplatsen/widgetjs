@@ -53,10 +53,9 @@ define([
 
     that.renderContentOn = function(html) {
       html.textarea({id: 'editor', style: 'height:100%'}, code);
-      that.didAttach.onceOn(my.widgetDidAttach);
     };
 
-    my.widgetDidAttach = function() {
+    my.didAttach = function() {
       editor = codemirror.fromTextArea(document.getElementById('editor'), {
         lineNumbers: showLineNumbers,
         matchBrackets: true,
