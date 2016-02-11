@@ -3,7 +3,11 @@
   "description": "A nice litle framework for widget based JS Apps.",
   "version": "0.0.1",
   "homepage": "http://github.com/foretagsplatsen/widgetjs",
-  "author": "Henrik Wallström",
+  "author": "Foretagsplatsen",
+  "contributors": [
+    "Nicolas Petton <nicolas@petton.fr>",
+    "Henrik Wallström <henrik.wallstrom@foretagsplatsen.se>"
+  ],
   "licenses": [
     {
       "type": "MIT",
