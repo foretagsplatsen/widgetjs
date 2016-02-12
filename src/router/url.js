@@ -1,7 +1,7 @@
-define(
-	[
-	],
-	function () {
+define([
+	'objectjs'
+],
+	function (object) {
 
 		/**
 		 * Token/Char used to separate segments in URL paths.
@@ -13,7 +13,7 @@ define(
 		 * A `url` actually represents the fragment part of the actual url.
 		 *
 		 * @example
-		 *	var url = url('path/to?foo=a&bar=b');
+		 *	var url = url({rawUrl: 'path/to?foo=a&bar=b'});
 		 *	url.getPath(); // => 'path/to'
 		 *	url.getQuery(); // => {foo: 'a', bar: 'b'}
 		 *	url.matchRoute(aRoute); // => true
@@ -21,16 +21,20 @@ define(
 		 * @param {string} rawUrl
 		 * @returns {url}
 		 */
-		function url (rawUrl) {
+		var url = object.subclass(function(that, spec, my) {
 
-			/** @typedef {{}} url */
-			var that = {};
+			var rawUrl;
+			var path;
+			var query;
+			var segments;
 
-			rawUrl = rawUrl || '';
+			that.initialize = function() {
+				rawUrl = spec.rawUrl || '';
+				path = parsePath(rawUrl);
+				query = parseQuery(rawUrl);
+				segments = parseSegments(path);
+			};
 
-			var path = parsePath(rawUrl);
-			var query = parseQuery(rawUrl);
-			var segments = parseSegments(path);
 
 			//
 			// Public
@@ -73,9 +77,7 @@ define(
 			that.toString = function() {
 				return rawUrl;
 			};
-
-			return that;
-		}
+		});
 
 		/**
 		 * Create URL from path and query
@@ -96,11 +98,11 @@ define(
 			if (query) {
                 var queryPart = decodeURIComponent(jQuery.param(query));
                 if(queryPart) {
-                    return url(path + '?' + queryPart);
+                    return url({rawUrl: path + '?' + queryPart});
                 }
             }
 
-			return url(path);
+			return url({rawUrl: path});
 		};
 
 		/**

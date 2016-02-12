@@ -2,16 +2,16 @@ define([
 	'widgetjs/core'
 ], function (widgetjs, shared) {
 
-	function navigationWidget(spec, my) {
-		spec = spec || {};
-		my = my || {};
+	var navigationWidget = widgetjs.widget.subclass(function(that, spec, my) {
 
-		var that = widgetjs.widget(spec, my);
+		var brand;
 
-		var brand = spec.brand || '';
+		that.initialize = function() {
+			brand = spec.brand || '';
 
-		that.activeItem = 'home';
-		that.items = [];
+			that.activeItem = 'home';
+			that.items = [];
+		};
 
 		that.activate = function(id) {
 			that.activeItem = id;
@@ -48,9 +48,7 @@ define([
 				)
 			);
 		};
-
-		return that;
-	}
+	});
 
 	return navigationWidget;
 });

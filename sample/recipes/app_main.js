@@ -2,6 +2,7 @@ requirejs.config({
 	baseUrl: '.',
 	paths: {
 		'jquery': '../../bower_components/jquery/jquery',
+		'objectjs': '../../bower_components/objectjs/src/object',
 		'widgetjs' : '../../src/',
 		'boostrap' : 'http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min',
 		'jstorage' : 'http://cdnjs.cloudflare.com/ajax/libs/jStorage/0.4.4/jstorage.min',
@@ -15,7 +16,6 @@ requirejs.config({
 
 define(['app', 'jquery'], function(app, jQuery) {
 	jQuery( document ).ready(function() {
-		var anApp = app();
-		anApp.initialize();
+		app();
 	});
 });

@@ -1,4 +1,6 @@
-define(['./abstractSegment'], function(abstractSegment) {
+define([
+	'./abstractSegment'
+], function(abstractSegment) {
 
 	/**
 	 * Constructs validator functions from constraints parameters.
@@ -39,17 +41,14 @@ define(['./abstractSegment'], function(abstractSegment) {
 	 * @param [my]
 	 * @returns {parameterSegment}
 	 */
-	function parameterSegment(spec, my) {
-		spec = spec || {};
-		my = my || {};
+	var parameterSegment = abstractSegment.subclass(function(that, spec, my) {
 
-		/** @typedef {abstractSegment} parameterSegment */
-		var that = abstractSegment(spec, my);
-
-		my.name = my.segmentString.substr(1); // strip of the leading #
-		my.constraints = (my.options.constraints && my.options.constraints[my.name] &&
-			[my.options.constraints[my.name]]) || [];
-		my.validators = my.constraints.map(parameterValidator).filter(Boolean);
+		that.initialize = function() {
+			my.name = my.segmentString.substr(1); // strip of the leading #
+			my.constraints = (my.options.constraints && my.options.constraints[my.name] &&
+				[my.options.constraints[my.name]]) || [];
+			my.validators = my.constraints.map(parameterValidator).filter(Boolean);
+		};
 
 		//
 		// Public
@@ -112,9 +111,7 @@ define(['./abstractSegment'], function(abstractSegment) {
 		that.toString = function() {
 			return 'param(' + that.getName() + ')';
 		};
-
-		return that;
-	}
+	});
 
 	/**
 	 * Match segment strings with a leading `#`.

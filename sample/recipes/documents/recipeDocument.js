@@ -6,11 +6,7 @@ define([
 	/**
 	 * Page for a single recipe
 	 */
-	function recipeDocument(spec, my) {
-		spec = spec || {};
-		my = my || {};
-
-		var that = widgetjs.widget(spec, my);
+	var recipeDocument = widgetjs.widget.subclass(function(that, spec, my) {
 
 		var recipe;
 
@@ -58,9 +54,7 @@ define([
 				)
 			);
 		};
-
-		return that;
-	}
+	});
 
 	return recipeDocument;
 });

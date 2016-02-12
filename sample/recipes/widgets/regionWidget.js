@@ -1,11 +1,8 @@
 define([
 	'widgetjs/core'
 ], function (widgetjs) {
-	function regionWidget(spec, my) {
-		spec =  spec || {};
-		my =  my || {};
 
-		var that = widgetjs.widget(spec, my);
+	var regionWidget = widgetjs.widget.subclass(function(that, spec, my) {
 
 		var widgets = [];
 
@@ -39,9 +36,7 @@ define([
 		that.renderContentOn = function(html) {
 			html.render(widgets);
 		};
-
-		return that;
-	}
+	});
 
 	return regionWidget;
 });

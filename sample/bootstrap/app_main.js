@@ -1,6 +1,7 @@
 requirejs.config({
 	baseUrl: '.',
 	paths:   {
+		'objectjs':   '../../bower_components/objectjs/src/object',
 		'jquery':   '../../bower_components/jquery/jquery',
 		'widgetjs': '../../src/',
 		'bootstrap': 'http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min',

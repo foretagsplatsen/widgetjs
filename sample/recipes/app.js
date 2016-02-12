@@ -18,23 +18,25 @@ define([
 	 *
 	 * @exports app
 	 */
-	function app (spec, my) {
-		spec = spec || {};
-		my = my || {};
-
-		var that = widgetjs.widget(spec, my);
+	var app = widgetjs.widget.subclass(function(that, spec, my) {
 
 		/** @type {navigationWidget} Main navigation for application. */
-		var navigation = widgets.navigationWidget({brand : 'My Recipes'});
+		var navigation;
 
 		/** @type {regionWidget} Displays the current document */
-		var mainRegion = widgets.regionWidget();
+		var mainRegion;
 
 		/**
 		 * Registers routes and creates menu items using addAction()
 		 * Executed once on start-up to initilize the application.
 		 */
 		that.initialize = function () {
+			/** @type {navigationWidget} Main navigation for application. */
+			navigation = widgets.navigationWidget({brand : 'My Recipes'});
+
+			/** @type {regionWidget} Displays the current document */
+			mainRegion = widgets.regionWidget();
+
 			that.addAction({
                 name: 'recipes',
 				pattern: '',
@@ -145,9 +147,7 @@ define([
 			html.render(navigation);
 			html.div({klass: 'container' }, mainRegion);
 		};
-
-		return that;
-	}
+	});
 
 	return app;
 });

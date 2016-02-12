@@ -5,8 +5,7 @@ define([
 	/**
 	 * About Page
 	 */
-	function aboutDocument() {
-		var that = widgetjs.widget();
+	var aboutDocument = widgetjs.widget.subclass(function(that, spec, my) {
 
 		that.renderContentOn = function (html) {
 			html.div({klass: 'jumbotron'},
@@ -15,9 +14,7 @@ define([
 				html.p('It uses twitter boostrap as base for styles and scripts')
 			);
 		};
-
-		return that;
-	}
+	});
 
 	return aboutDocument;
 });

@@ -4,9 +4,10 @@ define(
 		'../events',
 		'./route',
 		'./url',
-		'./hashLocation'
+		'./hashLocation',
+		'objectjs'
 	],
-	function(jQuery, events, route, url, hashLocation) {
+	function(jQuery, events, route, url, hashLocation, object) {
 
 		/**
 		 * Lazily creates a singleton instance of
@@ -36,19 +37,17 @@ define(
 		*
 		* @returns {{}}
 		*/
-		function router(spec, my) {
-			spec = spec || {};
-			my = my || {};
+		var router = object.subclass(function(that, spec, my) {
 
-			var that = {};
+			that.initialize = function() {
+				my.location = spec.locationHandler || hashSingleton();
+				my.routeTable = [];
+				my.lastMatch = undefined;
+				my.defaultParameters = {};
 
-			my.location = spec.locationHandler || hashSingleton();
-			my.routeTable = [];
-			my.lastMatch = undefined;
-			my.defaultParameters = {};
-
-			// Listen for URL changes and resolve URL when changed
-			my.location.onChanged(function() { my.resolveUrl(); });
+				// Listen for URL changes and resolve URL when changed
+				my.location.onChanged(function() { my.resolveUrl(); });
+			};
 
 			// Events
             my.events = events.eventCategory();
@@ -93,7 +92,7 @@ define(
 			 */
 			that.resolveUrl = function(aUrl) {
 				if(typeof aUrl === "string") {
-					aUrl = url(aUrl);
+					aUrl = url({rawUrl: aUrl});
 				}
 
 				my.resolveUrl(aUrl);
@@ -417,7 +416,7 @@ define(
 
 				// Expand template route and construct URL
 				var aRawUrl = templateRoute.expand(allParameters);
-				return url(aRawUrl);
+				return url({rawUrl: aRawUrl});
 			};
 
 			/**
@@ -592,9 +591,7 @@ define(
 
 				return target;
 			}
-
-			return that;
-		}
+		});
 
 		return router;
 	});

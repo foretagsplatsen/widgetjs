@@ -1,12 +1,13 @@
-define(['widgetjs/core', 'lodash', 'jquery', 'prettify'], function(widgetjs, lodash, jQuery, prettify) {
+define([
+	'widgetjs/core',
+	'lodash',
+	'jquery',
+	'prettify'
+], function(widgetjs, lodash, jQuery, prettify) {
 
     jQuery.fn.prettify = function () { this.html(prettify.prettyPrintOne(this.html())); };
 
-    function code (spec, my) {
-        spec = spec || {};
-        my = my || {};
-
-        var that = widgetjs.widget(spec, my);
+    var code = widgetjs.widget.subclass(function(that, spec, my) {
 
         var label = spec.label;
         var group = spec.group;
@@ -88,9 +89,7 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify'], function(widgetjs, lod
                 html.ul({'class' : 'list-unstyled'}, links.map(function(link) { return html.li(html.a({href: link, target: '_new'}, link));}));
             }
         };
-
-        return that;
-    }
+    });
 
     return code;
 });

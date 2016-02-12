@@ -1,6 +1,7 @@
 define(
-	['./routeFactory', '../events', './routeMatchResult', 'jquery',	'./url'],
-	function(routeFactory, events, routeMatchResult, jQuery, url) {
+	['./routeFactory', '../events', './routeMatchResult', 'jquery',	'./url',
+		'objectjs'],
+	function(routeFactory, events, routeMatchResult, jQuery, url, object) {
 
 		/**
 		 * Routes represent the path for which an action should be taken (see `matched` event).
@@ -53,28 +54,29 @@ define(
 		 * @param {{}} my
 		 * @returns {route}
 		 */
-		function route(spec, my) {
-			spec = spec || {};
-			my = my || {};
+		var route = object.subclass(function(that, spec, my) {
 
-			// Build segments from pattern
-			var segments = routeFactory(spec.pattern, spec.options);
+			var segments;
+			var ignoreTrailingSegments;
+			var optionalSequences;
 
-			// Route match URL if all route segments match
-			// but URL still contain trailing segments (default false)
-			var ignoreTrailingSegments = (spec.options && spec.options.ignoreTrailingSegments) || false;
+			that.initialize = function() {
+				// Build segments from pattern
+				segments = routeFactory(spec.pattern, spec.options);
+
+				// Route match URL if all route segments match
+				// but URL still contain trailing segments (default false)
+				ignoreTrailingSegments = (spec.options && spec.options.ignoreTrailingSegments) || false;
 
 
-			// Array with all optional sequences, ie. all combinations
-			// of optional parameters. Array must be ordered to match URL:s
-			// left to right.
-			var optionalSequences = [];
+				// Array with all optional sequences, ie. all combinations
+				// of optional parameters. Array must be ordered to match URL:s
+				// left to right.
+				optionalSequences = [];
 
-			// Pre-calculate optional sequences.
-			ensureOptionalSequences();
-
-			/** @typedef {{}} route */
-			var that = {};
+				// Pre-calculate optional sequences.
+				ensureOptionalSequences();
+			};
 
             my.events = events.eventCategory();
 
@@ -289,9 +291,7 @@ define(
 
 				return routeMatchResult({route: that, url: url, values: parameterValues });
 			}
-
-			return that;
-		}
+		});
 
 		/**
 		 * Generates all subsets of an array with same internal order. Returned subsets are

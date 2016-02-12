@@ -10,8 +10,7 @@ define([
 	 * Import json recipes using drag-and-drop
 	 *
 	 */
-	function exportDocument() {
-		var that = widgetjs.widget();
+	var exportDocument = widgetjs.widget.subclass(function(that, spec, my) {
 
 		that.renderContentOn = function (html) {
 			html.h2({klass: 'page-header'}, 'Export');
@@ -67,9 +66,7 @@ define([
 			e.stopPropagation();
 			e.preventDefault();
 		}
-
-		return that;
-	}
+	});
 
 	// Source: http://stackoverflow.com/questions/16376161/javascript-set-file-in-download
 	function download(strData, strFileName, strMimeType) {

@@ -6,11 +6,7 @@ define([
 	/**
 	 * List all recipes
 	 */
-	function recipesDocument(spec, my) {
-		spec = spec || {};
-		my = my || {};
-
-		var that = widgetjs.widget(spec, my);
+	var recipesDocument = widgetjs.widget.subclass(function(that, spec, my) {
 
 		var recipes = [];
 
@@ -48,9 +44,7 @@ define([
 				};
 			}));
 		};
-
-		return that;
-	}
+	});
 
 	return recipesDocument;
 });

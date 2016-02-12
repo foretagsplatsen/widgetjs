@@ -1,5 +1,6 @@
 define(
 	[
+		'objectjs',
 		'./widget-extensions',
 		'./router',
 		'./events',
@@ -7,7 +8,7 @@ define(
 		'jquery'
 	],
 
-	function (ext, router, events, htmlCanvas, jQuery) {
+	function (object, ext, router, events, htmlCanvas, jQuery) {
 
 		/**
 		 * Base for all widgets. A widget can keep state in variables, contain logic and
@@ -47,22 +48,20 @@ define(
 		 *
 		 * @returns {widget}
 		 */
-		var widget = function (spec, my) {
-			my = my || {};
-			spec = spec || {};
-
-			/** @typedef {{}} widget */
-			var that = {};
-
-			var id = spec.id || idGenerator.newId();
-
-			/** When within an update transaction, do not update the widget */
-			my.inUpdateTransaction = false;
+		var widget = object.subclass(function(that, spec, my) {
 
 			/**
 			 * Keep track of the rendered subwidgets
 			 */
-			var children = [];
+			var children;
+			var id;
+
+			that.initialize = function() {
+				id = spec.id || idGenerator.newId();
+				// When within an update transaction, do not update the widget
+				my.inUpdateTransaction = false;
+				children = [];
+			};
 
 			/** Events for widget */
 			my.events = events.eventCategory();
@@ -405,7 +404,7 @@ define(
 			}
 
 			return that;
-		};
+		});
 
 		/**
 		 * Creates unique ids used by widgets to identify their root div.

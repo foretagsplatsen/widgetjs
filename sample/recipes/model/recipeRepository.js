@@ -1,19 +1,22 @@
-define(['jquery', 'jstorage', 'model/defaultRecipesData', 'model/recipe'], function (jQuery, jstorage, defaultRecepies, recipe) {
+define([
+	'objectjs',
+	'jquery',
+	'jstorage',
+	'model/defaultRecipesData',
+	'model/recipe'
+], function (object, jQuery, jstorage, defaultRecepies, recipe) {
 
 	/**
 	 * Repository data store data using http://www.jstorage.info/
 	 */
-	function jStorageRepository (spec, my) {
-		spec = spec || {};
-		my = my || {};
+	var jStorageRepository = object.subclass(function(that, spec, my) {
 
-		var that = {};
+		that.initialize = function() {
+			my.model = spec.model;
+			my.prefix = spec.prefix || '';
+		};
 
 		// Protected API
-
-		my.model = spec.model;
-
-		my.prefix = spec.prefix || '';
 
 		my.key = function(key) {
 			return my.prefix + key;
@@ -122,18 +125,19 @@ define(['jquery', 'jstorage', 'model/defaultRecipesData', 'model/recipe'], funct
 		that.update  = my.storageUpdate;
 		that.remove = my.storageRemove;
 		that.empty = my.storageEmpty;
-
-
-		return that;
-	}
+	});
 
 	/**
 	 * jStorageRepository
 	 *
 	 * @exports recipeRepository
 	 */
-	function recipeRepository () {
-		var that = jStorageRepository({prefix: 'myrecipe', model: recipe.recipe});
+	var recipeRepository = jStorageRepository.subclass(function(that, spec, my) {
+
+		that.initialize = function() {
+			my.prefix = 'myrecipe';
+			my.model = recipe.recipe;
+		};
 
 		// Pre-populate with default data if empty
 		that.findAll({ onSuccess: function(recipes) {
@@ -147,9 +151,7 @@ define(['jquery', 'jstorage', 'model/defaultRecipesData', 'model/recipe'], funct
 				that.save({model: recipe});
 			});
 		}
-
-		return that;
-	}
+	});
 
 	return recipeRepository();
 });

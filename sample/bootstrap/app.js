@@ -1,12 +1,16 @@
-define(['widgetjs/core', 'styleExamples', 'componentsExamples', 'javascriptExamples', 'bootstrap'],
-    function(widgetjs, styleExamples, componentsExamples, javascriptExamples) {
+define([
+	'widgetjs/core',
+	'styleExamples',
+	'componentsExamples',
+	'javascriptExamples',
+	'bootstrap'
+], function(widgetjs, styleExamples, componentsExamples, javascriptExamples) {
 
     function uniqueValues(value, index, self) {
         return self.indexOf(value) === index;
     }
 
-    function bootstrapBrowserApp () {
-        var that = widgetjs.widget();
+    var bootstrapBrowserApp = widgetjs.widget.subclass(function(that, spec, my) {
 
         var searchFilter = '';
 
@@ -147,9 +151,7 @@ define(['widgetjs/core', 'styleExamples', 'componentsExamples', 'javascriptExamp
         function getGroupIdentifier (group) {
             return group.replace(/ /g,"_");
         }
-
-        return that;
-    }
+    });
 
     return bootstrapBrowserApp;
 });

@@ -1,23 +1,22 @@
-define([], function() {
+define([
+	'objectjs'
+], function(object) {
 	/**
 	 * A segment represents a single part of a route that can be matched
 	 * against a URL segment using `match()`.
 	 *
 	 * @param {{}} spec
-	 * @param {string} segmentString
-	 * @param {{}} spec.options all route options
+	 * @param {string} segmentString
+	 * @param {{}} spec.options all route options
 	 * @param my
 	 * @returns {abstractSegment}
 	 */
-	function abstractSegment(spec, my) {
-		spec = spec || {};
-		my = my || {};
+	var abstractSegment = object.subclass(function(that, spec, my) {
 
-		my.segmentString = spec.segmentString;
-		my.options = spec.options || {};
-
-		/** @typedef {{}} abstractSegment */
-		var that = {};
+		that.initialize = function() {
+			my.segmentString = spec.segmentString;
+			my.options = spec.options || {};
+		};
 
 		//
 		// Public
@@ -70,9 +69,11 @@ define([], function() {
 		that.toString = function() {
 			return my.segmentString;
 		};
+	});
 
-		return that;
-	}
+	abstractSegment.match = function(segmentString) {
+		return false;
+	};
 
 	return abstractSegment;
 });

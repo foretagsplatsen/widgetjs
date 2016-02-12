@@ -1,4 +1,6 @@
-define(['./abstractSegment'], function(abstractSegment) {
+define([
+	'./abstractSegment'
+], function(abstractSegment) {
 
 	/**
 	 * A static segment match URL segments that are identical
@@ -8,12 +10,7 @@ define(['./abstractSegment'], function(abstractSegment) {
 	 * @param [my]
 	 * @returns {segment}
 	 */
-	function staticSegment(spec, my) {
-		spec = spec || {};
-		my = my || {};
-
-		/** @typedef {abstractSegment} segment */
-		var that = abstractSegment(spec, my);
+	var staticSegment = abstractSegment.subclass(function(that, spec, my) {
 
 		/**
 		 * Static segment match if URL and route segment
@@ -27,17 +24,15 @@ define(['./abstractSegment'], function(abstractSegment) {
 		};
 
 		return that;
-	}
+	});
 
 	/**
-	 * Abstract segments should be the last segment type to match
-	 * since it will match all segment strings.
-	 *
+	 * Match all but parameter segment strings
 	 * @param {string} segmentString
 	 * @returns {boolean}
 	 */
 	staticSegment.match = function(segmentString) {
-		return true;
+		return ['#', '?'].indexOf(segmentString[0]) === -1;
 	};
 
 	return staticSegment;

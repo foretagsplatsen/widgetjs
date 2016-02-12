@@ -1,4 +1,6 @@
-define([], function () {
+define([
+	'objectjs'
+], function (object) {
 
 	/**
 	 * Ingredience in recipe
@@ -10,19 +12,18 @@ define([], function () {
 	 *
 	 * @return {object} ingredient object
 	 */
-	function recipeIngredient(spec) {
-		var that = {};
+	var recipeIngredient = object.subclass(function(that, spec, my) {
 
-		that.name = spec.name;
-		that.amount = spec.amount;
-		that.unit = spec.unit;
+		that.initialize = function() {
+			that.name = spec.name;
+			that.amount = spec.amount;
+			that.unit = spec.unit;
+		};
 
 		that.toString = function() {
 			return '' + that.amount + ' ' + that.unit + ' ' + that.name;
 		};
-
-		return that;
-	}
+	});
 
 	/**
 	 * Recipe instruction
@@ -32,17 +33,16 @@ define([], function () {
 	 *
 	 * @return {object} instruction object
 	 */
-	function recipeInstruction(spec) {
-		var that = {};
+	var recipeInstruction = object.subclass(function(that, spec, my) {
 
-		that.text = spec.text;
+		that.initialize = function() {
+			that.text = spec.text;
+		};
 
 		that.toString = function() {
 			return spec.text;
 		};
-
-		return that;
-	}
+	});
 
 	/**
 	 * Recipe
@@ -57,55 +57,42 @@ define([], function () {
 	 *
 	 * @return {[type]}      [description]
 	 */
-	function recipe(spec) {
-		spec = spec || {};
+	var recipe = object.subclass(function(that, spec, my) {
 
-		var id = spec.id || '',
-			image = spec.image || '',
-			name = spec.name || '',
-			source = spec.source,
-			description = spec.description || '',
-			instructions = spec.instructions && spec.instructions.map(function(instructionSpec) {
+		that.initialize = function() {
+			that.id = spec.id || '';
+			that.image = spec.image || '';
+			that.name = spec.name || '';
+			that.source = spec.source;
+			that.description = spec.description || '';
+			that.instructions = spec.instructions && spec.instructions.map(function(instructionSpec) {
 				return recipeInstruction(instructionSpec);
 			}) || [],
-			ingredients = spec.ingredients && spec.ingredients.map(function(ingredientSpec) {
+			that.ingredients = spec.ingredients && spec.ingredients.map(function(ingredientSpec) {
 				return recipeIngredient(ingredientSpec);
 			}) || [];
-
-		var that = {};
-
-		that.id = id;
-		that.name = name;
-		that.source = source;
-		that.image = image;
-		that.description = description;
-
-		that.instructions = instructions;
-		that.ingredients = ingredients;
+		};
 
 		that.newIngredient = function() {
-			ingredients.push(recipeIngredient({name: '', amount: '', unit: ''}));
+			that.ingredients.push(recipeIngredient({name: '', amount: '', unit: ''}));
 		};
 
 		that.removeIngredientAtIndex = function(index) {
-			ingredients.splice(index, 1);
+			that.ingredients.splice(index, 1);
 		};
 
 		that.newInstruction = function() {
-			instructions.push(recipeInstruction({text: ' '}));
+			that.instructions.push(recipeInstruction({text: ' '}));
 		};
 
 		that.removeInstructionAtIndex = function(index) {
-			instructions.splice(index, 1);
+			that.instructions.splice(index, 1);
 		};
-
-		return that;
-	}
+	});
 
 	return {
 		recipe: recipe,
 		ingredient: recipeIngredient,
 		instruction: recipeInstruction
 	};
-
 });

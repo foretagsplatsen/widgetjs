@@ -1,4 +1,6 @@
-define(['./parameterSegment'], function(parameterSegment) {
+define([
+	'./parameterSegment'
+], function(parameterSegment) {
 
 	/**
 	 * Optional parameters can have a default value.
@@ -7,14 +9,11 @@ define(['./parameterSegment'], function(parameterSegment) {
 	 * @param my
 	 * @returns {parameter}
 	 */
-	function optionalParameterSegment(spec, my) {
-		spec = spec || {};
-		my = my || {};
+	var optionalParameterSegment = parameterSegment.subclass(function(that, spec, my) {
 
-		/** @typedef {parameter} optionalParameter */
-		var that = parameterSegment(spec, my);
-
-		my.defaultValue = my.options.defaults && my.options.defaults[my.name];
+		that.initialize = function() {
+			my.defaultValue = my.options.defaults && my.options.defaults[my.name];
+		};
 
 		//
 		// Public
@@ -47,9 +46,7 @@ define(['./parameterSegment'], function(parameterSegment) {
 		that.toString = function() {
 			return 'optional(' + that.getName() + ')';
 		};
-
-		return that;
-	}
+	});
 
 	/**
 	 * Match segment strings with a leading `?`.

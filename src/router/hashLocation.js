@@ -1,8 +1,9 @@
 define([
 	'jquery',
 	'../events',
-	'./url'
-], function(jQuery, events, url) {
+	'./url',
+	'objectjs'
+], function(jQuery, events, url, object) {
 
 	/**
 	 * In modern browsers we use the 'hashchange' event to listen for location changes. If not supported
@@ -31,18 +32,13 @@ define([
 	 * @param [my]
 	 * @returns {hashLocation}
 	 */
-	function hashLocation(spec, my) {
-		spec = spec || {};
-		my = my || {};
+	var hashLocation = object.subclass(function(that, spec, my) {
 
 		var pollTimerId = null;
 
 		my.currentHash = undefined; // last hash fragment
 		my.history = []; // history of visited hash fragments
         my.events = events.eventCategory();
-
-		/** @typedef {{}} hashLocation */
-		var that = {};
 
 		//
 		// Public
@@ -154,14 +150,14 @@ define([
 
 		function urlToHash(aUrl) {
 			if(typeof aUrl === 'string') {
-				aUrl = url(aUrl);
+				aUrl = url({rawUrl: aUrl});
 			}
 			return '#!/' + aUrl.toString();
 		}
 
 		function urlFromHash(aHash) {
 			// Remove hash/hash-bang and any leading /
-			return url(aHash.replace(/^#!?[\/]?/, ''));
+			return url({rawUrl: aHash.replace(/^#!?[\/]?/, '')});
 		}
 
 		function setCurrentHash(newHash) {
@@ -183,9 +179,7 @@ define([
 				setCurrentHash(windowHash);
 			}
 		}
-
-		return that;
-	}
+	});
 
 	return hashLocation;
 });

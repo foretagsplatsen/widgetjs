@@ -1,6 +1,6 @@
-define(
-	[],
-	function() {
+define([
+	'objectjs'
+], function(object) {
 
 		/**
 		 * Route match result are used as the answer of matching a url against a route.
@@ -12,18 +12,23 @@ define(
 		 *
 		 * @returns {routeMatchResult}
 		 */
-		function routeMatchResult(spec) {
-			spec = spec || {};
+		var routeMatchResult = object.subclass(function(that, spec, my) {
 
-			var url = spec.url;
-			var route = spec.route;
+			var url;
+			var route;
+			var urlParameters;
+			var routeParameters;
+			var parameters;
 
-			var urlParameters = (url && url.getQuery && url.getQuery()) || {};
-			var routeParameters = spec.values || {};
-			var parameters = mergeParameters(routeParameters, urlParameters);
+			that.initialize = function() {
+				url = spec.url;
+				route = spec.route;
 
-			/** @typedef {{}} routeMatchResult */
-			var that = {};
+				urlParameters = (url && url.getQuery && url.getQuery()) || {};
+				routeParameters = spec.values || {};
+				parameters = mergeParameters(routeParameters, urlParameters);
+			};
+
 
 			//
 			// Public
@@ -121,9 +126,7 @@ define(
 				return allValues;
 
 			}
-
-			return that;
-		}
+		});
 
 		/**
 		 * Result to use when match does not match url

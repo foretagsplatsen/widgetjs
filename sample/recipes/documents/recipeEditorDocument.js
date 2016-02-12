@@ -7,11 +7,7 @@ define([
 	/**
 	 * Editor for editing an existing recipe or creating a new.
 	 */
-	function recipeDocument(spec, my) {
-		spec = spec || {};
-		my = my || {};
-
-		var that = widgetjs.widget(spec, my);
+	var recipeDocument = widgetjs.widget.subclass(function(that, spec, my) {
 
 		/**
 		 * Recipe currently edited.
@@ -277,9 +273,7 @@ define([
 				}
 			);
 		};
-
-		return that;
-	}
+	});
 
 	return recipeDocument;
 });
