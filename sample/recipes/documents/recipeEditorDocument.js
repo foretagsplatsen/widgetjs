@@ -7,7 +7,7 @@ define([
 	/**
 	 * Editor for editing an existing recipe or creating a new.
 	 */
-	var recipeDocument = widgetjs.widget.subclass(function(that, spec, my) {
+	var recipeDocument = widgetjs.widget.subclass(function(that, my) {
 
 		/**
 		 * Recipe currently edited.

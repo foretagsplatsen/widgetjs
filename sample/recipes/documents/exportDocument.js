@@ -10,7 +10,7 @@ define([
 	 * Import json recipes using drag-and-drop
 	 *
 	 */
-	var exportDocument = widgetjs.widget.subclass(function(that, spec, my) {
+	var exportDocument = widgetjs.widget.subclass(function(that, my) {
 
 		that.renderContentOn = function (html) {
 			html.h2({klass: 'page-header'}, 'Export');

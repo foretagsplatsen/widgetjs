@@ -54,13 +54,14 @@ define(
 		 * @param {{}} my
 		 * @returns {route}
 		 */
-		var route = object.subclass(function(that, spec, my) {
+		var route = object.subclass(function(that, my) {
 
 			var segments;
 			var ignoreTrailingSegments;
 			var optionalSequences;
 
-			that.initialize = function() {
+			my.initialize = function(spec) {
+				my.super();
 				// Build segments from pattern
 				segments = routeFactory(spec.pattern, spec.options);
 

@@ -41,9 +41,10 @@ define([
 	 * @param [my]
 	 * @returns {parameterSegment}
 	 */
-	var parameterSegment = abstractSegment.subclass(function(that, spec, my) {
+	var parameterSegment = abstractSegment.subclass(function(that, my) {
 
-		that.initialize = function() {
+		my.initialize = function(spec) {
+			my.super(spec);
 			my.name = my.segmentString.substr(1); // strip of the leading #
 			my.constraints = (my.options.constraints && my.options.constraints[my.name] &&
 				[my.options.constraints[my.name]]) || [];

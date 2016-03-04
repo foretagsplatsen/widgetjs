@@ -9,9 +9,10 @@ define([
 	/**
 	 * Repository data store data using http://www.jstorage.info/
 	 */
-	var jStorageRepository = object.subclass(function(that, spec, my) {
+	var jStorageRepository = object.subclass(function(that, my) {
 
-		that.initialize = function() {
+		my.initialize = function(spec) {
+			my.super(spec);
 			my.model = spec.model;
 			my.prefix = spec.prefix || '';
 		};
@@ -132,9 +133,10 @@ define([
 	 *
 	 * @exports recipeRepository
 	 */
-	var recipeRepository = jStorageRepository.subclass(function(that, spec, my) {
+	var recipeRepository = jStorageRepository.subclass(function(that, my) {
 
-		that.initialize = function() {
+		my.initialize = function(spec) {
+			my.super(spec);
 			my.prefix = 'myrecipe';
 			my.model = recipe.recipe;
 		};

@@ -11,9 +11,10 @@ define([
 	 * @param my
 	 * @returns {abstractSegment}
 	 */
-	var abstractSegment = object.subclass(function(that, spec, my) {
+	var abstractSegment = object.subclass(function(that, my) {
 
-		that.initialize = function() {
+		my.initialize = function(spec) {
+			my.super(spec);
 			my.segmentString = spec.segmentString;
 			my.options = spec.options || {};
 		};

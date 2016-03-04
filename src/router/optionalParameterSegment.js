@@ -9,9 +9,10 @@ define([
 	 * @param my
 	 * @returns {parameter}
 	 */
-	var optionalParameterSegment = parameterSegment.subclass(function(that, spec, my) {
+	var optionalParameterSegment = parameterSegment.subclass(function(that, my) {
 
-		that.initialize = function() {
+		my.initialize = function(spec) {
+			my.super(spec);
 			my.defaultValue = my.options.defaults && my.options.defaults[my.name];
 		};
 

@@ -12,9 +12,10 @@ define([
 	 *
 	 * @return {object} ingredient object
 	 */
-	var recipeIngredient = object.subclass(function(that, spec, my) {
+	var recipeIngredient = object.subclass(function(that, my) {
 
-		that.initialize = function() {
+		my.initialize = function(spec) {
+			my.super(spec);
 			that.name = spec.name;
 			that.amount = spec.amount;
 			that.unit = spec.unit;
@@ -33,9 +34,10 @@ define([
 	 *
 	 * @return {object} instruction object
 	 */
-	var recipeInstruction = object.subclass(function(that, spec, my) {
+	var recipeInstruction = object.subclass(function(that, my) {
 
-		that.initialize = function() {
+		my.initialize = function(spec) {
+			my.super(spec);
 			that.text = spec.text;
 		};
 
@@ -57,9 +59,10 @@ define([
 	 *
 	 * @return {[type]}      [description]
 	 */
-	var recipe = object.subclass(function(that, spec, my) {
+	var recipe = object.subclass(function(that, my) {
 
-		that.initialize = function() {
+		my.initialize = function(spec) {
+			my.super(spec);
 			that.id = spec.id || '';
 			that.image = spec.image || '';
 			that.name = spec.name || '';

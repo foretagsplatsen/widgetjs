@@ -10,7 +10,7 @@ define([
 	 * @param [my]
 	 * @returns {segment}
 	 */
-	var staticSegment = abstractSegment.subclass(function(that, spec, my) {
+	var staticSegment = abstractSegment.subclass(function(that, my) {
 
 		/**
 		 * Static segment match if URL and route segment

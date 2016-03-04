@@ -6,7 +6,7 @@ define([
 	/**
 	 * List all recipes
 	 */
-	var recipesDocument = widgetjs.widget.subclass(function(that, spec, my) {
+	var recipesDocument = widgetjs.widget.subclass(function(that, my) {
 
 		var recipes = [];
 

@@ -12,7 +12,7 @@ define([
 		 *
 		 * @returns {routeMatchResult}
 		 */
-		var routeMatchResult = object.subclass(function(that, spec, my) {
+		var routeMatchResult = object.subclass(function(that, my) {
 
 			var url;
 			var route;
@@ -20,7 +20,8 @@ define([
 			var routeParameters;
 			var parameters;
 
-			that.initialize = function() {
+			my.initialize = function(spec) {
+				my.super(spec);
 				url = spec.url;
 				route = spec.route;
 

@@ -48,7 +48,7 @@ define(
 		 *
 		 * @returns {widget}
 		 */
-		var widget = object.subclass(function(that, spec, my) {
+		var widget = object.subclass(function(that, my) {
 
 			/**
 			 * Keep track of the rendered subwidgets
@@ -56,7 +56,8 @@ define(
 			var children;
 			var id;
 
-			that.initialize = function() {
+			my.initialize = function(spec) {
+				my.super(spec);
 				id = spec.id || idGenerator.newId();
 				// When within an update transaction, do not update the widget
 				my.inUpdateTransaction = false;

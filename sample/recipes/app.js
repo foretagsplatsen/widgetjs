@@ -18,7 +18,7 @@ define([
 	 *
 	 * @exports app
 	 */
-	var app = widgetjs.widget.subclass(function(that, spec, my) {
+	var app = widgetjs.widget.subclass(function(that, my) {
 
 		/** @type {navigationWidget} Main navigation for application. */
 		var navigation;
@@ -27,10 +27,11 @@ define([
 		var mainRegion;
 
 		/**
-		 * Registers routes and creates menu items using addAction()
-		 * Executed once on start-up to initilize the application.
-		 */
-		that.initialize = function () {
+		 * Registers routes and creates menu items using addAction() my once on
+		 start-up to initilize the application.
+		*/
+		my.initialize = function () {
+			my.super();
 			/** @type {navigationWidget} Main navigation for application. */
 			navigation = widgets.navigationWidget({brand : 'My Recipes'});
 

@@ -7,19 +7,30 @@ define([
 
     jQuery.fn.prettify = function () { this.html(prettify.prettyPrintOne(this.html())); };
 
-    var code = widgetjs.widget.subclass(function(that, spec, my) {
+    var code = widgetjs.widget.subclass(function(that, my) {
 
-        var label = spec.label;
-        var group = spec.group;
-        var example = spec.example;
-        var tags = spec.tags || [];
-        var links = spec.links || [];
-        var showCode = spec.showCode === undefined ? true : spec.showCode;
-        var showTags = spec.showTags === undefined ? true : spec.showTags;
-        var showLinks = spec.showLinks === undefined ? true : spec.showLinks;
+		var label;
+		var group;
+		var example;
+		var tags;
+		var links;
+		var showCode;
+		var showTags;
+		var showLinks;
 
-        that.group = group;
-        that.label = label;
+		my.initialize = function(spec) {
+			label = spec.label;
+			group = spec.group;
+			example = spec.example;
+			tags = spec.tags || [];
+			links = spec.links || [];
+			showCode = spec.showCode === undefined ? true : spec.showCode;
+			showTags = spec.showTags === undefined ? true : spec.showTags;
+			showLinks = spec.showLinks === undefined ? true : spec.showLinks;
+
+			that.group = group;
+			that.label = label;
+		};
 
         that.toggleCode = function(state) {
             showCode = state;

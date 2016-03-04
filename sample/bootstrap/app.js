@@ -10,7 +10,7 @@ define([
         return self.indexOf(value) === index;
     }
 
-    var bootstrapBrowserApp = widgetjs.widget.subclass(function(that, spec, my) {
+    var bootstrapBrowserApp = widgetjs.widget.subclass(function(that, my) {
 
         var searchFilter = '';
 

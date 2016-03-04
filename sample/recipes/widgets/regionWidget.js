@@ -2,7 +2,7 @@ define([
 	'widgetjs/core'
 ], function (widgetjs) {
 
-	var regionWidget = widgetjs.widget.subclass(function(that, spec, my) {
+	var regionWidget = widgetjs.widget.subclass(function(that, my) {
 
 		var widgets = [];
 

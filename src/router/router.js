@@ -37,9 +37,10 @@ define(
 		*
 		* @returns {{}}
 		*/
-		var router = object.subclass(function(that, spec, my) {
+		var router = object.subclass(function(that, my) {
 
-			that.initialize = function() {
+			my.initialize = function(spec) {
+				my.super(spec);
 				my.location = spec.locationHandler || hashSingleton();
 				my.routeTable = [];
 				my.lastMatch = undefined;

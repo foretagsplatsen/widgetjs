@@ -21,14 +21,15 @@ define([
 		 * @param {string} rawUrl
 		 * @returns {url}
 		 */
-		var url = object.subclass(function(that, spec, my) {
+		var url = object.subclass(function(that, my) {
 
 			var rawUrl;
 			var path;
 			var query;
 			var segments;
 
-			that.initialize = function() {
+			my.initialize = function(spec) {
+				my.super(spec);
 				rawUrl = spec.rawUrl || '';
 				path = parsePath(rawUrl);
 				query = parseQuery(rawUrl);

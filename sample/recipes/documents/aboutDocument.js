@@ -5,7 +5,7 @@ define([
 	/**
 	 * About Page
 	 */
-	var aboutDocument = widgetjs.widget.subclass(function(that, spec, my) {
+	var aboutDocument = widgetjs.widget.subclass(function(that, my) {
 
 		that.renderContentOn = function (html) {
 			html.div({klass: 'jumbotron'},

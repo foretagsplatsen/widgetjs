@@ -32,7 +32,7 @@ define([
 	 * @param [my]
 	 * @returns {hashLocation}
 	 */
-	var hashLocation = object.subclass(function(that, spec, my) {
+	var hashLocation = object.subclass(function(that, my) {
 
 		var pollTimerId = null;
 

@@ -2,11 +2,12 @@ define([
 	'widgetjs/core'
 ], function (widgetjs, shared) {
 
-	var navigationWidget = widgetjs.widget.subclass(function(that, spec, my) {
+	var navigationWidget = widgetjs.widget.subclass(function(that, my) {
 
 		var brand;
 
-		that.initialize = function() {
+		my.initialize = function(spec) {
+			my.super(spec);
 			brand = spec.brand || '';
 
 			that.activeItem = 'home';

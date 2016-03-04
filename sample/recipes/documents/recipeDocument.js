@@ -6,7 +6,7 @@ define([
 	/**
 	 * Page for a single recipe
 	 */
-	var recipeDocument = widgetjs.widget.subclass(function(that, spec, my) {
+	var recipeDocument = widgetjs.widget.subclass(function(that, my) {
 
 		var recipe;
 
