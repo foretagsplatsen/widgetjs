@@ -252,6 +252,16 @@ define(
 			assert.equal(url, 'foo/a,b');
 		});
 
+		test("Route optional parameter expansion can handle arrays", function() {
+			var route = router.route({
+				pattern: "foo"
+			});
+			var url = route.expand({bar: ['a', 'b']});
+
+			assert.equal(url, 'foo?bar=a,b');
+		});
+
+
 		test("Expand optionals", function() {
 			var route = router.route({ pattern: "#a/?c/#b/?d"});
 

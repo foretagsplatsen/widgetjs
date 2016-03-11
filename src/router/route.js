@@ -151,6 +151,10 @@ define(
 				Object.keys(params).forEach(function(param) {
 					if(!that.hasParameter(param)) {
 						query[param] = params[param];
+						// Handle array param values
+						if(query[param] instanceof Array) {
+							query[param] = query[param].join(',');
+						}
 					}
 				});
 
