@@ -144,11 +144,11 @@ define([
 		// Pre-populate with default data if empty
 		that.findAll({ onSuccess: function(recipes) {
 			if(recipes.length <= 0) {
-				saveDefaultRecepies();
+				saveDefaultRecipes();
 			}
 		}});
 
-		function saveDefaultRecepies() {
+		function saveDefaultRecipes() {
 			defaultRecepies.forEach(function(recipe) {
 				that.save({model: recipe});
 			});
