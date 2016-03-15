@@ -30,8 +30,8 @@ define([
 		 * Registers routes and creates menu items using addAction() my once on
 		 start-up to initilize the application.
 		*/
-		my.initialize = function () {
-			my.super();
+		my.initialize = function(spec) {
+			my.super(spec);
 			/** @type {navigationWidget} Main navigation for application. */
 			navigation = widgets.navigationWidget({brand : 'My Recipes'});
 
