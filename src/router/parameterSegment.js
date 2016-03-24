@@ -114,15 +114,17 @@ define([
 		};
 	});
 
-	/**
-	 * Match segment strings with a leading `#`.
-	 * @param {string} segmentString
-	 * @returns {boolean}
-	 */
-	parameterSegment.match = function(segmentString) {
-		return segmentString.substr(0, 1) === '#';
-	};
+	parameterSegment.class(function(that) {
+
+		/**
+		 * Match segment strings with a leading `#`.
+		 * @param {string} segmentString
+		 * @returns {boolean}
+		 */
+		that.match = function(segmentString) {
+			return segmentString.substr(0, 1) === '#';
+		};
+	});
 
 	return parameterSegment;
-
 });

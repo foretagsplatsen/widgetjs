@@ -72,9 +72,11 @@ define([
 		};
 	});
 
-	abstractSegment.match = function(segmentString) {
-		return false;
-	};
+	abstractSegment.class(function(that) {
+		that.match = function(segmentString) {
+			return false;
+		};
+	});
 
 	return abstractSegment;
 });

@@ -49,14 +49,16 @@ define([
 		};
 	});
 
-	/**
-	 * Match segment strings with a leading `?`.
-	 * @param {string} segmentString
-	 * @returns {boolean}
-	 */
-	optionalParameterSegment.match = function(segmentString) {
-		return segmentString.substr(0, 1) === '?';
-	};
+	optionalParameterSegment.class(function(that) {
+		/**
+		 * Match segment strings with a leading `?`.
+		 * @param {string} segmentString
+		 * @returns {boolean}
+		 */
+		that.match = function(segmentString) {
+			return segmentString.substr(0, 1) === '?';
+		};
+	});
 
 	return optionalParameterSegment;
 });

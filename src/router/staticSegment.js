@@ -26,14 +26,17 @@ define([
 		return that;
 	});
 
-	/**
-	 * Match all but parameter segment strings
-	 * @param {string} segmentString
-	 * @returns {boolean}
-	 */
-	staticSegment.match = function(segmentString) {
-		return ['#', '?'].indexOf(segmentString[0]) === -1;
-	};
+	staticSegment.class(function(that) {
+
+		/**
+		 * Match all but parameter segment strings
+		 * @param {string} segmentString
+		 * @returns {boolean}
+		 */
+		that.match = function(segmentString) {
+			return ['#', '?'].indexOf(segmentString[0]) === -1;
+		};
+	});
 
 	return staticSegment;
 });
