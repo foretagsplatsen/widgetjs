@@ -88,14 +88,16 @@ define(
 			 * Should always be executed before a widget is disposed. Especially
 			 * if the widget register events to avoid memory leaks.
 			 *
-			 * If overridden in a subclass, make sure to execute `my.disposeWidget()`.
+			 * Most widgets should override `my.dispose` instead of overriding
+			 * this function.
 			 *
 			 */
 			that.dispose = function() {
 				children.forEach(function(child) {
 					child.dispose();
 				});
-				my.disposeWidget();
+				my.dispose();
+				my.events.dispose();
 			};
 
 			/**
@@ -217,9 +219,7 @@ define(
 			/**
 			 * Widget specific dispose.
 			 */
-			my.disposeWidget = function() {
-				my.events.dispose();
-			};
+			my.dispose = function() {};
 
 			// Route / Controller extensions
 
