@@ -97,7 +97,12 @@ define(
 					child.dispose();
 				});
 				my.dispose();
-				my.events.dispose();
+
+				// TODO: We cannot dispose events because the widget is being
+				// removed from the DOM. We need another mechanism to 'destroy'
+				// the widget and dispose its events.
+
+				// my.events.dispose();
 			};
 
 			/**
