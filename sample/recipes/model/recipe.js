@@ -42,7 +42,7 @@ define([
 		};
 
 		that.toString = function() {
-			return spec.text;
+			return that.text;
 		};
 	});
 
