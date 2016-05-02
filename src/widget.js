@@ -98,11 +98,19 @@ define(
 				});
 				my.dispose();
 
-				// TODO: We cannot dispose events because the widget is being
-				// removed from the DOM. We need another mechanism to 'destroy'
-				// the widget and dispose its events.
+				my.events.dispose();
+			};
 
-				// my.events.dispose();
+			/**
+			 * Method to be performed when a root widget is detached from the
+			 * DOM. The widegt and all its children will call `my.willDetach` in
+			 * turn.
+			 */
+			that.willDetach = function() {
+				children.forEach(function(child) {
+					child.willDetach();
+				});
+				my.willDetach();
 			};
 
 			/**
@@ -340,6 +348,11 @@ define(
 			 * reattached due to an update of rendering) to the DOM.
 			 */
 			my.didAttach = function() {};
+
+			/**
+			 * Hook evaluated when a widget is detached from the DOM.
+			 */
+			my.willDetach = function() {};
 
 			/**
 			 * Hook evaluated before widget update.
