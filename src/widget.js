@@ -204,9 +204,14 @@ define(
 			 * the evaluation.
 			 */
 			my.withAttachHooks = function(fn) {
-				that.triggerWillAttach();
+				var inRendering = inRenderingLoop();
+				if(!inRendering) {
+					that.triggerWillAttach();
+				}
 				fn();
-				that.triggerDidAttach();
+				if(!inRendering) {
+					that.triggerDidAttach();
+				}
 			};
 
 			// Expose events
@@ -225,7 +230,7 @@ define(
 			 *
 			 * @returns {String}
 			 */
-			my.nextId = function () {
+			my.nextId = function() {
 				return idGenerator.newId();
 			};
 
@@ -454,6 +459,13 @@ define(
 				}
 			};
 		})();
+
+		/**
+		 * Return true if the parent widget is rendering the receiver.
+		 */
+		function inRenderingLoop() {
+			return !!currentWidget.get();
+		}
 
 		/**
 		 * Set `widget` as the current widget while evaluating `fn`.
