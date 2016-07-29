@@ -70,7 +70,7 @@ define([
 			that.description = spec.description || '';
 			that.instructions = spec.instructions && spec.instructions.map(function(instructionSpec) {
 				return recipeInstruction(instructionSpec);
-			}) || [],
+			}) || [];
 			that.ingredients = spec.ingredients && spec.ingredients.map(function(ingredientSpec) {
 				return recipeIngredient(ingredientSpec);
 			}) || [];

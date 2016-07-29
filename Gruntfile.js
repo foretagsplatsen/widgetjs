@@ -33,7 +33,8 @@ module.exports = function(grunt) {
 					//almond: true,
 					baseUrl: './src/',
 					paths: {
-						"jquery": "../bower_components/requirejs/require"
+						"jquery": "../bower_components/requirejs/require",
+						"objectjs": "../bower_components/objectjs/src/object"
 					},
 					include: ["core"],
 					exclude: ['jquery'],

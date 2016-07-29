@@ -1,4 +1,4 @@
-Widget-JS [![Travis CI Status](https://travis-ci.org/foretagsplatsen/widget-js.svg?branch=master)](https://travis-ci.org/#!/foretagsplatsen/widget-js)
+widgetjs [![Travis CI Status](https://travis-ci.org/foretagsplatsen/widget-js.svg?branch=master)](https://travis-ci.org/#!/foretagsplatsen/widgetjs)
 =====
 
 Widget-JS is a framework that provides routing, events and widgets to javascript apps.
