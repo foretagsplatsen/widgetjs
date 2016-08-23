@@ -1,152 +1,455 @@
-<!DOCTYPE html>  <html> <head>   <title>widget.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="core.html">                 core.js               </a>                                           <a class="source" href="events.html">                 events.js               </a>                                           <a class="source" href="htmlCanvas.html">                 htmlCanvas.js               </a>                                           <a class="source" href="router.html">                 router.js               </a>                                           <a class="source" href="widget-extensions.html">                 widget-extensions.js               </a>                                           <a class="source" href="widget.html">                 widget.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               widget.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>Base for all widgets. A widget uses a HTML canvas (see <a href="htmlCanvas.html">htmlCanvas.js</a>) to render itself using <code>renderContentOn()</code>.</p>
+<!DOCTYPE html>  <html> <head>   <title>widget.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="core.html">                 core.js               </a>                                           <a class="source" href="events.html">                 events.js               </a>                                           <a class="source" href="htmlCanvas.html">                 htmlCanvas.js               </a>                                           <a class="source" href="router.html">                 router.js               </a>                                           <a class="source" href="abstractSegment.html">                 abstractSegment.js               </a>                                           <a class="source" href="hashLocation.html">                 hashLocation.js               </a>                                           <a class="source" href="optionalParameterSegment.html">                 optionalParameterSegment.js               </a>                                           <a class="source" href="parameterSegment.html">                 parameterSegment.js               </a>                                           <a class="source" href="route.html">                 route.js               </a>                                           <a class="source" href="routeFactory.html">                 routeFactory.js               </a>                                           <a class="source" href="routeMatchResult.html">                 routeMatchResult.js               </a>                                           <a class="source" href="router.html">                 router.js               </a>                                           <a class="source" href="staticSegment.html">                 staticSegment.js               </a>                                           <a class="source" href="url.html">                 url.js               </a>                                           <a class="source" href="widget-extensions.html">                 widget-extensions.js               </a>                                           <a class="source" href="widget.html">                 widget.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               widget.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span></span><span class="nx">define</span><span class="p">(</span>
+  <span class="p">[</span>
+    <span class="s1">&#39;objectjs&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;./widget-extensions&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;./router&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;./events&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;./htmlCanvas&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;jquery&#39;</span>
+  <span class="p">],</span>
 
-<p><em>Usage:</em></p>
+  <span class="kd">function</span> <span class="p">(</span><span class="nx">object</span><span class="p">,</span> <span class="nx">ext</span><span class="p">,</span> <span class="nx">router</span><span class="p">,</span> <span class="nx">events</span><span class="p">,</span> <span class="nx">htmlCanvas</span><span class="p">,</span> <span class="nx">jQuery</span><span class="p">)</span> <span class="p">{</span>
 
-<pre><code> var titleWidget = function(spec) {
-     var that = widget(spec);
+    <span class="cm">/**</span>
+<span class="cm">     * Base for all widgets. A widget can keep state in variables, contain logic and</span>
+<span class="cm">     * render itself using `renderOn()`.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @example</span>
+<span class="cm">     *</span>
+<span class="cm">     *    var titleWidget = function(spec) {</span>
+<span class="cm">     *      var that = widget(spec);</span>
+<span class="cm">     *</span>
+<span class="cm">     *      var title = spec.title || &#39;Hello World&#39;;</span>
+<span class="cm">     *</span>
+<span class="cm">     *      that.renderContentOn = function(html) {</span>
+<span class="cm">     *        html.h1(title)</span>
+<span class="cm">     *      }</span>
+<span class="cm">     *</span>
+<span class="cm">     *      return that;</span>
+<span class="cm">     *    };</span>
+<span class="cm">     *</span>
+<span class="cm">     *    var helloWorldWidget = titleWidget({title: &#39;Hello Widget!&#39;});</span>
+<span class="cm">     *</span>
+<span class="cm">     *    $(document).ready(function() {</span>
+<span class="cm">     *      helloWorldWidget.appendTo(&#39;BODY&#39;);</span>
+<span class="cm">     *    });</span>
+<span class="cm">     *</span>
+<span class="cm">     * Widgets can also be rendered on a HTML canvas (since widget implements `appendToBrush()`). Eg.</span>
+<span class="cm">     *</span>
+<span class="cm">     *    html.div(helloWorldWidget)</span>
+<span class="cm">     *</span>
+<span class="cm">     * It is therefor easy to compose widgets from other widgets.</span>
+<span class="cm">     *</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param {Object} spec</span>
+<span class="cm">     * @param {String} [spec.id] Unique id for widget. Also used for root element when attached/rendered to DOM.</span>
+<span class="cm">     *                           If not provided an ID will automatically be generated and assigned.</span>
+<span class="cm">     * @param {Object} [my]</span>
+<span class="cm">     *</span>
+<span class="cm">     * @returns {widget}</span>
+<span class="cm">     */</span>
+    <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="nx">object</span><span class="p">.</span><span class="nx">subclass</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">my</span><span class="p">)</span> <span class="p">{</span>
 
-     var title = spec.title;
+      <span class="cm">/**</span>
+<span class="cm">       * Keep track of the rendered subwidgets</span>
+<span class="cm">       */</span>
+      <span class="kd">var</span> <span class="nx">children</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">id</span><span class="p">;</span>
 
-     that.renderContentOn = function(html) {
-         html.h1('Hello World')
-     }
-     return that;
- }
+      <span class="nx">my</span><span class="p">.</span><span class="nx">initialize</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">spec</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">my</span><span class="p">.</span><span class="kr">super</span><span class="p">(</span><span class="nx">spec</span><span class="p">);</span>
+        <span class="nx">id</span> <span class="o">=</span> <span class="nx">spec</span><span class="p">.</span><span class="nx">id</span> <span class="o">||</span> <span class="nx">idGenerator</span><span class="p">.</span><span class="nx">newId</span><span class="p">();</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>When within an update transaction, do not update the widget</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">my</span><span class="p">.</span><span class="nx">inUpdateTransaction</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="nx">children</span> <span class="o">=</span> <span class="p">[];</span>
+      <span class="p">};</span>
 
- var helloWorldWidget = titleWidget({title: 'Hello Widget!'});
+      <span class="cm">/** Events for widget */</span>
+      <span class="nx">my</span><span class="p">.</span><span class="nx">events</span> <span class="o">=</span> <span class="nx">events</span><span class="p">.</span><span class="nx">eventCategory</span><span class="p">();</span>
 
- $(document).ready(function() {
-     helloWorldWidget.appendTo('BODY');
- });
-</code></pre>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">onAttach</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">createEvent</span><span class="p">();</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">onDetach</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">createEvent</span><span class="p">();</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Public</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="cm">/**</span>
+<span class="cm">       * Returns a unique id for the widget</span>
+<span class="cm">       *</span>
+<span class="cm">       * @returns {String}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">getId</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">id</span><span class="p">;</span>
+      <span class="p">};</span>
 
-<p>Widgets can also be rendered on a HTML canvas (since widget implements <code>appendToBrush()</code>). Eg.</p>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getId</span><span class="p">;</span> <span class="c1">//TODO: deprecated</span>
 
-<pre><code> html.div(helloWorldWidget)
-</code></pre>
+      <span class="cm">/**</span>
+<span class="cm">       * Performance tasks need for freeing/releasing/cleaning-up resources used by widget.</span>
+<span class="cm">       *</span>
+<span class="cm">       * Should always be executed before a widget is disposed. Especially</span>
+<span class="cm">       * if the widget register events to avoid memory leaks.</span>
+<span class="cm">       *</span>
+<span class="cm">       * Most widgets should override `my.dispose` instead of overriding</span>
+<span class="cm">       * this function.</span>
+<span class="cm">       *</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">dispose</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">children</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">child</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">child</span><span class="p">.</span><span class="nx">dispose</span><span class="p">();</span>
+        <span class="p">});</span>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">dispose</span><span class="p">();</span>
 
-<p>It is therefor easy to compose widgets from other widgets.</p>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">dispose</span><span class="p">();</span>
+      <span class="p">};</span>
 
-<p><em>Note:</em> Widgets composed by other widgets must
-expose sub widgets using <code>widgets()</code> to make it possible to traverse widget tree.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">define</span><span class="p">(</span>
-    <span class="p">[</span>
-        <span class="s1">&#39;./widget-extensions&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;./router&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;./events&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;./htmlCanvas&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;jquery&#39;</span>
-    <span class="p">],</span>
+      <span class="cm">/**</span>
+<span class="cm">       * Method to be performed when a root widget is detached from the</span>
+<span class="cm">       * DOM. The widegt and all its children will call `my.willDetach` in</span>
+<span class="cm">       * turn.</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">willDetach</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">children</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">child</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">child</span><span class="p">.</span><span class="nx">willDetach</span><span class="p">();</span>
+        <span class="p">});</span>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">willDetach</span><span class="p">();</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">onDetach</span><span class="p">.</span><span class="nx">trigger</span><span class="p">();</span>
+      <span class="p">};</span>
 
-    <span class="kd">function</span> <span class="p">(</span><span class="nx">ext</span><span class="p">,</span> <span class="nx">router</span><span class="p">,</span> <span class="nx">events</span><span class="p">,</span> <span class="nx">htmlCanvas</span><span class="p">,</span> <span class="nx">jQuery</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <hr />             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <h3>Widget</h3>
+      <span class="cm">/**</span>
+<span class="cm">       * Renders the widget on a JQuery / DOM</span>
+<span class="cm">       *</span>
+<span class="cm">       * @example</span>
+<span class="cm">       * widget.appendTo(&#39;BODY&#39;);</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param aJQuery</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">appendTo</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">aJQuery</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">withAttachHooks</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+          <span class="nx">renderBasicOn</span><span class="p">(</span><span class="nx">htmlCanvas</span><span class="p">(</span><span class="nx">aJQuery</span><span class="p">));</span>
+        <span class="p">});</span>
+      <span class="p">};</span>
 
-<p><em>Usage:</em></p>
+      <span class="cm">/**</span>
+<span class="cm">       * Does the same as appendTo except it first clear the</span>
+<span class="cm">       * elements matched by aJQuery</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param aJQuery</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">replace</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">aJQuery</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">withAttachHooks</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+          <span class="kd">var</span> <span class="nx">canvas</span> <span class="o">=</span> <span class="nx">htmlCanvas</span><span class="p">(</span><span class="nx">aJQuery</span><span class="p">);</span>
+          <span class="nx">canvas</span><span class="p">.</span><span class="nx">root</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">().</span><span class="nx">empty</span><span class="p">();</span>
+          <span class="nx">renderBasicOn</span><span class="p">(</span><span class="nx">canvas</span><span class="p">);</span>
+        <span class="p">});</span>
+      <span class="p">};</span>
 
-<pre><code> widget();
- widget({ id : 'unique_identifier'});
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">spec</span><span class="p">,</span> <span class="nx">my</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">my</span> <span class="o">=</span> <span class="nx">my</span> <span class="o">||</span> <span class="p">{};</span>
-            <span class="nx">spec</span> <span class="o">=</span> <span class="nx">spec</span> <span class="o">||</span> <span class="p">{};</span>
+      <span class="cm">/**</span>
+<span class="cm">       * Answers a jQuery that match the root DOM element. By default</span>
+<span class="cm">       * by selecting an element that have the same ID as the widget.</span>
+<span class="cm">       *</span>
+<span class="cm">       * See &#39;renderOn&#39;</span>
+<span class="cm">       *</span>
+<span class="cm">       * @returns {*}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">asJQuery</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getId</span><span class="p">());</span>
+      <span class="p">};</span>
 
-            <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="p">{};</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Unique <strong>widget id</strong>. Provided by id argument or auto generated.</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">spec</span><span class="p">.</span><span class="nx">id</span> <span class="o">||</span> <span class="nx">idGenerator</span><span class="p">.</span><span class="nx">newId</span><span class="p">();</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <h4>Public/Protected API</h4>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p><strong>Mix in Events</strong> (See <a href="events.html">events.js</a>)</p>
+      <span class="cm">/**</span>
+<span class="cm">       * Answers true if if widget have rendered content in DOM</span>
+<span class="cm">       *</span>
+<span class="cm">       * @returns {boolean}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">isRendered</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">that</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">().</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span>
+      <span class="p">};</span>
 
-<p>Trigger events using:</p>
+      <span class="cm">/**</span>
+<span class="cm">       * Implementation for `appendToBrush()` to allow a widget to be</span>
+<span class="cm">       * appended to a brush. See &#39;htmlCanvas&#39;.</span>
+<span class="cm">       *</span>
+<span class="cm">       * Basically it allows us to do:</span>
+<span class="cm">       *    html.div(widget);</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param aTagBrush</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">appendToBrush</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">aTagBrush</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">withAttachHooks</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+          <span class="nx">renderBasicOn</span><span class="p">(</span><span class="nx">htmlCanvas</span><span class="p">(</span><span class="nx">aTagBrush</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">()));</span>
+        <span class="p">});</span>
+      <span class="p">};</span>
 
-<pre><code> that.trigger('event_id', event_data)
-</code></pre>
+      <span class="cm">/**</span>
+<span class="cm">       * Trigger the `willAttach` event on the receiver and all</span>
+<span class="cm">       * rendered subwidgets.</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">triggerWillAttach</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">willAttach</span><span class="p">();</span>
+        <span class="nx">children</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">widget</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">widget</span><span class="p">.</span><span class="nx">triggerWillAttach</span><span class="p">();</span>
+        <span class="p">});</span>
+      <span class="p">};</span>
 
-<p>Listen for events:</p>
+      <span class="cm">/**</span>
+<span class="cm">       * Trigger the `didAttach` event on the receiver and all</span>
+<span class="cm">       * rendered subwidgets.</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">triggerDidAttach</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">didAttach</span><span class="p">();</span>
+        <span class="nx">children</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">widget</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">widget</span><span class="p">.</span><span class="nx">triggerDidAttach</span><span class="p">();</span>
+        <span class="p">});</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">onAttach</span><span class="p">.</span><span class="nx">trigger</span><span class="p">();</span>
+      <span class="p">};</span>
 
-<pre><code> that.on('event_id', function(event_data) { });
-</code></pre>
+      <span class="cm">/**</span>
+<span class="cm">       * Evaluate `fn`, calling `willAttach` before and `didAttach` after</span>
+<span class="cm">       * the evaluation.</span>
+<span class="cm">       */</span>
+      <span class="nx">my</span><span class="p">.</span><span class="nx">withAttachHooks</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">inRendering</span> <span class="o">=</span> <span class="nx">inRenderingLoop</span><span class="p">();</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">inRendering</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">that</span><span class="p">.</span><span class="nx">triggerWillAttach</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="nx">fn</span><span class="p">();</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">inRendering</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">that</span><span class="p">.</span><span class="nx">triggerDidAttach</span><span class="p">();</span>
+        <span class="p">}</span>
+      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Expose events</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">on</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">on</span><span class="p">;</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">onceOn</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">onceOn</span><span class="p">;</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">off</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">off</span><span class="p">;</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">trigger</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">trigger</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Protected</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="cm">/**</span>
+<span class="cm">       * Exposes the internal ID generator. Generates new unique IDs to be used</span>
+<span class="cm">       * for sub-widgets, etc.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @returns {String}</span>
+<span class="cm">       */</span>
+      <span class="nx">my</span><span class="p">.</span><span class="nx">nextId</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">idGenerator</span><span class="p">.</span><span class="nx">newId</span><span class="p">();</span>
+      <span class="p">};</span>
 
-<p>or more commonly:</p>
+      <span class="cm">/**</span>
+<span class="cm">       * Widget specific dispose.</span>
+<span class="cm">       */</span>
+      <span class="nx">my</span><span class="p">.</span><span class="nx">dispose</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{};</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Route / Controller extensions</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">my</span><span class="p">.</span><span class="nx">router</span> <span class="o">=</span> <span class="nx">router</span><span class="p">.</span><span class="nx">getRouter</span><span class="p">();</span>
 
-<pre><code> var w = widget();
- w.on('event_id', function(event_data) { });
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">jQuery</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">events</span><span class="p">.</span><span class="nx">eventhandler</span><span class="p">());</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p><strong>Third party protected extensions</strong> added to <code>my</code>.
-See <a href="widget-extensions.html">widget-extensions.js</a></p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">extProperty</span> <span class="k">in</span> <span class="nx">ext</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">ext</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">extProperty</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="nx">my</span><span class="p">[</span><span class="nx">extProperty</span><span class="p">]</span> <span class="o">=</span> <span class="nx">ext</span><span class="p">[</span><span class="nx">extProperty</span><span class="p">];</span>
-                <span class="p">}</span>
-            <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Returns sub widgets of the widget. Needed
-to traverse widget tree. Override in concrete widgets!</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">that</span><span class="p">.</span><span class="nx">widgets</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="p">[];</span>
-            <span class="p">};</span>
-           </pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Expose widget id</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">that</span><span class="p">.</span><span class="nx">getId</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="nx">id</span><span class="p">;</span>
-            <span class="p">};</span>
-            <span class="nx">that</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="nx">id</span><span class="p">;</span>
-            <span class="p">};</span>
+      <span class="nx">my</span><span class="p">.</span><span class="nx">linkTo</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">linkTo</span><span class="p">;</span>
+      <span class="nx">my</span><span class="p">.</span><span class="nx">linkToPath</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">linkToPath</span><span class="p">;</span>
+      <span class="nx">my</span><span class="p">.</span><span class="nx">linkToUrl</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">linkToUrl</span><span class="p">;</span>
 
-            </pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <h4>Route / Controller extensions</h4>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>Returns link to route/path</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">my</span><span class="p">.</span><span class="nx">linkTo</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="nx">router</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">linkTo</span><span class="p">(</span><span class="nx">path</span><span class="p">);</span>
-            <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>Redirects to route/path</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">my</span><span class="p">.</span><span class="nx">redirectTo</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">router</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">redirectTo</span><span class="p">(</span><span class="nx">path</span><span class="p">);</span>
-            <span class="p">};</span>
+      <span class="nx">my</span><span class="p">.</span><span class="nx">redirectTo</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">redirectTo</span><span class="p">;</span>
+      <span class="nx">my</span><span class="p">.</span><span class="nx">redirectToPath</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">redirectToPath</span><span class="p">;</span>
+      <span class="nx">my</span><span class="p">.</span><span class="nx">redirectToUrl</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">redirectToUrl</span><span class="p">;</span>
 
-            </pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <h4>Render extensions</h4>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>Append widget to DOM-element matched by aJQuery</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">that</span><span class="p">.</span><span class="nx">appendTo</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">aJQuery</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">that</span><span class="p">.</span><span class="nx">renderOn</span><span class="p">(</span><span class="nx">htmlCanvas</span><span class="p">(</span><span class="nx">aJQuery</span><span class="p">));</span>
-            <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Same as <code>that.appendTo()</code> except it first empties the element.</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">that</span><span class="p">.</span><span class="nx">replace</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">aJQuery</span><span class="p">)</span> <span class="p">{</span>
-                <span class="kd">var</span> <span class="nx">canvas</span> <span class="o">=</span> <span class="nx">htmlCanvas</span><span class="p">(</span><span class="nx">aJQuery</span><span class="p">);</span>
-                <span class="nx">canvas</span><span class="p">.</span><span class="nx">root</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">().</span><span class="nx">empty</span><span class="p">();</span>
-                <span class="nx">that</span><span class="p">.</span><span class="nx">renderOn</span><span class="p">(</span><span class="nx">canvas</span><span class="p">);</span>
-            <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>Implemention for <code>appendToBrush()</code> to allow a widget to be
-appended to a brush. See <a href="htmlCanvas.html">htmlCanvas.js</a>.</p>
+      <span class="nx">my</span><span class="p">.</span><span class="nx">getParameters</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">getParameters</span><span class="p">;</span>
+      <span class="nx">my</span><span class="p">.</span><span class="nx">getParameter</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">getParameter</span><span class="p">;</span>
+      <span class="nx">my</span><span class="p">.</span><span class="nx">setParameters</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">router</span><span class="p">.</span><span class="nx">setParameters</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Render</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="cm">/**</span>
+<span class="cm">       * Private rendering function.  This is the function</span>
+<span class="cm">       * internally called each time the widget is rendered, in</span>
+<span class="cm">       * `appendTo`, `replace` and `update`.</span>
+<span class="cm">       *</span>
+<span class="cm">       */</span>
+      <span class="kd">function</span> <span class="nx">renderBasicOn</span><span class="p">(</span><span class="nx">html</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">withChildrenRegistration</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+          <span class="nx">that</span><span class="p">.</span><span class="nx">renderOn</span><span class="p">(</span><span class="nx">html</span><span class="p">);</span>
+        <span class="p">});</span>
+      <span class="p">}</span>
 
-<p>Basicly it allows us to do:</p>
+      <span class="cm">/**</span>
+<span class="cm">       * Main entry point for rendering. For convenience &#39;renderOn&#39; will  wrap the content</span>
+<span class="cm">       * rendered by &#39;renderContentOn&#39; in a root element (renderRootOn) that will be matched</span>
+<span class="cm">       * by asJQuery.</span>
+<span class="cm">       *</span>
+<span class="cm">       * Usually concrete widgets override &#39;renderContentOn&#39; to render it content. Widgets</span>
+<span class="cm">       * can override &#39;renderOn&#39; but must then make sure that it can be matched by &#39;asJQuery&#39;.</span>
+<span class="cm">       *</span>
+<span class="cm">       * One way to do that is to make sure to have only one root element and setting the ID of</span>
+<span class="cm">       * that element to the ID of the widget.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @example</span>
+<span class="cm">       *</span>
+<span class="cm">       *    that.renderOn = function (html) {</span>
+<span class="cm">       *      html.ul({id: that.getId()}</span>
+<span class="cm">       *        html.li(&#39;BMW&#39;),</span>
+<span class="cm">       *        html.li(&#39;Toyota&#39;)</span>
+<span class="cm">       *      );</span>
+<span class="cm">       *    };</span>
+<span class="cm">       *</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param html</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">renderOn</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">html</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Renders widget by wrapping <code>renderContentOn()</code> in a root element.</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">my</span><span class="p">.</span><span class="nx">renderRootOn</span><span class="p">(</span><span class="nx">html</span><span class="p">).</span><span class="nx">render</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">renderContentOn</span><span class="p">);</span>
+      <span class="p">};</span>
 
-<pre><code> html.div(widget);
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">that</span><span class="p">.</span><span class="nx">appendToBrush</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">aTagBrush</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">that</span><span class="p">.</span><span class="nx">appendTo</span><span class="p">(</span><span class="nx">aTagBrush</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">());</span>
-            <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>Return JQuery that match root element (div).</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">that</span><span class="p">.</span><span class="nx">asJQuery</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getId</span><span class="p">());</span>
-            <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <h4>Update support</h4>
+      <span class="nx">my</span><span class="p">.</span><span class="nx">withChildrenRegistration</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">parent</span> <span class="o">=</span> <span class="nx">currentWidget</span><span class="p">.</span><span class="nx">get</span><span class="p">();</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">parent</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">parent</span><span class="p">.</span><span class="nx">registerChild</span><span class="p">(</span><span class="nx">that</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">withCurrentWidget</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+          <span class="nx">children</span> <span class="o">=</span> <span class="p">[];</span>
+          <span class="nx">fn</span><span class="p">();</span>
+        <span class="p">},</span> <span class="nx">that</span><span class="p">);</span>
+      <span class="p">};</span>
 
-<p>makes it possible to do <code>widget.update()</code> to re-render widget.</p>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">registerChild</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">widget</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">children</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">widget</span><span class="p">);</span>
+      <span class="p">};</span>
 
-<p><code>renderOn()</code> wrapps content rendered by <code>renderContentOn()</code> inside a
-root element rendered by <code>renderRoot</code>.</p>
+      <span class="cm">/**</span>
+<span class="cm">       * Renders a wrapper element (by default a &#39;widgetjs-widget&#39; tag) and</span>
+<span class="cm">       * set the element ID to the ID of the widget so that it can be found by</span>
+<span class="cm">       * &#39;asJQuery&#39; eg. when we re-render using &#39;update&#39;.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param html</span>
+<span class="cm">       * @returns {htmlBrush}</span>
+<span class="cm">       */</span>
+      <span class="nx">my</span><span class="p">.</span><span class="nx">renderRootOn</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">html</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">html</span><span class="p">.</span><span class="nx">tag</span><span class="p">(</span><span class="s1">&#39;widgetjs-widget&#39;</span><span class="p">).</span><span class="nx">id</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+      <span class="p">};</span>
 
-<p><code>update()</code> empties the root element and re-render content using <code>renderContentOn()</code></p>
+      <span class="cm">/**</span>
+<span class="cm">       * Overridden in concrete widgets to render widget to canvas/DOM.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @example</span>
+<span class="cm">       *</span>
+<span class="cm">       *    that.renderContentOn = function (html) {</span>
+<span class="cm">       *      html.ul(</span>
+<span class="cm">       *        html.li(&#39;BMW&#39;),</span>
+<span class="cm">       *        html.li(&#39;Toyota&#39;)</span>
+<span class="cm">       *      );</span>
+<span class="cm">       *    };</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {htmlCanvas} html</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">renderContentOn</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">html</span><span class="p">)</span> <span class="p">{};</span>
 
-<p>If you decide to override <code>renderOn()</code> you should also override <code>isRendered</code> and <code>update()</code>.
-Also override <code>asJQuery()</code> if the root elements id is not the widget id.</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p>True if widget have rendered content.</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">that</span><span class="p">.</span><span class="nx">isRendered</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="nx">that</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">().</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span>
-            <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p>Renders a wrapper/root for widget - a div as default</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">my</span><span class="p">.</span><span class="nx">renderRoot</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">html</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="nx">html</span><span class="p">.</span><span class="nx">div</span><span class="p">().</span><span class="nx">id</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
-            <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <p>Renders the acctual content inside the wrapper div. Override in concrete widgets!</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">that</span><span class="p">.</span><span class="nx">renderContentOn</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">html</span><span class="p">)</span> <span class="p">{</span>
-            <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-22">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-22">&#182;</a>               </div>               <p>Renders widget by wrapping <code>renderContentOn()</code> in a root element.</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">that</span><span class="p">.</span><span class="nx">renderOn</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">html</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">my</span><span class="p">.</span><span class="nx">renderRoot</span><span class="p">(</span><span class="nx">html</span><span class="p">).</span><span class="nx">render</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">renderContentOn</span><span class="p">);</span>
-            <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-23">&#182;</a>               </div>               <p><code>update()</code> is a general purpose function that will re-render the widget
-completely inside its root div.</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">that</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">isRendered</span><span class="p">())</span> <span class="p">{</span>
-                    <span class="k">return</span><span class="p">;</span>
-                <span class="p">}</span>
+      <span class="cm">/**</span>
+<span class="cm">       * Hook evaluated before the widget is attached (or reattached due</span>
+<span class="cm">       * to an update of rendering) to the DOM.</span>
+<span class="cm">       */</span>
+      <span class="nx">my</span><span class="p">.</span><span class="nx">willAttach</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{};</span>
 
-                <span class="kd">var</span> <span class="nx">rootCanvas</span> <span class="o">=</span> <span class="nx">htmlCanvas</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">());</span>
+      <span class="cm">/**</span>
+<span class="cm">       * Hook evaluated each time the widget is attached (or</span>
+<span class="cm">       * reattached due to an update of rendering) to the DOM.</span>
+<span class="cm">       */</span>
+      <span class="nx">my</span><span class="p">.</span><span class="nx">didAttach</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{};</span>
 
-                <span class="nx">rootCanvas</span><span class="p">.</span><span class="nx">root</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">().</span><span class="nx">empty</span><span class="p">();</span>
-                <span class="nx">that</span><span class="p">.</span><span class="nx">renderContentOn</span><span class="p">(</span><span class="nx">rootCanvas</span><span class="p">);</span>
-            <span class="p">};</span>
+      <span class="cm">/**</span>
+<span class="cm">       * Hook evaluated when a widget is detached from the DOM.</span>
+<span class="cm">       */</span>
+      <span class="nx">my</span><span class="p">.</span><span class="nx">willDetach</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{};</span>
 
-            <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
-        <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-24">&#182;</a>               </div>               <hr />             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-25">&#182;</a>               </div>               <h3>idGenerator</h3>
+      <span class="cm">/**</span>
+<span class="cm">       * Hook evaluated before widget update.</span>
+<span class="cm">       */</span>
+      <span class="nx">my</span><span class="p">.</span><span class="nx">willUpdate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{};</span>
 
-<p>Creates unique ids used by widgets to identify their root div.</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">idGenerator</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-            <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="p">{};</span>
-            <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+      <span class="cm">/**</span>
+<span class="cm">       * Re-renders the widget and replace it in the DOM</span>
+<span class="cm">       *</span>
+<span class="cm">       * Content is first re-rendered on a document fragment. Update then replace the element matched</span>
+<span class="cm">       * by &#39;asJQuery&#39; with the new content.</span>
+<span class="cm">       *</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">update</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">my</span><span class="p">.</span><span class="nx">inUpdateTransaction</span> <span class="o">||</span> <span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">isRendered</span><span class="p">())</span> <span class="p">{</span>
+          <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
 
-            <span class="nx">that</span><span class="p">.</span><span class="nx">newId</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-                <span class="nx">id</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
-                <span class="k">return</span> <span class="nx">id</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
-            <span class="p">};</span>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">willUpdate</span><span class="p">();</span>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">withAttachHooks</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Re-render</p>             </td>             <td class="code">               <div class="highlight"><pre>          <span class="kd">var</span> <span class="nx">html</span> <span class="o">=</span> <span class="nx">htmlCanvas</span><span class="p">();</span>
+          <span class="nx">renderBasicOn</span><span class="p">(</span><span class="nx">html</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>Replace our self</p>             </td>             <td class="code">               <div class="highlight"><pre>          <span class="nx">that</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">().</span><span class="nx">replaceWith</span><span class="p">(</span><span class="nx">html</span><span class="p">.</span><span class="nx">root</span><span class="p">.</span><span class="nx">element</span><span class="p">);</span>
+        <span class="p">});</span>
+      <span class="p">};</span>
 
-            <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
-        <span class="p">})();</span></pre></div>             </td>           </tr>                               <tr id="section-26">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-26">&#182;</a>               </div>               <h3>Exports</h3>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">withinTransaction</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">onDone</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">my</span><span class="p">.</span><span class="nx">inUpdateTransaction</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">fn</span><span class="p">();</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="k">try</span> <span class="p">{</span>
+            <span class="nx">my</span><span class="p">.</span><span class="nx">inUpdateTransaction</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+            <span class="nx">fn</span><span class="p">();</span>
+          <span class="p">}</span>
+          <span class="k">finally</span> <span class="p">{</span>
+            <span class="nx">my</span><span class="p">.</span><span class="nx">inUpdateTransaction</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">onDone</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">onDone</span><span class="p">();</span>
+            <span class="p">}</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+      <span class="p">};</span>
 
-<p>widget function</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">return</span> <span class="nx">widget</span><span class="p">;</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Evaluate `fn`, ensuring that an update will be</span>
+<span class="cm">       * performed after evaluating the function. Nested calls</span>
+<span class="cm">       * to `withUpdate` or `update` will result in updating the</span>
+<span class="cm">       * widget only once.</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">withUpdate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">withinTransaction</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">that</span><span class="p">.</span><span class="nx">update</span><span class="p">);</span>
+      <span class="p">};</span>
+
+      <span class="nx">that</span><span class="p">.</span><span class="nx">withNoUpdate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">withinTransaction</span><span class="p">(</span><span class="nx">fn</span><span class="p">);</span>
+      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>Third party protected extensions** added to <code>my</code>.
+See widget-extensions.js</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">extProperty</span> <span class="k">in</span> <span class="nx">ext</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">ext</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">extProperty</span><span class="p">))</span> <span class="p">{</span>
+          <span class="nx">my</span><span class="p">[</span><span class="nx">extProperty</span><span class="p">]</span> <span class="o">=</span> <span class="nx">ext</span><span class="p">[</span><span class="nx">extProperty</span><span class="p">];</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+
+      <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
+    <span class="p">});</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Creates unique ids used by widgets to identify their root div.</span>
+<span class="cm">     */</span>
+    <span class="kd">var</span> <span class="nx">idGenerator</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="p">{};</span>
+      <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+      <span class="nx">that</span><span class="p">.</span><span class="nx">newId</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">id</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">id</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+      <span class="p">};</span>
+
+      <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
+    <span class="p">})();</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Helpers for keeping track of the currently rendered widget.</span>
+<span class="cm">     */</span>
+    <span class="kd">var</span> <span class="nx">currentWidget</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">current</span><span class="p">;</span>
+      <span class="k">return</span> <span class="p">{</span>
+        <span class="nx">get</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">current</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">set</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">widget</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">current</span> <span class="o">=</span> <span class="nx">widget</span><span class="p">;</span>
+        <span class="p">}</span>
+      <span class="p">};</span>
+    <span class="p">})();</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Return true if the parent widget is rendering the receiver.</span>
+<span class="cm">     */</span>
+    <span class="kd">function</span> <span class="nx">inRenderingLoop</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="o">!!</span><span class="nx">currentWidget</span><span class="p">.</span><span class="nx">get</span><span class="p">();</span>
     <span class="p">}</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Set `widget` as the current widget while evaluating `fn`.</span>
+<span class="cm">     */</span>
+    <span class="kd">function</span> <span class="nx">withCurrentWidget</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="nx">widget</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">current</span> <span class="o">=</span> <span class="nx">currentWidget</span><span class="p">.</span><span class="nx">get</span><span class="p">();</span>
+      <span class="k">try</span> <span class="p">{</span>
+        <span class="nx">currentWidget</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">widget</span><span class="p">);</span>
+        <span class="nx">fn</span><span class="p">();</span>
+      <span class="p">}</span> <span class="k">finally</span> <span class="p">{</span>
+        <span class="nx">currentWidget</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">current</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">widget</span><span class="p">;</span>
+  <span class="p">}</span>
 <span class="p">);</span>
 
 </pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

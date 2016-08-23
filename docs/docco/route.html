@@ -1,0 +1,270 @@
+<!DOCTYPE html>  <html> <head>   <title>route.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="core.html">                 core.js               </a>                                           <a class="source" href="events.html">                 events.js               </a>                                           <a class="source" href="htmlCanvas.html">                 htmlCanvas.js               </a>                                           <a class="source" href="router.html">                 router.js               </a>                                           <a class="source" href="abstractSegment.html">                 abstractSegment.js               </a>                                           <a class="source" href="hashLocation.html">                 hashLocation.js               </a>                                           <a class="source" href="optionalParameterSegment.html">                 optionalParameterSegment.js               </a>                                           <a class="source" href="parameterSegment.html">                 parameterSegment.js               </a>                                           <a class="source" href="route.html">                 route.js               </a>                                           <a class="source" href="routeFactory.html">                 routeFactory.js               </a>                                           <a class="source" href="routeMatchResult.html">                 routeMatchResult.js               </a>                                           <a class="source" href="router.html">                 router.js               </a>                                           <a class="source" href="staticSegment.html">                 staticSegment.js               </a>                                           <a class="source" href="url.html">                 url.js               </a>                                           <a class="source" href="widget-extensions.html">                 widget-extensions.js               </a>                                           <a class="source" href="widget.html">                 widget.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               route.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span></span><span class="nx">define</span><span class="p">(</span>
+  <span class="p">[</span><span class="s1">&#39;./routeFactory&#39;</span><span class="p">,</span> <span class="s1">&#39;../events&#39;</span><span class="p">,</span> <span class="s1">&#39;./routeMatchResult&#39;</span><span class="p">,</span> <span class="s1">&#39;jquery&#39;</span><span class="p">,</span> <span class="s1">&#39;./url&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;objectjs&#39;</span><span class="p">],</span>
+  <span class="kd">function</span><span class="p">(</span><span class="nx">routeFactory</span><span class="p">,</span> <span class="nx">events</span><span class="p">,</span> <span class="nx">routeMatchResult</span><span class="p">,</span> <span class="nx">jQuery</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">object</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Routes represent the path for which an action should be taken (see `matched` event).</span>
+<span class="cm">     *</span>
+<span class="cm">     * Route is implemented as an array of segments. A route can be constructed from a segment array</span>
+<span class="cm">     * or a route pattern string.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @example</span>
+<span class="cm">     *    var aRouteFromSegments = route({segments: arrayOfRouteSegments});</span>
+<span class="cm">     *    var aRouteFromPattern = route(&#39;/segmentA/#aParameter/?andAnOptionalParameter&#39;);</span>
+<span class="cm">     *</span>
+<span class="cm">     * Route pattern strings are parsed into segment arrays by `routeFactory`.</span>
+<span class="cm">     *</span>
+<span class="cm">     * Route match URL:s by comparing the URL segments against an array</span>
+<span class="cm">     * of route segments. A route match a URL if the segments matches the route segments.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @example</span>
+<span class="cm">     *  route(&#39;/User/#id&#39;).matchUrl(&#39;/User/john&#39;).matched(); // =&gt; true</span>
+<span class="cm">     *</span>
+<span class="cm">     * Route would match URL since first segment in URL match Route (both &#39;User&#39;) and second</span>
+<span class="cm">     * segment is matched since a route parameter will match all values (if no constraints).</span>
+<span class="cm">     *</span>
+<span class="cm">     * Some segments can be optional and other mandatory. The strategy to match route with optional</span>
+<span class="cm">     * segments is to match it against the segments and then all combinations of optional parameters.</span>
+<span class="cm">     *</span>
+<span class="cm">     * An array with all optional sequences is calculated when route is created.</span>
+<span class="cm">     *</span>
+<span class="cm">     * Note: Avoid large number of optionals since it will consume memory and slow down matching.</span>
+<span class="cm">     * You can use query parameters instead.</span>
+<span class="cm">     *</span>
+<span class="cm">     * When a URL is matched the router will bind matches parameters to corresponding segments in URL</span>
+<span class="cm">     * and return them in `matchResult`</span>
+<span class="cm">     *</span>
+<span class="cm">     * @example</span>
+<span class="cm">     *</span>
+<span class="cm">     *    var result = route(&#39;/user/#id&#39;).matchUrl(&#39;/user/john&#39;);</span>
+<span class="cm">     *    console.dir(result.getValues()); // =&gt; { user: &#39;john&#39;}</span>
+<span class="cm">     *</span>
+<span class="cm">     * Routes can also be used as patterns for creating URLs</span>
+<span class="cm">     *</span>
+<span class="cm">     *    var url = route(&#39;/user/#id&#39;).expand({id: &#39;john&#39;});</span>
+<span class="cm">     *    console.log(url); // =&gt; &#39;/user/john&#39;</span>
+<span class="cm">     *</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param {string|{}} spec Route pattern or route spec</span>
+<span class="cm">     * @param {boolean} spec.ignoreTrailingSegments Route will match if all route segment match</span>
+<span class="cm">     * even if url have trailing unmatched segments</span>
+<span class="cm">     * @param {segment[]} [spec.segments] Array of route segments</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param {{}} my</span>
+<span class="cm">     * @returns {route}</span>
+<span class="cm">     */</span>
+    <span class="kd">var</span> <span class="nx">route</span> <span class="o">=</span> <span class="nx">object</span><span class="p">.</span><span class="nx">subclass</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">my</span><span class="p">)</span> <span class="p">{</span>
+
+      <span class="kd">var</span> <span class="nx">segments</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">ignoreTrailingSegments</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">optionalSequences</span><span class="p">;</span>
+
+      <span class="nx">my</span><span class="p">.</span><span class="nx">initialize</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">spec</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">my</span><span class="p">.</span><span class="kr">super</span><span class="p">();</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Build segments from pattern</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">segments</span> <span class="o">=</span> <span class="nx">routeFactory</span><span class="p">(</span><span class="nx">spec</span><span class="p">.</span><span class="nx">pattern</span><span class="p">,</span> <span class="nx">spec</span><span class="p">.</span><span class="nx">options</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Route match URL if all route segments match
+but URL still contain trailing segments (default false)</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">ignoreTrailingSegments</span> <span class="o">=</span> <span class="p">(</span><span class="nx">spec</span><span class="p">.</span><span class="nx">options</span> <span class="o">&amp;&amp;</span> <span class="nx">spec</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">ignoreTrailingSegments</span><span class="p">)</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Array with all optional sequences, ie. all combinations
+of optional parameters. Array must be ordered to match URL:s
+left to right.</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">optionalSequences</span> <span class="o">=</span> <span class="p">[];</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Pre-calculate optional sequences.</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">ensureOptionalSequences</span><span class="p">();</span>
+      <span class="p">};</span>
+
+            <span class="nx">my</span><span class="p">.</span><span class="nx">events</span> <span class="o">=</span> <span class="nx">events</span><span class="p">.</span><span class="nx">eventCategory</span><span class="p">();</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Public</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">onMatched</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">createEvent</span><span class="p">(</span><span class="s1">&#39;matched&#39;</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>@deprecated Use event property instead</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">on</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">on</span><span class="p">;</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Match route against URL by comparing segments. Triggers</span>
+<span class="cm">       * `onMatched` event on match.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {url} url</span>
+<span class="cm">       * @returns {routeMatchResult}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">matchUrl</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">match</span> <span class="o">=</span> <span class="nx">findMatch</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">match</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">routeMatchResult</span><span class="p">.</span><span class="nx">routeNoMatchResult</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">createMatchResult</span><span class="p">(</span><span class="nx">match</span><span class="p">,</span> <span class="nx">url</span><span class="p">);</span>
+                <span class="nx">my</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s1">&#39;matched&#39;</span><span class="p">,</span> <span class="nx">result</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Expands route into a url. All non optional route parameters must exist</span>
+<span class="cm">       * in `params`.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {{}} params Key/Values where keys are route parameter names and values the values to use</span>
+<span class="cm">       *</span>
+<span class="cm">       * @returns {string} URL string</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">expand</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">params</span> <span class="o">=</span> <span class="nx">params</span> <span class="o">||</span> <span class="p">{};</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Try to expand route into URL</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">urlSegments</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="nx">segments</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">routeSegment</span><span class="p">)</span> <span class="p">{</span>
+          <span class="kd">var</span> <span class="nx">urlSegment</span><span class="p">;</span>
+          <span class="k">if</span><span class="p">(</span><span class="nx">routeSegment</span><span class="p">.</span><span class="nx">isParameter</span><span class="p">())</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Use supplied value for parameters</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">urlSegment</span> <span class="o">=</span> <span class="nx">params</span><span class="p">[</span><span class="nx">routeSegment</span><span class="p">.</span><span class="nx">getName</span><span class="p">()];</span>
+          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>name/value for segments</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">urlSegment</span> <span class="o">=</span> <span class="nx">routeSegment</span><span class="p">.</span><span class="nx">getValue</span><span class="p">();</span>
+          <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>Skip if no match and optional</p>             </td>             <td class="code">               <div class="highlight"><pre>          <span class="k">if</span><span class="p">(</span><span class="nx">urlSegment</span> <span class="o">===</span> <span class="kc">undefined</span> <span class="o">&amp;&amp;</span>
+            <span class="nx">routeSegment</span><span class="p">.</span><span class="nx">isOptional</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">return</span><span class="p">;</span>
+          <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>Validate segment</p>             </td>             <td class="code">               <div class="highlight"><pre>          <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">routeSegment</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">urlSegment</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Could not generate a valid URL&#39;</span><span class="p">);</span>
+          <span class="p">}</span>
+
+          <span class="nx">urlSegments</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">urlSegment</span><span class="p">);</span>
+        <span class="p">});</span>
+
+        <span class="kd">var</span> <span class="nx">query</span> <span class="o">=</span> <span class="p">{};</span>
+
+        <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">params</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">param</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">that</span><span class="p">.</span><span class="nx">hasParameter</span><span class="p">(</span><span class="nx">param</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">query</span><span class="p">[</span><span class="nx">param</span><span class="p">]</span> <span class="o">=</span> <span class="nx">params</span><span class="p">[</span><span class="nx">param</span><span class="p">];</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>Handle array param values</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">if</span><span class="p">(</span><span class="nx">query</span><span class="p">[</span><span class="nx">param</span><span class="p">]</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">query</span><span class="p">[</span><span class="nx">param</span><span class="p">]</span> <span class="o">=</span> <span class="nx">query</span><span class="p">[</span><span class="nx">param</span><span class="p">].</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">);</span>
+            <span class="p">}</span>
+          <span class="p">}</span>
+        <span class="p">});</span>
+
+        <span class="k">return</span> <span class="nx">url</span><span class="p">.</span><span class="nx">build</span><span class="p">(</span><span class="nx">urlSegments</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">),</span> <span class="nx">query</span><span class="p">).</span><span class="nx">toString</span><span class="p">();</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Answers true if parameter with `name` exists in route.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {string} name</span>
+<span class="cm">       * @returns {boolean}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">hasParameter</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">segments</span><span class="p">.</span><span class="nx">some</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">segment</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">segment</span><span class="p">.</span><span class="nx">isParameter</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="nx">segment</span><span class="p">.</span><span class="nx">getName</span><span class="p">()</span> <span class="o">===</span> <span class="nx">name</span><span class="p">;</span>
+        <span class="p">});</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Returns a string representation of route useful for debugging.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @returns {string}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">toString</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s1">&#39;route(&#39;</span> <span class="o">+</span> <span class="nx">segments</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">;</span>
+      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>Private</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="cm">/**</span>
+<span class="cm">       * Checks if an array of url segments match a sequence of route segments.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {string[]} urlSegments</span>
+<span class="cm">       * @param {segments[]} [sequence] Route segments will be used as default</span>
+<span class="cm">       * @returns {boolean}</span>
+<span class="cm">       */</span>
+      <span class="kd">function</span> <span class="nx">isMatch</span><span class="p">(</span><span class="nx">urlSegments</span><span class="p">,</span> <span class="nx">sequence</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">sequence</span> <span class="o">=</span> <span class="nx">sequence</span> <span class="o">||</span> <span class="nx">segments</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Can not match if different sizes</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">if</span><span class="p">(</span><span class="nx">urlSegments</span><span class="p">.</span><span class="nx">length</span> <span class="o">!=</span> <span class="nx">sequence</span><span class="p">.</span><span class="nx">length</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">ignoreTrailingSegments</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>All routeSegments much match corresponding URL segment</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">return</span> <span class="nx">sequence</span><span class="p">.</span><span class="nx">every</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">routeSegment</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
+          <span class="kd">var</span> <span class="nx">urlSegment</span> <span class="o">=</span> <span class="nx">urlSegments</span><span class="p">[</span><span class="nx">index</span><span class="p">];</span>
+          <span class="k">return</span> <span class="nx">urlSegment</span> <span class="o">!==</span> <span class="kc">undefined</span> <span class="o">&amp;&amp;</span> <span class="nx">routeSegment</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="nx">urlSegment</span><span class="p">);</span>
+        <span class="p">});</span>
+      <span class="p">}</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Returns first sequence of segments that match url or null if no sequence match.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {url} url</span>
+<span class="cm">       * @returns {segment[]}</span>
+<span class="cm">       */</span>
+      <span class="kd">function</span> <span class="nx">findMatch</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">urlSegments</span> <span class="o">=</span> <span class="nx">url</span><span class="p">.</span><span class="nx">getSegments</span><span class="p">();</span></pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>Try match url segments</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">if</span><span class="p">(</span><span class="nx">isMatch</span><span class="p">(</span><span class="nx">urlSegments</span><span class="p">))</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">segments</span><span class="p">;</span>
+        <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>then optional sequences</p>             </td>             <td class="code">               <div class="highlight"><pre>                <span class="kd">var</span> <span class="nx">sequenceIndex</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="nx">sequenceIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">sequenceIndex</span> <span class="o">&lt;</span> <span class="nx">optionalSequences</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">sequenceIndex</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">if</span><span class="p">(</span><span class="nx">isMatch</span><span class="p">(</span><span class="nx">urlSegments</span><span class="p">,</span> <span class="nx">optionalSequences</span><span class="p">[</span><span class="nx">sequenceIndex</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">optionalSequences</span><span class="p">[</span><span class="nx">sequenceIndex</span><span class="p">];</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+      <span class="p">}</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Pre-calculate all optional sequences of segments.</span>
+<span class="cm">       */</span>
+      <span class="kd">function</span> <span class="nx">ensureOptionalSequences</span> <span class="p">()</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p>Find positions for optionals</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">optionalPositions</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="nx">segments</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">segment</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">if</span><span class="p">(</span><span class="nx">segment</span><span class="p">.</span><span class="nx">isOptional</span><span class="p">())</span> <span class="p">{</span>
+            <span class="nx">optionalPositions</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">index</span><span class="p">);</span>
+          <span class="p">}</span>
+        <span class="p">});</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="nx">optionalPositions</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">15</span><span class="p">)</span>  <span class="p">{</span>
+          <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span> <span class="p">(</span><span class="s1">&#39;Too many optional arguments. &quot;&#39;</span> <span class="o">+</span> <span class="nx">optionalPositions</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span>
+            <span class="s1">&#39;&quot;&quot; optionals would generate  &#39;</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="nx">optionalPositions</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="o">+</span>
+            <span class="s1">&#39; optional sequences.&#39;</span><span class="p">);</span>
+        <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p>Generate possible sequences</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">possibleOptionalSequences</span> <span class="o">=</span> <span class="nx">orderedSubsets</span><span class="p">(</span><span class="nx">optionalPositions</span><span class="p">);</span>
+
+        <span class="nx">possibleOptionalSequences</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">sequence</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <p>Clone segments array and remove optionals matching
+indexes in index sequence</p>             </td>             <td class="code">               <div class="highlight"><pre>          <span class="kd">var</span> <span class="nx">optionalSequence</span> <span class="o">=</span> <span class="nx">segments</span><span class="p">.</span><span class="nx">slice</span><span class="p">();</span>
+          <span class="nx">sequence</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">optionalIndex</span><span class="p">,</span> <span class="nx">numRemoved</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-22">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-22">&#182;</a>               </div>               <p>Remove optional but take in to account that we have already
+removed {numRemoved} from permutation.</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">optionalSequence</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">optionalIndex</span> <span class="o">-</span> <span class="nx">numRemoved</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+          <span class="p">});</span>
+
+          <span class="nx">optionalSequences</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">optionalSequence</span><span class="p">);</span>
+        <span class="p">});</span>
+      <span class="p">}</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Create a &#39;routeMatchResult&#39; from a matched sequence.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {segment[]} match Matched segment sequence</span>
+<span class="cm">       * @param {url} url Matched URL</span>
+<span class="cm">       *</span>
+<span class="cm">       * @returns {routeMatchResult}</span>
+<span class="cm">       */</span>
+      <span class="kd">function</span> <span class="nx">createMatchResult</span><span class="p">(</span><span class="nx">match</span><span class="p">,</span> <span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">urlSegments</span> <span class="o">=</span> <span class="nx">url</span><span class="p">.</span><span class="nx">getSegments</span><span class="p">();</span>
+
+        <span class="kd">var</span> <span class="nx">parameterValues</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="nx">segments</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">routeSegment</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">routeSegment</span><span class="p">.</span><span class="nx">isParameter</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">return</span><span class="p">;</span>
+          <span class="p">}</span>
+
+          <span class="kd">var</span> <span class="nx">matchedIndex</span> <span class="o">=</span> <span class="nx">match</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">routeSegment</span><span class="p">);</span>
+          <span class="k">if</span><span class="p">(</span><span class="nx">matchedIndex</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">parameterValues</span><span class="p">[</span><span class="nx">routeSegment</span><span class="p">.</span><span class="nx">getName</span><span class="p">()]</span> <span class="o">=</span> <span class="nx">routeSegment</span><span class="p">.</span><span class="nx">getValue</span><span class="p">(</span><span class="nx">urlSegments</span><span class="p">[</span><span class="nx">matchedIndex</span><span class="p">]);</span>
+          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">parameterValues</span><span class="p">[</span><span class="nx">routeSegment</span><span class="p">.</span><span class="nx">getName</span><span class="p">()]</span> <span class="o">=</span> <span class="nx">routeSegment</span><span class="p">.</span><span class="nx">getValue</span><span class="p">();</span>
+          <span class="p">}</span>
+        <span class="p">});</span>
+
+
+        <span class="k">return</span> <span class="nx">routeMatchResult</span><span class="p">({</span><span class="nx">route</span><span class="o">:</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">url</span><span class="o">:</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">values</span><span class="o">:</span> <span class="nx">parameterValues</span> <span class="p">});</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Generates all subsets of an array with same internal order. Returned subsets are</span>
+<span class="cm">     * ordered in right to left order.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @example</span>
+<span class="cm">     *  orderedSubsets([1,2,3]); // =&gt; [[1,2,3],[2,3],[1,3],[3],[1,2],[2],[1]]</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param {[]} input</span>
+<span class="cm">     * @returns {[[]]} Array with all subset arrays</span>
+<span class="cm">     */</span>
+    <span class="kd">function</span> <span class="nx">orderedSubsets</span><span class="p">(</span><span class="nx">input</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="p">[],</span> <span class="nx">result</span><span class="p">,</span> <span class="nx">mask</span><span class="p">,</span>
+        <span class="nx">total</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nx">input</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+
+      <span class="k">for</span> <span class="p">(</span><span class="nx">mask</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">mask</span> <span class="o">&lt;</span> <span class="nx">total</span><span class="p">;</span> <span class="nx">mask</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">result</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="nx">i</span> <span class="o">=</span> <span class="nx">input</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">do</span> <span class="p">{</span>
+          <span class="k">if</span> <span class="p">((</span><span class="nx">mask</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="nx">i</span><span class="p">))</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">result</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">input</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+          <span class="p">}</span>
+        <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="nx">i</span><span class="o">--</span><span class="p">);</span>
+        <span class="nx">results</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+      <span class="p">}</span>
+
+      <span class="k">return</span> <span class="nx">results</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">route</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">);</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

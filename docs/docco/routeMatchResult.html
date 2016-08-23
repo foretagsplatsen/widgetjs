@@ -1,0 +1,134 @@
+<!DOCTYPE html>  <html> <head>   <title>routeMatchResult.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="core.html">                 core.js               </a>                                           <a class="source" href="events.html">                 events.js               </a>                                           <a class="source" href="htmlCanvas.html">                 htmlCanvas.js               </a>                                           <a class="source" href="router.html">                 router.js               </a>                                           <a class="source" href="abstractSegment.html">                 abstractSegment.js               </a>                                           <a class="source" href="hashLocation.html">                 hashLocation.js               </a>                                           <a class="source" href="optionalParameterSegment.html">                 optionalParameterSegment.js               </a>                                           <a class="source" href="parameterSegment.html">                 parameterSegment.js               </a>                                           <a class="source" href="route.html">                 route.js               </a>                                           <a class="source" href="routeFactory.html">                 routeFactory.js               </a>                                           <a class="source" href="routeMatchResult.html">                 routeMatchResult.js               </a>                                           <a class="source" href="router.html">                 router.js               </a>                                           <a class="source" href="staticSegment.html">                 staticSegment.js               </a>                                           <a class="source" href="url.html">                 url.js               </a>                                           <a class="source" href="widget-extensions.html">                 widget-extensions.js               </a>                                           <a class="source" href="widget.html">                 widget.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               routeMatchResult.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span></span><span class="nx">define</span><span class="p">([</span>
+  <span class="s1">&#39;objectjs&#39;</span>
+<span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">object</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="cm">/**</span>
+<span class="cm">   * Route match result are used as the answer of matching a url against a route.</span>
+<span class="cm">   *</span>
+<span class="cm">   * @param {{}} [spec]</span>
+<span class="cm">   * @param {{}} spec.url Matched URL</span>
+<span class="cm">   * @param {{}} spec.route Matched Route</span>
+<span class="cm">   * @param {{}} spec.values Hash with matched parameter names as keys and matching url segment values.</span>
+<span class="cm">   *</span>
+<span class="cm">   * @returns {routeMatchResult}</span>
+<span class="cm">   */</span>
+  <span class="kd">var</span> <span class="nx">routeMatchResult</span> <span class="o">=</span> <span class="nx">object</span><span class="p">.</span><span class="nx">subclass</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">my</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="kd">var</span> <span class="nx">url</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">route</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">urlParameters</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">routeParameters</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">parameters</span><span class="p">;</span>
+
+    <span class="nx">my</span><span class="p">.</span><span class="nx">initialize</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">spec</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">my</span><span class="p">.</span><span class="kr">super</span><span class="p">(</span><span class="nx">spec</span><span class="p">);</span>
+      <span class="nx">url</span> <span class="o">=</span> <span class="nx">spec</span><span class="p">.</span><span class="nx">url</span><span class="p">;</span>
+      <span class="nx">route</span> <span class="o">=</span> <span class="nx">spec</span><span class="p">.</span><span class="nx">route</span><span class="p">;</span>
+
+      <span class="nx">urlParameters</span> <span class="o">=</span> <span class="p">(</span><span class="nx">url</span> <span class="o">&amp;&amp;</span> <span class="nx">url</span><span class="p">.</span><span class="nx">getQuery</span> <span class="o">&amp;&amp;</span> <span class="nx">url</span><span class="p">.</span><span class="nx">getQuery</span><span class="p">())</span> <span class="o">||</span> <span class="p">{};</span>
+      <span class="nx">routeParameters</span> <span class="o">=</span> <span class="nx">spec</span><span class="p">.</span><span class="nx">values</span> <span class="o">||</span> <span class="p">{};</span>
+      <span class="nx">parameters</span> <span class="o">=</span> <span class="nx">mergeParameters</span><span class="p">(</span><span class="nx">routeParameters</span><span class="p">,</span> <span class="nx">urlParameters</span><span class="p">);</span>
+    <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Public</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="cm">/**</span>
+<span class="cm">     * Matched route</span>
+<span class="cm">     *</span>
+<span class="cm">     * @returns {route}</span>
+<span class="cm">     */</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">getRoute</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">route</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Matched URL</span>
+<span class="cm">     *</span>
+<span class="cm">     * @returns {url}</span>
+<span class="cm">     */</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">getUrl</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">url</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Answers true if route match URL</span>
+<span class="cm">     *</span>
+<span class="cm">     * @returns {boolean}</span>
+<span class="cm">     */</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">isMatch</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Values for parameters in route</span>
+<span class="cm">     *</span>
+<span class="cm">     * @returns {{}}</span>
+<span class="cm">     */</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">getRouteParameters</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">routeParameters</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Values for parameters in query</span>
+<span class="cm">     *</span>
+<span class="cm">     * @returns {{}}</span>
+<span class="cm">     */</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">getQueryParameters</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">url</span><span class="p">.</span><span class="nx">getQuery</span><span class="p">();</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * All matched parameters</span>
+<span class="cm">     *</span>
+<span class="cm">     * @returns {{}}</span>
+<span class="cm">     */</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">getParameters</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">parameters</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Constructs an array with all parameters in same order as in route pattern with</span>
+<span class="cm">     * query parameter as the last value.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @returns {Array}</span>
+<span class="cm">     */</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">getActionArguments</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">actionArguments</span> <span class="o">=</span>  <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">routeParameters</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">parameterName</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">routeParameters</span><span class="p">[</span><span class="nx">parameterName</span><span class="p">];</span>
+      <span class="p">});</span>
+      <span class="nx">actionArguments</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">url</span><span class="p">.</span><span class="nx">getQuery</span><span class="p">());</span>
+      <span class="k">return</span> <span class="nx">actionArguments</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Private</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">function</span> <span class="nx">mergeParameters</span><span class="p">(</span><span class="nx">routeParameters</span><span class="p">,</span> <span class="nx">queryParameters</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">allValues</span> <span class="o">=</span> <span class="p">{};</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Fill with route parameters</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">parameterName</span> <span class="k">in</span> <span class="nx">routeParameters</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">routeParameters</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">parameterName</span><span class="p">))</span> <span class="p">{</span>
+          <span class="nx">allValues</span><span class="p">[</span><span class="nx">parameterName</span><span class="p">]</span> <span class="o">=</span> <span class="nx">routeParameters</span><span class="p">[</span><span class="nx">parameterName</span><span class="p">];</span>
+        <span class="p">}</span>
+      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Fill with query parameters</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">queryParameterName</span> <span class="k">in</span> <span class="nx">queryParameters</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">queryParameters</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">queryParameterName</span><span class="p">))</span> <span class="p">{</span>
+          <span class="nx">allValues</span><span class="p">[</span><span class="nx">queryParameterName</span><span class="p">]</span> <span class="o">=</span> <span class="nx">queryParameters</span><span class="p">[</span><span class="nx">queryParameterName</span><span class="p">];</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+
+      <span class="k">return</span> <span class="nx">allValues</span><span class="p">;</span>
+
+    <span class="p">}</span>
+  <span class="p">});</span>
+
+  <span class="nx">routeMatchResult</span><span class="p">.</span><span class="kr">class</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="cm">/**</span>
+<span class="cm">     * Result to use when match does not match url</span>
+<span class="cm">     */</span>
+    <span class="nx">that</span><span class="p">.</span><span class="nx">routeNoMatchResult</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+
+      <span class="cm">/** @typedef {routeMatchResult} routeNoMatchResult */</span>
+      <span class="kd">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="nx">that</span><span class="p">();</span>
+
+      <span class="nx">instance</span><span class="p">.</span><span class="nx">isMatch</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+      <span class="p">};</span>
+
+      <span class="k">return</span> <span class="nx">instance</span><span class="p">;</span>
+    <span class="p">}());</span>
+  <span class="p">});</span>
+
+  <span class="k">return</span> <span class="nx">routeMatchResult</span><span class="p">;</span>
+<span class="p">});</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
