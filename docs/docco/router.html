@@ -1,248 +1,552 @@
-<!DOCTYPE html>  <html> <head>   <title>router.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="core.html">                 core.js               </a>                                           <a class="source" href="events.html">                 events.js               </a>                                           <a class="source" href="htmlCanvas.html">                 htmlCanvas.js               </a>                                           <a class="source" href="router.html">                 router.js               </a>                                           <a class="source" href="widget-extensions.html">                 widget-extensions.js               </a>                                           <a class="source" href="widget.html">                 widget.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               router.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>Event-based URL handling:</p>
-
-<ul>
-<li><p><strong>Router</strong>: simply watches the hash of the URL (uses the hash-bang '#!' convention) and notifies a controller when it change.</p>
-
-<p>http://foo.com/#!<strong>/bar</strong></p></li>
-<li><p><strong>Controller</strong>: responsible for binding events to some URL.</p>
-
-<p>controller.on('/<strong>bar</strong>', function() { alert('bar'); });</p></li>
-</ul>
-
-<p>When the URL (hash fragment) change the router sends a <code>resolveRoute(route)</code> message with the new route to the controller that then triggers an
-action.</p>
-
-<hr />             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">define</span><span class="p">(</span>
+<!DOCTYPE html>  <html> <head>   <title>router.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="core.html">                 core.js               </a>                                           <a class="source" href="events.html">                 events.js               </a>                                           <a class="source" href="htmlCanvas.html">                 htmlCanvas.js               </a>                                           <a class="source" href="router.html">                 router.js               </a>                                           <a class="source" href="abstractSegment.html">                 abstractSegment.js               </a>                                           <a class="source" href="hashLocation.html">                 hashLocation.js               </a>                                           <a class="source" href="optionalParameterSegment.html">                 optionalParameterSegment.js               </a>                                           <a class="source" href="parameterSegment.html">                 parameterSegment.js               </a>                                           <a class="source" href="route.html">                 route.js               </a>                                           <a class="source" href="routeFactory.html">                 routeFactory.js               </a>                                           <a class="source" href="routeMatchResult.html">                 routeMatchResult.js               </a>                                           <a class="source" href="router.html">                 router.js               </a>                                           <a class="source" href="staticSegment.html">                 staticSegment.js               </a>                                           <a class="source" href="url.html">                 url.js               </a>                                           <a class="source" href="widget-extensions.html">                 widget-extensions.js               </a>                                           <a class="source" href="widget.html">                 widget.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               router.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span></span><span class="nx">define</span><span class="p">(</span>
   <span class="p">[</span>
     <span class="s1">&#39;jquery&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;./events&#39;</span>
+    <span class="s1">&#39;../events&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;./route&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;./url&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;./hashLocation&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;objectjs&#39;</span>
   <span class="p">],</span>
-  <span class="kd">function</span> <span class="p">(</span><span class="nx">jQuery</span><span class="p">,</span> <span class="nx">events</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <h3>Event bus/manager for routing</h3>
+  <span class="kd">function</span><span class="p">(</span><span class="nx">jQuery</span><span class="p">,</span> <span class="nx">events</span><span class="p">,</span> <span class="nx">route</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">hashLocation</span><span class="p">,</span> <span class="nx">object</span><span class="p">)</span> <span class="p">{</span>
 
-<p>Manage all routing events. Usage:</p>
+    <span class="cm">/**</span>
+<span class="cm">     * Lazily creates a singleton instance of</span>
+<span class="cm">     * hash-fragment listener `hashLocation()`.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @returns {hashLocation}</span>
+<span class="cm">     */</span>
+    <span class="kd">var</span> <span class="nx">hashSingleton</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">hashSingleton</span><span class="p">.</span><span class="nx">instance</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">hashSingleton</span><span class="p">.</span><span class="nx">instance</span> <span class="o">=</span> <span class="nx">hashLocation</span><span class="p">();</span>
+      <span class="p">}</span>
 
-<pre><code>events.at('routing').on('notfound', function(url) {
-    alert('404 - Url not found: ' + url);
-});
-</code></pre>
+      <span class="k">return</span> <span class="nx">hashSingleton</span><span class="p">.</span><span class="nx">instance</span><span class="p">;</span>
+    <span class="p">};</span>
 
-<hr />             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">handler</span> <span class="o">=</span> <span class="nx">events</span><span class="p">.</span><span class="nx">at</span><span class="p">(</span><span class="s1">&#39;routing&#39;</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <h3>Default controller</h3>
+    <span class="cm">/**</span>
+<span class="cm">    * Router allow you to keep state in the URL. When a user visits a specific URL the application</span>
+<span class="cm">    * can be transformed accordingly.</span>
+<span class="cm">    *</span>
+<span class="cm">    * Router have a routing table consisting of an array of routes. When the router resolves a URL</span>
+<span class="cm">    * each route is matched against the URL one-by-one. The order is defined by the route priority</span>
+<span class="cm">    * property (lower first). If two routes have the same priority or if priority is omitted, routes</span>
+<span class="cm">    * are matched in registration order.</span>
+<span class="cm">    *</span>
+<span class="cm">    * @param [spec]</span>
+<span class="cm">    * @param [spec.locationHandler] hashSingleton by default</span>
+<span class="cm">    *</span>
+<span class="cm">    * @returns {{}}</span>
+<span class="cm">    */</span>
+    <span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">object</span><span class="p">.</span><span class="nx">subclass</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">my</span><span class="p">)</span> <span class="p">{</span>
 
-<p>Use controller.on(...)</p>
+      <span class="nx">my</span><span class="p">.</span><span class="nx">initialize</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">spec</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">my</span><span class="p">.</span><span class="kr">super</span><span class="p">(</span><span class="nx">spec</span><span class="p">);</span>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">location</span> <span class="o">=</span> <span class="nx">spec</span><span class="p">.</span><span class="nx">locationHandler</span> <span class="o">||</span> <span class="nx">hashSingleton</span><span class="p">();</span>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">routeTable</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">lastMatch</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">defaultParameters</span> <span class="o">=</span> <span class="p">{};</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Listen for URL changes and resolve URL when changed</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">my</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">onChanged</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">my</span><span class="p">.</span><span class="nx">resolveUrl</span><span class="p">();</span> <span class="p">});</span>
+      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Events</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">my</span><span class="p">.</span><span class="nx">events</span> <span class="o">=</span> <span class="nx">events</span><span class="p">.</span><span class="nx">eventCategory</span><span class="p">();</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Public</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="cm">/**</span>
+<span class="cm">       * Triggered when a route is matched with `routeMatchResult` as argument.</span>
+<span class="cm">       * @type {event}</span>
+<span class="cm">       */</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">onRouteMatched</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">createEvent</span><span class="p">(</span><span class="s1">&#39;routeMatched&#39;</span><span class="p">);</span>
 
-<p>Example: path with parameters (starting with a '#')</p>
+      <span class="cm">/**</span>
+<span class="cm">       * Triggered when a route is not matched with &#39;url&#39; as argument.</span>
+<span class="cm">       * @type {event}</span>
+<span class="cm">       */</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">onRouteNotFound</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">createEvent</span><span class="p">(</span><span class="s1">&#39;routeNotFound&#39;</span><span class="p">);</span>
 
-<pre><code>myController.on('/page/#pageNumber', function(pageNumber) {
-    alert(pageNumber);
-});
-</code></pre>
+      <span class="cm">/**</span>
+<span class="cm">       * Triggered each time a URL is resolved with `url` as argument</span>
+<span class="cm">       * @type {event}</span>
+<span class="cm">       */</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">onResolveUrl</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">createEvent</span><span class="p">(</span><span class="s1">&#39;resolveUrl&#39;</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>@deprecated Use event property instead</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">that</span><span class="p">.</span><span class="nx">on</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">on</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Public</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="cm">/**</span>
+<span class="cm">       * Tries to resolve URL by matching the URL against all routes in</span>
+<span class="cm">       * route table. Unless `fallThrough` is set on the matched route, router</span>
+<span class="cm">       * will stop on first match.</span>
+<span class="cm">       *</span>
+<span class="cm">       * Last match is also stored as `my.lastMatch`</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {url} [aUrl] A URL or current url as default</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">resolveUrl</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">aUrl</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">aUrl</span> <span class="o">===</span> <span class="s2">&quot;string&quot;</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">aUrl</span> <span class="o">=</span> <span class="nx">url</span><span class="p">({</span><span class="nx">rawUrl</span><span class="o">:</span> <span class="nx">aUrl</span><span class="p">});</span>
+        <span class="p">}</span>
 
-<p>Example: regexp path:</p>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">resolveUrl</span><span class="p">(</span><span class="nx">aUrl</span><span class="p">);</span>
+      <span class="p">};</span>
 
-<pre><code>myController.on('/page/.*', function() {
-    ...
-});
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">controller</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="p">{};</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <h4>Private methods</h4>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Convert parameters (eg. '#userId') into regexp</p>
+      <span class="cm">/**</span>
+<span class="cm">       * Creates and adds a new route to the routing table.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @example</span>
+<span class="cm">       *</span>
+<span class="cm">       *    // Simplest possible route</span>
+<span class="cm">       *    aRouter.addRoute({</span>
+<span class="cm">       *      pattern: &#39;/user/#id&#39;,</span>
+<span class="cm">       *      action: function(id, query) { console.log(id, query);},</span>
+<span class="cm">       *    });</span>
+<span class="cm">       *</span>
+<span class="cm">       *    // Route with name and priority,</span>
+<span class="cm">       *    aRouter.addRoute({</span>
+<span class="cm">       *      name: &#39;user&#39;,</span>
+<span class="cm">       *      pattern: &#39;/user/#id&#39;,</span>
+<span class="cm">       *      priority: 4000,</span>
+<span class="cm">       *      action: function(id) { console.log(id);},</span>
+<span class="cm">       *    });</span>
+<span class="cm">       *</span>
+<span class="cm">       *    // Route with only pattern and custom onMatched event handler,</span>
+<span class="cm">       *    var route = aRouter.addRoute({ pattern: &#39;&#39;/user/#id&#39;&#39;});</span>
+<span class="cm">       *    route.onMatched(function(result) {</span>
+<span class="cm">       *      console.dir(result.getValues());</span>
+<span class="cm">       *    });</span>
+<span class="cm">       *</span>
+<span class="cm">       *    // Route with route options,</span>
+<span class="cm">       *    aRouter.addRoute({</span>
+<span class="cm">       *      pattern: &#39;/user/#id&#39;,</span>
+<span class="cm">       *      priority: 4000,</span>
+<span class="cm">       *      defaults: {</span>
+<span class="cm">       *        id: &#39;john_doe&#39;</span>
+<span class="cm">       *      },</span>
+<span class="cm">       *      constraints: {</span>
+<span class="cm">       *        id: [&#39;john_doe&#39;, &#39;jane_doe&#39;]</span>
+<span class="cm">       *      }</span>
+<span class="cm">       *    });</span>
+<span class="cm">       *</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {routeSpec} routeSpec Options passed to route plus options below</span>
+<span class="cm">       * @param {string} routeSpec.pattern Route pattern as string</span>
+<span class="cm">       * @param {function} routeSpec.action Executed when route is matched with parameters as arguments +</span>
+<span class="cm">       * query object as the last argument.</span>
+<span class="cm">       * @param {string} routeSpec.pattern Route pattern as string</span>
+<span class="cm">       *</span>
+<span class="cm">       * @returns {route}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">addRoute</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">routeSpec</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">routeSpec</span> <span class="o">=</span> <span class="nx">routeSpec</span> <span class="o">||</span> <span class="p">{};</span>
 
-<pre><code>convertRoute('/user/#userId'); //=&gt; "/user/([^/]*)"
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">function</span> <span class="nx">convertRoute</span><span class="p">(</span><span class="nx">route</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">route</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/#[\w\d]+/g</span><span class="p">,</span> <span class="s1">&#39;([^\/]*)&#39;</span><span class="p">);</span>
-      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Match route against path and return array of values for matched parameters in path.</p>
+        <span class="kd">var</span> <span class="nx">newRoute</span> <span class="o">=</span> <span class="nx">route</span><span class="p">({</span>
+          <span class="nx">pattern</span><span class="o">:</span> <span class="nx">routeSpec</span><span class="p">.</span><span class="nx">pattern</span><span class="p">,</span>
+          <span class="nx">options</span><span class="o">:</span> <span class="nx">routeSpec</span>
+        <span class="p">});</span>
 
-<pre><code>extractParameters('/user/kalle', '/user/#id'); //=&gt; ['kalle']
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">function</span> <span class="nx">extractParameters</span><span class="p">(</span><span class="nx">route</span><span class="p">,</span> <span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">parameterValues</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="p">(</span><span class="s1">&#39;^&#39;</span> <span class="o">+</span> <span class="nx">convertRoute</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;[\/]?$&#39;</span><span class="p">).</span><span class="nx">exec</span><span class="p">(</span><span class="nx">route</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">parameterValues</span><span class="p">)</span> <span class="p">{</span>
-          <span class="k">return</span> <span class="nx">parameterValues</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">routeSpec</span><span class="p">.</span><span class="nx">action</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">newRoute</span><span class="p">.</span><span class="nx">onMatched</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">routeSpec</span><span class="p">.</span><span class="nx">action</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">result</span><span class="p">.</span><span class="nx">getActionArguments</span><span class="p">());</span>
+          <span class="p">});</span>
+        <span class="p">}</span>
+
+                <span class="nx">newRoute</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">routeSpec</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+        <span class="nx">newRoute</span><span class="p">.</span><span class="nx">fallThrough</span> <span class="o">=</span> <span class="nx">routeSpec</span><span class="p">.</span><span class="nx">fallThrough</span><span class="p">;</span>
+
+        <span class="nx">newRoute</span><span class="p">.</span><span class="nx">priority</span> <span class="o">=</span> <span class="nx">routeSpec</span><span class="p">.</span><span class="nx">priority</span><span class="p">;</span>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">addRoute</span><span class="p">(</span><span class="nx">newRoute</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="nx">newRoute</span><span class="p">;</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Find a route using a predicate function. The function is applied on routes</span>
+<span class="cm">       * on-by-one until match.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {function} predicate</span>
+<span class="cm">       * @returns {route} Matched route or null if not matched</span>
+<span class="cm">       */</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">findRoute</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">predicate</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">numRoutes</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">routeTable</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+                <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">routeIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">routeIndex</span> <span class="o">&lt;</span> <span class="nx">numRoutes</span><span class="p">;</span> <span class="nx">routeIndex</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">route</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">routeTable</span><span class="p">[</span><span class="nx">routeIndex</span><span class="p">];</span>
+                    <span class="k">if</span><span class="p">(</span><span class="nx">predicate</span><span class="p">(</span><span class="nx">route</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="k">return</span> <span class="nx">route</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+                <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Finds route by name</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {string} routeName</span>
+<span class="cm">       * @returns {route}</span>
+<span class="cm">       */</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">getRouteByName</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">routeName</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="nx">that</span><span class="p">.</span><span class="nx">findRoute</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">route</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">route</span><span class="p">.</span><span class="nx">name</span> <span class="o">&amp;&amp;</span> <span class="nx">route</span><span class="p">.</span><span class="nx">name</span> <span class="o">===</span> <span class="nx">routeName</span><span class="p">;</span>
+                <span class="p">});</span>
+            <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Removes a route from routing table</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param route</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">removeRoute</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">route</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">routeTable</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">route</span><span class="p">);</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">index</span> <span class="o">===</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Route not in route table&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nx">my</span><span class="p">.</span><span class="nx">routeTable</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Removes all routes from routing table.</span>
+<span class="cm">       */</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">clear</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+                <span class="nx">my</span><span class="p">.</span><span class="nx">routeTable</span> <span class="o">=</span> <span class="p">[];</span>
+                <span class="nx">my</span><span class="p">.</span><span class="nx">lastMatch</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+            <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Pipes URL matching &#39;routeSpec&#39; to another router.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {{}} routeSpec Same options as `addRoute`</span>
+<span class="cm">       * @param {router} router</span>
+<span class="cm">       *</span>
+<span class="cm">       * @returns {route}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">pipeRoute</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">routeSpec</span><span class="p">,</span> <span class="nx">router</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">routeSpec</span> <span class="o">||</span> <span class="o">!</span><span class="nx">routeSpec</span><span class="p">.</span><span class="nx">pattern</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Route pattern required&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="kd">var</span> <span class="nx">aRoute</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">addRoute</span><span class="p">(</span><span class="nx">routeSpec</span><span class="p">);</span>
+        <span class="nx">aRoute</span><span class="p">.</span><span class="nx">onMatched</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">router</span><span class="p">.</span><span class="nx">resolveUrl</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">getUrl</span><span class="p">());</span>
+        <span class="p">});</span>
+
+        <span class="k">return</span> <span class="nx">aRoute</span><span class="p">;</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Pipe not found to a different router</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {router} router</span>
+<span class="cm">       * @returns {route}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">pipeNotFound</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">router</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">that</span><span class="p">.</span><span class="nx">onRouteNotFound</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">aRawUrl</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">router</span><span class="p">.</span><span class="nx">resolveUrl</span><span class="p">(</span><span class="nx">aRawUrl</span><span class="p">);</span>
+        <span class="p">});</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Returns the current URL</span>
+<span class="cm">       * @returns {url}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">getUrl</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">my</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">getUrl</span><span class="p">();</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Constructs a link that can be used eg. in href.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @example</span>
+<span class="cm">       *  // Link to a route by name (recommended)</span>
+<span class="cm">       *  aRouter.linkTo(&#39;users-list&#39;, {user: &#39;jane&#39;});</span>
+<span class="cm">       *</span>
+<span class="cm">       *  // Link to a path</span>
+<span class="cm">       *  aRouter.linkTo(&#39;/user/mikael&#39;);</span>
+<span class="cm">       *  aRouter.linkTo(&#39;/user/&#39;, {sortBy: &#39;name&#39;});</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {string} routeName Name of route or path</span>
+<span class="cm">       * @param {{}} [parameters]</span>
+<span class="cm">       * @param {boolean} [includeCurrentParameters=false] Merge parameters with parameters in current match.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @returns {string}</span>
+<span class="cm">       */</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">linkTo</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">routeName</span><span class="p">,</span> <span class="nx">parameters</span><span class="p">,</span> <span class="nx">includeCurrentParameters</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">route</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getRouteByName</span><span class="p">(</span><span class="nx">routeName</span><span class="p">);</span>
+                <span class="k">if</span><span class="p">(</span><span class="nx">route</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">my</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">linkToUrl</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">expand</span><span class="p">({</span>
+            <span class="nx">routeName</span><span class="o">:</span> <span class="nx">route</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+            <span class="nx">parameters</span><span class="o">:</span> <span class="nx">parameters</span><span class="p">,</span>
+            <span class="nx">excludeCurrentParameters</span><span class="o">:</span> <span class="o">!</span><span class="nx">includeCurrentParameters</span>
+          <span class="p">}));</span>
+                <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>fallback to path (eg. /user/john) if route is not defined</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">return</span> <span class="nx">that</span><span class="p">.</span><span class="nx">linkToPath</span><span class="p">(</span><span class="nx">routeName</span><span class="p">,</span> <span class="nx">parameters</span><span class="p">);</span>
+            <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Link to a path</span>
+<span class="cm">       *</span>
+<span class="cm">       * @example</span>
+<span class="cm">       *  aRouter.linkToPath(&#39;/user/mikael&#39;);</span>
+<span class="cm">       *  aRouter.linkToPath(&#39;/user/&#39;, {sortBy: &#39;name&#39;});</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {string} path</span>
+<span class="cm">       * @param {{}} query</span>
+<span class="cm">       * @returns {string}</span>
+<span class="cm">       */</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">linkToPath</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">query</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">that</span><span class="p">.</span><span class="nx">linkToUrl</span><span class="p">(</span><span class="nx">url</span><span class="p">.</span><span class="nx">build</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">query</span><span class="p">));</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Link from url</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {url} aUrl</span>
+<span class="cm">       * @returns {string}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">linkToUrl</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">aUrl</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">my</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">linkToUrl</span><span class="p">(</span><span class="nx">aUrl</span><span class="p">);</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Redirects browser to route or path.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @example</span>
+<span class="cm">       *  // Redirect to a route by name</span>
+<span class="cm">       *  aRouter.redirectTo(&#39;users-list&#39;, {user: &#39;jane&#39;});</span>
+<span class="cm">       *</span>
+<span class="cm">       *  // Redirect to a path</span>
+<span class="cm">       *  aRouter.redirectTo(&#39;/user/mikael&#39;);</span>
+<span class="cm">       *  aRouter.redirectTo(&#39;/user/&#39;, {sortBy: &#39;name&#39;});</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {string} routeName</span>
+<span class="cm">       * @param {{}} [parameters]</span>
+<span class="cm">       * @param {boolean} [includeCurrentParameters=false] Merge parameters with parameters in current match.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @returns {string}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">redirectTo</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">routeName</span><span class="p">,</span> <span class="nx">parameters</span><span class="p">,</span> <span class="nx">includeCurrentParameters</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">route</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getRouteByName</span><span class="p">(</span><span class="nx">routeName</span><span class="p">);</span>
+                <span class="k">if</span><span class="p">(</span><span class="nx">route</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">my</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">setUrl</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">expand</span><span class="p">({</span>
+            <span class="nx">routeName</span><span class="o">:</span> <span class="nx">route</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+            <span class="nx">parameters</span><span class="o">:</span> <span class="nx">parameters</span><span class="p">,</span>
+            <span class="nx">excludeCurrentParameters</span><span class="o">:</span> <span class="o">!</span><span class="nx">includeCurrentParameters</span>
+          <span class="p">}));</span>
+                <span class="p">}</span>
+
+                <span class="k">return</span> <span class="nx">that</span><span class="p">.</span><span class="nx">redirectToPath</span><span class="p">(</span><span class="nx">routeName</span><span class="p">,</span> <span class="nx">parameters</span><span class="p">);</span>
+            <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Redirect to a path</span>
+<span class="cm">       *</span>
+<span class="cm">       * @example</span>
+<span class="cm">       *  aRouter.redirectToPath(&#39;/user/mikael&#39;);</span>
+<span class="cm">       *  aRouter.redirectToPath(&#39;/user/&#39;, {sortBy: &#39;name&#39;});</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {string} path</span>
+<span class="cm">       * @param {{}} query</span>
+<span class="cm">       * @returns {string}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">redirectToPath</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">query</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">that</span><span class="p">.</span><span class="nx">redirectToUrl</span><span class="p">(</span><span class="nx">url</span><span class="p">.</span><span class="nx">build</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">query</span><span class="p">));</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Redirect to url</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {url} aUrl</span>
+<span class="cm">       * @returns {string}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">redirectToUrl</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">aUrl</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">my</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">setUrl</span><span class="p">(</span><span class="nx">aUrl</span><span class="p">);</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Constructs a new URL from parameters with a route as template. If no route is</span>
+<span class="cm">       * supplied the last matched route is used.</span>
+<span class="cm">       *</span>
+<span class="cm">       * Parameters are merged with parameters from last match unless `excludeCurrentParameters`</span>
+<span class="cm">       * is set to true.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {{}} [options]</span>
+<span class="cm">       * @param {string} [options.routeName] Name of route to link to. Default route from last match.</span>
+<span class="cm">       * @param {{}} [options.parameters={}]</span>
+<span class="cm">       * @param {boolean} [options.excludeCurrentParameters=false]</span>
+<span class="cm">       *</span>
+<span class="cm">       * @returns {url}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">expand</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">routeName</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">routeName</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">suppliedParameters</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">parameters</span> <span class="o">||</span> <span class="p">{};</span>
+        <span class="kd">var</span> <span class="nx">excludeCurrentParameters</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">excludeCurrentParameters</span> <span class="o">||</span> <span class="kc">false</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Pick a template route</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">templateRoute</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">routeName</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">templateRoute</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getRouteByName</span><span class="p">(</span><span class="nx">routeName</span><span class="p">)</span> <span class="o">||</span> <span class="nx">route</span><span class="p">();</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="nx">my</span><span class="p">.</span><span class="nx">lastMatch</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">templateRoute</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">lastMatch</span><span class="p">.</span><span class="nx">getRoute</span><span class="p">();</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-          <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+          <span class="nx">templateRoute</span> <span class="o">=</span> <span class="nx">route</span><span class="p">();</span>
+        <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Merge current parameters with supplied parameters</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">currentParameters</span> <span class="o">=</span> <span class="o">!</span><span class="nx">excludeCurrentParameters</span> <span class="o">?</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getParameters</span><span class="p">()</span> <span class="o">:</span> <span class="p">{};</span>
+        <span class="kd">var</span> <span class="nx">allParameters</span> <span class="o">=</span> <span class="nx">merge</span><span class="p">(</span><span class="nx">currentParameters</span><span class="p">,</span> <span class="nx">suppliedParameters</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>Fill with defaults if needed</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">my</span><span class="p">.</span><span class="nx">defaultParameters</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">parameterName</span><span class="p">){</span>
+          <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">parameterName</span> <span class="k">in</span> <span class="nx">allParameters</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">allParameters</span><span class="p">[</span><span class="nx">parameterName</span><span class="p">]</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">my</span><span class="p">.</span><span class="nx">defaultParameters</span><span class="p">[</span><span class="nx">parameterName</span><span class="p">]</span> <span class="o">===</span> <span class="s2">&quot;function&quot;</span> <span class="o">?</span>
+              <span class="nx">my</span><span class="p">.</span><span class="nx">defaultParameters</span><span class="p">[</span><span class="nx">parameterName</span><span class="p">]()</span> <span class="o">:</span>
+              <span class="nx">my</span><span class="p">.</span><span class="nx">defaultParameters</span><span class="p">[</span><span class="nx">parameterName</span><span class="p">];</span>
+          <span class="p">}</span>
+        <span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>Expand template route and construct URL</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">aRawUrl</span> <span class="o">=</span> <span class="nx">templateRoute</span><span class="p">.</span><span class="nx">expand</span><span class="p">(</span><span class="nx">allParameters</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">url</span><span class="p">({</span><span class="nx">rawUrl</span><span class="o">:</span> <span class="nx">aRawUrl</span><span class="p">});</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Constructs a link from supplied parameters.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {{}} [parameters={}]</span>
+<span class="cm">       * @param {boolean} [excludeCurrentParameters=false]</span>
+<span class="cm">       *</span>
+<span class="cm">       * @returns {string}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">linkToParameters</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">parameters</span><span class="p">,</span> <span class="nx">excludeCurrentParameters</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">my</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">linkToUrl</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">expand</span><span class="p">({</span>
+          <span class="nx">parameters</span><span class="o">:</span> <span class="nx">parameters</span><span class="p">,</span>
+          <span class="nx">excludeCurrentParameters</span><span class="o">:</span> <span class="nx">excludeCurrentParameters</span>
+        <span class="p">}));</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Constructs a link from supplied parameters.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {{}} [parameters={}]</span>
+<span class="cm">       * @param {boolean} [excludeCurrentParameters=false]</span>
+<span class="cm">       *</span>
+<span class="cm">       * @returns {string}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">setParameters</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">parameters</span><span class="p">,</span> <span class="nx">excludeCurrentParameters</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">redirectToUrl</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">expand</span><span class="p">({</span>
+          <span class="nx">parameters</span><span class="o">:</span> <span class="nx">parameters</span><span class="p">,</span>
+          <span class="nx">excludeCurrentParameters</span><span class="o">:</span> <span class="nx">excludeCurrentParameters</span>
+        <span class="p">}));</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Return current parameters, ether from last match or if no match</span>
+<span class="cm">       * from query in current URL.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @returns {{}} Parameter values with parameter names as keys</span>
+<span class="cm">       */</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">getParameters</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">my</span><span class="p">.</span><span class="nx">lastMatch</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">my</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">getUrl</span><span class="p">().</span><span class="nx">getQuery</span><span class="p">();</span>
         <span class="p">}</span>
-      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <h4>Public API</h4>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Binds a callback to a path. <em>Eg:</em></p>
 
-<pre><code>myController.on('foo', function() {
-    alert('/#!/foo triggered!');
-});
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">on</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">||</span> <span class="nx">path</span> <span class="o">===</span> <span class="kc">null</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">path</span> <span class="o">!==</span> <span class="s2">&quot;string&quot;</span><span class="p">)</span> <span class="p">{</span>
-          <span class="k">throw</span> <span class="s1">&#39;accepts only string paths&#39;</span><span class="p">;</span>
-        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">my</span><span class="p">.</span><span class="nx">lastMatch</span><span class="p">.</span><span class="nx">getParameters</span><span class="p">();</span>
+            <span class="p">};</span>
 
-        <span class="nx">handler</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
-      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Tries to match registered bindings agains the new route
-from the router.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">resolveRoute</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">route</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">params</span><span class="p">,</span>
-          <span class="nx">numMatches</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-          <span class="nx">bindings</span> <span class="o">=</span> <span class="nx">handler</span><span class="p">.</span><span class="nx">events</span><span class="p">;</span>
+      <span class="cm">/**</span>
+<span class="cm">       * Returns parameter value by name</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {string} parameterName</span>
+<span class="cm">       * @returns {*}</span>
+<span class="cm">       */</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">getParameter</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">parameterName</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kd">var</span> <span class="nx">parameters</span> <span class="o">=</span> <span class="nx">that</span><span class="p">.</span><span class="nx">getParameters</span><span class="p">();</span>
+                <span class="k">return</span> <span class="nx">parameters</span><span class="p">[</span><span class="nx">parameterName</span><span class="p">];</span>
+            <span class="p">};</span>
 
-        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">path</span> <span class="k">in</span> <span class="nx">bindings</span><span class="p">)</span> <span class="p">{</span>
-          <span class="k">if</span> <span class="p">(</span><span class="nx">bindings</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">path</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nx">params</span> <span class="o">=</span> <span class="nx">extractParameters</span><span class="p">(</span><span class="nx">route</span><span class="p">,</span> <span class="nx">path</span><span class="p">);</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">params</span><span class="p">)</span> <span class="p">{</span>
-              <span class="nx">numMatches</span><span class="o">++</span><span class="p">;</span>
-              <span class="nx">handler</span><span class="p">.</span><span class="nx">trigger</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="p">[</span><span class="nx">path</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">params</span><span class="p">));</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">setDefaultParameter</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">parameterName</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">defaultParameters</span><span class="p">[</span><span class="nx">parameterName</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Navigate back to previous location in history. If history is empty</span>
+<span class="cm">       * the location will be changed to fallback URL.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {string|url} aFallbackUrl</span>
+<span class="cm">       * @returns {string} URL</span>
+<span class="cm">       */</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">back</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">aFallbackUrl</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">my</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">back</span><span class="p">(</span><span class="nx">aFallbackUrl</span><span class="p">);</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Return `true` if the history is empty</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">isHistoryEmpty</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">my</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">isHistoryEmpty</span><span class="p">();</span>
+      <span class="p">};</span>
+
+
+      <span class="cm">/**</span>
+<span class="cm">       * Start listening for location changes and automatically</span>
+<span class="cm">       * resolve new URLs (including the current)</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">start</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">resolveUrl</span><span class="p">();</span> <span class="c1">// resolve current url</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Stop listening for location changes.</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">stop</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>Protected</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="cm">/**</span>
+<span class="cm">       * Tries to resolve URL by matching the URL against all routes in</span>
+<span class="cm">       * route table. Unless  `fallThrough`is set on the matched route router</span>
+<span class="cm">       * will stop on first match.</span>
+<span class="cm">       *</span>
+<span class="cm">       * Last match is also stored as `my.lastMatch`</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {url} [aUrl] A URL or current url as default</span>
+<span class="cm">       */</span>
+      <span class="nx">my</span><span class="p">.</span><span class="nx">resolveUrl</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">aUrl</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">currentUrl</span> <span class="o">=</span> <span class="nx">aUrl</span> <span class="o">===</span> <span class="kc">undefined</span> <span class="o">?</span> <span class="nx">my</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">getUrl</span><span class="p">()</span> <span class="o">:</span> <span class="nx">aUrl</span><span class="p">;</span>
+
+        <span class="nx">that</span><span class="p">.</span><span class="nx">onResolveUrl</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="nx">currentUrl</span><span class="p">);</span>
+
+        <span class="kd">var</span> <span class="nx">numMatched</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">routeTable</span><span class="p">.</span><span class="nx">some</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">candidateRoute</span><span class="p">)</span> <span class="p">{</span>
+          <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">currentUrl</span><span class="p">.</span><span class="nx">matchRoute</span><span class="p">(</span><span class="nx">candidateRoute</span><span class="p">);</span>
+          <span class="k">if</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">isMatch</span><span class="p">())</span> <span class="p">{</span>
+            <span class="nx">my</span><span class="p">.</span><span class="nx">lastMatch</span> <span class="o">=</span> <span class="nx">result</span><span class="p">;</span>
+            <span class="nx">numMatched</span><span class="o">++</span><span class="p">;</span>
+            <span class="nx">that</span><span class="p">.</span><span class="nx">onRouteMatched</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+
+            <span class="k">if</span><span class="p">(</span><span class="nx">candidateRoute</span><span class="p">.</span><span class="nx">fallThrough</span> <span class="o">===</span> <span class="kc">undefined</span> <span class="o">||</span>
+              <span class="nx">candidateRoute</span><span class="p">.</span><span class="nx">fallThrough</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
+              <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
             <span class="p">}</span>
           <span class="p">}</span>
-        <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>Trigger 'notfound' event (with route as argument) if no match</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="nx">numMatches</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">handler</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s1">&#39;notfound&#39;</span><span class="p">,</span> <span class="nx">route</span><span class="p">);</span>
+        <span class="p">});</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">numMatched</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">that</span><span class="p">.</span><span class="nx">onRouteNotFound</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="nx">currentUrl</span><span class="p">.</span><span class="nx">toString</span><span class="p">());</span>
         <span class="p">}</span>
       <span class="p">};</span>
 
-      <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <hr />             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <h3>Router</h3>
+      <span class="cm">/**</span>
+<span class="cm">       * Injects route in route table. Routes are ordered by priority (lower first) with</span>
+<span class="cm">       * routes without priority last. Routes with same priority are order in</span>
+<span class="cm">       * registration order.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {route} route</span>
+<span class="cm">       */</span>
+      <span class="nx">my</span><span class="p">.</span><span class="nx">addRoute</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">route</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">routeIndex</span> <span class="o">=</span> <span class="nx">my</span><span class="p">.</span><span class="nx">routeTable</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">route</span><span class="p">.</span><span class="nx">priority</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">do</span> <span class="p">{</span> <span class="o">--</span><span class="nx">routeIndex</span><span class="p">;</span> <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="nx">my</span><span class="p">.</span><span class="nx">routeTable</span><span class="p">[</span><span class="nx">routeIndex</span><span class="p">]</span> <span class="o">&amp;&amp;</span>
+          <span class="p">(</span><span class="nx">my</span><span class="p">.</span><span class="nx">routeTable</span><span class="p">[</span><span class="nx">routeIndex</span><span class="p">].</span><span class="nx">priority</span> <span class="o">===</span> <span class="kc">undefined</span> <span class="o">||</span>
+          <span class="nx">route</span><span class="p">.</span><span class="nx">priority</span> <span class="o">&lt;</span> <span class="nx">my</span><span class="p">.</span><span class="nx">routeTable</span><span class="p">[</span><span class="nx">routeIndex</span><span class="p">].</span><span class="nx">priority</span><span class="p">));</span>
+          <span class="nx">routeIndex</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="nx">my</span><span class="p">.</span><span class="nx">routeTable</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">routeIndex</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">route</span><span class="p">);</span>
+      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>Private</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="cm">/**</span>
+<span class="cm">       * Shallow merge all objects in arguments. Properties in later objects overwrites</span>
+<span class="cm">       * properties.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @returns {{}}</span>
+<span class="cm">       */</span>
+      <span class="kd">function</span> <span class="nx">merge</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">objects</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">);</span>
 
-<p>Listens for changes in the hash fragment of the URL. In modern browsers we use the 'hashchange' event.
-In legacy browsers we instead pull for changes using a timer/interval.</p>
+        <span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="nx">objects</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">obj</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">target</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+          <span class="p">});</span>
+        <span class="p">});</span>
 
-<p>In old IE (&lt; IE 8) a hidden IFrame is created to allow the back button and hash-based history to work. 
-See <code>setupOldIE()</code> and <code>fixHistoryForIE()</code>.</p>
-
-<p>Usage:</p>
-
-<ol>
-<li><p>Register your controller</p>
-
-<p>current_router.register(controller);</p>
-
-<p>or</p>
-
-<p>controller.register();</p></li>
-<li><p>Set-up routing</p>
-
-<p>controller.on(...)</p></li>
-<li><p>Start the router</p>
-
-<p>router.start();</p></li>
-</ol>
-
-<p>Router can be started before DOM is ready, but since it won’t be usable before then in IE6/7 (due to the necessary IFrame),
-recommended usage is to bind it inside a DOM ready handler.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">spec</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">spec</span> <span class="o">=</span> <span class="nx">spec</span> <span class="o">||</span> <span class="p">{};</span>
-      <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="p">{};</span>
-
-      <span class="kd">var</span> <span class="nx">fallback</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="nx">oldIE</span><span class="p">,</span> <span class="c1">// IE7 or older</span>
-        <span class="nx">fragment</span><span class="p">,</span> <span class="c1">// last hash fragment</span>
-        <span class="nx">history</span> <span class="o">=</span> <span class="p">[],</span> <span class="c1">// history of visited hash fragments</span>
-        <span class="nx">timer</span><span class="p">,</span>
-        <span class="nx">iframe_src</span> <span class="o">=</span> <span class="p">(</span><span class="nx">spec</span><span class="p">.</span><span class="nx">iframe_src</span> <span class="o">||</span> <span class="cm">/*jshint scripturl:true*/</span>  <span class="s1">&#39;javascript:0&#39;</span><span class="p">),</span> <span class="cm">/*jshint scripturl:false*/</span>
-        <span class="nx">controller</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <h4>Initilize</h4>             </td>             <td class="code">               <div class="highlight"><pre>      </pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>Fallback only if no 'onhashchange' event</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;onhashchange&#39;</span> <span class="k">in</span> <span class="nb">window</span><span class="p">)</span> <span class="p">{</span> <span class="nx">fallback</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span> <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>oldIE if IE &lt; IE8</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">oldIE</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">.</span><span class="nx">browser</span><span class="p">.</span><span class="nx">msie</span> <span class="o">&amp;&amp;</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">jQuery</span><span class="p">.</span><span class="nx">browser</span><span class="p">.</span><span class="nx">version</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <h4>Private methods</h4>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>The route is simply the URL hash fragment minus the hash-bang (#!). Eg. <strong>bar</strong> in:
-   http://foo.com/#!<strong>/bar</strong></p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">function</span> <span class="nx">route</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/^#![\/]?/</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
-      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>Get/Set the hash fragment</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">function</span> <span class="nx">getHash</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">target</span><span class="p">;</span>
       <span class="p">}</span>
-      <span class="kd">function</span> <span class="nx">setHash</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="nx">string</span><span class="p">;</span>
-      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p>Setup IFrame for old versions of IE</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">function</span> <span class="nx">setupOldIE</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">iDoc</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">(</span><span class="s2">&quot;&lt;iframe id=&#39;ie_history_iframe&#39;&quot;</span> <span class="o">+</span>
-          <span class="s2">&quot;src=&#39;&quot;</span> <span class="o">+</span> <span class="nx">iframe_src</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span>
-          <span class="s2">&quot;style=&#39;display: none&#39;&gt;&lt;/iframe&gt;&quot;</span><span class="p">).</span><span class="nx">prependTo</span><span class="p">(</span><span class="s2">&quot;body&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
-        <span class="kd">var</span> <span class="nx">iframe</span> <span class="o">=</span> <span class="nx">iDoc</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">.</span><span class="nb">document</span> <span class="o">||</span> <span class="nx">iDoc</span><span class="p">.</span><span class="nb">document</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">)</span> <span class="p">{</span>
-          <span class="kd">var</span> <span class="nx">hash</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-          <span class="nx">iframe</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="nx">hash</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="nx">iframe</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">title</span><span class="p">;</span>
-      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p>Special hack for IE &lt; 8 since hashchanges is not added to history. 
-IE will add a history entry when IFrame is opened/closed.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">function</span> <span class="nx">fixHistoryForIE</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">iframe</span> <span class="o">=</span> <span class="nx">getIframe</span><span class="p">();</span>
-        <span class="nx">iframe</span><span class="p">.</span><span class="nx">open</span><span class="p">();</span>
-        <span class="nx">iframe</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
-        <span class="nx">iframe</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="nx">fragment</span><span class="p">;</span>
-      <span class="p">}</span>
+    <span class="p">});</span>
 
-      <span class="kd">function</span> <span class="nx">getIframe</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;#ie_history_iframe&#39;</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nx">contentWindow</span><span class="p">.</span><span class="nb">document</span><span class="p">;</span>
-      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <p>Adds a fragment to history</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">function</span> <span class="nx">pushToHistory</span><span class="p">(</span><span class="nx">aFragment</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">oldIE</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">fixHistoryForIE</span><span class="p">();</span>
-        <span class="p">}</span>
-        <span class="nx">history</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">aFragment</span><span class="p">);</span>
-      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-22">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-22">&#182;</a>               </div>               <p>Delegates route resolving to the current controller, if any</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">function</span> <span class="nx">resolveRoute</span><span class="p">()</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">controller</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">controller</span><span class="p">.</span><span class="nx">resolveRoute</span><span class="p">(</span><span class="nx">route</span><span class="p">());</span>
-        <span class="p">}</span>
-      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-23">&#182;</a>               </div>               <p>Check if the url fragment has changed
-and resolve it if needed.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">function</span> <span class="nx">check</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">newFragment</span> <span class="o">=</span> <span class="nx">getHash</span><span class="p">();</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="nx">fragment</span> <span class="o">!==</span> <span class="nx">newFragment</span> <span class="cm">/* route changed */</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">fragment</span> <span class="o">=</span> <span class="nx">newFragment</span><span class="p">;</span>
-          <span class="nx">pushToHistory</span><span class="p">(</span><span class="nx">fragment</span><span class="p">);</span>
-          <span class="nx">resolveRoute</span><span class="p">();</span>
-
-        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">oldIE</span><span class="p">)</span> <span class="p">{</span>
-          <span class="kd">var</span> <span class="nx">iframe</span> <span class="o">=</span> <span class="nx">getIframe</span><span class="p">();</span>
-          <span class="k">if</span> <span class="p">(</span><span class="nx">iframe</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span> <span class="o">!==</span> <span class="nx">newFragment</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">setHash</span><span class="p">(</span><span class="nx">iframe</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">);</span>
-            <span class="nx">pushToHistory</span><span class="p">(</span><span class="nx">fragment</span><span class="p">);</span>
-            <span class="nx">resolveRoute</span><span class="p">();</span>
-          <span class="p">}</span>
-        <span class="p">}</span>
-      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-24">&#182;</a>               </div>               <h4>Public API</h4>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-25">&#182;</a>               </div>               <p>Return current route</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">route</span> <span class="o">=</span> <span class="nx">route</span><span class="p">;</span>
-
-      <span class="nx">that</span><span class="p">.</span><span class="nx">linkTo</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">||</span> <span class="nx">path</span> <span class="o">===</span> <span class="kc">null</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">path</span> <span class="o">!==</span> <span class="s2">&quot;string&quot;</span><span class="p">)</span> <span class="p">{</span>
-          <span class="k">throw</span> <span class="s1">&#39;accepts only string paths&#39;</span><span class="p">;</span>
-        <span class="p">}</span>
-
-        <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;#!/&#39;</span> <span class="o">+</span> <span class="nx">path</span><span class="p">);</span>
-      <span class="p">};</span>
-
-      <span class="nx">that</span><span class="p">.</span><span class="nx">redirectTo</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">setHash</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">linkTo</span><span class="p">(</span><span class="nx">path</span><span class="p">));</span>
-      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-26">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-26">&#182;</a>               </div>               <p>Navigate to previous fragment. Fallback to the
-`fallback' url if the history is empty</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">back</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">fallback</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">history</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">history</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
-          <span class="nx">setHash</span><span class="p">(</span><span class="nx">history</span><span class="p">.</span><span class="nx">pop</span><span class="p">());</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">fallback</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">setHash</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">linkTo</span><span class="p">(</span><span class="nx">fallback</span><span class="p">));</span>
-                <span class="p">}</span> 
-      <span class="p">};</span>
-  </pre></div>             </td>           </tr>                               <tr id="section-27">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-27">&#182;</a>               </div>               <p><strong>Force a check()</strong>, whether the fragment has changed or not.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">forceCheck</span> <span class="o">=</span> <span class="nx">resolveRoute</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-28">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-28">&#182;</a>               </div>               <p><strong>Register a controller</strong></p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">register</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">aController</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-29">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-29">&#182;</a>               </div>               <p>Only one controller can be registered at a time</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">controller</span> <span class="o">=</span> <span class="nx">aController</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-30">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-30">&#182;</a>               </div>               <p>Also send controller route() if started</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">if</span><span class="p">(</span><span class="nx">fragment</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span> 
-          <span class="nx">resolveRoute</span><span class="p">();</span>
-        <span class="p">}</span>
-      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-31">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-31">&#182;</a>               </div>               <p><strong>Start/stop</strong> url changes check. If the browser supports it we bind 'check()' to the 'hashchange' event.
-In legacy browsers we instead pull for changes every 100 ms.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">start</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="nx">that</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
-        
-        <span class="nx">fragment</span> <span class="o">=</span> <span class="nx">getHash</span><span class="p">();</span>
-        <span class="nx">history</span> <span class="o">=</span> <span class="p">[</span><span class="nx">fragment</span><span class="p">];</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="nx">fallback</span><span class="p">)</span> <span class="p">{</span>
-          <span class="k">if</span> <span class="p">(</span><span class="nx">oldIE</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">setupOldIE</span><span class="p">();</span>
-          <span class="p">}</span>
-          <span class="nx">timer</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="p">(</span><span class="nx">check</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-          <span class="nx">jQuery</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;hashchange&#39;</span><span class="p">,</span> <span class="nx">check</span><span class="p">);</span>
-        <span class="p">}</span>
-
-        <span class="nx">resolveRoute</span><span class="p">();</span> <span class="c1">//send controller our route()</span>
-      <span class="p">};</span>
-
-      <span class="nx">that</span><span class="p">.</span><span class="nx">stop</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">timer</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">timer</span><span class="p">.</span><span class="nx">clearInterval</span><span class="p">();</span>
-          <span class="nx">timer</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="nx">jQuery</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">unbind</span><span class="p">(</span><span class="s1">&#39;hashchange&#39;</span><span class="p">,</span> <span class="nx">check</span><span class="p">);</span>
-        <span class="nx">jQuery</span><span class="p">(</span><span class="s1">&#39;#ie_history_iframe&#39;</span><span class="p">).</span><span class="nx">remove</span><span class="p">();</span> <span class="c1">// remove any IFRAME</span>
-      <span class="p">};</span>
-
-      <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-32">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-32">&#182;</a>               </div>               <h3>Exports</h3>
-
-<p>Instances of default router and controller</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">current_router</span> <span class="o">=</span> <span class="nx">router</span><span class="p">();</span>
-    <span class="kd">var</span> <span class="nx">current_controller</span> <span class="o">=</span> <span class="nx">controller</span><span class="p">();</span>
-    <span class="nx">current_router</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="nx">current_controller</span><span class="p">);</span>
-
-    <span class="k">return</span> <span class="p">{</span>
-      <span class="nx">controller</span><span class="o">:</span> <span class="nx">current_controller</span><span class="p">,</span>
-      <span class="nx">router</span><span class="o">:</span> <span class="nx">current_router</span>
-    <span class="p">};</span>
+    <span class="k">return</span> <span class="nx">router</span><span class="p">;</span>
   <span class="p">});</span>
 
 </pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

@@ -67,6 +67,9 @@ define(
 			/** Events for widget */
 			my.events = events.eventCategory();
 
+			that.onAttach = my.events.createEvent();
+			that.onDetach = my.events.createEvent();
+
 			//
 			// Public
 			//
@@ -111,6 +114,7 @@ define(
 					child.willDetach();
 				});
 				my.willDetach();
+				that.onDetach.trigger();
 			};
 
 			/**
@@ -197,6 +201,7 @@ define(
 				children.forEach(function (widget) {
 					widget.triggerDidAttach();
 				});
+				that.onAttach.trigger();
 			};
 
 			/**

@@ -1,166 +1,414 @@
-<!DOCTYPE html>  <html> <head>   <title>htmlCanvas.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="core.html">                 core.js               </a>                                           <a class="source" href="events.html">                 events.js               </a>                                           <a class="source" href="htmlCanvas.html">                 htmlCanvas.js               </a>                                           <a class="source" href="router.html">                 router.js               </a>                                           <a class="source" href="widget-extensions.html">                 widget-extensions.js               </a>                                           <a class="source" href="widget.html">                 widget.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               htmlCanvas.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>htmlCanvas is a DSL that we use to add elements to the DOM using a HTML looking syntax.</p>
-
-<p>The basic metaphor used is one of painting on a canvas using brushes. The canvas is the
-DOM and the brushes HTML 'tags'.</p>
-
-<p><em>NOTE:</em> It has nothing to do with the HTML5 canvas tag</p>
-
-<p><em>Usage:</em></p>
-
-<p>A htmlCanvas is created on a jQuery object:</p>
-
-<pre><code>var html = htmlCanvas($('BODY'));
-</code></pre>
-
-<p>We write HTML using standard tags:</p>
-
-<pre><code>html.h1('Hello World!');
-</code></pre>
-
-<p>and standard attributes:</p>
-
-<pre><code>html.a('Google').id('id').href('http://www.google.se');
-</code></pre>
-
-<p>Attributes can also be set from an object litteral:</p>
-
-<pre><code>html.a({id: 'id', href: 'http://www.google.se'}, 'Google');
-</code></pre>
-
-<p>Callbacks can be attached to events:</p>
-
-<pre><code>html.a('Click me!').click(function() { alert('Hello World!')});
-</code></pre>
-
-<p>Tags can be nested:</p>
-
-<pre><code>html.div({'class' : 'outer_div'},
-    html.div({'class' : 'inner_div'},
-        html.span('Some text')
-    )
-);
-</code></pre>
-
-<p>Parts can be assigned to variables:</p>
-
-<pre><code>var homeButton = html.a('Home').href('/');
-if(showAlert) {
-    homeButton.click(function() { alert('Hello'); });
-}
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre><span class="cm">/*</span>
-<span class="cm">* HTML Canvas</span>
-<span class="cm">* Copyright 2011 Nicolas Petton &lt;nico@objectfusion.fr&gt;</span>
-<span class="cm">* This file is released under MIT.</span>
-<span class="cm">*/</span>
-
-<span class="nx">define</span><span class="p">(</span>
+<!DOCTYPE html>  <html> <head>   <title>htmlCanvas.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="core.html">                 core.js               </a>                                           <a class="source" href="events.html">                 events.js               </a>                                           <a class="source" href="htmlCanvas.html">                 htmlCanvas.js               </a>                                           <a class="source" href="router.html">                 router.js               </a>                                           <a class="source" href="abstractSegment.html">                 abstractSegment.js               </a>                                           <a class="source" href="hashLocation.html">                 hashLocation.js               </a>                                           <a class="source" href="optionalParameterSegment.html">                 optionalParameterSegment.js               </a>                                           <a class="source" href="parameterSegment.html">                 parameterSegment.js               </a>                                           <a class="source" href="route.html">                 route.js               </a>                                           <a class="source" href="routeFactory.html">                 routeFactory.js               </a>                                           <a class="source" href="routeMatchResult.html">                 routeMatchResult.js               </a>                                           <a class="source" href="router.html">                 router.js               </a>                                           <a class="source" href="staticSegment.html">                 staticSegment.js               </a>                                           <a class="source" href="url.html">                 url.js               </a>                                           <a class="source" href="widget-extensions.html">                 widget-extensions.js               </a>                                           <a class="source" href="widget.html">                 widget.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               htmlCanvas.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span></span><span class="nx">define</span><span class="p">(</span>
   <span class="p">[</span>
     <span class="s1">&#39;jquery&#39;</span>
   <span class="p">],</span>
 
-  <span class="kd">function</span> <span class="p">(</span><span class="nx">jQuery</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <hr />             </td>             <td class="code">               <div class="highlight"><pre>    </pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <h3>htmlCanvas</h3>
+  <span class="kd">function</span> <span class="p">(</span><span class="nx">jQuery</span><span class="p">)</span> <span class="p">{</span>
 
-<p>htmlCanvas provides a HTML-looking-syntax interface for appending content to the The Document Object Model (DOM).</p>
+    <span class="cm">/**</span>
+<span class="cm">     * @typedef {function} renderer</span>
+<span class="cm">     * @param {htmlCanvas} html</span>
+<span class="cm">     */</span>
 
-<p><em>Usage</em>:</p>
+    <span class="cm">/** @typedef {({}|string|renderer|widget|htmlTagBrush|*)} renderable */</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Supported HTML 'tags'</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">tags</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;a abbr acronym address area article aside audio b bdi bdo big &#39;</span> <span class="o">+</span>
+      <span class="s1">&#39;blockquote body br button canvas caption cite code col colgroup command &#39;</span> <span class="o">+</span>
+      <span class="s1">&#39;datalist dd del details dfn div dl dt em embed fieldset figcaption figure &#39;</span> <span class="o">+</span>
+      <span class="s1">&#39;footer form frame frameset h1 h2 h3 h4 h5 h6 hr head header hgroup html i &#39;</span> <span class="o">+</span>
+      <span class="s1">&#39;iframe img input ins kbd keygen label legend li link map mark meta meter &#39;</span> <span class="o">+</span>
+      <span class="s1">&#39;nav noscript object ol optgroup option output p param pre progress q rp rt&#39;</span> <span class="o">+</span>
+      <span class="s1">&#39;ruby samp script section select small source span strong style sub summary&#39;</span> <span class="o">+</span>
+      <span class="s1">&#39;sup table tbody td textarea tfoot th thead time title tr track tt ul var&#39;</span> <span class="o">+</span>
+      <span class="s1">&#39;video wbr&#39;</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Supported HTML events</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">attributes</span> <span class="o">=</span> <span class="s1">&#39;href for id media rel src style title type&#39;</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">);</span>
 
-<pre><code>var html = htmlCanvas($('BODY'));
-html.div(html.h1('title'));
-</code></pre>
+    <span class="kd">var</span> <span class="nx">omitSymbol</span> <span class="o">=</span> <span class="p">{};</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Supported HTML attributes</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">events</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;blur focus focusin focusout load resize scroll unload &#39;</span> <span class="o">+</span>
+      <span class="s1">&#39;click dblclick mousedown mouseup mousemove mouseover &#39;</span> <span class="o">+</span>
+      <span class="s1">&#39;mouseout mouseenter mouseleave change select submit &#39;</span> <span class="o">+</span>
+      <span class="s1">&#39;keydown keypress keyup error dragstart dragenter dragover dragleave drop dragend&#39;</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">);</span>
 
-<p>The canvas is created on the first element matched by aJQuery (eg. $('BODY') above). A brush for that element is created
-and set as the root object.</p>
+    <span class="cm">/**</span>
+<span class="cm">     * htmlCanvas provides a DSL that we use to add elements to the DOM using a HTML looking syntax.</span>
+<span class="cm">     *</span>
+<span class="cm">     * The basic metaphor used is one of painting on a canvas using brushes. The canvas is the</span>
+<span class="cm">     * DOM and the brushes HTML &#39;tags&#39;. Note that it have nothing to do with the HTML5 canvas tag</span>
+<span class="cm">     *</span>
+<span class="cm">     * @example</span>
+<span class="cm">     *    // A htmlCanvas is created on a jQuery object:</span>
+<span class="cm">     *    var html = htmlCanvas($(&#39;BODY&#39;));</span>
+<span class="cm">     *</span>
+<span class="cm">     *    // We write HTML using standard tags:</span>
+<span class="cm">     *    html.h1(&#39;Hello World!&#39;);</span>
+<span class="cm">     *</span>
+<span class="cm">     *    // and standard attributes:</span>
+<span class="cm">     *    html.a({ id: &#39;id&#39;, href: &#39;http://www.google.se&#39;}, &#39;Google&#39;);</span>
+<span class="cm">     *</span>
+<span class="cm">     *    // Callbacks can be attached to events:</span>
+<span class="cm">     *    html.a({click: function() { alert(&#39;Hello World!&#39;)} &#39;Click me!&#39;);</span>
+<span class="cm">     *</span>
+<span class="cm">     *    // Tags can be nested:</span>
+<span class="cm">     *    html.div({&#39;class&#39; : &#39;outer_div&#39;},</span>
+<span class="cm">     *      html.div({&#39;class&#39; : &#39;inner_div&#39;},</span>
+<span class="cm">     *        html.span(&#39;Some text&#39;)</span>
+<span class="cm">     *      )</span>
+<span class="cm">     *    );</span>
+<span class="cm">     *</span>
+<span class="cm">     *    // Parts can be assigned to variables:</span>
+<span class="cm">     *    var homeButton = html.a(&#39;Home&#39;).href(&#39;/&#39;);</span>
+<span class="cm">     *    if(showAlert) {</span>
+<span class="cm">     *      homeButton.click(function() { alert(&#39;Hello&#39;); });</span>
+<span class="cm">     *    }</span>
+<span class="cm">     *</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param {string|jQuery|htmlTagBrush} [rootElement] Element to  &quot;paint&quot; on. If not supplied a document fragment will be created</span>
+<span class="cm">     *</span>
+<span class="cm">     * @returns {htmlCanvas}</span>
+<span class="cm">     */</span>
+    <span class="kd">function</span> <span class="nx">htmlCanvas</span><span class="p">(</span><span class="nx">rootElement</span><span class="p">)</span> <span class="p">{</span>
 
-<p>All other brushes (eg. html.div() above) are added to that root brush. Brushes added as children of a
-brush (eg. html.h1('title') above) are however added to their parent brush which gives us the ability to nest
-brushes and create a tree.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">htmlCanvas</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">aJQuery</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="p">{};</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Supported HTML 'tags'</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">tags</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;a abbr acronym address area article aside audio b bdi bdo big &#39;</span> <span class="o">+</span>
-        <span class="s1">&#39;blockquote body br button canvas caption cite code col colgroup command &#39;</span> <span class="o">+</span>
-        <span class="s1">&#39;datalist dd del details dfn div dl dt em embed fieldset figcaption figure &#39;</span> <span class="o">+</span>
-        <span class="s1">&#39;footer form frame frameset h1 h2 h3 h4 h5 h6 hr head header hgroup html i &#39;</span> <span class="o">+</span>
-        <span class="s1">&#39;iframe img input ins kbd keygen label legend li link map mark meta meter &#39;</span> <span class="o">+</span>
-        <span class="s1">&#39;nav noscript object ol optgroup option output p param pre progress q rp rt&#39;</span> <span class="o">+</span>
-        <span class="s1">&#39;ruby samp script section select small source span strong style sub summary&#39;</span> <span class="o">+</span>
-        <span class="s1">&#39;sup table tbody td textarea tfoot th thead time title tr track tt ul var&#39;</span> <span class="o">+</span>
-        <span class="s1">&#39;video wbr&#39;</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <h4>Public API</h4>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>The root object. It's element is set to first element matched by aJQuery</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">root</span> <span class="o">=</span> <span class="nx">tagBrush</span><span class="p">({</span> <span class="nx">canvas</span><span class="o">:</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">jQuery</span><span class="o">:</span> <span class="nx">aJQuery</span> <span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Creates a new tag brush and adds it to root brush. The element is a
-new element in partent brush element, created using the 'tag' (eg. H1).</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">tag</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">tag</span><span class="p">,</span> <span class="nx">children</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">tagBrush</span><span class="p">({</span> <span class="nx">canvas</span><span class="o">:</span> <span class="nx">that</span><span class="p">,</span> <span class="nx">tag</span><span class="o">:</span> <span class="nx">tag</span><span class="p">,</span> <span class="nx">children</span><span class="o">:</span> <span class="nx">children</span> <span class="p">});</span>
-        <span class="nx">that</span><span class="p">.</span><span class="nx">root</span><span class="p">.</span><span class="nx">addBrush</span><span class="p">(</span><span class="nx">t</span><span class="p">);</span>
-        <span class="k">return</span> <span class="nx">t</span><span class="p">;</span>
-      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Tag brush functions are added dynamically on object creation.
-Each 'tag' in Supported HTML 'tags' is added as a public method on htmlCanvas</p>
+      <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">htmlTagBrush</span><span class="p">({</span> <span class="nx">element</span><span class="o">:</span> <span class="nx">rootElement</span> <span class="p">});</span>
 
-<p><em>Example:</em></p>
+      <span class="cm">/** @typedef {{}} htmlCanvas */</span>
+      <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="p">{};</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Public</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="cm">/**</span>
+<span class="cm">       * The root object that brushes will append elements to.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @type {htmlTagBrush}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span><span class="p">;</span>
 
-<pre><code>html.h1('hello');
-html.span('world');
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">function</span> <span class="nx">createTagBrush</span><span class="p">(</span><span class="nx">tagname</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="cm">/**</span>
+<span class="cm">       * Creates a brush that &quot;paints&quot; a tag of type tagName. Any children supplied</span>
+<span class="cm">       * will be appended as children to brush.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {string} tagName Type of element (supported by document.createElement)</span>
+<span class="cm">       * @param {renderable[]} [children] Renderable objects to append as children of brush.</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">tag</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">tagName</span><span class="p">,</span> <span class="nx">children</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">tagBrush</span> <span class="o">=</span> <span class="nx">htmlTagBrush</span><span class="p">({</span> <span class="nx">tag</span><span class="o">:</span> <span class="nx">tagName</span><span class="p">,</span> <span class="nx">children</span><span class="o">:</span> <span class="nx">children</span> <span class="p">});</span>
+        <span class="nx">root</span><span class="p">.</span><span class="nx">appendBrush</span><span class="p">(</span><span class="nx">tagBrush</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">tagBrush</span><span class="p">;</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Tags builders for each supported tag type.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @example</span>
+<span class="cm">       *  html.h1(&#39;Title&#39;);</span>
+<span class="cm">       *  html.strong(&#39;Important stuff&#39;);</span>
+<span class="cm">       *  html.span(html.strong(userName), &#39; signed in.&#39;)</span>
+<span class="cm">       */</span>
+      <span class="nx">tags</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">tagName</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">that</span><span class="p">[</span><span class="nx">tagName</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
           <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">);</span>
-          <span class="k">return</span> <span class="nx">that</span><span class="p">.</span><span class="nx">tag</span><span class="p">(</span><span class="nx">tagname</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+          <span class="k">return</span> <span class="nx">that</span><span class="p">.</span><span class="nx">tag</span><span class="p">(</span><span class="nx">tagName</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
         <span class="p">};</span>
-      <span class="p">}</span>
-      <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">tagIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">tagIndex</span> <span class="o">&lt;</span> <span class="nx">tags</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">tagIndex</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">that</span><span class="p">[</span><span class="nx">tags</span><span class="p">[</span><span class="nx">tagIndex</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">createTagBrush</span><span class="p">(</span><span class="nx">tags</span><span class="p">[</span><span class="nx">tagIndex</span><span class="p">]);</span>
-      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Render anObject on the root tag brush. See <code>tagBrush.render()</code></p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">render</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">anObject</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">that</span><span class="p">.</span><span class="nx">root</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="nx">anObject</span><span class="p">);</span>
+      <span class="p">});</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Returns omit symbol that is used to omit a attribute pair</span>
+<span class="cm">       * and omit the object appended to brush.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @returns {{}}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">omit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">omitSymbol</span><span class="p">;</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Append an object to the root brush</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param anObject</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">render</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">);</span>
+        <span class="nx">root</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="nx">args</span><span class="p">);</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Append an unescaped HTML string to the root brush</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">raw</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">htmlString</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">root</span><span class="p">.</span><span class="nx">raw</span><span class="p">(</span><span class="nx">htmlString</span><span class="p">);</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Append an unescaped string replacing all spaces by</span>
+<span class="cm">       * non-breaking spaces</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">renderNonBreaking</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">htmlString</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">raw</span><span class="p">(</span><span class="nx">htmlString</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\s/g</span><span class="p">,</span> <span class="s2">&quot;&amp;nbsp;&quot;</span><span class="p">));</span>
       <span class="p">};</span>
 
       <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <hr />             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <h3>tagBrush</h3>
+    <span class="p">}</span>
 
-<p>A tag brush object represents a DOM element, built on a canvas. The element can
-be created from a 'tag' or an element matched using 'jQuery'.</p>
+    <span class="cm">/**</span>
+<span class="cm">     * A tag brush object represents a DOM element, built on a canvas. The element can</span>
+<span class="cm">     * be created from a &#39;tag&#39; or an element matched using &#39;jQuery&#39;.</span>
+<span class="cm">     *</span>
+<span class="cm">     * Note: A brush is usually only created from `htmlCanvas` and it should only</span>
+<span class="cm">     * be used once.</span>
+<span class="cm">     *</span>
+<span class="cm">     * @param {{}} spec</span>
+<span class="cm">     * @param {string} [spec.tag] Name of tag to create (using document.createElement)</span>
+<span class="cm">     * @param {string|jQuery|widget|htmlTagBrush|*} [spec.element]</span>
+<span class="cm">     * @param {renderable[]} [spec.children]</span>
+<span class="cm">     *</span>
+<span class="cm">     * @returns {htmlTagBrush}</span>
+<span class="cm">     */</span>
+    <span class="kd">function</span> <span class="nx">htmlTagBrush</span><span class="p">(</span><span class="nx">spec</span><span class="p">)</span> <span class="p">{</span>
 
-<p><em>Usage:</em> create from 'tag'</p>
+      <span class="cm">/** @typedef {{}} htmlTagBrush */</span>
+      <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="p">{};</span>
 
-<pre><code>var h1 = tagBrush({tag : 'h1', canvas : html});
-</code></pre>
+      <span class="cm">/**</span>
+<span class="cm">       * Create a new element from tagName or get it from elements.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @type {HTMLElement}</span>
+<span class="cm">       */</span>
+      <span class="kd">var</span> <span class="nx">element</span> <span class="o">=</span> <span class="nx">spec</span><span class="p">.</span><span class="nx">tag</span> <span class="o">?</span> <span class="nx">createElement</span><span class="p">(</span><span class="nx">spec</span><span class="p">.</span><span class="nx">tag</span><span class="p">)</span> <span class="o">:</span> <span class="nx">getElement</span><span class="p">(</span><span class="nx">spec</span><span class="p">.</span><span class="nx">element</span><span class="p">);</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;htmlTagBrush requires an element&#39;</span><span class="p">);</span>
+      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Public</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="cm">/**</span>
+<span class="cm">       * DOM element created by brush</span>
+<span class="cm">       *</span>
+<span class="cm">       * @returns {HTMLElement}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">element</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">element</span><span class="p">;</span>
+      <span class="p">};</span>
 
-<p>A h1 element is created and appended to ´canvas.root´.</p>
+      <span class="cm">/**</span>
+<span class="cm">       * Appends child objects to brush. Can take a single or several arguments.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @example</span>
+<span class="cm">       *  html.h1().render(</span>
+<span class="cm">       *    &#39;hello&#39;,</span>
+<span class="cm">       *    html.span(&#39;world&#39;,</span>
+<span class="cm">       *      function(html) {</span>
+<span class="cm">       *        html.img().src(&#39;foo.img&#39;);</span>
+<span class="cm">       *        }</span>
+<span class="cm">       *      )</span>
+<span class="cm">       *    );</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {renderable[]} arguments Any renderable objects</span>
+<span class="cm">       * @returns {htmlTagBrush}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">render</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">);</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">append</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
+      <span class="p">};</span>
 
-<p><em>Usage:</em> create from matched jQuery</p>
+      <span class="cm">/**</span>
+<span class="cm">       * Implementation for `appendToBrush()` to allow a brush to be</span>
+<span class="cm">       * appended to another brush.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {htmlTagBrush} aTagBrush</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">appendToBrush</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">aTagBrush</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">aTagBrush</span><span class="p">.</span><span class="nx">appendBrush</span><span class="p">(</span><span class="nx">that</span><span class="p">);</span>
+      <span class="p">};</span>
 
-<pre><code>var h1 = tagBrush({jQuery : '#heading', canvas : html});
-</code></pre>
+      <span class="cm">/**</span>
+<span class="cm">       * Append brush as child.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {htmlTagBrush} aTagBrush</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">appendBrush</span> <span class="o">=</span> <span class="nx">appendBrush</span><span class="p">;</span>
 
-<p>A brush is created for first element that match jQuery.</p>
+      <span class="cm">/**</span>
+<span class="cm">       * Set unescaped html contents.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {string} htmlContents</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">html</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">htmlContents</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">().</span><span class="nx">html</span><span class="p">(</span><span class="nx">htmlContents</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
+      <span class="p">};</span>
 
-<p><em>Usage:</em> create from with children</p>
+      <span class="cm">/**</span>
+<span class="cm">       * Append an unescaped html contents.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {string} htmlContents</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">raw</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">htmlContents</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">().</span><span class="nx">append</span><span class="p">(</span><span class="nx">htmlContents</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
+      <span class="p">};</span>
 
-<pre><code>tagBrush({jQuery : '#heading', canvas : html, children : [headingBrush, bodyBrush, footerBrush]});
-</code></pre>
+      <span class="cm">/**</span>
+<span class="cm">       * Append an unescaped string replacing all spaces by</span>
+<span class="cm">       * non-breaking spaces</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">renderNonBreaking</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">htmlString</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">raw</span><span class="p">(</span><span class="nx">htmlString</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\s/g</span><span class="p">,</span> <span class="s2">&quot;&amp;nbsp;&quot;</span><span class="p">));</span>
+      <span class="p">};</span>
 
-<p>Children are appended to brush one-by-one.</p>
+      <span class="cm">/**</span>
+<span class="cm">       * Bind callback to DOM event</span>
+<span class="cm">       *</span>
+<span class="cm">       * @usage</span>
+<span class="cm">       *    html.a(&#39;click me&#39;).on(&#39;click&#39;, function() {</span>
+<span class="cm">       *      alert(&#39;click&#39;);</span>
+<span class="cm">       *    });</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {string} eventType One or more DOM event types, such as &quot;click&quot; or &quot;submit,&quot; or custom event names.</span>
+<span class="cm">       * @param {function} callback A function to execute each time the event is triggered.</span>
+<span class="cm">       * @returns {{}}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">on</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">eventType</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">().</span><span class="nx">bind</span><span class="p">(</span><span class="nx">eventType</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
+      <span class="p">};</span>
 
-<p><em>Note:</em> Each tag brush should be only used once.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">tagBrush</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">spec</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">that</span> <span class="o">=</span> <span class="p">{};</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>Supported HTML events</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">attributes</span> <span class="o">=</span> <span class="s1">&#39;href for id media rel src style title type&#39;</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>Supported HTML attributes</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">events</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;blur focus focusin focusout load resize scroll unload &#39;</span> <span class="o">+</span>
-        <span class="s1">&#39;click dblclick mousedown mouseup mousemove mouseover &#39;</span> <span class="o">+</span>
-        <span class="s1">&#39;mouseout mouseenter mouseleave change select submit &#39;</span> <span class="o">+</span>
-        <span class="s1">&#39;keydown keypress keyup error&#39;</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">);</span>
-      
-      <span class="kd">var</span> <span class="nx">jquery</span> <span class="o">=</span> <span class="nx">spec</span><span class="p">.</span><span class="nx">jQuery</span><span class="p">;</span>
-      <span class="kd">var</span> <span class="nx">elementTagName</span> <span class="o">=</span> <span class="nx">spec</span><span class="p">.</span><span class="nx">tag</span><span class="p">;</span>
-      <span class="kd">var</span> <span class="nx">children</span> <span class="o">=</span> <span class="nx">spec</span><span class="p">.</span><span class="nx">children</span><span class="p">;</span>
-      <span class="kd">var</span> <span class="nx">canvas</span> <span class="o">=</span> <span class="nx">spec</span><span class="p">.</span><span class="nx">canvas</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>DOM element - Is set on initilization to first DOM element matched by
-'jquery'. if no jQuery is given, element is created from tag name.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">element</span><span class="p">;</span>
+      <span class="cm">/**</span>
+<span class="cm">       * Event functions for each supported event type.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @example</span>
+<span class="cm">       *  aBrush.click(function() { .. });</span>
+<span class="cm">       *  aBrush.blur(function() { .. });</span>
+<span class="cm">       */</span>
+      <span class="nx">events</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">eventType</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">that</span><span class="p">[</span><span class="nx">eventType</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">that</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">eventType</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
+        <span class="p">};</span>
+      <span class="p">});</span>
 
+      <span class="cm">/**</span>
+<span class="cm">       * Adds a new attribute or changes the value of an existing attribute on the specified element.</span>
+<span class="cm">       * @param key</span>
+<span class="cm">       * @param value</span>
+<span class="cm">       * @returns {{}}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">setAttribute</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Omit attribute if value is omit</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">if</span><span class="p">(</span><span class="nx">value</span> <span class="o">===</span> <span class="nx">omitSymbol</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="nx">element</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Accessors for each supported attribute.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @example</span>
+<span class="cm">       *  aBrush.id(&#39;id&#39;);</span>
+<span class="cm">       *  aBrush.src(&#39;javascript:0&#39;);</span>
+<span class="cm">       *  aBrush.href(&#39;#&#39;);</span>
+<span class="cm">       */</span>
+      <span class="nx">attributes</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">attributeName</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">that</span><span class="p">[</span><span class="nx">attributeName</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">that</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="nx">attributeName</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+        <span class="p">};</span>
+      <span class="p">});</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Set element style with key/value or object literal.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @example</span>
+<span class="cm">       *    html.h1().css(&#39;display&#39;, &#39;block&#39;);</span>
+<span class="cm">       *    html.h1().css({&#39;display&#39; : &#39;block&#39;, &#39;color&#39; : &#39;red&#39;});</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {string|{}} key</span>
+<span class="cm">       * @param {string} value</span>
+<span class="cm">       * @returns {{}}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">css</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">key</span> <span class="o">===</span> <span class="s2">&quot;string&quot;</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">that</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">().</span><span class="nx">css</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+          <span class="nx">that</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">().</span><span class="nx">css</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span> <span class="c1">// otherwise assume key is a map (object literal)</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Set attributes using object literal.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @example</span>
+<span class="cm">       *  html.h1().attr({id : &#39;myid&#39;, &#39;class&#39; : &#39;myclass&#39;});</span>
+<span class="cm">       *</span>
+<span class="cm">       * @note</span>
+<span class="cm">       *  Use klass or &#39;class&#39; with quotation marks as key instead of class since its a reserved word.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param object</span>
+<span class="cm">       * @returns {{}}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">attr</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">object</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">key</span> <span class="k">in</span> <span class="nx">object</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">object</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Attach functions</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">object</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">===</span> <span class="s2">&quot;function&quot;</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">that</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">object</span><span class="p">[</span><span class="nx">key</span><span class="p">]);</span>
+            <span class="p">}</span>
+
+            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">key</span> <span class="o">===</span> <span class="s1">&#39;klass&#39;</span><span class="p">)</span> <span class="p">{</span>
+              <span class="nx">that</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">object</span><span class="p">[</span><span class="nx">key</span><span class="p">]);</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+              <span class="nx">that</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">object</span><span class="p">[</span><span class="nx">key</span><span class="p">]);</span>
+            <span class="p">}</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Appends className to class attribute</span>
+<span class="cm">       * @param className</span>
+<span class="cm">       * @returns {htmlTagBrush}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">addClass</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">className</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">().</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">className</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Removes className from class attribute</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {string} className</span>
+<span class="cm">       * @returns {htmlTagBrush}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">removeClass</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">className</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">that</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">().</span><span class="nx">removeClass</span><span class="p">(</span><span class="nx">className</span><span class="p">);</span>
+        <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
+      <span class="p">};</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Returns jQuery that match element.</span>
+<span class="cm">       * @returns {jQuery}</span>
+<span class="cm">       */</span>
+      <span class="nx">that</span><span class="p">.</span><span class="nx">asJQuery</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">jQuery</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">element</span><span class="p">());</span>
+      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Private</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="cm">/**</span>
+<span class="cm">       * Creates a new element from tagName</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {string} tagName</span>
+<span class="cm">       * @returns {Element}</span>
+<span class="cm">       */</span>
       <span class="kd">function</span> <span class="nx">createElement</span><span class="p">(</span><span class="nx">tagName</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="nx">tagName</span><span class="p">);</span>
-      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Appends objects to the brush element. A tag brush knows how to append:</p>
+      <span class="p">}</span>
 
-<ul>
-<li>strings</li>
-<li>functions (that take a htmlCanvas as argument)</li>
-<li>other brushes and widgets (that implements <code>appendToBrush()</code>)</li>
-<li>map / object literal with attributes (eg. {id: 'aId', 'class' : 'aClass'})</li>
-<li>array of valid objects (see above)</li>
-</ul>
-
-<p>all other objects are appended using:
-<code>jQuery(element).append(object);</code></p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">function</span> <span class="nx">append</span><span class="p">(</span><span class="nx">object</span><span class="p">)</span> <span class="p">{</span>
+      <span class="cm">/**</span>
+<span class="cm">       * Appends object as child to brush. A tag brush knows how to append:</span>
+<span class="cm">       *</span>
+<span class="cm">       * - strings</span>
+<span class="cm">       * - functions (that take a htmlCanvas as argument)</span>
+<span class="cm">       * - other brushes and widgets (that implements `appendToBrush()`)</span>
+<span class="cm">       * - map / object literal with attributes (eg. {id: &#39;aId&#39;, &#39;class&#39; : &#39;aClass&#39;})</span>
+<span class="cm">       * - array of valid objects (see above)</span>
+<span class="cm">       *</span>
+<span class="cm">       * all other objects are appended using:</span>
+<span class="cm">       * `jQuery(element).append(object);`</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {renderable|renderable[]|{}} object</span>
+<span class="cm">       */</span>
+      <span class="kd">function</span> <span class="nx">append</span><span class="p">(</span><span class="nx">object</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="nx">object</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">||</span> <span class="nx">object</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
-          <span class="k">throw</span> <span class="s1">&#39;cannot append null or undefined to brush&#39;</span><span class="p">;</span>
+          <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;cannot append null or undefined to brush&#39;</span><span class="p">);</span>
+        <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>Ignore object if it's a omit symbol</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">if</span><span class="p">(</span><span class="nx">object</span> <span class="o">===</span> <span class="nx">omitSymbol</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">object</span> <span class="o">===</span> <span class="s2">&quot;object&quot;</span> <span class="o">&amp;&amp;</span> <span class="nx">object</span><span class="p">.</span><span class="nx">constructor</span> <span class="o">===</span> <span class="nb">Array</span><span class="p">)</span> <span class="p">{</span>
@@ -181,162 +429,78 @@ be created from a 'tag' or an element matched using 'jQuery'.</p>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
           <span class="nx">jQuery</span><span class="p">(</span><span class="nx">element</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">object</span><span class="p">);</span> <span class="c1">// default to jquery</span>
         <span class="p">}</span>
-      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>Appends DOM node as child of element or concatenate with
-text if element can't have children.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">function</span> <span class="nx">appendChild</span><span class="p">(</span><span class="nx">child</span><span class="p">)</span> <span class="p">{</span>
+      <span class="p">}</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Appends DOM node as last child of element or concatenate with</span>
+<span class="cm">       * text if element can&#39;t have children.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {string|HTMLElement} child</span>
+<span class="cm">       */</span>
+      <span class="kd">function</span> <span class="nx">appendChild</span><span class="p">(</span><span class="nx">child</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="nx">element</span><span class="p">.</span><span class="nx">canHaveChildren</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
           <span class="nx">element</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">child</span><span class="p">);</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
           <span class="nx">element</span><span class="p">.</span><span class="nx">text</span> <span class="o">=</span> <span class="nx">element</span><span class="p">.</span><span class="nx">text</span> <span class="o">+</span> <span class="nx">child</span><span class="p">.</span><span class="nx">innerHTML</span><span class="p">;</span>
         <span class="p">}</span>
-      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>Appends element of brush as last child of this element</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">function</span> <span class="nx">appendBrush</span><span class="p">(</span><span class="nx">aTagBrush</span><span class="p">)</span> <span class="p">{</span>
+      <span class="p">}</span>
+
+      <span class="cm">/**</span>
+<span class="cm">       * Appends element of brush</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {htmlTagBrush} aTagBrush</span>
+<span class="cm">       */</span>
+      <span class="kd">function</span> <span class="nx">appendBrush</span><span class="p">(</span><span class="nx">aTagBrush</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">appendChild</span><span class="p">(</span><span class="nx">aTagBrush</span><span class="p">.</span><span class="nx">element</span><span class="p">());</span>
-      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>Append text or HTML text to element</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">function</span> <span class="nx">appendString</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">jQuery</span><span class="p">(</span><span class="nx">element</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">string</span><span class="p">);</span>
-      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p>Append function by executing function with this element as canvas.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">function</span> <span class="nx">appendFunction</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">root</span><span class="p">;</span>
-        <span class="nx">canvas</span><span class="p">.</span><span class="nx">root</span> <span class="o">=</span> <span class="nx">that</span><span class="p">;</span>
-        <span class="nx">fn</span><span class="p">(</span><span class="nx">canvas</span><span class="p">);</span>
-        <span class="nx">canvas</span><span class="p">.</span><span class="nx">root</span> <span class="o">=</span> <span class="nx">root</span><span class="p">;</span>
-      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <h4>Public API</h4>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <p>Returns DOM element created by brush.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">element</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">element</span><span class="p">;</span>
-      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-22">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-22">&#182;</a>               </div>               <p>Renders objects using <code>append()</code>. Can take a single or several arguments.</p>
-
-<p><em>Usage:</em></p>
-
-<pre><code>html.h1().render(
-    'hello',
-    html.span('world',
-        function(html) {
-            html.img().src('foo.img');
-        }
-    )
-);
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">render</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">);</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">append</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
-      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-23">&#182;</a>               </div>               <p>Implemention for <code>appendToBrush()</code> to allow a brush to be
-appended to another brush.</p>
-
-<p>Basicly it allows us to do:</p>
-
-<pre><code>var h1Brush = html.span('test');
- html.div(h1Brush);
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">appendToBrush</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">aTagBrush</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">aTagBrush</span><span class="p">.</span><span class="nx">addBrush</span><span class="p">(</span><span class="nx">that</span><span class="p">);</span>
-      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-24">&#182;</a>               </div>               <p>Appends brush <code>element()</code> to this element.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">addBrush</span> <span class="o">=</span> <span class="nx">appendBrush</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-25">&#182;</a>               </div>               <p>Events are delegated to jQuery</p>
-
-<p><em>Usage:</em></p>
-
-<pre><code>html.a('click me').on('click', function() {
-    alert('click');
-});
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">on</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">that</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">().</span><span class="nx">bind</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
-        <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
-      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-26">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-26">&#182;</a>               </div>               <p>Event functions are added dynamically on object creation.
-Each supported event is added as a public method on brush</p>
-
-<p><em>Example:</em></p>
-
-<pre><code>aBrush.click(function() { .. });
-aBrush.blur(function() { .. });
-aBrush.load(function() { .. });
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">function</span> <span class="nx">createEvent</span><span class="p">(</span><span class="nx">eventname</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">that</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">eventname</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
-          <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
-        <span class="p">};</span>
       <span class="p">}</span>
-      <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">eventIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">eventIndex</span> <span class="o">&lt;</span> <span class="nx">events</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">eventIndex</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">that</span><span class="p">[</span><span class="nx">events</span><span class="p">[</span><span class="nx">eventIndex</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">createEvent</span><span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="nx">eventIndex</span><span class="p">]);</span>
-      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-27">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-27">&#182;</a>               </div>               <p>Attribute accessors are added dynamically on object creation.
-Each supported attribute is added as a public method on brush</p>
 
-<p><em>Example:</em></p>
-
-<pre><code>aBrush.id('id');
-aBrush.src('javascript:0');
-aBrush.href('#');
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">function</span> <span class="nx">createAttrubute</span><span class="p">(</span><span class="nx">attributename</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">that</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="nx">attributename</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
-          <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
-        <span class="p">};</span>
+      <span class="cm">/**</span>
+<span class="cm">       * Append text as child. `string` is escaped</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {string} string</span>
+<span class="cm">       */</span>
+      <span class="kd">function</span> <span class="nx">appendString</span><span class="p">(</span><span class="nx">string</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">jQuery</span><span class="p">(</span><span class="nx">element</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">createTextNode</span><span class="p">(</span><span class="nx">string</span><span class="p">));</span>
       <span class="p">}</span>
-      <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">attributeIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">attributeIndex</span> <span class="o">&lt;</span> <span class="nx">attributes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">attributeIndex</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">that</span><span class="p">[</span><span class="nx">attributes</span><span class="p">[</span><span class="nx">attributeIndex</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">createAttrubute</span><span class="p">(</span><span class="nx">attributes</span><span class="p">[</span><span class="nx">attributeIndex</span><span class="p">]);</span>
-      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-28">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-28">&#182;</a>               </div>               <p>Sets element attribute with key to value</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">setAttribute</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">element</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
-        <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
-      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-29">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-29">&#182;</a>               </div>               <p>Set element style with key/value or object literal.</p>
 
-<p><em>Usage:</em></p>
-
-<pre><code>html.h1().css('display', 'block');
-html.h1().css({'display' : 'block', 'color' : 'red'});
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">css</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">key</span> <span class="o">===</span> <span class="s2">&quot;string&quot;</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">that</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">().</span><span class="nx">css</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="k">else</span> <span class="p">{</span>
-          <span class="nx">that</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">().</span><span class="nx">css</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span> <span class="c1">// otherwise assume key is a map (object literal)</span>
-        <span class="p">}</span>
-
-        <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
-      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-30">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-30">&#182;</a>               </div>               <p>Set attributes using object literal.</p>
-
-<p><em>Usage:</em></p>
-
-<pre><code>html.h1().attr({id : 'myid', 'class' : 'myclass'});
-</code></pre>
-
-<p><em>Note:</em> Use klass or 'class' with quotation marks as key instead of class since its a reserved word.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">attr</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">object</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">key</span> <span class="k">in</span> <span class="nx">object</span><span class="p">)</span> <span class="p">{</span>
-          <span class="k">if</span> <span class="p">(</span><span class="nx">object</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">key</span> <span class="o">===</span> <span class="s1">&#39;klass&#39;</span><span class="p">)</span> <span class="p">{</span>
-              <span class="nx">that</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">object</span><span class="p">[</span><span class="nx">key</span><span class="p">]);</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-              <span class="nx">that</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">object</span><span class="p">[</span><span class="nx">key</span><span class="p">]);</span>
-            <span class="p">}</span>
-          <span class="p">}</span>
-        <span class="p">}</span>
-
-        <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
-      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-31">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-31">&#182;</a>               </div>               <p>Appends className to class attribute</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">addClass</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">className</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">that</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">().</span><span class="nx">addClass</span><span class="p">(</span><span class="nx">className</span><span class="p">);</span>
-        <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
-      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-32">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-32">&#182;</a>               </div>               <p>Removes className from class attribute</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">removeClass</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">className</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">that</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">().</span><span class="nx">removeClass</span><span class="p">(</span><span class="nx">className</span><span class="p">);</span>
-        <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
-      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-33">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-33">&#182;</a>               </div>               <p>Returns jQuery that match element.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">that</span><span class="p">.</span><span class="nx">asJQuery</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">jQuery</span><span class="p">(</span><span class="nx">that</span><span class="p">.</span><span class="nx">element</span><span class="p">());</span>
-      <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-34">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-34">&#182;</a>               </div>               <h4>TagBrush initialization</h4>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-35">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-35">&#182;</a>               </div>               <p>Element is set to first match if a jQuery was given.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">if</span> <span class="p">(</span><span class="nx">jquery</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">jquery</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">jquery</span> <span class="o">=</span> <span class="nx">jQuery</span><span class="p">(</span><span class="nx">jquery</span><span class="p">);</span>
+      <span class="cm">/**</span>
+<span class="cm">       * Append function by executing function with this element as canvas.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {renderer} fn</span>
+<span class="cm">       */</span>
+      <span class="kd">function</span> <span class="nx">appendFunction</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">brushCanvas</span> <span class="o">=</span> <span class="nx">htmlCanvas</span><span class="p">(</span><span class="nx">that</span><span class="p">);</span>
+        <span class="nx">fn</span><span class="p">(</span><span class="nx">brushCanvas</span><span class="p">);</span>
       <span class="p">}</span>
-      <span class="k">if</span> <span class="p">(</span><span class="nx">jquery</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">element</span> <span class="o">=</span> <span class="nx">jquery</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">element</span><span class="p">)</span> <span class="p">{</span>
-          <span class="k">throw</span> <span class="s1">&#39;jQuery did not match an element&#39;</span><span class="p">;</span>
-        <span class="p">}</span>
-      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-36">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-36">&#182;</a>               </div>               <p>If no jQuery was given, element is created
-from tag name.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">else</span> <span class="p">{</span>
-        <span class="nx">element</span> <span class="o">=</span> <span class="nx">createElement</span><span class="p">(</span><span class="nx">elementTagName</span><span class="p">);</span>
-      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-37">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-37">&#182;</a>               </div>               <p>Append children to support nesting. <em>Eg.:</em></p>
 
-<pre><code>html.ul(html.li(html.a({href: '#'}, 'home'));
-</code></pre>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">if</span> <span class="p">(</span><span class="nx">children</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">childIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">childIndex</span> <span class="o">&lt;</span> <span class="nx">spec</span><span class="p">.</span><span class="nx">children</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">childIndex</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nx">append</span><span class="p">(</span><span class="nx">spec</span><span class="p">.</span><span class="nx">children</span><span class="p">[</span><span class="nx">childIndex</span><span class="p">]);</span>
-        <span class="p">}</span>
+      <span class="cm">/**</span>
+<span class="cm">       * Element is set to first match if a jQuery was given.</span>
+<span class="cm">       *</span>
+<span class="cm">       * @param {string|jQuery|HTMLElement|widget|htmlTagBrush} [object]</span>
+<span class="cm">       * @returns {HTMLElement}</span>
+<span class="cm">       */</span>
+      <span class="kd">function</span> <span class="nx">getElement</span><span class="p">(</span><span class="nx">object</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>Create a fragment if no object</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="nx">object</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">||</span> <span class="nx">object</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span>  <span class="nx">jQuery</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">createDocumentFragment</span><span class="p">()).</span><span class="nx">get</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+        <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>Any object that implements asJQuery eg. widget and tagBrush</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">if</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">object</span> <span class="o">===</span> <span class="s2">&quot;object&quot;</span> <span class="o">&amp;&amp;</span> <span class="nx">object</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">object</span><span class="p">.</span><span class="nx">asJQuery</span><span class="p">().</span><span class="nx">get</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+        <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>Fall back on jQuery if a string containing a selector expression,
+a DOM Element, an existing jQuery object or any other argument that
+jQuery accept (http://api.jquery.com/jQuery/)</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">return</span> <span class="nx">jQuery</span><span class="p">(</span><span class="nx">object</span><span class="p">).</span><span class="nx">get</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+      <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>Init</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="cm">/**</span>
+<span class="cm">       * Append children to support nesting</span>
+<span class="cm">       *</span>
+<span class="cm">       * @example</span>
+<span class="cm">       *    html.ul(html.li(html.a({href: &#39;#&#39;}, &#39;home&#39;));</span>
+<span class="cm">       */</span>
+      <span class="k">if</span><span class="p">(</span><span class="nx">spec</span><span class="p">.</span><span class="nx">children</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">append</span><span class="p">(</span><span class="nx">spec</span><span class="p">.</span><span class="nx">children</span><span class="p">);</span>
       <span class="p">}</span>
 
       <span class="k">return</span> <span class="nx">that</span><span class="p">;</span>
-    <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-38">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-38">&#182;</a>               </div>               <h3>Exports</h3>
+    <span class="p">}</span>
 
-<p>htmlCanvas</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">return</span> <span class="nx">htmlCanvas</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="nx">htmlCanvas</span><span class="p">;</span>
   <span class="p">}</span>
 <span class="p">);</span>
 
