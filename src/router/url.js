@@ -1,7 +1,7 @@
 define([
 	'objectjs'
 ],
-	function (object) {
+	function (objectjs) {
 
 		/**
 		 * Token/Char used to separate segments in URL paths.
@@ -21,7 +21,7 @@ define([
 		 * @param {string} rawUrl
 		 * @returns {url}
 		 */
-		var url = object.subclass(function(that, my) {
+		var url = objectjs.object.subclass(function(that, my) {
 
 			var rawUrl;
 			var path;

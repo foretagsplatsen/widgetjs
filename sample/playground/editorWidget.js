@@ -1,5 +1,5 @@
 define([
-  'widgetjs/core',
+  'widgetjs',
   'jquery',
   'codemirror/lib/codemirror',
   'codemirror/mode/javascript/javascript'

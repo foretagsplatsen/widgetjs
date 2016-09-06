@@ -1,36 +1,52 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Counter</title>
-    <meta charset="UTF-8">
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
-    <script type="text/javascript" src="../../dist/widgetjs.min.js"></script>
+    <head>
+        <title>Counter</title>
+        <meta charset="UTF-8">
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+        <script type="text/javascript" src="../../bower_components/objectjs/dist/objectjs.js"></script>
+        <script type="text/javascript" src="../../dist/widgetjs.min.js"></script>
 
-    <script type="text/javascript">
+        <script type="text/javascript">
 
-     var counterWidget = function () {
-	 var that = widgetjs.widget();
+         var counter = objectjs.object.subclass(function(that, my) {
+	     my.initialize = function(spec) {
+		 my.super(spec);
+		 my.property("count", 0);
+	     };
 
-	 var count = 0;
+	     my.get("count");
 
-	 that.renderContentOn = function (html) {
-	     html.h1(count.toString());
-	     html.button('+').click(function() { count++; that.update();});
-	     html.button('-').click(function() { count--; that.update();});
-	 };
+	     that.increment = function() {
+		 my.count++;
+	     };
 
-	 return that;
-     };
+	     that.decrement = function() {
+		 my.count--;
+	     };
+	 });
 
-     jQuery(document).ready(function() {
-	 counterWidget().appendTo('body');
-	 counterWidget().appendTo('body');
-     })
+	 var counterWidget = widgetjs.widget.subclass(function(that, my) {
+	     my.initialize = function(spec) {
+		 my.super(spec);
+		 my.counter = counter();
+	     };
 
-    </script>
-</head>
+	     that.renderContentOn = function (html) {
+		 html.h1(my.counter.getCount());
+		 html.button('+').click(my.counter.increment);
+		 html.button('-').click(my.counter.decrement);
+	     };
+	 });
 
-<body>
-</body>
+         jQuery(document).ready(function() {
+             counterWidget().appendTo('body');
+             counterWidget().appendTo('body');
+         });
+        </script>
+    </head>
+
+    <body>
+    </body>
 
 </html>

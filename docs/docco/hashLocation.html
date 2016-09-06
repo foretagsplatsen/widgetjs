@@ -3,7 +3,7 @@
   <span class="s1">&#39;../events&#39;</span><span class="p">,</span>
   <span class="s1">&#39;./url&#39;</span><span class="p">,</span>
   <span class="s1">&#39;objectjs&#39;</span>
-<span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">jQuery</span><span class="p">,</span> <span class="nx">events</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">object</span><span class="p">)</span> <span class="p">{</span>
+<span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">jQuery</span><span class="p">,</span> <span class="nx">events</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">objectjs</span><span class="p">)</span> <span class="p">{</span>
 
   <span class="cm">/**</span>
 <span class="cm">   * In modern browsers we use the &#39;hashchange&#39; event to listen for location changes. If not supported</span>
@@ -32,7 +32,7 @@
 <span class="cm">   * @param [my]</span>
 <span class="cm">   * @returns {hashLocation}</span>
 <span class="cm">   */</span>
-  <span class="kd">var</span> <span class="nx">hashLocation</span> <span class="o">=</span> <span class="nx">object</span><span class="p">.</span><span class="nx">subclass</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">my</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">hashLocation</span> <span class="o">=</span> <span class="nx">objectjs</span><span class="p">.</span><span class="nx">object</span><span class="p">.</span><span class="nx">subclass</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">my</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="kd">var</span> <span class="nx">pollTimerId</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
 

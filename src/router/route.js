@@ -1,7 +1,7 @@
 define(
 	['./routeFactory', '../events', './routeMatchResult', 'jquery',	'./url',
 		'objectjs'],
-	function(routeFactory, events, routeMatchResult, jQuery, url, object) {
+	function(routeFactory, events, routeMatchResult, jQuery, url, objectjs) {
 
 		/**
 		 * Routes represent the path for which an action should be taken (see `matched` event).
@@ -54,7 +54,7 @@ define(
 		 * @param {{}} my
 		 * @returns {route}
 		 */
-		var route = object.subclass(function(that, my) {
+		var route = objectjs.object.subclass(function(that, my) {
 
 			var segments;
 			var ignoreTrailingSegments;

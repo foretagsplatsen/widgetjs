@@ -1,6 +1,6 @@
 define([
 	'objectjs'
-], function(object) {
+], function(objectjs) {
 
 	/**
 	 * Route match result are used as the answer of matching a url against a route.
@@ -12,7 +12,7 @@ define([
 	 *
 	 * @returns {routeMatchResult}
 	 */
-	var routeMatchResult = object.subclass(function(that, my) {
+	var routeMatchResult = objectjs.object.subclass(function(that, my) {
 
 		var url;
 		var route;

@@ -449,20 +449,31 @@ define(
 					for (var i = 0; i < object.length; i++) {
 						append(object[i]);
 					}
+					return;
 				}
-				else if (typeof object === "string") {
+
+				if (typeof object === "string") {
 					appendString(object);
-				} else if (typeof object === "function") {
+					return;
+				}
+
+				if (typeof object === "function") {
 					appendFunction(object);
-				} else if (typeof object === "object" &&
+					return;
+				}
+
+				if (typeof object === "object" &&
 					object.appendToBrush /* eg. widget and tagBrush implement appendToBrush */) {
 					object.appendToBrush(that); // double dispatch
+					return;
 				}
-				else if (typeof object === "object") {
+
+				if (typeof object === "object") {
 					that.attr(object); // assume attributes if none of above
-				} else {
-					jQuery(element).append(object); // default to jquery
+					return;
 				}
+
+				jQuery(element).append(object); // default to jquery
 			}
 
 			/**

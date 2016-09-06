@@ -8,7 +8,7 @@ define(
 		'jquery'
 	],
 
-	function (object, ext, router, events, htmlCanvas, jQuery) {
+	function (objectjs, ext, router, events, htmlCanvas, jQuery) {
 
 		/**
 		 * Base for all widgets. A widget can keep state in variables, contain logic and
@@ -48,7 +48,7 @@ define(
 		 *
 		 * @returns {widget}
 		 */
-		var widget = object.subclass(function(that, my) {
+		var widget = objectjs.object.subclass(function(that, my) {
 
 			/**
 			 * Keep track of the rendered subwidgets
@@ -484,6 +484,14 @@ define(
 				currentWidget.set(current);
 			}
 		}
+
+		// Register to property accesses for data binding
+		objectjs.propertyEventEmitter.instance().onAccess(function(instance, propName) {
+			var widget = currentWidget.get();
+			if (widget) {
+				instance.onPropertyChange(propName, widget.update);
+			}
+		});
 
 		return widget;
 	}

@@ -7,7 +7,7 @@ define(
 		'./hashLocation',
 		'objectjs'
 	],
-	function(jQuery, events, route, url, hashLocation, object) {
+	function(jQuery, events, route, url, hashLocation, objectjs) {
 
 		/**
 		 * Lazily creates a singleton instance of
@@ -37,7 +37,7 @@ define(
 		*
 		* @returns {{}}
 		*/
-		var router = object.subclass(function(that, my) {
+		var router = objectjs.object.subclass(function(that, my) {
 
 			my.initialize = function(spec) {
 				my.super(spec);

@@ -3,25 +3,28 @@ module.exports = function(grunt) {
 	// read almond from disk
 	var fs = require('fs');
 	var almondPath = require.resolve('almond').replace('.js', '');
-	var almond  = String(fs.readFileSync(almondPath + '.js'));
+	var almond = String(fs.readFileSync(almondPath + '.js'));
 
 	// create wrapper
 	var wrap = {
 		start:
 		"(function (root, factory) {" +
 			"if (typeof define === 'function' && define.amd) {" +
-			" define(['jquery'], factory);" +
+			" define(['jquery', 'objectjs'], factory);" +
 			" } else {" +
-			" root.widgetjs = factory(root.$);"+
+			" root.widgetjs = factory(root.$, root.objectjs);"+
 			" } " +
-			"}(this, function ($) {" + almond,
+			"}(this, function ($, objectjs) {" + almond,
 
 		end:
 		"define('jquery', function () {" +
 			"   return $;" +
 			"});" +
+			"define('objectjs', function () {" +
+			"   return objectjs;" +
+			"});" +
 			"return require('core');" +
-			"}));"
+		"}));"
 	};
 
 	// Project configuration.
@@ -33,11 +36,11 @@ module.exports = function(grunt) {
 					//almond: true,
 					baseUrl: './src/',
 					paths: {
-						"jquery": "../bower_components/requirejs/require",
-						"objectjs": "../bower_components/objectjs/src/object"
+						"jquery": "../bower_components/jquery/dist/jquery",
+						"objectjs": "../bower_components/objectjs/dist/objectjs"
 					},
 					include: ["core"],
-					exclude: ['jquery'],
+					exclude: ['jquery', 'objectjs'],
 					out: './dist/<%= pkg.name %>.min.js',
 					//optimize: "none", //'hybrid',
 					wrap : wrap
@@ -78,8 +81,8 @@ module.exports = function(grunt) {
 
 	// Load the plugin that provides the "uglify" task.
 	grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-mocha');
-  //grunt.loadNpmTasks('grunt-requirejs');
+	grunt.loadNpmTasks('grunt-mocha');
+	//grunt.loadNpmTasks('grunt-requirejs');
 	grunt.loadNpmTasks('grunt-contrib-requirejs');
 	grunt.loadNpmTasks('grunt-docco');
 	grunt.loadNpmTasks('grunt-contrib-watch');

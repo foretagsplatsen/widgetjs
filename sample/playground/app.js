@@ -1,5 +1,5 @@
 define([
-	'widgetjs/core',
+	'widgetjs',
 	'./editorWidget',
 	'./outputWidget'
 ], function(widgetjs, editorWidget, outputWidget) {

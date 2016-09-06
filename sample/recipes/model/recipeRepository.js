@@ -4,12 +4,12 @@ define([
 	'jstorage',
 	'model/defaultRecipesData',
 	'model/recipe'
-], function (object, jQuery, jstorage, defaultRecepies, recipe) {
+], function (objectjs, jQuery, jstorage, defaultRecepies, recipe) {
 
 	/**
 	 * Repository data store data using http://www.jstorage.info/
 	 */
-	var jStorageRepository = object.subclass(function(that, my) {
+	var jStorageRepository = objectjs.object.subclass(function(that, my) {
 
 		my.initialize = function(spec) {
 			my.super(spec);

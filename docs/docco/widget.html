@@ -8,7 +8,7 @@
     <span class="s1">&#39;jquery&#39;</span>
   <span class="p">],</span>
 
-  <span class="kd">function</span> <span class="p">(</span><span class="nx">object</span><span class="p">,</span> <span class="nx">ext</span><span class="p">,</span> <span class="nx">router</span><span class="p">,</span> <span class="nx">events</span><span class="p">,</span> <span class="nx">htmlCanvas</span><span class="p">,</span> <span class="nx">jQuery</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">function</span> <span class="p">(</span><span class="nx">objectjs</span><span class="p">,</span> <span class="nx">ext</span><span class="p">,</span> <span class="nx">router</span><span class="p">,</span> <span class="nx">events</span><span class="p">,</span> <span class="nx">htmlCanvas</span><span class="p">,</span> <span class="nx">jQuery</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Base for all widgets. A widget can keep state in variables, contain logic and</span>
@@ -48,7 +48,7 @@
 <span class="cm">     *</span>
 <span class="cm">     * @returns {widget}</span>
 <span class="cm">     */</span>
-    <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="nx">object</span><span class="p">.</span><span class="nx">subclass</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">my</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="nx">objectjs</span><span class="p">.</span><span class="nx">object</span><span class="p">.</span><span class="nx">subclass</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">my</span><span class="p">)</span> <span class="p">{</span>
 
       <span class="cm">/**</span>
 <span class="cm">       * Keep track of the rendered subwidgets</span>
@@ -446,7 +446,12 @@ See widget-extensions.js</p>             </td>             <td class="code">    
       <span class="p">}</span> <span class="k">finally</span> <span class="p">{</span>
         <span class="nx">currentWidget</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">current</span><span class="p">);</span>
       <span class="p">}</span>
-    <span class="p">}</span>
+    <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>Register to property accesses for data binding</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">objectjs</span><span class="p">.</span><span class="nx">propertyEventEmitter</span><span class="p">.</span><span class="nx">instance</span><span class="p">().</span><span class="nx">onAccess</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">instance</span><span class="p">,</span> <span class="nx">propName</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">widget</span> <span class="o">=</span> <span class="nx">currentWidget</span><span class="p">.</span><span class="nx">get</span><span class="p">();</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">widget</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">instance</span><span class="p">.</span><span class="nx">onPropertyChange</span><span class="p">(</span><span class="nx">propName</span><span class="p">,</span> <span class="nx">widget</span><span class="p">.</span><span class="nx">update</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
 
     <span class="k">return</span> <span class="nx">widget</span><span class="p">;</span>
   <span class="p">}</span>

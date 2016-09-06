@@ -7,7 +7,7 @@
     <span class="s1">&#39;./hashLocation&#39;</span><span class="p">,</span>
     <span class="s1">&#39;objectjs&#39;</span>
   <span class="p">],</span>
-  <span class="kd">function</span><span class="p">(</span><span class="nx">jQuery</span><span class="p">,</span> <span class="nx">events</span><span class="p">,</span> <span class="nx">route</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">hashLocation</span><span class="p">,</span> <span class="nx">object</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">function</span><span class="p">(</span><span class="nx">jQuery</span><span class="p">,</span> <span class="nx">events</span><span class="p">,</span> <span class="nx">route</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">hashLocation</span><span class="p">,</span> <span class="nx">objectjs</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="cm">/**</span>
 <span class="cm">     * Lazily creates a singleton instance of</span>
@@ -37,7 +37,7 @@
 <span class="cm">    *</span>
 <span class="cm">    * @returns {{}}</span>
 <span class="cm">    */</span>
-    <span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">object</span><span class="p">.</span><span class="nx">subclass</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">my</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">router</span> <span class="o">=</span> <span class="nx">objectjs</span><span class="p">.</span><span class="nx">object</span><span class="p">.</span><span class="nx">subclass</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">that</span><span class="p">,</span> <span class="nx">my</span><span class="p">)</span> <span class="p">{</span>
 
       <span class="nx">my</span><span class="p">.</span><span class="nx">initialize</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">spec</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">my</span><span class="p">.</span><span class="kr">super</span><span class="p">(</span><span class="nx">spec</span><span class="p">);</span>
