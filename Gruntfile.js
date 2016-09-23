@@ -34,7 +34,7 @@ module.exports = function(grunt) {
 					baseUrl: './src/',
 					paths: {
 						"jquery": "../bower_components/requirejs/require",
-						"objectjs": "../bower_components/objectjs/src/object"
+						"klassified": "../bower_components/klassified/src/object"
 					},
 					include: ["core"],
 					exclude: ['jquery'],

@@ -5,7 +5,7 @@ define(
 		'./route',
 		'./url',
 		'./hashLocation',
-		'objectjs'
+		'klassified'
 	],
 	function(jQuery, events, route, url, hashLocation, object) {
 

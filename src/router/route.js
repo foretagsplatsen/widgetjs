@@ -1,6 +1,6 @@
 define(
 	['./routeFactory', '../events', './routeMatchResult', 'jquery',	'./url',
-		'objectjs'],
+		'klassified'],
 	function(routeFactory, events, routeMatchResult, jQuery, url, object) {
 
 		/**

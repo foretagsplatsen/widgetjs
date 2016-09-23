@@ -2,7 +2,7 @@ define([
 	'jquery',
 	'../events',
 	'./url',
-	'objectjs'
+	'klassified'
 ], function(jQuery, events, url, object) {
 
 	/**

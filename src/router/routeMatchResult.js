@@ -1,5 +1,5 @@
 define([
-	'objectjs'
+	'klassified'
 ], function(object) {
 
 	/**

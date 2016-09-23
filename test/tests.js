@@ -1,6 +1,6 @@
 require.config({
     paths: {
-		'objectjs': '../bower_components/objectjs/src/object',
+		'klassified': '../bower_components/klassified/src/object',
         'jquery': '../bower_components/jquery/dist/jquery',
         'widgetjs': '../src/',
         'chai': '../bower_components/chai/chai',

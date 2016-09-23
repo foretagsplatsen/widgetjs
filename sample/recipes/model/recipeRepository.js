@@ -1,5 +1,5 @@
 define([
-	'objectjs',
+	'klassified',
 	'jquery',
 	'jstorage',
 	'model/defaultRecipesData',

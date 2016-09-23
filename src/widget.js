@@ -1,6 +1,6 @@
 define(
 	[
-		'objectjs',
+		'klassified',
 		'./widget-extensions',
 		'./router',
 		'./events',
