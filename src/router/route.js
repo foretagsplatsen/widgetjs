@@ -196,7 +196,7 @@ define(
 				sequence = sequence || segments;
 
 				// Can not match if different sizes
-				if(urlSegments.length != sequence.length && !ignoreTrailingSegments) {
+				if(urlSegments.length !== sequence.length && !ignoreTrailingSegments) {
 					return false;
 				}
 
