@@ -409,7 +409,6 @@ define(
 				}
 			};
 
-
 			/**
 			 * Evaluate `fn`, ensuring that an update will be
 			 * performed after evaluating the function. Nested calls

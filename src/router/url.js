@@ -36,7 +36,6 @@ define([
 				segments = parseSegments(path);
 			};
 
-
 			//
 			// Public
 			//

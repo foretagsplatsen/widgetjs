@@ -101,7 +101,6 @@ define(function(require) {
         // Arrange: an event
         var anEvent = events.event();
 
-
         // Act: bind a callback using on
         var counter = 0;
         anEvent.onceOn(function() {
@@ -184,7 +183,6 @@ define(function(require) {
         // Arrange: an event
         var someEvents = events.eventCategory();
         var anEvent = someEvents.createEvent("namedEvent");
-
 
         // Act: bind a callback using on
         var counter = 0;

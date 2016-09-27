@@ -37,7 +37,6 @@ define(
 			assertMatch("//",route, "Ignore extra slash");
 			assertMatch("?a=1&b=2",route, "Ignore query");
 
-
 			assertNoMatch("value",route, "Don't match values");
 		});
 
@@ -123,7 +122,6 @@ define(
 			assertMatch("/foo/world/bar/hello/",route, "Ignore trailing slash");
 			assertMatch("/foo///world/bar///hello",route, "Ignore extra slash");
 			assertMatch("/foo/world/bar/hello?a=1&b=2",route, "Ignore query");
-
 
 			assertNoMatch("",route, "Empty. At least two segments expected");
 			assertNoMatch("/foo/world/bar/hello/and",route, "Don't match if more segments than in route.");
@@ -261,7 +259,6 @@ define(
 			assert.equal(url, "foo?bar=a,b");
 		});
 
-
 		test("Expand optionals", function() {
 			var route = router.route({ pattern: "#a/?c/#b/?d"});
 
@@ -276,7 +273,6 @@ define(
 			assert.equal(route.expand({a : "hello", b: "world", c: "foo"}), "hello/world?c=foo");
 			assert.equal(route.expand({a : "hello", b: "world", c: "foo", d: "bar" }), "hello/world?c=foo&d=bar");
 		});
-
 
 		test("Expand throws not valid URL error", function() {
 			var route = router.route({ pattern: "#a/#b" });
@@ -383,7 +379,6 @@ define(
 			assert.ok(aRoute.matchUrl(router.url({rawUrl: "h"})).isMatch(), "last constraint match");
 			assert.deepEqual(aRoute.matchUrl(router.url({rawUrl: "h"})).getRouteParameters(), { a: undefined, b: undefined, c: "h"}, "parameters");
 		});
-
 
         test("Ignore trailing segments route option", function() {
             var aRoute = router.route({

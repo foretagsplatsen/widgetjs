@@ -41,7 +41,6 @@ define([
 		return segmentArray;
 	}
 
-
 	/**
 	 * Create segment from string
 	 *

@@ -548,7 +548,6 @@ define(
 			return that;
 		}
 
-
 		return htmlCanvas;
 	}
 );

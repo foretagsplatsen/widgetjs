@@ -196,7 +196,6 @@ define([],
                 events = [];
             };
 
-
             /**
              * Answers true if an event with name exists
              *

@@ -138,7 +138,6 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
 		});
 	});
 
-
 	test("tags can be nested", function() {
         withCanvas(function(html) {
             // Arrange: a inner and outer div with a span as inner child
@@ -193,12 +192,10 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
             // Act: render a SPAN in it
             div.render(html.span("test").addClass("aSpan"));
 
-
             // Assert:
             assert.ok(jQuery("#aDiv > .aSpan").get(0), "SPAN rendered inside DIV");
         });
     });
-
 
     test("can render arrays", function() {
         withCanvas(function(html) {
@@ -225,7 +222,6 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
 
         });
     });
-
 
     test("throws error if object to append is null or undefined", function() {
         withCanvas(function(html) {
@@ -339,7 +335,6 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
 		});
     });
 
-
     test("element() returns brush element", function() {
         withCanvas(function(html) {
             // Arrange: a heading
@@ -350,7 +345,6 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
         });
     });
 
-
     test("setAttribute() get/set style using key/value", function() {
         withCanvas(function(html) {
             // Arrange: a heading with id
@@ -360,7 +354,6 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
             assert.equal(h1.asJQuery().attr("id"), ("aHeading"), "attribute set");
         });
     });
-
 
     test("css() get/set style", function() {
         withCanvas(function(html) {
@@ -406,7 +399,6 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
             assert.equal(h1.asJQuery().get(0), jQuery("#aHeading").get(0), "asJQuery() acessor returns hquery that match element.");
         });
     });
-
 
     //TODO: allow or throw exception?
     test("can render almost everything", function() {

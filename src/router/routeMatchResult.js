@@ -30,7 +30,6 @@ define([
 			parameters = mergeParameters(routeParameters, urlParameters);
 		};
 
-
 		//
 		// Public
 		//

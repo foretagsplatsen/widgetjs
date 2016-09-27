@@ -62,7 +62,6 @@ define(
 			assert.equal(my.routeTable[0], route, "equals route created");
 		});
 
-
 		test("Remove route", function() {
 			// Act: add and remove route
 			var route = aRouter.addRoute({pattern: "/users/"});
@@ -71,7 +70,6 @@ define(
 			// Assert that route was removed from route table
 			assert.equal(my.routeTable.length, 0, "route was removed from routetable");
 		});
-
 
         test("Named routes", function() {
             // Arrange: a named route

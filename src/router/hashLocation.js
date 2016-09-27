@@ -82,7 +82,6 @@ define([
 			return urlToHash(aUrl);
 		};
 
-
 		/**
 		 * Navigate back to previous location in history. If history is empty
 		 * the location will be changed to fallback URL.

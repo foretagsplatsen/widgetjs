@@ -69,7 +69,6 @@ define(
 				// but URL still contain trailing segments (default false)
 				ignoreTrailingSegments = (spec.options && spec.options.ignoreTrailingSegments) || false;
 
-
 				// Array with all optional sequences, ie. all combinations
 				// of optional parameters. Array must be ordered to match URL:s
 				// left to right.
@@ -292,7 +291,6 @@ define(
 						parameterValues[routeSegment.getName()] = routeSegment.getValue();
 					}
 				});
-
 
 				return routeMatchResult({route: that, url: url, values: parameterValues });
 			}

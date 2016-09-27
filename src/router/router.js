@@ -497,7 +497,6 @@ define(
 				return my.location.isHistoryEmpty();
 			};
 
-
 			/**
 			 * Start listening for location changes and automatically
 			 * resolve new URLs (including the current)

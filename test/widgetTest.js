@@ -202,7 +202,6 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
                 return that;
             })();
 
-
             // Act: append widget to canvas
             html.render(aWidget);
 
@@ -234,7 +233,6 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
             assert.ok(aWidget.isRendered(), "isRendered() is true when rendereded");
         });
     });
-
 
     test("renderRoot() can be overridden in widget", function() {
         withCanvas(function(html) {
