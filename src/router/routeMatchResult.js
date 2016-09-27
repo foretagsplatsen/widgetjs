@@ -143,7 +143,7 @@ define([
 			};
 
 			return instance;
-		}());
+		})();
 	});
 
 	return routeMatchResult;
