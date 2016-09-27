@@ -229,7 +229,7 @@ define(
 			 *
 			 * @returns {route}
 			 */
-			that.pipeRoute = function (routeSpec, router) {
+			that.pipeRoute = function(routeSpec, router) {
 				if(!routeSpec || !routeSpec.pattern) {
 					throw new Error("Route pattern required");
 				}
@@ -248,7 +248,7 @@ define(
 			 * @param {router} router
 			 * @returns {route}
 			 */
-			that.pipeNotFound = function (router) {
+			that.pipeNotFound = function(router) {
 				return that.onRouteNotFound(function(aRawUrl) {
 					router.resolveUrl(aRawUrl);
 				});
@@ -456,7 +456,7 @@ define(
 			 *
 			 * @returns {{}} Parameter values with parameter names as keys
 			 */
-            that.getParameters = function () {
+            that.getParameters = function() {
 				if (!my.lastMatch) {
 					return my.location.getUrl().getQuery();
 				}
@@ -470,7 +470,7 @@ define(
 			 * @param {string} parameterName
 			 * @returns {*}
 			 */
-            that.getParameter = function (parameterName) {
+            that.getParameter = function(parameterName) {
                 var parameters = that.getParameters();
                 return parameters[parameterName];
             };
@@ -559,7 +559,7 @@ define(
 			 *
 			 * @param {route} route
 			 */
-			my.addRoute = function (route) {
+			my.addRoute = function(route) {
 				var routeIndex = my.routeTable.length;
 				if(route.priority !== undefined) {
 					do { --routeIndex; } while (my.routeTable[routeIndex] &&
@@ -585,7 +585,7 @@ define(
 
 				var target = {};
 				objects.forEach(function(obj) {
-					Object.keys(obj).forEach(function (key) {
+					Object.keys(obj).forEach(function(key) {
 						target[key] = obj[key];
 					});
 				});

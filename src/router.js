@@ -4,7 +4,7 @@ define(
 		"./router/route",
 		"./router/router"
 	],
-	function (url, route, router) {
+	function(url, route, router) {
 
 		var routerSingleton = router();
 

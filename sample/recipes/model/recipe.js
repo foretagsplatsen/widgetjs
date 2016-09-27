@@ -1,6 +1,6 @@
 define([
 	"klassified"
-], function (object) {
+], function(object) {
 
 	/**
 	 * Ingredience in recipe

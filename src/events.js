@@ -1,5 +1,5 @@
 define([],
-    function () {
+    function() {
 
         /**
          * Keeps a list of bindings/callbacks that can be added using **push()** and
@@ -9,7 +9,7 @@ define([],
          * @param [my] {Object}
          * @returns {event}
          */
-        var event = function (spec, my) {
+        var event = function(spec, my) {
             my = my || {};
 
             var that = function(callback) {
@@ -38,7 +38,7 @@ define([],
              */
             that.onceOn = function(callback) {
                 var onceBinding = eventBinding({
-                    callback: function () {
+                    callback: function() {
                         my.remove(onceBinding);
                         callback.apply(that, arguments);
                     }
@@ -53,7 +53,7 @@ define([],
              * @param name {String} Name of event
              * @param binding {eventBinding} Binding
              */
-            that.off = function (binding) {
+            that.off = function(binding) {
                 my.remove(binding);
             };
 
@@ -62,7 +62,7 @@ define([],
              *
              * @param arguments {Object|Object[]} Arguments passed to callback of each binding
              */
-            that.trigger = function () {
+            that.trigger = function() {
                 var params = Array.prototype.slice.call(arguments);
                 bindings.forEach(function(binding) {
                     binding.execute(params);
@@ -81,7 +81,7 @@ define([],
             /**
              * @param binding {eventBinding}
              */
-            my.push = function (binding) {
+            my.push = function(binding) {
                 bindings.push(binding);
                 binding.bind(that);
             };
@@ -89,7 +89,7 @@ define([],
             /**
              * @param binding {eventBinding}
              */
-            my.remove = function (binding) {
+            my.remove = function(binding) {
                 bindings.splice(bindings.indexOf(binding), 1);
             };
 
@@ -113,7 +113,7 @@ define([],
          *
          * @returns {{}}
          */
-        var eventCategory = function () {
+        var eventCategory = function() {
             var that = {};
 
             // Map of events with name as key
@@ -139,7 +139,7 @@ define([],
              * @param [name] {string} Name of event in eventHandler
              * @returns {event}
              */
-            that.createEvent = function (name) {
+            that.createEvent = function(name) {
                 return addEvent(event(), name);
             };
 
@@ -149,7 +149,7 @@ define([],
              * @param name {String}
              * @param callback {function}
              */
-            that.on = function (name, callback) {
+            that.on = function(name, callback) {
                 return ensureEventHolderFor(name).on(callback);
             };
 
@@ -158,7 +158,7 @@ define([],
              * @param name {String} Name of event
              * @param binding {eventBinding} Binding
              */
-            that.off = function (name, binding) {
+            that.off = function(name, binding) {
                 return ensureEventHolderFor(name).off(binding);
             };
 
@@ -169,7 +169,7 @@ define([],
              * @param callback
              * @returns {*}
              */
-            that.onceOn = function (name, callback) {
+            that.onceOn = function(name, callback) {
                 return ensureEventHolderFor(name).onceOn(callback);
             };
 
@@ -178,7 +178,7 @@ define([],
              * @param name
              * @param arguments Any arguments to trigger is sent as arguments to callback.
              */
-            that.trigger = function (name) {
+            that.trigger = function(name) {
                 var params = Array.prototype.slice.call(arguments, 1);
                 var event = ensureEventHolderFor(name);
                 event.trigger.apply(that, params);
@@ -231,7 +231,7 @@ define([],
 
          * @returns {eventBinding}
          */
-        var eventBinding = function (spec) {
+        var eventBinding = function(spec) {
             spec = spec || {};
             var that = {};
 
@@ -249,7 +249,7 @@ define([],
             /**
              * Remove itself from event, if bound.
              */
-            that.unbind = function () {
+            that.unbind = function() {
                 if (that.isBound()) {
                     event.off(that);
                     event = undefined;
@@ -259,7 +259,7 @@ define([],
             /**
              * @param anEvent
              */
-            that.bind = function (anEvent) {
+            that.bind = function(anEvent) {
                 that.unbind();
                 if (anEvent) {
                     event = anEvent;
@@ -270,7 +270,7 @@ define([],
              * Executes connected callback
              * @param params
              */
-            that.execute = function (params) {
+            that.execute = function(params) {
                 if (callback) {
                     callback.apply(that, params);
                 }
@@ -282,7 +282,7 @@ define([],
         /**
          * Singleton object that keeps a list of named event categories.
          */
-        var eventManager = (function () {
+        var eventManager = (function() {
             var that = {};
 
             // Map of event categories with (category) name as key
@@ -293,7 +293,7 @@ define([],
              * @param name
              * @returns {eventCategory}
              */
-            that.register = function (name) {
+            that.register = function(name) {
                 if (categories[name]) {
                     throw ("A event category is already registered for " + name);
                 }
@@ -308,7 +308,7 @@ define([],
              * @param name
              * @returns {*}
              */
-            that.at = function (name) {
+            that.at = function(name) {
                 if (!categories[name]) {
                     that.register(name);
                 }

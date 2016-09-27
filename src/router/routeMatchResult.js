@@ -40,7 +40,7 @@ define([
 		 *
 		 * @returns {route}
 		 */
-		that.getRoute = function () {
+		that.getRoute = function() {
 			return route;
 		};
 
@@ -49,7 +49,7 @@ define([
 		 *
 		 * @returns {url}
 		 */
-		that.getUrl = function () {
+		that.getUrl = function() {
 			return url;
 		};
 
@@ -95,8 +95,8 @@ define([
 		 *
 		 * @returns {Array}
 		 */
-		that.getActionArguments = function () {
-			var actionArguments =  Object.keys(routeParameters).map(function (parameterName) {
+		that.getActionArguments = function() {
+			var actionArguments =  Object.keys(routeParameters).map(function(parameterName) {
 				return routeParameters[parameterName];
 			});
 			actionArguments.push(url.getQuery());

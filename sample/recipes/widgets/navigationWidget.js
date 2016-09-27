@@ -1,6 +1,6 @@
 define([
 	"widgetjs/core"
-], function (widgetjs, shared) {
+], function(widgetjs, shared) {
 
 	var navigationWidget = widgetjs.widget.subclass(function(that, my) {
 
@@ -19,7 +19,7 @@ define([
 			that.update();
 		};
 
-		that.renderContentOn = function (html) {
+		that.renderContentOn = function(html) {
 			html.div({ klass: "navbar navbar-default navbar-fixed-top" },
 				html.div({ klass: "container"},
 					html.div({ klass: "navbar-header"},

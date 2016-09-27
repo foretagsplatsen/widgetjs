@@ -1,7 +1,7 @@
 define([
 	"klassified"
 ],
-	function (object) {
+	function(object) {
 
 		/**
 		 * Token/Char used to separate segments in URL paths.
@@ -45,21 +45,21 @@ define([
 			 * URL path
 			 * @returns {string}
 			 */
-			that.getPath = function () { return path; };
+			that.getPath = function() { return path; };
 
 			/**
 			 * Key/Value pairs parsed from query
 			 *
 			 * @returns {{}}
 			 */
-			that.getQuery = function () { return query; };
+			that.getQuery = function() { return query; };
 
 			/**
 			 * Segments in path parsed by splitting `path` by `urlSeparator`
 			 *
 			 * @returns {string[]}
 			 */
-			that.getSegments = function () { return segments; };
+			that.getSegments = function() { return segments; };
 
 			/**
 			 * Answers true if the route is a match for the receiver
@@ -67,7 +67,7 @@ define([
 			 * @param route
 			 * @returns {boolean}
 			 */
-			that.matchRoute = function (route) {
+			that.matchRoute = function(route) {
 				return route.matchUrl(that);
 			};
 
@@ -151,7 +151,7 @@ define([
 			var query = {};
 			var pair;
 			if (result && result.length >= 2) {
-				(result[1].split("&")).forEach(function (each) {
+				(result[1].split("&")).forEach(function(each) {
 					pair = each.split("=");
 					query[pair[0]] = pair[1];
 				});

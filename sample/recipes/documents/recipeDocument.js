@@ -1,7 +1,7 @@
 define([
 	"widgetjs/core",
 	"model/recipeRepository"
-], function (widgetjs, recipeRepository) {
+], function(widgetjs, recipeRepository) {
 
 	/**
 	 * Page for a single recipe
@@ -22,7 +22,7 @@ define([
 			}});
 		};
 
-		that.renderContentOn = function (html) {
+		that.renderContentOn = function(html) {
 			if(!recipe) {
 				html.div({klass: "alert alert-info"}, "Recipe not found");
 				return;

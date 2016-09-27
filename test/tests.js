@@ -24,7 +24,7 @@ var testModules = [
     "router/routeTest"
 ];
 
-require(testModules, function () {
+require(testModules, function() {
     if (window.mochaPhantomJS) {
         window.mochaPhantomJS.run();
     }

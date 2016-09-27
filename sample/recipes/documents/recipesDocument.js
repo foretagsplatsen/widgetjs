@@ -1,7 +1,7 @@
 define([
 	"widgetjs/core",
 	"model/recipeRepository"
-], function (widgetjs, recipeRepository) {
+], function(widgetjs, recipeRepository) {
 
 	/**
 	 * List all recipes
@@ -22,9 +22,9 @@ define([
 			});
 		};
 
-		that.renderContentOn = function (html) {
+		that.renderContentOn = function(html) {
 			html.div({klass: "row"}, recipes.map(function(recipe, index) {
-				return function (html) {
+				return function(html) {
 					html.div({klass: "recipe-card col-xs-6 col-sm-2"},
 						html.a({href: my.linkTo("showRecipe", { recipeId: recipe.id })},
 							html.img({klass: "img-responsive img-thumbnail", src: recipe.image })

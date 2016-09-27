@@ -245,7 +245,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
                 var my = {};
                 var that = widget({}, my);
 
-                my.renderRootOn = function (html) {
+                my.renderRootOn = function(html) {
                     return html.form().id(that.id());
                 };
 

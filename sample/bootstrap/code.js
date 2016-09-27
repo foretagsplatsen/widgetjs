@@ -5,7 +5,7 @@ define([
 	"prettify"
 ], function(widgetjs, lodash, jQuery, prettify) {
 
-    jQuery.fn.prettify = function () { this.html(prettify.prettyPrintOne(this.html())); };
+    jQuery.fn.prettify = function() { this.html(prettify.prettyPrintOne(this.html())); };
 
     var code = widgetjs.widget.subclass(function(that, my) {
 

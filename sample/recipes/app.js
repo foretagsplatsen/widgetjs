@@ -5,7 +5,7 @@ define([
     "widgets",
     "jquery",
     "bootstrap"
-], function (widgetjs, router, documents, widgets, jQuery) {
+], function(widgetjs, router, documents, widgets, jQuery) {
 
     /**
      * Recipe application concists of the following views/documents:
@@ -123,7 +123,7 @@ define([
          * @param {object} options.values   Key-Value object with default values for route parameters
          *                                  to use in menu link.
          */
-        that.addAction = function (options) {
+        that.addAction = function(options) {
             var menuId = options.menuId || my.nextId(),
                 doc = options.doc;
 
@@ -144,7 +144,7 @@ define([
             }
         };
 
-        that.renderOn = function (html) {
+        that.renderOn = function(html) {
             html.render(navigation);
             html.div({klass: "container" }, mainRegion);
         };

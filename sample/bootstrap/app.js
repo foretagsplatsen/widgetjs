@@ -37,15 +37,15 @@ define([
         }
 
         // Examples
-        var styles = Object.keys(styleExamples).map(function (key) {
+        var styles = Object.keys(styleExamples).map(function(key) {
             return styleExamples[key];
         });
 
-        var components = Object.keys(componentsExamples).map(function (key) {
+        var components = Object.keys(componentsExamples).map(function(key) {
             return componentsExamples[key];
         });
 
-        var scripts = Object.keys(javascriptExamples).map(function (key) {
+        var scripts = Object.keys(javascriptExamples).map(function(key) {
             return javascriptExamples[key];
         });
 
@@ -136,7 +136,7 @@ define([
         };
 
         function refreshScrollspy () {
-            jQuery("[data-spy="scroll"]").each(function () {
+            jQuery("[data-spy="scroll"]").each(function() {
                 jQuery(this).scrollspy("refresh");
             });
         }

@@ -4,7 +4,7 @@ define([
 	"jstorage",
 	"model/defaultRecipesData",
 	"model/recipe"
-], function (object, jQuery, jstorage, defaultRecepies, recipe) {
+], function(object, jQuery, jstorage, defaultRecepies, recipe) {
 
 	/**
 	 * Repository data store data using http://www.jstorage.info/
@@ -23,7 +23,7 @@ define([
 			return my.prefix + key;
 		};
 
-		my.storageGet = function (options) {
+		my.storageGet = function(options) {
 			if(!options.id || !options.onSuccess) {
 				throw new Error("Option \"id\" and \"onSuccess\" are required");
 			}

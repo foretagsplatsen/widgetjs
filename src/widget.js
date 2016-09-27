@@ -8,7 +8,7 @@ define(
 		"jquery"
 	],
 
-	function (object, ext, router, events, htmlCanvas, jQuery) {
+	function(object, ext, router, events, htmlCanvas, jQuery) {
 
 		/**
 		 * Base for all widgets. A widget can keep state in variables, contain logic and
@@ -79,7 +79,7 @@ define(
 			 *
 			 * @returns {String}
 			 */
-			that.getId = function () {
+			that.getId = function() {
 				return id;
 			};
 
@@ -125,7 +125,7 @@ define(
 			 *
 			 * @param aJQuery
 			 */
-			that.appendTo = function (aJQuery) {
+			that.appendTo = function(aJQuery) {
 				my.withAttachHooks(function() {
 					renderBasicOn(htmlCanvas(aJQuery));
 				});
@@ -137,7 +137,7 @@ define(
 			 *
 			 * @param aJQuery
 			 */
-			that.replace = function (aJQuery) {
+			that.replace = function(aJQuery) {
 				my.withAttachHooks(function() {
 					var canvas = htmlCanvas(aJQuery);
 					canvas.root.asJQuery().empty();
@@ -153,7 +153,7 @@ define(
 			 *
 			 * @returns {*}
 			 */
-			that.asJQuery = function () {
+			that.asJQuery = function() {
 				return jQuery("#" + that.getId());
 			};
 
@@ -162,7 +162,7 @@ define(
 			 *
 			 * @returns {boolean}
 			 */
-			that.isRendered = function () {
+			that.isRendered = function() {
 				return that.asJQuery().length > 0;
 			};
 
@@ -175,7 +175,7 @@ define(
 			 *
 			 * @param aTagBrush
 			 */
-			that.appendToBrush = function (aTagBrush) {
+			that.appendToBrush = function(aTagBrush) {
 				my.withAttachHooks(function() {
 					renderBasicOn(htmlCanvas(aTagBrush.asJQuery()));
 				});
@@ -187,7 +187,7 @@ define(
 			 */
 			that.triggerWillAttach = function() {
 				my.willAttach();
-				children.forEach(function (widget) {
+				children.forEach(function(widget) {
 					widget.triggerWillAttach();
 				});
 			};
@@ -198,7 +198,7 @@ define(
 			 */
 			that.triggerDidAttach = function() {
 				my.didAttach();
-				children.forEach(function (widget) {
+				children.forEach(function(widget) {
 					widget.triggerDidAttach();
 				});
 				that.onAttach.trigger();
@@ -289,7 +289,7 @@ define(
 			 *
 			 * @example
 			 *
-			 *		that.renderOn = function (html) {
+			 *		that.renderOn = function(html) {
 			 *			html.ul({id: that.getId()}
 			 *				html.li("BMW"),
 			 *				html.li("Toyota")
@@ -299,7 +299,7 @@ define(
 			 *
 			 * @param html
 			 */
-			that.renderOn = function (html) {
+			that.renderOn = function(html) {
 				// Renders widget by wrapping `renderContentOn()` in a root element.
 				my.renderRootOn(html).render(that.renderContentOn);
 			};
@@ -309,7 +309,7 @@ define(
 				if(parent) {
 					parent.registerChild(that);
 				}
-				withCurrentWidget(function () {
+				withCurrentWidget(function() {
 					children = [];
 					fn();
 				}, that);
@@ -327,7 +327,7 @@ define(
 			 * @param html
 			 * @returns {htmlBrush}
 			 */
-			my.renderRootOn = function (html) {
+			my.renderRootOn = function(html) {
 				return html.tag("widgetjs-widget").id(id);
 			};
 
@@ -336,7 +336,7 @@ define(
 			 *
 			 * @example
 			 *
-			 *		that.renderContentOn = function (html) {
+			 *		that.renderContentOn = function(html) {
 			 *			html.ul(
 			 *				html.li("BMW"),
 			 *				html.li("Toyota")
@@ -345,7 +345,7 @@ define(
 			 *
 			 * @param {htmlCanvas} html
 			 */
-			that.renderContentOn = function (html) {};
+			that.renderContentOn = function(html) {};
 
 			/**
 			 * Hook evaluated before the widget is attached (or reattached due
@@ -376,7 +376,7 @@ define(
 			 * by "asJQuery" with the new content.
 			 *
 			 */
-			that.update = function () {
+			that.update = function() {
 				if (my.inUpdateTransaction || !that.isRendered()) {
 					return;
 				}
@@ -438,11 +438,11 @@ define(
 		/**
 		 * Creates unique ids used by widgets to identify their root div.
 		 */
-		var idGenerator = (function () {
+		var idGenerator = (function() {
 			var that = {};
 			var id = 0;
 
-			that.newId = function () {
+			that.newId = function() {
 				id += 1;
 				return id.toString();
 			};
@@ -453,13 +453,13 @@ define(
 		/**
 		 * Helpers for keeping track of the currently rendered widget.
 		 */
-		var currentWidget = (function () {
+		var currentWidget = (function() {
 			var current;
 			return {
-				get: function () {
+				get: function() {
 					return current;
 				},
-				set: function (widget) {
+				set: function(widget) {
 					current = widget;
 				}
 			};

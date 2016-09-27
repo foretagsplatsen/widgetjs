@@ -2,7 +2,7 @@ define([
 	"widgetjs/core",
 	"model/recipeRepository",
 	"model/recipe"
-], function (widgetjs, recipeRepository, recipeModel) {
+], function(widgetjs, recipeRepository, recipeModel) {
 
 	/**
 	 * Editor for editing an existing recipe or creating a new.
@@ -34,7 +34,7 @@ define([
 			that.update();
 		};
 
-		that.renderContentOn = function (html) {
+		that.renderContentOn = function(html) {
 			if(!recipe) {
 				html.div({klass: "alert alert-info"}, "Recipe not found");
 				return;
@@ -118,7 +118,7 @@ define([
 		/**
 		 * Render row with form buttons
 		 */
-		that.renderFormActionsOn = function (html) {
+		that.renderFormActionsOn = function(html) {
 			html.div({klass: "well well-sm"},
 				html.span(
 					// Save Button

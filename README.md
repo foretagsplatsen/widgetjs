@@ -5,12 +5,12 @@ Widget-JS is a framework that provides routing, events and widgets to javascript
 
 A simple widget can look like:
 ``` javascript
-var counterWidget = function () {
+var counterWidget = function() {
 	var that = widgetjs.widget();
 
 	var count = 0;
 
-	that.renderContentOn = function (html) {
+	that.renderContentOn = function(html) {
 		html.h1(count.toString());
 		html.button("+").click(function() { count++; that.update();});
 		html.button("-").click(function() { count--; that.update();});

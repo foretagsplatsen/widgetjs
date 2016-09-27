@@ -4,7 +4,7 @@ define([
 	"documents/recipeDocument",
 	"documents/recipeEditorDocument",
 	"documents/exportDocument",
-], function (aboutDocument, recipesDocument, recipeDocument, recipeEditorDocument, exportDocument) {
+], function(aboutDocument, recipesDocument, recipeDocument, recipeEditorDocument, exportDocument) {
 	return {
 		aboutDocument: aboutDocument(),
 		recipesDocument: recipesDocument(),

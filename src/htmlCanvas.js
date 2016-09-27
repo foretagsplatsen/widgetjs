@@ -3,7 +3,7 @@ define(
 		"jquery"
 	],
 
-	function (jQuery) {
+	function(jQuery) {
 
 		/**
 		 * @typedef {function} renderer
@@ -96,7 +96,7 @@ define(
 			 * @param {string} tagName Type of element (supported by document.createElement)
 			 * @param {renderable[]} [children] Renderable objects to append as children of brush.
 			 */
-			that.tag = function (tagName, children) {
+			that.tag = function(tagName, children) {
 				var tagBrush = htmlTagBrush({ tag: tagName, children: children });
 				root.appendBrush(tagBrush);
 				return tagBrush;
@@ -110,8 +110,8 @@ define(
 			 *	html.strong("Important stuff");
 			 *	html.span(html.strong(userName), " signed in.")
 			 */
-			tags.forEach(function (tagName) {
-				that[tagName] = function () {
+			tags.forEach(function(tagName) {
+				that[tagName] = function() {
 					var args = Array.prototype.slice.call(arguments);
 					return that.tag(tagName, args);
 				};
@@ -132,7 +132,7 @@ define(
 			 *
 			 * @param anObject
 			 */
-			that.render = function () {
+			that.render = function() {
 				var args = Array.prototype.slice.call(arguments);
 				root.render(args);
 			};
@@ -193,7 +193,7 @@ define(
 			 *
 			 * @returns {HTMLElement}
 			 */
-			that.element = function () {
+			that.element = function() {
 				return element;
 			};
 
@@ -213,7 +213,7 @@ define(
 			 * @param {renderable[]} arguments Any renderable objects
 			 * @returns {htmlTagBrush}
 			 */
-			that.render = function () {
+			that.render = function() {
 				var args = Array.prototype.slice.call(arguments);
 				for (var i = 0; i < args.length; i++) {
 					append(args[i]);
@@ -227,7 +227,7 @@ define(
 			 *
 			 * @param {htmlTagBrush} aTagBrush
 			 */
-			that.appendToBrush = function (aTagBrush) {
+			that.appendToBrush = function(aTagBrush) {
 				aTagBrush.appendBrush(that);
 			};
 
@@ -243,7 +243,7 @@ define(
 			 *
 			 * @param {string} htmlContents
 			 */
-			that.html = function (htmlContents) {
+			that.html = function(htmlContents) {
 				that.asJQuery().html(htmlContents);
 				return that;
 			};
@@ -253,7 +253,7 @@ define(
 			 *
 			 * @param {string} htmlContents
 			 */
-			that.raw = function (htmlContents) {
+			that.raw = function(htmlContents) {
 				that.asJQuery().append(htmlContents);
 				return that;
 			};
@@ -278,7 +278,7 @@ define(
 			 * @param {function} callback A function to execute each time the event is triggered.
 			 * @returns {{}}
 			 */
-			that.on = function (eventType, callback) {
+			that.on = function(eventType, callback) {
 				that.asJQuery().bind(eventType, callback);
 				return that;
 			};
@@ -291,7 +291,7 @@ define(
 			 *	aBrush.blur(function() { .. });
 			 */
 			events.forEach(function(eventType) {
-				that[eventType] = function (callback) {
+				that[eventType] = function(callback) {
 					return that.on(eventType, callback);
 				};
 			});
@@ -302,7 +302,7 @@ define(
 			 * @param value
 			 * @returns {{}}
 			 */
-			that.setAttribute = function (key, value) {
+			that.setAttribute = function(key, value) {
 				// Omit attribute if value is omit
 				if(value === omitSymbol) {
 					return that;
@@ -321,7 +321,7 @@ define(
 			 *	aBrush.href("#");
 			 */
 			attributes.forEach(function(attributeName) {
-				that[attributeName] = function (value) {
+				that[attributeName] = function(value) {
 					return that.setAttribute(attributeName, value);
 				};
 			});
@@ -337,7 +337,7 @@ define(
 			 * @param {string} value
 			 * @returns {{}}
 			 */
-			that.css = function (key, value) {
+			that.css = function(key, value) {
 				if (typeof key === "string") {
 					that.asJQuery().css(key, value);
 				}
@@ -383,7 +383,7 @@ define(
 			 * @param className
 			 * @returns {htmlTagBrush}
 			 */
-			that.addClass = function (className) {
+			that.addClass = function(className) {
 				that.asJQuery().addClass(className);
 				return that;
 			};
@@ -394,7 +394,7 @@ define(
 			 * @param {string} className
 			 * @returns {htmlTagBrush}
 			 */
-			that.removeClass = function (className) {
+			that.removeClass = function(className) {
 				that.asJQuery().removeClass(className);
 				return that;
 			};
@@ -403,7 +403,7 @@ define(
 			 * Returns jQuery that match element.
 			 * @returns {jQuery}
 			 */
-			that.asJQuery = function () {
+			that.asJQuery = function() {
 				return jQuery(that.element());
 			};
 

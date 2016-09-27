@@ -10,7 +10,7 @@
 // my.hello();
 
 define(
-	function () {
+	function() {
 		return {};
 	}
 );

@@ -1,7 +1,7 @@
 define([
 	"widgetjs/core",
 	"model/recipeRepository"
-], function (widgetjs, recipeRepository) {
+], function(widgetjs, recipeRepository) {
 
 	/**
 	 * Import/Export Page
@@ -12,7 +12,7 @@ define([
 	 */
 	var exportDocument = widgetjs.widget.subclass(function(that, my) {
 
-		that.renderContentOn = function (html) {
+		that.renderContentOn = function(html) {
 			html.h2({klass: "page-header"}, "Export");
 			html.button({klass: "btn btn-default"}, "Export Recipes").click(function() {
 				recipeRepository.findAll({onSuccess: function(all) {

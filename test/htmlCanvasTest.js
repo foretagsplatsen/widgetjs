@@ -227,7 +227,7 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
     });
 
 
-    test("throws error if object to append is null or undefined", function () {
+    test("throws error if object to append is null or undefined", function() {
         withCanvas(function(html) {
             assert.throws(
                 function() { html.render(null); },
@@ -351,7 +351,7 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
     });
 
 
-    test("setAttribute() get/set style using key/value", function () {
+    test("setAttribute() get/set style using key/value", function() {
         withCanvas(function(html) {
             // Arrange: a heading with id
             var h1 = html.h1().setAttribute("id", "aHeading");
@@ -362,7 +362,7 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
     });
 
 
-    test("css() get/set style", function () {
+    test("css() get/set style", function() {
         withCanvas(function(html) {
             // Arrange: a div
             var div = html.div();
@@ -372,7 +372,7 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
         });
     });
 
-    test("attr() get/set style", function () {
+    test("attr() get/set style", function() {
         withCanvas(function(html) {
             // Arrange: a heading with id (set using map)
             var h1 = html.h1().attr({id : "aHeading"});
@@ -382,7 +382,7 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
         });
     });
 
-    test("addClass()/removeClass() add/remove class", function () {
+    test("addClass()/removeClass() add/remove class", function() {
         withCanvas(function(html) {
             // Arrange: a heading
             var h1 = html.h1().id("aHeading");
@@ -409,7 +409,7 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
 
 
     //TODO: allow or throw exception?
-    test("can render almost everything", function () {
+    test("can render almost everything", function() {
         withCanvas(function(html) {
             html.render(0); // toString()
             html.render(3.14159265359); // toString()

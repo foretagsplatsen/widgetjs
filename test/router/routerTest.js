@@ -1,6 +1,6 @@
 define(
 	["widgetjs/router/router", "chai"],
-	function (router, chai) {
+	function(router, chai) {
 
         var assert = chai.assert;
 
@@ -12,7 +12,7 @@ define(
 					return;
 				}
 				var fn = steps.shift();
-				setTimeout(function () {
+				setTimeout(function() {
 					next(fn.apply(next, arguments));
 				}, 10);
 			}
@@ -36,13 +36,13 @@ define(
             aRouter.clear();
 		});
 
-		test("Router defaults", function () {
+		test("Router defaults", function() {
 			// Assert that defaults are correct
 			assert.equal(my.routeTable.length, 0, "routetable is empty");
 			assert.equal(my.lastMatch, undefined, "no route matched");
 		});
 
-		test("Router options", function () {
+		test("Router options", function() {
 			// Arrange a router with options set
 			var anotherMy = {};
 			var anotherRouter = router({
@@ -53,7 +53,7 @@ define(
 			assert.equal(anotherMy.location.isFake, true, "location handler from options");
 		});
 
-		test("Add route", function () {
+		test("Add route", function() {
 			// Act: add a route
 			var route = aRouter.addRoute({ pattern: "/users/" });
 
@@ -63,7 +63,7 @@ define(
 		});
 
 
-		test("Remove route", function () {
+		test("Remove route", function() {
 			// Act: add and remove route
 			var route = aRouter.addRoute({pattern: "/users/"});
 			aRouter.removeRoute(route);
@@ -73,7 +73,7 @@ define(
 		});
 
 
-        test("Named routes", function () {
+        test("Named routes", function() {
             // Arrange: a named route
             var route = aRouter.addRoute({name: "users", pattern: "/users/"});
 
@@ -84,7 +84,7 @@ define(
             assert.equal(namedRoute, route, "same route");
         });
 
-		test("Add routes with priority", function () {
+		test("Add routes with priority", function() {
 			// Act: add routes with different priorities
 			var invoiceRoute = aRouter.addRoute({pattern: "/invoice/"});
 			var ticketRoute = aRouter.addRoute({pattern: "/ticket/"});
@@ -100,7 +100,7 @@ define(
 			assert.equal(my.routeTable[4], ticketRoute, "registration order if no priority");
 		});
 
-		test("resolveUrl executes route callback on match", function (start) {
+		test("resolveUrl executes route callback on match", function(start) {
 			// Arrange: setup a route
 			var userRoute = aRouter.addRoute({pattern: "/user/"});
 			userRoute.on("matched", function() {
@@ -116,7 +116,7 @@ define(
 			assert.ok(true, "callback executed for route");
 		});
 
-		test("resolveUrl triggers resolveUrl event", function (start) {
+		test("resolveUrl triggers resolveUrl event", function(start) {
 			// listen for "resolveUrl event" on router
 			aRouter.on("resolveUrl", function(url) {
 				start(); // execute asserts
@@ -130,7 +130,7 @@ define(
 			assert.ok(true, "callback executed");
 		});
 
-		test("resolveUrl triggers routeMatched event", function (start) {
+		test("resolveUrl triggers routeMatched event", function(start) {
 			// Arrange: setup a route
 			var userRoute = aRouter.addRoute({pattern: "/user/"});
 
@@ -148,7 +148,7 @@ define(
 			aRouter.resolveUrl("/user/");
 		});
 
-		test("resolveUrl triggers routeNotFound event", function (start) {
+		test("resolveUrl triggers routeNotFound event", function(start) {
 			// Arrange: setup no routes but
 			// a lister for "notFound event"
 			aRouter.on("routeNotFound", function(url) {
@@ -164,7 +164,7 @@ define(
 			aRouter.resolveUrl("/user/");
 		});
 
-		test("resolveUrl executes action on match", function (start) {
+		test("resolveUrl executes action on match", function(start) {
 			// Arrange: setup a route
 			var userRoute = aRouter.addRoute({
 				pattern: "/user/",
@@ -181,7 +181,7 @@ define(
 			assert.ok(true, "action was executed once");
 		});
 
-		test("resolveUrl pass values to action", function (start) {
+		test("resolveUrl pass values to action", function(start) {
 			// Arrange a route that have two mandatory parameters
 			aRouter.addRoute({
 				pattern: "/user/#userid/order/#orderid",
@@ -196,7 +196,7 @@ define(
 			aRouter.resolveUrl("/user/john/order/1");
 		});
 
-		test("resolveUrl pass optional values to action", function (start) {
+		test("resolveUrl pass optional values to action", function(start) {
 			// Arrange a route that have two mandatory parameters
 			aRouter.addRoute({
 				pattern: "/user/?userid/order/?orderid",
@@ -212,7 +212,7 @@ define(
 			aRouter.resolveUrl("/user/order/1");
 		});
 
-		test("resolveUrl pass optional value defaults to action", function (start) {
+		test("resolveUrl pass optional value defaults to action", function(start) {
 			// Arrange a route that have two optional parameters
 			//  with defaukts
 			var userRoute = aRouter.addRoute({
@@ -233,7 +233,7 @@ define(
 			aRouter.resolveUrl("/user/order/1");
 		});
 
-		test("resolveUrl pass query as last argument to action", function (start) {
+		test("resolveUrl pass query as last argument to action", function(start) {
 			// Arrange a route that have one parameter
 			var userRoute = aRouter.addRoute({
 				pattern: "/user/#userid/order",
@@ -251,7 +251,7 @@ define(
 			aRouter.resolveUrl("/user/john/order/?filter=open&orderBy=date");
 		});
 
-		test("resolveUrl continues if fallThrough", function (start) {
+		test("resolveUrl continues if fallThrough", function(start) {
 			// Arrange a 3 routes, where first have fallThrough
 			// set and the two other have not
 
@@ -285,7 +285,7 @@ define(
 			aRouter.resolveUrl("/user/");
 		});
 
-		test("Add route with constraints", function (start) {
+		test("Add route with constraints", function(start) {
 			// Arrange a route with constraints
 			var userRoute = aRouter.addRoute({
 				pattern: "/user/#name/",
@@ -305,7 +305,7 @@ define(
 			aRouter.resolveUrl("/user/james");
 		});
 
-		test("getUrl returns current location", function () {
+		test("getUrl returns current location", function() {
 			// Act: change hash and get url
 			window.location.hash = "#!/aPath";
 			var currentUrl = aRouter.getUrl();
@@ -314,12 +314,12 @@ define(
 			assert.equal(currentUrl.toString(), "aPath", "url is current location");
 		});
 
-		test("linkTo() creates links for href", function () {
+		test("linkTo() creates links for href", function() {
 			assert.equal(aRouter.linkTo("aPath"), "#!/aPath", "Hash-bang \"#!\" convention (hash.js)");
 			assert.equal(aRouter.linkTo(""), "#!/", "handles empty path");
 		});
 
-		test("redirectTo() changes the current location to URL", function () {
+		test("redirectTo() changes the current location to URL", function() {
 			aRouter.redirectTo("aPath");
 			assert.equal(window.location.hash, "#!/aPath", "sets window.location.hash");
 
@@ -327,7 +327,7 @@ define(
 			assert.equal(window.location.hash, "#!/", "redirects empty path");
 		});
 
-		test("Pipe notfound to another router", function (start) {
+		test("Pipe notfound to another router", function(start) {
 			// Arrange another router with a route handler
 			var anotherRouter = router();
 			anotherRouter.addRoute({
@@ -347,7 +347,7 @@ define(
             anotherRouter.stop();
 		});
 
-		test("Pipe route to another router", function (start) {
+		test("Pipe route to another router", function(start) {
 			// Arrange another router with a route handler
 			var anotherRouter = router();
 			anotherRouter.addRoute({
@@ -367,52 +367,52 @@ define(
             anotherRouter.stop();
 		});
 
-		test("back()", function (start) {
+		test("back()", function(start) {
 			aRouter.stop();
 			window.location.hash = ""; // start path
 			aRouter.start();
 
 			delayedSteps(
-				function () {
+				function() {
 					aRouter.redirectTo("a");
 				},
-				function () {
+				function() {
 					aRouter.redirectTo("b");
 				},
-				function () {
+				function() {
 					assert.equal(aRouter.getUrl().toString(), "b", "route is last URL");
 				},
-				function () {
+				function() {
 					aRouter.back();
 				},
-				function () {
+				function() {
 					assert.equal(aRouter.getUrl().toString(), "a", "back sets path to previous path");
 				},
-				function () {
+				function() {
 					aRouter.back();
 				},
-				function () {
+				function() {
 					assert.equal(aRouter.getUrl().toString(), "", "back set to start path");
 				},
-				function () {
+				function() {
 					aRouter.back();
 				},
-				function () {
+				function() {
 					assert.equal(aRouter.getUrl().toString(), "", "can not back furter than start");
 				},
-				function () {
+				function() {
 					aRouter.back("fallback");
 				},
-				function () {
+				function() {
 					assert.equal(aRouter.getUrl().toString(), "fallback", "but can give a fallback path");
 				},
-				function () {
+				function() {
 					start();
 				}
 			);
 		});
 
-        test("Expand parameters for named route", function () {
+        test("Expand parameters for named route", function() {
             // Arrange: a named route
             aRouter.addRoute({name: "user", pattern: "/user/#userId"});
 
@@ -427,7 +427,7 @@ define(
             assert.equal(url.toString(), "user/john?includeDetails=true", "URL match pattern and data");
         });
 
-        test("Expand parameters for empty route", function () {
+        test("Expand parameters for empty route", function() {
             // Arrange: empty hash route
             window.location.hash = ""; // start path
 
@@ -440,7 +440,7 @@ define(
             assert.equal(url.toString(), "?userId=john&includeDetails=true", "URL match pattern and data");
         });
 
-        test("Expand parameters for current route", function () {
+        test("Expand parameters for current route", function() {
             // Arrange: a named route
             aRouter.addRoute({
                 name: "user",
@@ -460,7 +460,7 @@ define(
             assert.equal(url.toString(), "user/john?includeCompanies=true&includeDetails=true", "URL match pattern and data");
         });
 
-		test("LinkTo with default parameters", function () {
+		test("LinkTo with default parameters", function() {
 			// Arrange: a route with non optional parameter #foo
 			aRouter.addRoute({
 				name: "bar",
@@ -479,7 +479,7 @@ define(
 			assert.equal(url.toString(), "#!/default/bar", "Parameter value from default parameters used.");
 		});
 
-        test("GetParameters from current URL", function () {
+        test("GetParameters from current URL", function() {
             // Arrange: a named route
             aRouter.addRoute({name: "user", pattern: "/user/#userId"});
 
@@ -493,7 +493,7 @@ define(
             assert.deepEqual(parameters, {userId : "john", includeCompanies: "true"}, "Parameters contains query and URL parameters");
         });
 
-        test("GetParameter", function () {
+        test("GetParameter", function() {
             // Arrange: a named route
             aRouter.addRoute({name: "user", pattern: "/user/#userId"});
 
@@ -511,7 +511,7 @@ define(
             assert.equal(unknownParameter, null, "Unknown parameter is null");
         });
 
-        test("setParameters()", function (start) {
+        test("setParameters()", function(start) {
 			aRouter.stop();
 			window.location.hash = ""; // start path
 			aRouter.start();
@@ -519,31 +519,31 @@ define(
 			aRouter.addRoute({pattern: "a/#value"});
 
 			delayedSteps(
-				function () {
+				function() {
 					aRouter.redirectTo("a/b", {foo : "bar"});
 				},
-				function () {
+				function() {
 					assert.equal(aRouter.getUrl().toString(), "a/b?foo=bar", "parameter and query set");
 				},
-				function () {
+				function() {
 					aRouter.setParameters({value : "hello"});
 				},
-				function () {
+				function() {
 					assert.equal(aRouter.getUrl().toString(), "a/hello?foo=bar", "parameter updated");
 				},
-				function () {
+				function() {
 					aRouter.setParameters({foo : "world"});
 				},
-				function () {
+				function() {
 					assert.equal(aRouter.getUrl().toString(), "a/hello?foo=world", "query updated");
 				},
-				function () {
+				function() {
 					aRouter.setParameters({extra : "fun"});
 				},
-				function () {
+				function() {
 					assert.equal(aRouter.getUrl().toString(), "a/hello?foo=world&extra=fun", "extra parameter added");
 				},
-				function () {
+				function() {
 					start();
 				}
 			);
