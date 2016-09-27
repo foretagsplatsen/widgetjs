@@ -1,5 +1,5 @@
 define([
-	'widgetjs/core'
+	"widgetjs/core"
 ], function(widgetjs) {
 
 	/**
@@ -16,7 +16,7 @@ define([
 
 		var that = widgetjs.widget(spec, my);
 
-		my.output = '';
+		my.output = "";
 
 		//
 		// Public

@@ -1,15 +1,15 @@
 define([
-	'./parameterSegment',
-	'./optionalParameterSegment',
-	'./staticSegment',
-	'./abstractSegment'
+	"./parameterSegment",
+	"./optionalParameterSegment",
+	"./staticSegment",
+	"./abstractSegment"
 ], function(parameterSegment, optionalParameterSegment, staticSegment, abstractSegment) {
 
 	/**
 	 * Token/Char used to separate segments in route patterns.
 	 * @type {string}
 	 */
-	var routePatternSeparator = '/';
+	var routePatternSeparator = "/";
 
 	/**
 	 * Creates a route from pattern. A pattern is a string with route segments

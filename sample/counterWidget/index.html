@@ -15,16 +15,16 @@
 
 	 that.renderContentOn = function (html) {
 	     html.h1(count.toString());
-	     html.button('+').click(function() { count++; that.update();});
-	     html.button('-').click(function() { count--; that.update();});
+	     html.button("+").click(function() { count++; that.update();});
+	     html.button("-").click(function() { count--; that.update();});
 	 };
 
 	 return that;
      };
 
      jQuery(document).ready(function() {
-	 counterWidget().appendTo('body');
-	 counterWidget().appendTo('body');
+	 counterWidget().appendTo("body");
+	 counterWidget().appendTo("body");
      })
 
     </script>

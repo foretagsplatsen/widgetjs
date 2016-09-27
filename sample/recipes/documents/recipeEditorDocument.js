@@ -1,7 +1,7 @@
 define([
-	'widgetjs/core',
-	'model/recipeRepository',
-	'model/recipe'
+	"widgetjs/core",
+	"model/recipeRepository",
+	"model/recipe"
 ], function (widgetjs, recipeRepository, recipeModel) {
 
 	/**
@@ -36,7 +36,7 @@ define([
 
 		that.renderContentOn = function (html) {
 			if(!recipe) {
-				html.div({klass: 'alert alert-info'}, 'Recipe not found');
+				html.div({klass: "alert alert-info"}, "Recipe not found");
 				return;
 			}
 
@@ -44,43 +44,43 @@ define([
 		};
 
 		that.renderEditorOn = function(html) {
-			html.h1({klass: 'page-header'}, 'Recipe Editor');
-			html.form({ id: 'recipeForm', klass: 'form-horizontal', role: 'form' },
-				that.formGroup('Id',
-					that.inputField({ model: recipe, property: 'id'})
+			html.h1({klass: "page-header"}, "Recipe Editor");
+			html.form({ id: "recipeForm", klass: "form-horizontal", role: "form" },
+				that.formGroup("Id",
+					that.inputField({ model: recipe, property: "id"})
 				),
 
-				that.formGroup('Name',
-					that.inputField({ model: recipe, property: 'name'})
+				that.formGroup("Name",
+					that.inputField({ model: recipe, property: "name"})
 				),
 
-				that.formGroup('Source',
-					that.inputField({ model: recipe, property: 'source'})
+				that.formGroup("Source",
+					that.inputField({ model: recipe, property: "source"})
 				),
 
-				that.formGroup('Image URL',
+				that.formGroup("Image URL",
 					// URL
-					that.inputField({id: 'image', model: recipe, property: 'image',
-						onChange: function() { jQuery('#image_preview').attr('src', jQuery('#image').val()); }
+					that.inputField({id: "image", model: recipe, property: "image",
+						onChange: function() { jQuery("#image_preview").attr("src", jQuery("#image").val()); }
 					}),
 					// File drop Zone
 					that.renderImageDropZoneOn,
 
 					// Preview
-					html.img({id: 'image_preview', src: recipe.image, style: 'height:140px'})
+					html.img({id: "image_preview", src: recipe.image, style: "height:140px"})
 				),
 
-				that.formGroup('Description',
-					that.inputField({model: recipe, property: 'description'})
+				that.formGroup("Description",
+					that.inputField({model: recipe, property: "description"})
 				),
 
-				that.formGroup('Ingrediences',
+				that.formGroup("Ingrediences",
 					that.editor({
 						data: recipe.ingredients,
 						fields: [
-							{ name: 'amount', label: 'Amount' },
-							{ name: 'unit', label: 'Unit'},
-							{ name: 'name', label: 'Ingredient', klass:  'col-md-9' },
+							{ name: "amount", label: "Amount" },
+							{ name: "unit", label: "Unit"},
+							{ name: "name", label: "Ingredient", klass:  "col-md-9" },
 						],
 						create :  function() {
 							recipe.newIngredient();
@@ -93,11 +93,11 @@ define([
 					})
 				),
 
-				that.formGroup('Instructions',
+				that.formGroup("Instructions",
 					that.editor({
 						data: recipe.instructions,
 						fields: [
-							{ name: 'text', label: 'Instruction', klass:  'col-md-11' }
+							{ name: "text", label: "Instruction", klass:  "col-md-11" }
 						],
 						create :  function() {
 							recipe.newInstruction();
@@ -111,7 +111,7 @@ define([
 				),
 
 
-				that.formGroup('', that.renderFormActionsOn)
+				that.formGroup("", that.renderFormActionsOn)
 			);
 		};
 
@@ -119,25 +119,25 @@ define([
 		 * Render row with form buttons
 		 */
 		that.renderFormActionsOn = function (html) {
-			html.div({klass: 'well well-sm'},
+			html.div({klass: "well well-sm"},
 				html.span(
 					// Save Button
-					html.button({klass: 'btn btn-default'}, 'Save Recipe').click(function() {
+					html.button({klass: "btn btn-default"}, "Save Recipe").click(function() {
 						recipeRepository.save({model: recipe, onSuccess: function() {
-							my.redirectTo('showRecipe', {recipeId: recipe.id});
+							my.redirectTo("showRecipe", {recipeId: recipe.id});
 						}});
 					}),
-					' or ',
+					" or ",
 
 					// Cancel Button
-					html.a({ href: recipe.id ? my.linkTo('showRecipe', {recipeId: recipe.id}) : my.linkTo('recipes') }, 'Cancel')
+					html.a({ href: recipe.id ? my.linkTo("showRecipe", {recipeId: recipe.id}) : my.linkTo("recipes") }, "Cancel")
 				),
 
-				html.span({ klass: 'pull-right'},
+				html.span({ klass: "pull-right"},
 					// Delete Button
-					html.button({klass: 'btn btn-danger'}, 'Delete Recipe').click(function() {
+					html.button({klass: "btn btn-danger"}, "Delete Recipe").click(function() {
 						recipeRepository.remove({model: recipe, onSuccess: function() {
-							my.redirectTo('recipes');
+							my.redirectTo("recipes");
 						}});
 					})
 				)
@@ -145,7 +145,7 @@ define([
 		};
 
 		/**
-		 * Create a Twitter Boostrap form-group with a 'label' as control-label and
+		 * Create a Twitter Boostrap form-group with a "label" as control-label and
 		 * any other argument supplied as content in right hand column.
 		 *
 		 * @param  {string} label		Value of control-label element
@@ -156,9 +156,9 @@ define([
 		that.formGroup = function(label) {
 			var content = Array.prototype.slice.call(arguments, 1);
 			return function(html) {
-				html.div({ klass: 'form-group' },
-					html.label({ klass: 'col-sm-2 control-label'}, label),
-					html.div({ klass: 'col-sm-10'}, content)
+				html.div({ klass: "form-group" },
+					html.label({ klass: "col-sm-2 control-label"}, label),
+					html.div({ klass: "col-sm-10"}, content)
 				);
 			};
 		};
@@ -182,7 +182,7 @@ define([
 			};
 
 			return function(html) {
-				input = html.input({ id: options.id || my.nextId(), klass: 'form-control', value: options.model[options.property]});
+				input = html.input({ id: options.id || my.nextId(), klass: "form-control", value: options.model[options.property]});
 				input.blur(onInputChange);
 				input.change(onInputChange);
 			};
@@ -201,7 +201,7 @@ define([
 		 */
 		that.editor = function(options) {
 			return function(html) {
-				html.table({ klass: 'table'},
+				html.table({ klass: "table"},
 					// Field labels as column headings
 					html.thead(
 						html.tr(options.fields.map(function(field) {
@@ -221,7 +221,7 @@ define([
 								return td;
 							}),
 							// A delete button for each row
-							html.td(html.a({klass: 'btn'}, html.span({klass: 'glyphicon glyphicon-minus-sign'})).click(function() {
+							html.td(html.a({klass: "btn"}, html.span({klass: "glyphicon glyphicon-minus-sign"})).click(function() {
 								options.remove(data, index);
 							}))
 						);
@@ -229,7 +229,7 @@ define([
 				);
 
 				// A create button to add more items
-				html.a({klass: 'btn'}, html.span({klass: 'glyphicon glyphicon-plus'}), ' Add new').click(options.create);
+				html.a({klass: "btn"}, html.span({klass: "glyphicon glyphicon-plus"}), " Add new").click(options.create);
 			};
 		};
 
@@ -245,7 +245,7 @@ define([
 				e.preventDefault();
 			}
 
-			html.div({id: 'imagedrop_zone', klass: 'drop_zone'}, 'Drop files here')
+			html.div({id: "imagedrop_zone", klass: "drop_zone"}, "Drop files here")
 				.dragover(noPropagation)
 				.dragenter(noPropagation)
 				.drop(function(e) {
@@ -265,7 +265,7 @@ define([
 
 						var reader = new FileReader();
 						reader.onload = function() {
-							jQuery('#image').val(reader.result).change();
+							jQuery("#image").val(reader.result).change();
 						};
 
 						reader.readAsDataURL(file);

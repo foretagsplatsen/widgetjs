@@ -1,8 +1,8 @@
 define([
-	'widgetjs/core',
-	'lodash',
-	'jquery',
-	'prettify'
+	"widgetjs/core",
+	"lodash",
+	"jquery",
+	"prettify"
 ], function(widgetjs, lodash, jQuery, prettify) {
 
     jQuery.fn.prettify = function () { this.html(prettify.prettyPrintOne(this.html())); };
@@ -48,7 +48,7 @@ define([
         };
 
         my.getCode = function() {
-            var lines = example.toString().split('\n');
+            var lines = example.toString().split("\n");
             lines.splice(0,1);
             lines.splice(lines.length - 1,1);
 
@@ -65,11 +65,11 @@ define([
             // Remove extra indent
             if(minIndent > 0) {
                 lines = lines.map(function(line) {
-                    return line.replace(RegExp('^(\\s){' + minIndent + '}', 'g'), '');
+                    return line.replace(RegExp("^(\\s){" + minIndent + "}", "g"), "");
                 });
             }
 
-            return lines.join('\n');
+            return lines.join("\n");
         };
 
         my.renderCodeOn = function(html) {
@@ -77,12 +77,12 @@ define([
                 return;
             }
 
-            var codeBlock = html.pre({'class' : 'prettyprint lang-js'}, my.getCode());
+            var codeBlock = html.pre({"class" : "prettyprint lang-js"}, my.getCode());
             codeBlock.asJQuery().prettify();
         };
 
         my.renderExampleOn = function(html) {
-            html.div({'class' : 'bs-example'}, example) ;
+            html.div({"class" : "bs-example"}, example) ;
         };
 
         that.renderContentOn = function(html) {
@@ -93,11 +93,11 @@ define([
             );
 
             if(showTags) {
-                html.ul({'class' : 'list-inline'}, tags.map(function(tag) { return html.li(tag);}));
+                html.ul({"class" : "list-inline"}, tags.map(function(tag) { return html.li(tag);}));
             }
 
             if(showLinks) {
-                html.ul({'class' : 'list-unstyled'}, links.map(function(link) { return html.li(html.a({href: link, target: '_new'}, link));}));
+                html.ul({"class" : "list-unstyled"}, links.map(function(link) { return html.li(html.a({href: link, target: "_new"}, link));}));
             }
         };
     });

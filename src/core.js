@@ -1,10 +1,10 @@
 define(
 	[
-		'./htmlCanvas',
-		'./widget',
-		'./widget-extensions',
-		'./router',
-		'./events'
+		"./htmlCanvas",
+		"./widget",
+		"./widget-extensions",
+		"./router",
+		"./events"
 	],
 
 	function (htmlCanvas, widget, ext, router, events) {

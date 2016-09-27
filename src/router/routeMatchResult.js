@@ -1,5 +1,5 @@
 define([
-	'klassified'
+	"klassified"
 ], function(object) {
 
 	/**

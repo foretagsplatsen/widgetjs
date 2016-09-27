@@ -1,9 +1,9 @@
 define([
-	'documents/aboutDocument',
-	'documents/recipesDocument',
-	'documents/recipeDocument',
-	'documents/recipeEditorDocument',
-	'documents/exportDocument',
+	"documents/aboutDocument",
+	"documents/recipesDocument",
+	"documents/recipeDocument",
+	"documents/recipeEditorDocument",
+	"documents/exportDocument",
 ], function (aboutDocument, recipesDocument, recipeDocument, recipeEditorDocument, exportDocument) {
 	return {
 		aboutDocument: aboutDocument(),

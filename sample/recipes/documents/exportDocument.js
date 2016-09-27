@@ -1,6 +1,6 @@
 define([
-	'widgetjs/core',
-	'model/recipeRepository'
+	"widgetjs/core",
+	"model/recipeRepository"
 ], function (widgetjs, recipeRepository) {
 
 	/**
@@ -13,27 +13,27 @@ define([
 	var exportDocument = widgetjs.widget.subclass(function(that, my) {
 
 		that.renderContentOn = function (html) {
-			html.h2({klass: 'page-header'}, 'Export');
-			html.button({klass: 'btn btn-default'}, 'Export Recipes').click(function() {
+			html.h2({klass: "page-header"}, "Export");
+			html.button({klass: "btn btn-default"}, "Export Recipes").click(function() {
 				recipeRepository.findAll({onSuccess: function(all) {
-					download(JSON.stringify(all), 'recipes.json', 'text/json');
+					download(JSON.stringify(all), "recipes.json", "text/json");
 				}});
 			});
 
-			html.h2({klass: 'page-header'}, 'Import');
-			html.div({id: 'drop_zone', klass: 'drop_zone'}, 'Drop files here')
+			html.h2({klass: "page-header"}, "Import");
+			html.div({id: "drop_zone", klass: "drop_zone"}, "Drop files here")
 				.dragover(noPropagation)
 				.dragenter(noPropagation)
 				.drop(onFileDrop);
 
-			html.div({id: 'drop_result'});
+			html.div({id: "drop_result"});
 		};
 
 		function importRecipes (json) {
 			var recipes =  jQuery.parseJSON(json);
 			recipes.forEach(function(recipe) {
 				recipeRepository.save({model: recipe});
-				jQuery('#drop_result').append('<p>Imported recipe "' + recipe.name + '"</p>');
+				jQuery("#drop_result").append("<p>Imported recipe \"" + recipe.name + "\"</p>");
 			});
 		}
 
@@ -48,13 +48,13 @@ define([
 			var files = Array.prototype.slice.call(e.originalEvent.dataTransfer.files);
 			files.forEach(function(file) {
 				if (!file.type.match(/json.*/)) {
-					jQuery('#drop_result').text('File type: "'+ file.type + '" is not Supported');
+					jQuery("#drop_result").text("File type: \""+ file.type + "\" is not Supported");
 					return;
 				}
 
 				var reader = new FileReader();
 				reader.onload = function() {
-					jQuery('#drop_result').html('<p>Reading file: ' + file.name + '</p>');
+					jQuery("#drop_result").html("<p>Reading file: " + file.name + "</p>");
 					importRecipes(reader.result);
 				};
 
@@ -84,7 +84,7 @@ define([
 		// build download link:
 		link.href = "data:" + strMimeType + "," + escape(strData);
 
-		if ('download' in link) { //FF20, CH19
+		if ("download" in link) { //FF20, CH19
 			link.setAttribute("download", strFileName);
 			link.innerHTML = "downloading...";
 			doc.body.appendChild(link);
@@ -95,7 +95,7 @@ define([
 				doc.body.removeChild(link);
 			}, 66);
 			return true;
-		} /* end if('download' in a) */
+		} /* end if("download" in a) */
 
 		//do iframe dataURL download: (older W3)
 		var f = doc.createElement("iframe");

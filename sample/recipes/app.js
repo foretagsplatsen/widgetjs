@@ -1,10 +1,10 @@
 define([
-    'widgetjs/core',
-    'widgetjs/router',
-    'documents',
-    'widgets',
-    'jquery',
-    'bootstrap'
+    "widgetjs/core",
+    "widgetjs/router",
+    "documents",
+    "widgets",
+    "jquery",
+    "bootstrap"
 ], function (widgetjs, router, documents, widgets, jQuery) {
 
     /**
@@ -33,78 +33,78 @@ define([
         my.initialize = function(spec) {
             my.super(spec);
             /** @type {navigationWidget} Main navigation for application. */
-            navigation = widgets.navigationWidget({brand : 'My Recipes'});
+            navigation = widgets.navigationWidget({brand : "My Recipes"});
 
             /** @type {regionWidget} Displays the current document */
             mainRegion = widgets.regionWidget();
 
             that.addAction({
-                name: 'recipes',
-                pattern: '',
+                name: "recipes",
+                pattern: "",
                 action: function(recipes) {
                     recipes.showAll();
                 },
                 doc: documents.recipesDocument,
-                menuLabel: 'Recipes',
-                menuId: 'recipes'
+                menuLabel: "Recipes",
+                menuId: "recipes"
             });
 
             that.addAction({
-                name: 'showRecipe',
-                pattern: 'recipe/#recipeId',
+                name: "showRecipe",
+                pattern: "recipe/#recipeId",
                 action: function(recipe, recipeId) {
                     recipe.show(recipeId);
                 },
                 doc: documents.recipeDocument,
-                menuId: 'recipes'
+                menuId: "recipes"
             });
 
             that.addAction({
-                name: 'editRecipe',
-                pattern: 'recipe/#recipeId/edit',
+                name: "editRecipe",
+                pattern: "recipe/#recipeId/edit",
                 action: function(recipeEditor, recipeId) {
                     recipeEditor.edit(recipeId);
                 },
                 doc: documents.recipeEditorDocument,
-                menuId: 'recipes'
+                menuId: "recipes"
             });
 
             that.addAction({
-                name: 'createRecipe',
-                pattern: 'create/recipe',
+                name: "createRecipe",
+                pattern: "create/recipe",
                 action: function(recipeEditor) {
                     recipeEditor.create();
                 },
                 doc: documents.recipeEditorDocument,
-                menuId: 'recipes'
+                menuId: "recipes"
             });
 
             that.addAction({
-                name: 'export',
-                pattern: 'export',
+                name: "export",
+                pattern: "export",
                 doc: documents.exportDocument,
-                menuLabel: 'Export'
+                menuLabel: "Export"
             });
 
             that.addAction({
-                name: 'about',
-                pattern: 'about',
+                name: "about",
+                pattern: "about",
                 doc: documents.aboutDocument,
-                menuLabel: 'About',
+                menuLabel: "About",
             });
 
             // Render our self on BODY
-            that.appendTo('body');
+            that.appendTo("body");
 
             // Log route events
-            my.router.on('routeMatched', function(result) {
-                console.log(result.getRoute().toString(), 'matched url', result.getUrl().toString());
+            my.router.on("routeMatched", function(result) {
+                console.log(result.getRoute().toString(), "matched url", result.getUrl().toString());
             });
 
             // Route not found
-            my.router.on('routeNotFound', function(url) {
-                alert('Page not found: ' + url);
-                my.redirectTo('');
+            my.router.on("routeNotFound", function(url) {
+                alert("Page not found: " + url);
+                my.redirectTo("");
             });
 
             my.router.start();
@@ -135,7 +135,7 @@ define([
 
                 navigation.activate(menuId);
                 mainRegion.set(doc);
-                jQuery('html, body').animate({ scrollTop: 0}, 200);
+                jQuery("html, body").animate({ scrollTop: 0}, 200);
             });
 
             if(options.menuLabel) {
@@ -146,7 +146,7 @@ define([
 
         that.renderOn = function (html) {
             html.render(navigation);
-            html.div({klass: 'container' }, mainRegion);
+            html.div({klass: "container" }, mainRegion);
         };
     });
 

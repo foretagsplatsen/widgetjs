@@ -1,5 +1,5 @@
 define([
-	'klassified'
+	"klassified"
 ], function(object) {
 	/**
 	 * A segment represents a single part of a route that can be matched

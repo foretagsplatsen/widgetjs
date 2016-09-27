@@ -1,6 +1,6 @@
 define(
 	[
-		'jquery'
+		"jquery"
 	],
 
 	function (jQuery) {
@@ -13,57 +13,57 @@ define(
 		/** @typedef {({}|string|renderer|widget|htmlTagBrush|*)} renderable */
 
 		// Supported HTML 'tags'
-		var tags = ('a abbr acronym address area article aside audio b bdi bdo big ' +
-			'blockquote body br button canvas caption cite code col colgroup command ' +
-			'datalist dd del details dfn div dl dt em embed fieldset figcaption figure ' +
-			'footer form frame frameset h1 h2 h3 h4 h5 h6 hr head header hgroup html i ' +
-			'iframe img input ins kbd keygen label legend li link map mark meta meter ' +
-			'nav noscript object ol optgroup option output p param pre progress q rp rt' +
-			'ruby samp script section select small source span strong style sub summary' +
-			'sup table tbody td textarea tfoot th thead time title tr track tt ul var' +
-			'video wbr').split(' ');
+		var tags = ("a abbr acronym address area article aside audio b bdi bdo big " +
+			"blockquote body br button canvas caption cite code col colgroup command " +
+			"datalist dd del details dfn div dl dt em embed fieldset figcaption figure " +
+			"footer form frame frameset h1 h2 h3 h4 h5 h6 hr head header hgroup html i " +
+			"iframe img input ins kbd keygen label legend li link map mark meta meter " +
+			"nav noscript object ol optgroup option output p param pre progress q rp rt" +
+			"ruby samp script section select small source span strong style sub summary" +
+			"sup table tbody td textarea tfoot th thead time title tr track tt ul var" +
+			"video wbr").split(" ");
 
 		// Supported HTML events
-		var attributes = 'href for id media rel src style title type'.split(' ');
+		var attributes = "href for id media rel src style title type".split(" ");
 
 		var omitSymbol = {};
 
 		// Supported HTML attributes
-		var events = ('blur focus focusin focusout load resize scroll unload ' +
-			'click dblclick mousedown mouseup mousemove mouseover ' +
-			'mouseout mouseenter mouseleave change select submit ' +
-			'keydown keypress keyup error dragstart dragenter dragover dragleave drop dragend').split(' ');
+		var events = ("blur focus focusin focusout load resize scroll unload " +
+			"click dblclick mousedown mouseup mousemove mouseover " +
+			"mouseout mouseenter mouseleave change select submit " +
+			"keydown keypress keyup error dragstart dragenter dragover dragleave drop dragend").split(" ");
 
 		/**
 		 * htmlCanvas provides a DSL that we use to add elements to the DOM using a HTML looking syntax.
 		 *
 		 * The basic metaphor used is one of painting on a canvas using brushes. The canvas is the
-		 * DOM and the brushes HTML 'tags'. Note that it have nothing to do with the HTML5 canvas tag
+		 * DOM and the brushes HTML "tags". Note that it have nothing to do with the HTML5 canvas tag
 		 *
 		 * @example
 		 *		// A htmlCanvas is created on a jQuery object:
-		 *		var html = htmlCanvas($('BODY'));
+		 *		var html = htmlCanvas($("BODY"));
 		 *
 		 *		// We write HTML using standard tags:
-		 *		html.h1('Hello World!');
+		 *		html.h1("Hello World!");
 		 *
 		 *		// and standard attributes:
-		 *		html.a({ id: 'id', href: 'http://www.google.se'}, 'Google');
+		 *		html.a({ id: "id", href: "http://www.google.se"}, "Google");
 		 *
 		 *		// Callbacks can be attached to events:
-		 *		html.a({click: function() { alert('Hello World!')} 'Click me!');
+		 *		html.a({click: function() { alert("Hello World!")} "Click me!");
 		 *
 		 *		// Tags can be nested:
-		 *		html.div({'class' : 'outer_div'},
-		 *			html.div({'class' : 'inner_div'},
-		 *				html.span('Some text')
+		 *		html.div({"class" : "outer_div"},
+		 *			html.div({"class" : "inner_div"},
+		 *				html.span("Some text")
 		 *			)
 		 *		);
 		 *
 		 *		// Parts can be assigned to variables:
-		 *		var homeButton = html.a('Home').href('/');
+		 *		var homeButton = html.a("Home").href("/");
 		 *		if(showAlert) {
-		 *			homeButton.click(function() { alert('Hello'); });
+		 *			homeButton.click(function() { alert("Hello"); });
 		 *		}
 		 *
 		 *
@@ -106,9 +106,9 @@ define(
 			 * Tags builders for each supported tag type.
 			 *
 			 * @example
-			 *	html.h1('Title');
-			 *	html.strong('Important stuff');
-			 *	html.span(html.strong(userName), ' signed in.')
+			 *	html.h1("Title");
+			 *	html.strong("Important stuff");
+			 *	html.span(html.strong(userName), " signed in.")
 			 */
 			tags.forEach(function (tagName) {
 				that[tagName] = function () {
@@ -157,7 +157,7 @@ define(
 
 		/**
 		 * A tag brush object represents a DOM element, built on a canvas. The element can
-		 * be created from a 'tag' or an element matched using 'jQuery'.
+		 * be created from a "tag" or an element matched using "jQuery".
 		 *
 		 * Note: A brush is usually only created from `htmlCanvas` and it should only
 		 * be used once.
@@ -181,7 +181,7 @@ define(
 			 */
 			var element = spec.tag ? createElement(spec.tag) : getElement(spec.element);
 			if (!element) {
-				throw new Error('htmlTagBrush requires an element');
+				throw new Error("htmlTagBrush requires an element");
 			}
 
 			//
@@ -202,10 +202,10 @@ define(
 			 *
 			 * @example
 			 *	html.h1().render(
-			 *		'hello',
-			 *		html.span('world',
+			 *		"hello",
+			 *		html.span("world",
 			 *			function(html) {
-			 *				html.img().src('foo.img');
+			 *				html.img().src("foo.img");
 			 *				}
 			 *			)
 			 *		);
@@ -270,8 +270,8 @@ define(
 			 * Bind callback to DOM event
 			 *
 			 * @usage
-			 *		html.a('click me').on('click', function() {
-			 *			alert('click');
+			 *		html.a("click me").on("click", function() {
+			 *			alert("click");
 			 *		});
 			 *
 			 * @param {string} eventType One or more DOM event types, such as "click" or "submit," or custom event names.
@@ -316,9 +316,9 @@ define(
 			 * Accessors for each supported attribute.
 			 *
 			 * @example
-			 *	aBrush.id('id');
-			 *	aBrush.src('javascript:0');
-			 *	aBrush.href('#');
+			 *	aBrush.id("id");
+			 *	aBrush.src("javascript:0");
+			 *	aBrush.href("#");
 			 */
 			attributes.forEach(function(attributeName) {
 				that[attributeName] = function (value) {
@@ -330,8 +330,8 @@ define(
 			 * Set element style with key/value or object literal.
 			 *
 			 * @example
-			 *		html.h1().css('display', 'block');
-			 *		html.h1().css({'display' : 'block', 'color' : 'red'});
+			 *		html.h1().css("display", "block");
+			 *		html.h1().css({"display" : "block", "color" : "red"});
 			 *
 			 * @param {string|{}} key
 			 * @param {string} value
@@ -352,10 +352,10 @@ define(
 			 * Set attributes using object literal.
 			 *
 			 * @example
-			 *	html.h1().attr({id : 'myid', 'class' : 'myclass'});
+			 *	html.h1().attr({id : "myid", "class" : "myclass"});
 			 *
 			 * @note
-			 *	Use klass or 'class' with quotation marks as key instead of class since its a reserved word.
+			 *	Use klass or "class" with quotation marks as key instead of class since its a reserved word.
 			 *
 			 * @param object
 			 * @returns {{}}
@@ -368,7 +368,7 @@ define(
 							that.on(key, object[key]);
 						}
 
-						else if (key === 'klass') {
+						else if (key === "klass") {
 							that.addClass(object[key]);
 						} else {
 							that.setAttribute(key, object[key]);
@@ -427,7 +427,7 @@ define(
 			 * - strings
 			 * - functions (that take a htmlCanvas as argument)
 			 * - other brushes and widgets (that implements `appendToBrush()`)
-			 * - map / object literal with attributes (eg. {id: 'aId', 'class' : 'aClass'})
+			 * - map / object literal with attributes (eg. {id: "aId", "class" : "aClass"})
 			 * - array of valid objects (see above)
 			 *
 			 * all other objects are appended using:
@@ -436,11 +436,11 @@ define(
 			 * @param {renderable|renderable[]|{}} object
 			 */
 			function append(object) {
-				if (typeof(object) === 'undefined' || object === null) {
-					throw new Error('cannot append null or undefined to brush');
+				if (typeof(object) === "undefined" || object === null) {
+					throw new Error("cannot append null or undefined to brush");
 				}
 
-				// Ignore object if it's a omit symbol
+				// Ignore object if it"s a omit symbol
 				if(object === omitSymbol) {
 					return;
 				}
@@ -467,7 +467,7 @@ define(
 
 			/**
 			 * Appends DOM node as last child of element or concatenate with
-			 * text if element can't have children.
+			 * text if element can"t have children.
 			 *
 			 * @param {string|HTMLElement} child
 			 */
@@ -516,7 +516,7 @@ define(
 			function getElement(object) {
 
 				// Create a fragment if no object
-				if (typeof(object) === 'undefined' || object === null) {
+				if (typeof(object) === "undefined" || object === null) {
 					return  jQuery(document.createDocumentFragment()).get(0);
 				}
 
@@ -539,7 +539,7 @@ define(
 			 * Append children to support nesting
 			 *
 			 * @example
-			 *		html.ul(html.li(html.a({href: '#'}, 'home'));
+			 *		html.ul(html.li(html.a({href: "#"}, "home"));
 			 */
 			if(spec.children) {
 				append(spec.children);

@@ -1,11 +1,11 @@
 define(
 	[
-		'klassified',
-		'./widget-extensions',
-		'./router',
-		'./events',
-		'./htmlCanvas',
-		'jquery'
+		"klassified",
+		"./widget-extensions",
+		"./router",
+		"./events",
+		"./htmlCanvas",
+		"jquery"
 	],
 
 	function (object, ext, router, events, htmlCanvas, jQuery) {
@@ -19,7 +19,7 @@ define(
 		 *		var titleWidget = function(spec) {
 		 *			var that = widget(spec);
 		 *
-		 *			var title = spec.title || 'Hello World';
+		 *			var title = spec.title || "Hello World";
 		 *
 		 *			that.renderContentOn = function(html) {
 		 *				html.h1(title)
@@ -28,10 +28,10 @@ define(
 		 *			return that;
 		 *		};
 		 *
-		 *		var helloWorldWidget = titleWidget({title: 'Hello Widget!'});
+		 *		var helloWorldWidget = titleWidget({title: "Hello Widget!"});
 		 *
 		 *		$(document).ready(function() {
-		 *			helloWorldWidget.appendTo('BODY');
+		 *			helloWorldWidget.appendTo("BODY");
 		 *		});
 		 *
 		 * Widgets can also be rendered on a HTML canvas (since widget implements `appendToBrush()`). Eg.
@@ -121,7 +121,7 @@ define(
 			 * Renders the widget on a JQuery / DOM
 			 *
 			 * @example
-			 * widget.appendTo('BODY');
+			 * widget.appendTo("BODY");
 			 *
 			 * @param aJQuery
 			 */
@@ -149,12 +149,12 @@ define(
 			 * Answers a jQuery that match the root DOM element. By default
 			 * by selecting an element that have the same ID as the widget.
 			 *
-			 * See 'renderOn'
+			 * See "renderOn"
 			 *
 			 * @returns {*}
 			 */
 			that.asJQuery = function () {
-				return jQuery('#' + that.getId());
+				return jQuery("#" + that.getId());
 			};
 
 			/**
@@ -168,7 +168,7 @@ define(
 
 			/**
 			 * Implementation for `appendToBrush()` to allow a widget to be
-			 * appended to a brush. See 'htmlCanvas'.
+			 * appended to a brush. See "htmlCanvas".
 			 *
 			 * Basically it allows us to do:
 			 *		html.div(widget);
@@ -277,12 +277,12 @@ define(
 			}
 
 			/**
-			 * Main entry point for rendering. For convenience 'renderOn' will	wrap the content
-			 * rendered by 'renderContentOn' in a root element (renderRootOn) that will be matched
+			 * Main entry point for rendering. For convenience "renderOn" will	wrap the content
+			 * rendered by "renderContentOn" in a root element (renderRootOn) that will be matched
 			 * by asJQuery.
 			 *
-			 * Usually concrete widgets override 'renderContentOn' to render it content. Widgets
-			 * can override 'renderOn' but must then make sure that it can be matched by 'asJQuery'.
+			 * Usually concrete widgets override "renderContentOn" to render it content. Widgets
+			 * can override "renderOn" but must then make sure that it can be matched by "asJQuery".
 			 *
 			 * One way to do that is to make sure to have only one root element and setting the ID of
 			 * that element to the ID of the widget.
@@ -291,8 +291,8 @@ define(
 			 *
 			 *		that.renderOn = function (html) {
 			 *			html.ul({id: that.getId()}
-			 *				html.li('BMW'),
-			 *				html.li('Toyota')
+			 *				html.li("BMW"),
+			 *				html.li("Toyota")
 			 *			);
 			 *		};
 			 *
@@ -320,15 +320,15 @@ define(
 			};
 
 			/**
-			 * Renders a wrapper element (by default a 'widgetjs-widget' tag) and
+			 * Renders a wrapper element (by default a "widgetjs-widget" tag) and
 			 * set the element ID to the ID of the widget so that it can be found by
-			 * 'asJQuery' eg. when we re-render using 'update'.
+			 * "asJQuery" eg. when we re-render using "update".
 			 *
 			 * @param html
 			 * @returns {htmlBrush}
 			 */
 			my.renderRootOn = function (html) {
-				return html.tag('widgetjs-widget').id(id);
+				return html.tag("widgetjs-widget").id(id);
 			};
 
 			/**
@@ -338,8 +338,8 @@ define(
 			 *
 			 *		that.renderContentOn = function (html) {
 			 *			html.ul(
-			 *				html.li('BMW'),
-			 *				html.li('Toyota')
+			 *				html.li("BMW"),
+			 *				html.li("Toyota")
 			 *			);
 			 *		};
 			 *
@@ -373,7 +373,7 @@ define(
 			 * Re-renders the widget and replace it in the DOM
 			 *
 			 * Content is first re-rendered on a document fragment. Update then replace the element matched
-			 * by 'asJQuery' with the new content.
+			 * by "asJQuery" with the new content.
 			 *
 			 */
 			that.update = function () {

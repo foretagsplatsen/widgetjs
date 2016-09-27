@@ -1,6 +1,6 @@
 define([
-	'widgets/navigationWidget',
-	'widgets/regionWidget',
+	"widgets/navigationWidget",
+	"widgets/regionWidget",
 ], function (navigationWidget, regionWidget) {
 	return {
 		navigationWidget: navigationWidget,

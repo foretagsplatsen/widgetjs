@@ -1,44 +1,44 @@
-define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widgetjs, lodash, jQuery, prettify, code) {
+define(["widgetjs/core", "lodash", "jquery", "prettify", "code"], function(widgetjs, lodash, jQuery, prettify, code) {
 
     var examples = {};
 
     examples.glyphicons = code({
-        group: 'Glyphicons',
-        label: 'Glyphicons',
-        links: ['http://getbootstrap.com/components/#glyphicons',
-            'http://getbootstrap.com/components/#glyphicons-examples'],
+        group: "Glyphicons",
+        label: "Glyphicons",
+        links: ["http://getbootstrap.com/components/#glyphicons",
+            "http://getbootstrap.com/components/#glyphicons-examples"],
         example : function(html) {
-            html.button({ type: 'button',  klass: 'btn btn-default btn-lg'},
-                html.span({ klass: 'glyphicon glyphicon-star'}
+            html.button({ type: "button",  klass: "btn btn-default btn-lg"},
+                html.span({ klass: "glyphicon glyphicon-star"}
                 )
             );
         }
     });
 
     examples.dropdowns = code({
-        group: 'Dropdowns',
-        label: 'Dropdowns',
-        links: ['http://getbootstrap.com/components/#dropdowns',
-            'http://getbootstrap.com/components/#dropdowns-example'],
+        group: "Dropdowns",
+        label: "Dropdowns",
+        links: ["http://getbootstrap.com/components/#dropdowns",
+            "http://getbootstrap.com/components/#dropdowns-example"],
         example : function(html) {
-            html.div({ klass: 'dropdown clearfix'},
-                html.button({ klass: 'btn dropdown-toggle sr-only',  type: 'button',  id: 'dropdownMenu1',  'data-toggle': 'dropdown'},
-                    html.span({ klass: 'caret'})
+            html.div({ klass: "dropdown clearfix"},
+                html.button({ klass: "btn dropdown-toggle sr-only",  type: "button",  id: "dropdownMenu1",  "data-toggle": "dropdown"},
+                    html.span({ klass: "caret"})
                 ),
-                html.ul({ klass: 'dropdown-menu',  role: 'menu',  'aria-labelledby': 'dropdownMenu1'},
-                    html.li({ role: 'presentation'},
-                        html.a({ role: 'menuitem',  tabindex: '-1',  href: '#'},'Action')
+                html.ul({ klass: "dropdown-menu",  role: "menu",  "aria-labelledby": "dropdownMenu1"},
+                    html.li({ role: "presentation"},
+                        html.a({ role: "menuitem",  tabindex: "-1",  href: "#"},"Action")
                     ),
-                    html.li({ role: 'presentation'},
-                        html.a({ role: 'menuitem',  tabindex: '-1',  href: '#'},'Another action')
+                    html.li({ role: "presentation"},
+                        html.a({ role: "menuitem",  tabindex: "-1",  href: "#"},"Another action")
                     ),
-                    html.li({ role: 'presentation'},
-                        html.a({ role: 'menuitem',  tabindex: '-1',  href: '#'}, 'Something else here')
+                    html.li({ role: "presentation"},
+                        html.a({ role: "menuitem",  tabindex: "-1",  href: "#"}, "Something else here")
                     ),
-                    html.li({ role: 'presentation',  klass: 'divider'}
+                    html.li({ role: "presentation",  klass: "divider"}
                     ),
-                    html.li({ role: 'presentation'},
-                        html.a({ role: 'menuitem',  tabindex: '-1',  href: '#'},'Separated link')
+                    html.li({ role: "presentation"},
+                        html.a({ role: "menuitem",  tabindex: "-1",  href: "#"},"Separated link")
                     )
                 )
             );
@@ -46,43 +46,43 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
     });
 
     examples.dropdownHeaders = code({
-        group: 'Dropdowns',
-        label: 'Dropdown Headers',
-        links: ['http://getbootstrap.com/components/#dropdowns',
-            'http://getbootstrap.com/components/#dropdowns-headers'],
+        group: "Dropdowns",
+        label: "Dropdown Headers",
+        links: ["http://getbootstrap.com/components/#dropdowns",
+            "http://getbootstrap.com/components/#dropdowns-headers"],
         example : function(html) {
-            html.div({ klass: 'dropdown clearfix'},
-                html.button({ klass: 'btn dropdown-toggle sr-only',  type: 'button',  id: 'dropdownMenu2',  'data-toggle': 'dropdown'},
-                    html.span({ klass: 'caret'}
+            html.div({ klass: "dropdown clearfix"},
+                html.button({ klass: "btn dropdown-toggle sr-only",  type: "button",  id: "dropdownMenu2",  "data-toggle": "dropdown"},
+                    html.span({ klass: "caret"}
                     )
                 ),
-                html.ul({ klass: 'dropdown-menu',  role: 'menu',  'aria-labelledby': 'dropdownMenu2'},
-                    html.li({ role: 'presentation',  klass: 'dropdown-header'},
-                        'Dropdown header'
+                html.ul({ klass: "dropdown-menu",  role: "menu",  "aria-labelledby": "dropdownMenu2"},
+                    html.li({ role: "presentation",  klass: "dropdown-header"},
+                        "Dropdown header"
                     ),
-                    html.li({ role: 'presentation'},
-                        html.a({ role: 'menuitem',  tabindex: '-1',  href: '#'},
-                            'Action'
+                    html.li({ role: "presentation"},
+                        html.a({ role: "menuitem",  tabindex: "-1",  href: "#"},
+                            "Action"
                         )
                     ),
-                    html.li({ role: 'presentation'},
-                        html.a({ role: 'menuitem',  tabindex: '-1',  href: '#'},
-                            'Another action'
+                    html.li({ role: "presentation"},
+                        html.a({ role: "menuitem",  tabindex: "-1",  href: "#"},
+                            "Another action"
                         )
                     ),
-                    html.li({ role: 'presentation'},
-                        html.a({ role: 'menuitem',  tabindex: '-1',  href: '#'},
-                            'Something else here'
+                    html.li({ role: "presentation"},
+                        html.a({ role: "menuitem",  tabindex: "-1",  href: "#"},
+                            "Something else here"
                         )
                     ),
-                    html.li({ role: 'presentation',  klass: 'divider'}
+                    html.li({ role: "presentation",  klass: "divider"}
                     ),
-                    html.li({ role: 'presentation',  klass: 'dropdown-header'},
-                        'Dropdown header'
+                    html.li({ role: "presentation",  klass: "dropdown-header"},
+                        "Dropdown header"
                     ),
-                    html.li({ role: 'presentation'},
-                        html.a({ role: 'menuitem',  tabindex: '-1',  href: '#'},
-                            'Separated link'
+                    html.li({ role: "presentation"},
+                        html.a({ role: "menuitem",  tabindex: "-1",  href: "#"},
+                            "Separated link"
                         )
                     )
                 )
@@ -91,38 +91,38 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
     });
 
     examples.buttonGroups = code({
-        group: 'Button groups',
-        label: 'Button groups',
-        links: ['http://getbootstrap.com/components/#btn-groups'],
+        group: "Button groups",
+        label: "Button groups",
+        links: ["http://getbootstrap.com/components/#btn-groups"],
         example : function(html) {
 
             html.div(
-                html.div({ klass: 'btn-toolbar',  role: 'toolbar'},
-                    html.div({ klass: 'btn-group btn-group-lg'},
-                        html.button({ type: 'button',  klass: 'btn btn-default'}, 'Left'),
-                        html.button({ type: 'button',  klass: 'btn btn-default'}, 'Middle'),
-                        html.button({ type: 'button',  klass: 'btn btn-default'}, 'Right')
+                html.div({ klass: "btn-toolbar",  role: "toolbar"},
+                    html.div({ klass: "btn-group btn-group-lg"},
+                        html.button({ type: "button",  klass: "btn btn-default"}, "Left"),
+                        html.button({ type: "button",  klass: "btn btn-default"}, "Middle"),
+                        html.button({ type: "button",  klass: "btn btn-default"}, "Right")
                     )
                 ),
-                html.div({ klass: 'btn-toolbar',  role: 'toolbar'},
-                    html.div({ klass: 'btn-group'},
-                        html.button({ type: 'button',  klass: 'btn btn-default'}, 'Left'),
-                        html.button({ type: 'button',  klass: 'btn btn-default'}, 'Middle'),
-                        html.button({ type: 'button',  klass: 'btn btn-default'}, 'Right')
+                html.div({ klass: "btn-toolbar",  role: "toolbar"},
+                    html.div({ klass: "btn-group"},
+                        html.button({ type: "button",  klass: "btn btn-default"}, "Left"),
+                        html.button({ type: "button",  klass: "btn btn-default"}, "Middle"),
+                        html.button({ type: "button",  klass: "btn btn-default"}, "Right")
                     )
                 ),
-                html.div({ klass: 'btn-toolbar',  role: 'toolbar'},
-                    html.div({ klass: 'btn-group btn-group-sm'},
-                        html.button({ type: 'button',  klass: 'btn btn-default'}, 'Left'),
-                        html.button({ type: 'button',  klass: 'btn btn-default'}, 'Middle'),
-                        html.button({ type: 'button',  klass: 'btn btn-default'}, 'Right')
+                html.div({ klass: "btn-toolbar",  role: "toolbar"},
+                    html.div({ klass: "btn-group btn-group-sm"},
+                        html.button({ type: "button",  klass: "btn btn-default"}, "Left"),
+                        html.button({ type: "button",  klass: "btn btn-default"}, "Middle"),
+                        html.button({ type: "button",  klass: "btn btn-default"}, "Right")
                     )
                 ),
-                html.div({ klass: 'btn-toolbar',  role: 'toolbar'},
-                    html.div({ klass: 'btn-group btn-group-xs'},
-                        html.button({ type: 'button',  klass: 'btn btn-default'}, 'Left'),
-                        html.button({ type: 'button',  klass: 'btn btn-default'}, 'Middle'),
-                        html.button({ type: 'button',  klass: 'btn btn-default'}, 'Right')
+                html.div({ klass: "btn-toolbar",  role: "toolbar"},
+                    html.div({ klass: "btn-group btn-group-xs"},
+                        html.button({ type: "button",  klass: "btn btn-default"}, "Left"),
+                        html.button({ type: "button",  klass: "btn btn-default"}, "Middle"),
+                        html.button({ type: "button",  klass: "btn btn-default"}, "Right")
                     )
                 )
             );
@@ -130,24 +130,24 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
     });
 
     examples.buttonGroupsNesting = code({
-        group: 'Button groups',
-        label: 'Nesting',
-        links: ['http://getbootstrap.com/components/#btn-groups'],
+        group: "Button groups",
+        label: "Nesting",
+        links: ["http://getbootstrap.com/components/#btn-groups"],
         example : function(html) {
-            html.div({ klass: 'btn-group'},
-                html.button({ type: 'button',  klass: 'btn btn-default'}, '1'),
-                html.button({ type: 'button',  klass: 'btn btn-default'}, '2'),
-                html.div({ klass: 'btn-group'},
-                    html.button({ id: 'btnGroupDrop1',  type: 'button',  klass: 'btn btn-default dropdown-toggle',  'data-toggle': 'dropdown'},
-                        'Drop Down',
-                        html.span({ klass: 'caret'})
+            html.div({ klass: "btn-group"},
+                html.button({ type: "button",  klass: "btn btn-default"}, "1"),
+                html.button({ type: "button",  klass: "btn btn-default"}, "2"),
+                html.div({ klass: "btn-group"},
+                    html.button({ id: "btnGroupDrop1",  type: "button",  klass: "btn btn-default dropdown-toggle",  "data-toggle": "dropdown"},
+                        "Drop Down",
+                        html.span({ klass: "caret"})
                     ),
-                    html.ul({ klass: 'dropdown-menu',  role: 'menu',  'aria-labelledby': 'btnGroupDrop1'},
+                    html.ul({ klass: "dropdown-menu",  role: "menu",  "aria-labelledby": "btnGroupDrop1"},
                         html.li(
-                            html.a({ href: '#'}, 'Dropdown link')
+                            html.a({ href: "#"}, "Dropdown link")
                         ),
                         html.li(
-                            html.a({ href: '#'}, 'Dropdown link')
+                            html.a({ href: "#"}, "Dropdown link")
                         )
                     )
                 )
@@ -156,24 +156,24 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
     });
 
     examples.buttonGroupsJustified = code({
-        group: 'Button groups',
-        label: 'Justified',
-        links: ['http://getbootstrap.com/components/#btn-groups-justified'],
+        group: "Button groups",
+        label: "Justified",
+        links: ["http://getbootstrap.com/components/#btn-groups-justified"],
         example : function(html) {
-            html.div({ klass: 'btn-group btn-group-justified'},
-                html.div({ klass: 'btn-group'},
-                    html.button({ type: 'button',  klass: 'btn btn-default'},
-                        'Left'
+            html.div({ klass: "btn-group btn-group-justified"},
+                html.div({ klass: "btn-group"},
+                    html.button({ type: "button",  klass: "btn btn-default"},
+                        "Left"
                     )
                 ),
-                html.div({ klass: 'btn-group'},
-                    html.button({ type: 'button',  klass: 'btn btn-default'},
-                        'Middle'
+                html.div({ klass: "btn-group"},
+                    html.button({ type: "button",  klass: "btn btn-default"},
+                        "Middle"
                     )
                 ),
-                html.div({ klass: 'btn-group'},
-                    html.button({ type: 'button',  klass: 'btn btn-default'},
-                        'Right'
+                html.div({ klass: "btn-group"},
+                    html.button({ type: "button",  klass: "btn btn-default"},
+                        "Right"
                     )
                 )
             );
@@ -182,38 +182,38 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
 
 
     examples.buttonDropdowns = code({
-        group: 'Button dropdowns',
-        label: 'Button dropdowns',
-        links: ['http://getbootstrap.com/components/#btn-dropdowns'],
+        group: "Button dropdowns",
+        label: "Button dropdowns",
+        links: ["http://getbootstrap.com/components/#btn-dropdowns"],
         example : function(html) {
             // Single button dropdowns
-            html.div({ klass: 'btn-group'},
-                html.button({ type: 'button',  klass: 'btn btn-info dropdown-toggle',  'data-toggle': 'dropdown'},
-                    'Info ',
-                    html.span({ klass: 'caret'}
+            html.div({ klass: "btn-group"},
+                html.button({ type: "button",  klass: "btn btn-info dropdown-toggle",  "data-toggle": "dropdown"},
+                    "Info ",
+                    html.span({ klass: "caret"}
                     )
                 ),
-                html.ul({ klass: 'dropdown-menu',  role: 'menu'},
+                html.ul({ klass: "dropdown-menu",  role: "menu"},
                     html.li(
-                        html.a({ href: '#'},
-                            'Action'
+                        html.a({ href: "#"},
+                            "Action"
                         )
                     ),
                     html.li(
-                        html.a({ href: '#'},
-                            'Another action'
+                        html.a({ href: "#"},
+                            "Another action"
                         )
                     ),
                     html.li(
-                        html.a({ href: '#'},
-                            'Something else here'
+                        html.a({ href: "#"},
+                            "Something else here"
                         )
                     ),
-                    html.li({ klass: 'divider'}
+                    html.li({ klass: "divider"}
                     ),
                     html.li(
-                        html.a({ href: '#'},
-                            'Separated link'
+                        html.a({ href: "#"},
+                            "Separated link"
                         )
                     )
                 )
@@ -223,38 +223,38 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
 
             // Split button
 
-            html.div({ klass: 'btn-group'},
-                html.button({ type: 'button',  klass: 'btn btn-primary'},
-                    'Primary'
+            html.div({ klass: "btn-group"},
+                html.button({ type: "button",  klass: "btn btn-primary"},
+                    "Primary"
                 ),
-                html.button({ type: 'button',  klass: 'btn btn-primary dropdown-toggle',  'data-toggle': 'dropdown'},
-                    html.span({ klass: 'caret'}
+                html.button({ type: "button",  klass: "btn btn-primary dropdown-toggle",  "data-toggle": "dropdown"},
+                    html.span({ klass: "caret"}
                     ),
-                    html.span({ klass: 'sr-only'},
-                        'Toggle Dropdown'
+                    html.span({ klass: "sr-only"},
+                        "Toggle Dropdown"
                     )
                 ),
-                html.ul({ klass: 'dropdown-menu',  role: 'menu'},
+                html.ul({ klass: "dropdown-menu",  role: "menu"},
                     html.li(
-                        html.a({ href: '#'},
-                            'Action'
+                        html.a({ href: "#"},
+                            "Action"
                         )
                     ),
                     html.li(
-                        html.a({ href: '#'},
-                            'Another action'
+                        html.a({ href: "#"},
+                            "Another action"
                         )
                     ),
                     html.li(
-                        html.a({ href: '#'},
-                            'Something else here'
+                        html.a({ href: "#"},
+                            "Something else here"
                         )
                     ),
-                    html.li({ klass: 'divider'}
+                    html.li({ klass: "divider"}
                     ),
                     html.li(
-                        html.a({ href: '#'},
-                            'Separated link'
+                        html.a({ href: "#"},
+                            "Separated link"
                         )
                     )
                 )
@@ -264,62 +264,62 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
     });
 
     examples.inputGroups = code({
-        group: 'Input groups',
-        label: 'Input groups',
-        links: ['http://getbootstrap.com/components/#input-groups'],
+        group: "Input groups",
+        label: "Input groups",
+        links: ["http://getbootstrap.com/components/#input-groups"],
         example : function(html) {
 
             // Left/Right/Both
-            html.div({ klass: 'input-group'},
-                html.span({ klass: 'input-group-addon'}, '@'),
-                html.input({ type: 'text',  klass: 'form-control',  placeholder: 'Username'})
+            html.div({ klass: "input-group"},
+                html.span({ klass: "input-group-addon"}, "@"),
+                html.input({ type: "text",  klass: "form-control",  placeholder: "Username"})
             );
-            html.div({ klass: 'input-group'},
-                html.input({ type: 'text',  klass: 'form-control'}),
-                html.span({ klass: 'input-group-addon'}, '.00')
+            html.div({ klass: "input-group"},
+                html.input({ type: "text",  klass: "form-control"}),
+                html.span({ klass: "input-group-addon"}, ".00")
             );
-            html.div({ klass: 'input-group'},
-                html.span({ klass: 'input-group-addon'},'$'),
-                html.input({ type: 'text',  klass: 'form-control'}),
-                html.span({ klass: 'input-group-addon'}, '.00')
+            html.div({ klass: "input-group"},
+                html.span({ klass: "input-group-addon"},"$"),
+                html.input({ type: "text",  klass: "form-control"}),
+                html.span({ klass: "input-group-addon"}, ".00")
             );
 
             // Sizes
-            html.div({ klass: 'input-group input-group-lg'},
-                html.span({ klass: 'input-group-addon'}, '@'),
-                html.input({ type: 'text',  klass: 'form-control',  placeholder: 'Username'})
+            html.div({ klass: "input-group input-group-lg"},
+                html.span({ klass: "input-group-addon"}, "@"),
+                html.input({ type: "text",  klass: "form-control",  placeholder: "Username"})
             );
-            html.div({ klass: 'input-group'},
-                html.span({ klass: 'input-group-addon'}, '@'),
-                html.input({ type: 'text',  klass: 'form-control',  placeholder: 'Username'})
+            html.div({ klass: "input-group"},
+                html.span({ klass: "input-group-addon"}, "@"),
+                html.input({ type: "text",  klass: "form-control",  placeholder: "Username"})
             );
-            html.div({ klass: 'input-group input-group-sm'},
-                html.span({ klass: 'input-group-addon'}, '@'),
-                html.input({ type: 'text',  klass: 'form-control',  placeholder: 'Username'})
+            html.div({ klass: "input-group input-group-sm"},
+                html.span({ klass: "input-group-addon"}, "@"),
+                html.input({ type: "text",  klass: "form-control",  placeholder: "Username"})
             );
         }
     });
 
     examples.inputGroupsCheckBoxes = code({
-        group: 'Input groups',
-        label: 'Checkboxes and radio addons',
-        links: ['http://getbootstrap.com/components/#input-groups-checkboxes-radios'],
+        group: "Input groups",
+        label: "Checkboxes and radio addons",
+        links: ["http://getbootstrap.com/components/#input-groups-checkboxes-radios"],
         example : function(html) {
-            html.div({ klass: 'row'},
-                html.div({ klass: 'col-lg-6'},
-                    html.div({ klass: 'input-group'},
-                        html.span({ klass: 'input-group-addon'},
-                            html.input({ type: 'checkbox'})
+            html.div({ klass: "row"},
+                html.div({ klass: "col-lg-6"},
+                    html.div({ klass: "input-group"},
+                        html.span({ klass: "input-group-addon"},
+                            html.input({ type: "checkbox"})
                         ),
-                        html.input({ type: 'text',  klass: 'form-control'})
+                        html.input({ type: "text",  klass: "form-control"})
                     )
                 ),
-                html.div({ klass: 'col-lg-6'},
-                    html.div({ klass: 'input-group'},
-                        html.span({ klass: 'input-group-addon'},
-                            html.input({ type: 'radio'})
+                html.div({ klass: "col-lg-6"},
+                    html.div({ klass: "input-group"},
+                        html.span({ klass: "input-group-addon"},
+                            html.input({ type: "radio"})
                         ),
-                        html.input({ type: 'text',  klass: 'form-control'})
+                        html.input({ type: "text",  klass: "form-control"})
                     )
                 )
             );
@@ -327,64 +327,64 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
     });
 
     examples.inputGroupsButtons = code({
-        group: 'Input groups',
-        label: 'Button addons',
-        links: ['http://getbootstrap.com/components/#input-groups-buttons'],
+        group: "Input groups",
+        label: "Button addons",
+        links: ["http://getbootstrap.com/components/#input-groups-buttons"],
         example : function(html) {
             // Button add-on
-            html.div({ klass: 'row'},
-                html.div({ klass: 'col-lg-6'},
-                    html.div({ klass: 'input-group'},
-                        html.span({ klass: 'input-group-btn'}),
-                        html.button({ klass: 'btn btn-default',  type: 'button'},'Go!'),
-                        html.input({ type: 'text',  klass: 'form-control'})
+            html.div({ klass: "row"},
+                html.div({ klass: "col-lg-6"},
+                    html.div({ klass: "input-group"},
+                        html.span({ klass: "input-group-btn"}),
+                        html.button({ klass: "btn btn-default",  type: "button"},"Go!"),
+                        html.input({ type: "text",  klass: "form-control"})
                     )
                 ),
-                html.div({ klass: 'col-lg-6'},
-                    html.div({ klass: 'input-group'},
-                        html.input({ type: 'text',  klass: 'form-control'}),
-                        html.span({ klass: 'input-group-btn'}),
-                        html.button({ klass: 'btn btn-default',  type: 'button'}, 'Go!')
+                html.div({ klass: "col-lg-6"},
+                    html.div({ klass: "input-group"},
+                        html.input({ type: "text",  klass: "form-control"}),
+                        html.span({ klass: "input-group-btn"}),
+                        html.button({ klass: "btn btn-default",  type: "button"}, "Go!")
                     )
                 )
             );
 
             // Drop-Down
 
-            html.div({ klass: 'row'},
-                html.div({ klass: 'col-lg-6'},
-                    html.div({ klass: 'input-group'},
-                        html.div({ klass: 'input-group-btn'},
-                            html.button({ type: 'button',  klass: 'btn btn-default dropdown-toggle',  'data-toggle': 'dropdown'},
-                                'Action ',
-                                html.span({ klass: 'caret'})
+            html.div({ klass: "row"},
+                html.div({ klass: "col-lg-6"},
+                    html.div({ klass: "input-group"},
+                        html.div({ klass: "input-group-btn"},
+                            html.button({ type: "button",  klass: "btn btn-default dropdown-toggle",  "data-toggle": "dropdown"},
+                                "Action ",
+                                html.span({ klass: "caret"})
                             ),
-                            html.ul({ klass: 'dropdown-menu'},
-                                html.li(html.a({ href: '#'}, 'Action')),
-                                html.li(html.a({ href: '#'}, 'Another action')),
-                                html.li(html.a({ href: '#'}, 'Something else here')),
-                                html.li({ klass: 'divider'}),
-                                html.li(html.a({ href: '#'},'Separated link')
+                            html.ul({ klass: "dropdown-menu"},
+                                html.li(html.a({ href: "#"}, "Action")),
+                                html.li(html.a({ href: "#"}, "Another action")),
+                                html.li(html.a({ href: "#"}, "Something else here")),
+                                html.li({ klass: "divider"}),
+                                html.li(html.a({ href: "#"},"Separated link")
                                 )
                             )
                         ),
-                        html.input({ type: 'text',  klass: 'form-control'})
+                        html.input({ type: "text",  klass: "form-control"})
                     )
                 ),
-                html.div({ klass: 'col-lg-6'},
-                    html.div({ klass: 'input-group'},
-                        html.input({ type: 'text',  klass: 'form-control'}),
-                        html.div({ klass: 'input-group-btn'},
-                            html.button({ type: 'button',  klass: 'btn btn-default dropdown-toggle',  'data-toggle': 'dropdown'},
-                                'Action ',
-                                html.span({ klass: 'caret'})
+                html.div({ klass: "col-lg-6"},
+                    html.div({ klass: "input-group"},
+                        html.input({ type: "text",  klass: "form-control"}),
+                        html.div({ klass: "input-group-btn"},
+                            html.button({ type: "button",  klass: "btn btn-default dropdown-toggle",  "data-toggle": "dropdown"},
+                                "Action ",
+                                html.span({ klass: "caret"})
                             ),
-                            html.ul({ klass: 'dropdown-menu pull-right'},
-                                html.li(html.a({ href: '#'}, 'Action')),
-                                html.li(html.a({ href: '#'},'Another action')),
-                                html.li(html.a({ href: '#'},'Something else here')),
-                                html.li({ klass: 'divider'}),
-                                html.li(html.a({ href: '#'},'Separated link'))
+                            html.ul({ klass: "dropdown-menu pull-right"},
+                                html.li(html.a({ href: "#"}, "Action")),
+                                html.li(html.a({ href: "#"},"Another action")),
+                                html.li(html.a({ href: "#"},"Something else here")),
+                                html.li({ klass: "divider"}),
+                                html.li(html.a({ href: "#"},"Separated link"))
                             )
                         )
                     )
@@ -394,85 +394,85 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
     });
 
     examples.navs = code({
-        group: 'Navs',
-        label: 'Navs',
-        links: ['http://getbootstrap.com/components/#nav'],
+        group: "Navs",
+        label: "Navs",
+        links: ["http://getbootstrap.com/components/#nav"],
         example : function(html) {
             // Tabs
-            html.ul({ klass: 'nav nav-tabs'},
-                html.li({ klass: 'active'},
-                    html.a({ href: '#'}, 'Home')
+            html.ul({ klass: "nav nav-tabs"},
+                html.li({ klass: "active"},
+                    html.a({ href: "#"}, "Home")
                 ),
-                html.li(html.a({ href: '#'},'Profile')),
-                html.li(html.a({ href: '#'},'Messages'))
+                html.li(html.a({ href: "#"},"Profile")),
+                html.li(html.a({ href: "#"},"Messages"))
             );
 
             html.br();
 
             // Pills
-            html.ul({ klass: 'nav nav-pills'},
-                html.li({ klass: 'active'},
-                    html.a({ href: '#'}, 'Home')
+            html.ul({ klass: "nav nav-pills"},
+                html.li({ klass: "active"},
+                    html.a({ href: "#"}, "Home")
                 ),
-                html.li(html.a({ href: '#'},'Profile')),
-                html.li(html.a({ href: '#'},'Messages'))
+                html.li(html.a({ href: "#"},"Profile")),
+                html.li(html.a({ href: "#"},"Messages"))
             );
 
             html.br();
 
             // Pills stacked
-            html.ul({ klass: 'nav nav-pills nav-stacked'},
-                html.li({ klass: 'active'},
-                    html.a({ href: '#'}, 'Home')
+            html.ul({ klass: "nav nav-pills nav-stacked"},
+                html.li({ klass: "active"},
+                    html.a({ href: "#"}, "Home")
                 ),
-                html.li(html.a({ href: '#'},'Profile')),
-                html.li(html.a({ href: '#'},'Messages'))
+                html.li(html.a({ href: "#"},"Profile")),
+                html.li(html.a({ href: "#"},"Messages"))
             );
 
             html.br();
 
             // Justified
-            html.ul({ klass: 'nav nav-pills nav-justified'},
-                html.li({ klass: 'active'},
-                    html.a({ href: '#'}, 'Home')
+            html.ul({ klass: "nav nav-pills nav-justified"},
+                html.li({ klass: "active"},
+                    html.a({ href: "#"}, "Home")
                 ),
-                html.li(html.a({ href: '#'},'Profile')),
-                html.li(html.a({ href: '#'},'Messages'))
+                html.li(html.a({ href: "#"},"Profile")),
+                html.li(html.a({ href: "#"},"Messages"))
             );
         }
     });
 
     examples.navsDropDown = code({
-        group: 'Navs',
-        label: 'Navs with dropdowns',
-        links: ['http://getbootstrap.com/components/#nav-dropdowns'],
+        group: "Navs",
+        label: "Navs with dropdowns",
+        links: ["http://getbootstrap.com/components/#nav-dropdowns"],
         example : function(html) {
 
-            html.ul({ klass: 'nav nav-pills'},
-                html.li({ klass: 'active'},
-                    html.a({ href: '#'}, 'Home')
+            html.ul({ klass: "nav nav-pills"},
+                html.li({ klass: "active"},
+                    html.a({ href: "#"}, "Home")
                 ),
                 html.li(
-                    html.a({ href: '#'}, 'Help')
+                    html.a({ href: "#"}, "Help")
                 ),
-                html.li({ klass: 'dropdown'},
-                    html.a({ klass: 'dropdown-toggle',  'data-toggle': 'dropdown',  href: '#'},
-                        'Dropdown',
-                        html.span({ klass: 'caret'})
+                html.li({ klass: "dropdown"},
+                    html.a({ klass: "dropdown-toggle",  "data-toggle": "dropdown",  href: "#"},
+                        "Dropdown",
+                        html.span({ klass: "caret"})
                     ),
-                    html.ul({ klass: 'dropdown-menu',  role: 'menu'},
+                    html.ul({ klass: "dropdown-menu",  role: "menu"},
                         html.li(
-                            html.a({ href: '#'}, 'Action')
-                        ),
-                        html.li(
-                            html.a({ href: '#'}, 'Another action')
+                            html.a({ href: "#"}, "Action")
                         ),
                         html.li(
-                            html.a({ href: '#'}, 'Something else here')
+                            html.a({ href: "#"}, "Another action")
                         ),
-                        html.li({ klass: 'divider'}
+                        html.li(
+                            html.a({ href: "#"}, "Something else here")
                         ),
-                        html.li( html.a({ href: '#'},'Separated link')
+                        html.li({ klass: "divider"}
+                        ),
+                        html.li( html.a({ href: "#"},"Separated link")
                         )
                     )
                 )
@@ -482,121 +482,121 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
 
 
     examples.navbar = code({
-        group: 'Navbar',
-        label: 'navbar',
-        links: ['http://getbootstrap.com/components/#navbar'],
+        group: "Navbar",
+        label: "navbar",
+        links: ["http://getbootstrap.com/components/#navbar"],
         example : function(html) {
 
-            html.nav({ klass: 'navbar navbar-default',  role: 'navigation'},
-                html.div({ klass: 'container-fluid'},
-                    html.div({ klass: 'navbar-header'},
-                        html.button({ type: 'button',  klass: 'navbar-toggle',  'data-toggle': 'collapse',  'data-target': '#bs-example-navbar-collapse-1'},
-                            html.span({ klass: 'sr-only'},
-                                'Toggle navigation'
+            html.nav({ klass: "navbar navbar-default",  role: "navigation"},
+                html.div({ klass: "container-fluid"},
+                    html.div({ klass: "navbar-header"},
+                        html.button({ type: "button",  klass: "navbar-toggle",  "data-toggle": "collapse",  "data-target": "#bs-example-navbar-collapse-1"},
+                            html.span({ klass: "sr-only"},
+                                "Toggle navigation"
                             ),
-                            html.span({ klass: 'icon-bar'}
+                            html.span({ klass: "icon-bar"}
                             ),
-                            html.span({ klass: 'icon-bar'}
+                            html.span({ klass: "icon-bar"}
                             ),
-                            html.span({ klass: 'icon-bar'}
+                            html.span({ klass: "icon-bar"}
                             )
                         ),
-                        html.a({ klass: 'navbar-brand',  href: '#'},
-                            'Brand'
+                        html.a({ klass: "navbar-brand",  href: "#"},
+                            "Brand"
                         )
                     ),
-                    html.div({ klass: 'collapse navbar-collapse',  id: 'bs-example-navbar-collapse-1'},
-                        html.ul({ klass: 'nav navbar-nav'},
-                            html.li({ klass: 'active'},
-                                html.a({ href: '#'},
-                                    'Link'
+                    html.div({ klass: "collapse navbar-collapse",  id: "bs-example-navbar-collapse-1"},
+                        html.ul({ klass: "nav navbar-nav"},
+                            html.li({ klass: "active"},
+                                html.a({ href: "#"},
+                                    "Link"
                                 )
                             ),
                             html.li(
-                                html.a({ href: '#'},
-                                    'Link'
+                                html.a({ href: "#"},
+                                    "Link"
                                 )
                             ),
-                            html.li({ klass: 'dropdown'},
-                                html.a({ href: '#',  klass: 'dropdown-toggle',  'data-toggle': 'dropdown'},
-                                    'Dropdown ',
-                                    html.b({ klass: 'caret'}
+                            html.li({ klass: "dropdown"},
+                                html.a({ href: "#",  klass: "dropdown-toggle",  "data-toggle": "dropdown"},
+                                    "Dropdown ",
+                                    html.b({ klass: "caret"}
                                     )
                                 ),
-                                html.ul({ klass: 'dropdown-menu'},
+                                html.ul({ klass: "dropdown-menu"},
                                     html.li(
-                                        html.a({ href: '#'},
-                                            'Action'
+                                        html.a({ href: "#"},
+                                            "Action"
                                         )
                                     ),
                                     html.li(
-                                        html.a({ href: '#'},
-                                            'Another action'
+                                        html.a({ href: "#"},
+                                            "Another action"
                                         )
                                     ),
                                     html.li(
-                                        html.a({ href: '#'},
-                                            'Something else here'
+                                        html.a({ href: "#"},
+                                            "Something else here"
                                         )
                                     ),
-                                    html.li({ klass: 'divider'}
+                                    html.li({ klass: "divider"}
                                     ),
                                     html.li(
-                                        html.a({ href: '#'},
-                                            'Separated link'
+                                        html.a({ href: "#"},
+                                            "Separated link"
                                         )
                                     ),
-                                    html.li({ klass: 'divider'}
+                                    html.li({ klass: "divider"}
                                     ),
                                     html.li(
-                                        html.a({ href: '#'},
-                                            'One more separated link'
+                                        html.a({ href: "#"},
+                                            "One more separated link"
                                         )
                                     )
                                 )
                             )
                         ),
-                        html.form({ klass: 'navbar-form navbar-left',  role: 'search'},
-                            html.div({ klass: 'form-group'},
-                                html.input({ type: 'text',  klass: 'form-control',  placeholder: 'Search'})
+                        html.form({ klass: "navbar-form navbar-left",  role: "search"},
+                            html.div({ klass: "form-group"},
+                                html.input({ type: "text",  klass: "form-control",  placeholder: "Search"})
                             ),
-                            html.button({ type: 'submit',  klass: 'btn btn-default'},
-                                'Submit'
+                            html.button({ type: "submit",  klass: "btn btn-default"},
+                                "Submit"
                             )
                         ),
-                        html.ul({ klass: 'nav navbar-nav navbar-right'},
+                        html.ul({ klass: "nav navbar-nav navbar-right"},
                             html.li(
-                                html.a({ href: '#'},
-                                    'Link'
+                                html.a({ href: "#"},
+                                    "Link"
                                 )
                             ),
-                            html.li({ klass: 'dropdown'},
-                                html.a({ href: '#',  klass: 'dropdown-toggle',  'data-toggle': 'dropdown'},
-                                    'Dropdown ',
-                                    html.b({ klass: 'caret'}
+                            html.li({ klass: "dropdown"},
+                                html.a({ href: "#",  klass: "dropdown-toggle",  "data-toggle": "dropdown"},
+                                    "Dropdown ",
+                                    html.b({ klass: "caret"}
                                     )
                                 ),
-                                html.ul({ klass: 'dropdown-menu'},
+                                html.ul({ klass: "dropdown-menu"},
                                     html.li(
-                                        html.a({ href: '#'},
-                                            'Action'
+                                        html.a({ href: "#"},
+                                            "Action"
                                         )
                                     ),
                                     html.li(
-                                        html.a({ href: '#'},
-                                            'Another action'
+                                        html.a({ href: "#"},
+                                            "Another action"
                                         )
                                     ),
                                     html.li(
-                                        html.a({ href: '#'},
-                                            'Something else here'
+                                        html.a({ href: "#"},
+                                            "Something else here"
                                         )
                                     ),
-                                    html.li({ klass: 'divider'}
+                                    html.li({ klass: "divider"}
                                     ),
                                     html.li(
-                                        html.a({ href: '#'},
-                                            'Separated link'
+                                        html.a({ href: "#"},
+                                            "Separated link"
                                         )
                                     )
                                 )
@@ -609,39 +609,39 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
     });
 
     examples.breadcrumb = code({
-        group: 'Breadcrumbs',
-        label: 'Breadcrumbs',
-        links: ['http://getbootstrap.com/components/#breadcrumbs'],
+        group: "Breadcrumbs",
+        label: "Breadcrumbs",
+        links: ["http://getbootstrap.com/components/#breadcrumbs"],
         example : function(html) {
-            html.div({ klass: 'bs-example'},
-                html.ol({ klass: 'breadcrumb'},
-                    html.li({ klass: 'active'},
-                        'Home'
+            html.div({ klass: "bs-example"},
+                html.ol({ klass: "breadcrumb"},
+                    html.li({ klass: "active"},
+                        "Home"
                     )
                 ),
-                html.ol({ klass: 'breadcrumb'},
+                html.ol({ klass: "breadcrumb"},
                     html.li(
-                        html.a({ href: '#'},
-                            'Home'
+                        html.a({ href: "#"},
+                            "Home"
                         )
                     ),
-                    html.li({ klass: 'active'},
-                        'Library'
+                    html.li({ klass: "active"},
+                        "Library"
                     )
                 ),
-                html.ol({ klass: 'breadcrumb',  style: 'margin-bottom: 5px;'},
+                html.ol({ klass: "breadcrumb",  style: "margin-bottom: 5px;"},
                     html.li(
-                        html.a({ href: '#'},
-                            'Home'
+                        html.a({ href: "#"},
+                            "Home"
                         )
                     ),
                     html.li(
-                        html.a({ href: '#'},
-                            'Library'
+                        html.a({ href: "#"},
+                            "Library"
                         )
                     ),
-                    html.li({ klass: 'active'},
-                        'Data'
+                    html.li({ klass: "active"},
+                        "Data"
                     )
                 )
             );
@@ -649,61 +649,61 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
     });
 
     examples.pagination = code({
-        group: 'Pagination',
-        label: 'Pagination',
-        links: ['http://getbootstrap.com/components/#pagination'],
+        group: "Pagination",
+        label: "Pagination",
+        links: ["http://getbootstrap.com/components/#pagination"],
         example : function(html) {
 
             // Default pagination
-            html.ul({ klass: 'pagination'},
+            html.ul({ klass: "pagination"},
                 html.li(
-                    html.a({ href: '#'}, '&laquo;')
+                    html.a({ href: "#"}, "&laquo;")
                 ),
-                html.li({ klass: 'active'},
-                    html.a({ href: '#'}, '1 ', html.span({ klass: 'sr-only'}, '(current)'))
-                ),
-                html.li(
-                    html.a({ href: '#'}, '2')
+                html.li({ klass: "active"},
+                    html.a({ href: "#"}, "1 ", html.span({ klass: "sr-only"}, "(current)"))
                 ),
                 html.li(
-                    html.a({ href: '#'}, '3')
+                    html.a({ href: "#"}, "2")
                 ),
                 html.li(
-                    html.a({ href: '#'}, '4')
+                    html.a({ href: "#"}, "3")
                 ),
                 html.li(
-                    html.a({ href: '#'}, '5')
+                    html.a({ href: "#"}, "4")
                 ),
                 html.li(
-                    html.a({ href: '#'}, '&raquo;')
+                    html.a({ href: "#"}, "5")
+                ),
+                html.li(
+                    html.a({ href: "#"}, "&raquo;")
                 )
             );
 
             // Pager
-            html.ul({ klass: 'pager'},
+            html.ul({ klass: "pager"},
                 html.li(
-                    html.a({ href: '#'},
-                        'Previous'
+                    html.a({ href: "#"},
+                        "Previous"
                     )
                 ),
                 html.li(
-                    html.a({ href: '#'},
-                        'Next'
+                    html.a({ href: "#"},
+                        "Next"
                     )
                 )
             );
 
             // Align links
 
-            html.ul({ klass: 'pager'},
-                html.li({ klass: 'previous disabled'},
-                    html.a({ href: '#'},
-                        '&larr; Older'
+            html.ul({ klass: "pager"},
+                html.li({ klass: "previous disabled"},
+                    html.a({ href: "#"},
+                        "&larr; Older"
                     )
                 ),
-                html.li({ klass: 'next'},
-                    html.a({ href: '#'},
-                        'Newer &rarr;'
+                html.li({ klass: "next"},
+                    html.a({ href: "#"},
+                        "Newer &rarr;"
                     )
                 )
             );
@@ -713,28 +713,28 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
     });
 
     examples.labels = code({
-        group: 'Labels',
-        label: 'Labels',
-        links: ['http://getbootstrap.com/components/#labels'],
+        group: "Labels",
+        label: "Labels",
+        links: ["http://getbootstrap.com/components/#labels"],
         example : function(html) {
             // Variations
-            html.span({ klass: 'label label-default'},
-                'Default'
+            html.span({ klass: "label label-default"},
+                "Default"
             );
-            html.span({ klass: 'label label-primary'},
-                'Primary'
+            html.span({ klass: "label label-primary"},
+                "Primary"
             );
-            html.span({ klass: 'label label-success'},
-                'Success'
+            html.span({ klass: "label label-success"},
+                "Success"
             );
-            html.span({ klass: 'label label-info'},
-                'Info'
+            html.span({ klass: "label label-info"},
+                "Info"
             );
-            html.span({ klass: 'label label-warning'},
-                'Warning'
+            html.span({ klass: "label label-warning"},
+                "Warning"
             );
-            html.span({ klass: 'label label-danger'},
-                'Danger'
+            html.span({ klass: "label label-danger"},
+                "Danger"
             );
 
             html.br();
@@ -742,39 +742,39 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
             // With headings
             html.div(
                 html.h1(
-                    'Example heading ',
-                    html.span({ klass: 'label label-default'},
-                        'New'
+                    "Example heading ",
+                    html.span({ klass: "label label-default"},
+                        "New"
                     )
                 ),
                 html.h2(
-                    'Example heading ',
-                    html.span({ klass: 'label label-default'},
-                        'New'
+                    "Example heading ",
+                    html.span({ klass: "label label-default"},
+                        "New"
                     )
                 ),
                 html.h3(
-                    'Example heading ',
-                    html.span({ klass: 'label label-default'},
-                        'New'
+                    "Example heading ",
+                    html.span({ klass: "label label-default"},
+                        "New"
                     )
                 ),
                 html.h4(
-                    'Example heading ',
-                    html.span({ klass: 'label label-default'},
-                        'New'
+                    "Example heading ",
+                    html.span({ klass: "label label-default"},
+                        "New"
                     )
                 ),
                 html.h5(
-                    'Example heading ',
-                    html.span({ klass: 'label label-default'},
-                        'New'
+                    "Example heading ",
+                    html.span({ klass: "label label-default"},
+                        "New"
                     )
                 ),
                 html.h6(
-                    'Example heading ',
-                    html.span({ klass: 'label label-default'},
-                        'New'
+                    "Example heading ",
+                    html.span({ klass: "label label-default"},
+                        "New"
                     )
                 )
             );
@@ -784,67 +784,67 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
     });
 
     examples.badges = code({
-        group: 'Badges',
-        label: 'Badges',
-        links: ['http://getbootstrap.com/components/#badges'],
+        group: "Badges",
+        label: "Badges",
+        links: ["http://getbootstrap.com/components/#badges"],
         example : function(html) {
             // Simple
-            html.a({ href: '#'},
-                'Inbox ',
-                html.span({ klass: 'badge'}, '42')
+            html.a({ href: "#"},
+                "Inbox ",
+                html.span({ klass: "badge"}, "42")
             );
 
             // Adapts to nav state
             html.div(
-                html.ul({ klass: 'nav nav-pills'},
-                    html.li({ klass: 'active'},
-                        html.a({ href: '#'},
-                            'Home ',
-                            html.span({ klass: 'badge'},
-                                '42'
+                html.ul({ klass: "nav nav-pills"},
+                    html.li({ klass: "active"},
+                        html.a({ href: "#"},
+                            "Home ",
+                            html.span({ klass: "badge"},
+                                "42"
                             )
                         )
                     ),
                     html.li(
-                        html.a({ href: '#'},
-                            'Profile'
+                        html.a({ href: "#"},
+                            "Profile"
                         )
                     ),
                     html.li(
-                        html.a({ href: '#'},
-                            'Messages ',
-                            html.span({ klass: 'badge'},
-                                '3'
-                            )
-                        )
-                    )
-                ),
-                html.br(),
-                html.ul({ klass: 'nav nav-pills nav-stacked',  style: 'max-width: 260px;'},
-                    html.li({ klass: 'active'},
-                        html.a({ href: '#'},
-                            html.span({ klass: 'badge pull-right'},
-                                '42'
-                            )
-                        )
-                    ),
-                    html.li(
-                        html.a({ href: '#'},
-                            'Profile'
-                        )
-                    ),
-                    html.li(
-                        html.a({ href: '#'},
-                            html.span({ klass: 'badge pull-right'},
-                                '3'
+                        html.a({ href: "#"},
+                            "Messages ",
+                            html.span({ klass: "badge"},
+                                "3"
                             )
                         )
                     )
                 ),
                 html.br(),
-                html.button({ klass: 'btn btn-primary',  type: 'button'},
-                    html.span({ klass: 'badge'},
-                        '4'
+                html.ul({ klass: "nav nav-pills nav-stacked",  style: "max-width: 260px;"},
+                    html.li({ klass: "active"},
+                        html.a({ href: "#"},
+                            html.span({ klass: "badge pull-right"},
+                                "42"
+                            )
+                        )
+                    ),
+                    html.li(
+                        html.a({ href: "#"},
+                            "Profile"
+                        )
+                    ),
+                    html.li(
+                        html.a({ href: "#"},
+                            html.span({ klass: "badge pull-right"},
+                                "3"
+                            )
+                        )
+                    )
+                ),
+                html.br(),
+                html.button({ klass: "btn btn-primary",  type: "button"},
+                    html.span({ klass: "badge"},
+                        "4"
                     )
                 )
             );
@@ -853,29 +853,29 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
     });
 
     examples.alerts = code({
-        group: 'Alerts',
-        label: 'Alerts',
-        links: ['http://getbootstrap.com/components/#alerts'],
+        group: "Alerts",
+        label: "Alerts",
+        links: ["http://getbootstrap.com/components/#alerts"],
         example : function(html) {
-            html.div({ klass: 'bs-example'},
-                html.div({ klass: 'alert alert-success'},
+            html.div({ klass: "bs-example"},
+                html.div({ klass: "alert alert-success"},
                     html.strong(
-                        'Well done!'
+                        "Well done!"
                     )
                 ),
-                html.div({ klass: 'alert alert-info'},
+                html.div({ klass: "alert alert-info"},
                     html.strong(
-                        'Heads up!'
+                        "Heads up!"
                     )
                 ),
-                html.div({ klass: 'alert alert-warning'},
+                html.div({ klass: "alert alert-warning"},
                     html.strong(
-                        'Warning!'
+                        "Warning!"
                     )
                 ),
-                html.div({ klass: 'alert alert-danger'},
+                html.div({ klass: "alert alert-danger"},
                     html.strong(
-                        'Oh snap!'
+                        "Oh snap!"
                     )
                 )
             );
@@ -883,61 +883,61 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
     });
 
     examples.alertsDismissable = code({
-        group: 'Alerts',
-        label: 'Dismissable alerts',
-        links: ['http://getbootstrap.com/components/#alerts-dismissable'],
+        group: "Alerts",
+        label: "Dismissable alerts",
+        links: ["http://getbootstrap.com/components/#alerts-dismissable"],
         example : function(html) {
-            html.div({ klass: 'alert alert-warning alert-dismissable'},
-                html.button({ type: 'button',  klass: 'close',  'data-dismiss': 'alert',  'aria-hidden': 'true'},
-                    '&times;'
+            html.div({ klass: "alert alert-warning alert-dismissable"},
+                html.button({ type: "button",  klass: "close",  "data-dismiss": "alert",  "aria-hidden": "true"},
+                    "&times;"
                 ),
                 html.strong(
-                    'Warning!'
+                    "Warning!"
                 )
             );
         }
     });
 
     examples.alertsLinks = code({
-        group: 'Alerts',
-        label: 'Links in alerts',
-        links: ['http://getbootstrap.com/components/#alerts-dismissable'],
+        group: "Alerts",
+        label: "Links in alerts",
+        links: ["http://getbootstrap.com/components/#alerts-dismissable"],
         example : function(html) {
-            html.div({ klass: 'bs-example'},
-                html.div({ klass: 'alert alert-success'},
+            html.div({ klass: "bs-example"},
+                html.div({ klass: "alert alert-success"},
                     html.strong(
-                        'Well done!'
+                        "Well done!"
                     ),
-                    ' You successfully read ',
-                    html.a({ href: '#',  klass: 'alert-link'},
-                        'this important alert message'
+                    " You successfully read ",
+                    html.a({ href: "#",  klass: "alert-link"},
+                        "this important alert message"
                     )
                 ),
-                html.div({ klass: 'alert alert-info'},
+                html.div({ klass: "alert alert-info"},
                     html.strong(
-                        'Heads up!'
+                        "Heads up!"
                     ),
-                    ' This ',
-                    html.a({ href: '#',  klass: 'alert-link'},
-                        'alert needs your attention'
+                    " This ",
+                    html.a({ href: "#",  klass: "alert-link"},
+                        "alert needs your attention"
                     )
                 ),
-                html.div({ klass: 'alert alert-warning'},
+                html.div({ klass: "alert alert-warning"},
                     html.strong(
-                        'Warning!'
+                        "Warning!"
                     ),
-                    ' Better check yourself, youre ',
-                    html.a({ href: '#',  klass: 'alert-link'},
-                        'not looking too good'
+                    " Better check yourself, youre ",
+                    html.a({ href: "#",  klass: "alert-link"},
+                        "not looking too good"
                     )
                 ),
-                html.div({ klass: 'alert alert-danger'},
+                html.div({ klass: "alert alert-danger"},
                     html.strong(
-                        'Oh snap!'
+                        "Oh snap!"
                     ),
-                    ' ',
-                    html.a({ href: '#',  klass: 'alert-link'},
-                        'Change a few things up'
+                    " ",
+                    html.a({ href: "#",  klass: "alert-link"},
+                        "Change a few things up"
                     )
                 )
             );
@@ -945,37 +945,37 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
     });
 
     examples.progress = code({
-        group: 'Progress bars',
-        label: 'Progress bars',
-        links: ['http://getbootstrap.com/components/#progress'],
+        group: "Progress bars",
+        label: "Progress bars",
+        links: ["http://getbootstrap.com/components/#progress"],
         example : function(html) {
 
-            html.div({ klass: 'bs-example'},
-                html.div({ klass: 'progress'},
-                    html.div({ klass: 'progress-bar progress-bar-success',  role: 'progressbar', 'aria-valuenow': '40',  'aria-valuemin': '0',  'aria-valuemax': '100',  style: 'width: 40%'},
-                        html.span({ klass: 'sr-only'},
-                            '40% Complete (success)'
+            html.div({ klass: "bs-example"},
+                html.div({ klass: "progress"},
+                    html.div({ klass: "progress-bar progress-bar-success",  role: "progressbar", "aria-valuenow": "40",  "aria-valuemin": "0",  "aria-valuemax": "100",  style: "width: 40%"},
+                        html.span({ klass: "sr-only"},
+                            "40% Complete (success)"
                         )
                     )
                 ),
-                html.div({ klass: 'progress'},
-                    html.div({ klass: 'progress-bar progress-bar-info',  role: 'progressbar',  'aria-valuenow': '20',  'aria-valuemin': '0',  'aria-valuemax': '100',  style: 'width: 20%'},
-                        html.span({ klass: 'sr-only'},
-                            '20% Complete'
+                html.div({ klass: "progress"},
+                    html.div({ klass: "progress-bar progress-bar-info",  role: "progressbar",  "aria-valuenow": "20",  "aria-valuemin": "0",  "aria-valuemax": "100",  style: "width: 20%"},
+                        html.span({ klass: "sr-only"},
+                            "20% Complete"
                         )
                     )
                 ),
-                html.div({ klass: 'progress'},
-                    html.div({ klass: 'progress-bar progress-bar-warning',  role: 'progressbar',  'aria-valuenow': '60',  'aria-valuemin': '0',  'aria-valuemax': '100',  style: 'width: 60%'},
-                        html.span({ klass: 'sr-only'},
-                            '60% Complete (warning)'
+                html.div({ klass: "progress"},
+                    html.div({ klass: "progress-bar progress-bar-warning",  role: "progressbar",  "aria-valuenow": "60",  "aria-valuemin": "0",  "aria-valuemax": "100",  style: "width: 60%"},
+                        html.span({ klass: "sr-only"},
+                            "60% Complete (warning)"
                         )
                     )
                 ),
-                html.div({ klass: 'progress'},
-                    html.div({ klass: 'progress-bar progress-bar-danger',  role: 'progressbar',  'aria-valuenow': '80',  'aria-valuemin': '0',  'aria-valuemax': '100',  style: 'width: 80%'},
-                        html.span({ klass: 'sr-only'},
-                            '80% Complete (danger)'
+                html.div({ klass: "progress"},
+                    html.div({ klass: "progress-bar progress-bar-danger",  role: "progressbar",  "aria-valuenow": "80",  "aria-valuemin": "0",  "aria-valuemax": "100",  style: "width: 80%"},
+                        html.span({ klass: "sr-only"},
+                            "80% Complete (danger)"
                         )
                     )
                 )
@@ -984,25 +984,25 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
     });
 
     examples.progressStacked = code({
-        group: 'Progress bars',
-        label: 'Stacked Progress bars',
-        links: ['http://getbootstrap.com/components/#progress-stacked'],
+        group: "Progress bars",
+        label: "Stacked Progress bars",
+        links: ["http://getbootstrap.com/components/#progress-stacked"],
         example : function(html) {
             html.div(
-                html.div({ klass: 'progress'},
-                    html.div({ klass: 'progress-bar progress-bar-success',  style: 'width: 35%'},
-                        html.span({ klass: 'sr-only'},
-                            '35% Complete (success)'
+                html.div({ klass: "progress"},
+                    html.div({ klass: "progress-bar progress-bar-success",  style: "width: 35%"},
+                        html.span({ klass: "sr-only"},
+                            "35% Complete (success)"
                         )
                     ),
-                    html.div({ klass: 'progress-bar progress-bar-warning',  style: 'width: 20%'},
-                        html.span({ klass: 'sr-only'},
-                            '20% Complete (warning)'
+                    html.div({ klass: "progress-bar progress-bar-warning",  style: "width: 20%"},
+                        html.span({ klass: "sr-only"},
+                            "20% Complete (warning)"
                         )
                     ),
-                    html.div({ klass: 'progress-bar progress-bar-danger',  style: 'width: 10%'},
-                        html.span({ klass: 'sr-only'},
-                            '10% Complete (danger)'
+                    html.div({ klass: "progress-bar progress-bar-danger",  style: "width: 10%"},
+                        html.span({ klass: "sr-only"},
+                            "10% Complete (danger)"
                         )
                     )
                 )
@@ -1011,87 +1011,87 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
     });
 
     examples.listGroup = code({
-        group: 'List group',
-        label: 'List group',
-        links: ['http://getbootstrap.com/components/#list-group'],
+        group: "List group",
+        label: "List group",
+        links: ["http://getbootstrap.com/components/#list-group"],
         example : function(html) {
             // With badges
 
-            html.ul({ klass: 'list-group'},
-                html.li({ klass: 'list-group-item'},
-                    html.span({ klass: 'badge'}, '14'), 'Item #1'
+            html.ul({ klass: "list-group"},
+                html.li({ klass: "list-group-item"},
+                    html.span({ klass: "badge"}, "14"), "Item #1"
                 ),
-                html.li({ klass: 'list-group-item'},
-                    html.span({ klass: 'badge'}, '2'), 'Item #2'
+                html.li({ klass: "list-group-item"},
+                    html.span({ klass: "badge"}, "2"), "Item #2"
                 ),
-                html.li({ klass: 'list-group-item'},
-                    html.span({ klass: 'badge'}, '1') , 'Item #3'
+                html.li({ klass: "list-group-item"},
+                    html.span({ klass: "badge"}, "1") , "Item #3"
                 )
             );
 
             html.br();
 
             // With links
-            html.div({ klass: 'list-group'},
-                html.a({ href: '#',  klass: 'list-group-item active'},
-                    'Cras justo odio'
+            html.div({ klass: "list-group"},
+                html.a({ href: "#",  klass: "list-group-item active"},
+                    "Cras justo odio"
                 ),
-                html.a({ href: '#',  klass: 'list-group-item'},
-                    'Dapibus ac facilisis in'
+                html.a({ href: "#",  klass: "list-group-item"},
+                    "Dapibus ac facilisis in"
                 ),
-                html.a({ href: '#',  klass: 'list-group-item'},
-                    'Morbi leo risus'
+                html.a({ href: "#",  klass: "list-group-item"},
+                    "Morbi leo risus"
                 ),
-                html.a({ href: '#',  klass: 'list-group-item'},
-                    'Porta ac consectetur ac'
+                html.a({ href: "#",  klass: "list-group-item"},
+                    "Porta ac consectetur ac"
                 ),
-                html.a({ href: '#',  klass: 'list-group-item'},
-                    'Vestibulum at eros'
+                html.a({ href: "#",  klass: "list-group-item"},
+                    "Vestibulum at eros"
                 )
             );
 
             // Contextual
 
-            html.ul({ klass: 'list-group'},
-                html.li({ klass: 'list-group-item list-group-item-success'},
-                    'Dapibus ac facilisis in'
+            html.ul({ klass: "list-group"},
+                html.li({ klass: "list-group-item list-group-item-success"},
+                    "Dapibus ac facilisis in"
                 ),
-                html.li({ klass: 'list-group-item list-group-item-info'},
-                    'Cras sit amet nibh libero'
+                html.li({ klass: "list-group-item list-group-item-info"},
+                    "Cras sit amet nibh libero"
                 ),
-                html.li({ klass: 'list-group-item list-group-item-warning'},
-                    'Porta ac consectetur ac'
+                html.li({ klass: "list-group-item list-group-item-warning"},
+                    "Porta ac consectetur ac"
                 ),
-                html.li({ klass: 'list-group-item list-group-item-danger'},
-                    'Vestibulum at eros'
+                html.li({ klass: "list-group-item list-group-item-danger"},
+                    "Vestibulum at eros"
                 )
             );
 
             // Custom content
 
-            html.div({ klass: 'list-group'},
-                html.a({ href: '#',  klass: 'list-group-item active'},
-                    html.h4({ klass: 'list-group-item-heading'},
-                        'List group item heading'
+            html.div({ klass: "list-group"},
+                html.a({ href: "#",  klass: "list-group-item active"},
+                    html.h4({ klass: "list-group-item-heading"},
+                        "List group item heading"
                     ),
-                    html.p({ klass: 'list-group-item-text'},
-                        'Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.'
+                    html.p({ klass: "list-group-item-text"},
+                        "Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit."
                     )
                 ),
-                html.a({ href: '#',  klass: 'list-group-item'},
-                    html.h4({ klass: 'list-group-item-heading'},
-                        'List group item heading'
+                html.a({ href: "#",  klass: "list-group-item"},
+                    html.h4({ klass: "list-group-item-heading"},
+                        "List group item heading"
                     ),
-                    html.p({ klass: 'list-group-item-text'},
-                        'Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.'
+                    html.p({ klass: "list-group-item-text"},
+                        "Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit."
                     )
                 ),
-                html.a({ href: '#',  klass: 'list-group-item'},
-                    html.h4({ klass: 'list-group-item-heading'},
-                        'List group item heading'
+                html.a({ href: "#",  klass: "list-group-item"},
+                    html.h4({ klass: "list-group-item-heading"},
+                        "List group item heading"
                     ),
-                    html.p({ klass: 'list-group-item-text'},
-                        'Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.'
+                    html.p({ klass: "list-group-item-text"},
+                        "Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit."
                     )
                 )
             );
@@ -1100,124 +1100,124 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
     });
 
     examples.panels = code({
-        group: 'Panels',
-        label: 'Panels',
-        links: ['http://getbootstrap.com/components/#panels'],
+        group: "Panels",
+        label: "Panels",
+        links: ["http://getbootstrap.com/components/#panels"],
         example : function(html) {
             // Default
-            html.div({ klass: 'panel panel-default'},
-                html.div({ klass: 'panel-body'},  'Basic panel example')
+            html.div({ klass: "panel panel-default"},
+                html.div({ klass: "panel-body"},  "Basic panel example")
             );
 
             // with heading
-            html.div({ klass: 'panel panel-default'},
-                html.div({ klass: 'panel-heading'},
-                    'Panel heading without title'
+            html.div({ klass: "panel panel-default"},
+                html.div({ klass: "panel-heading"},
+                    "Panel heading without title"
                 ),
-                html.div({ klass: 'panel-body'},
-                    'Panel content'
+                html.div({ klass: "panel-body"},
+                    "Panel content"
                 )
             );
 
             // with footer
 
-            html.div({ klass: 'panel panel-default'},
-                html.div({ klass: 'panel-body'},
-                    'Panel content'
+            html.div({ klass: "panel panel-default"},
+                html.div({ klass: "panel-body"},
+                    "Panel content"
                 ),
-                html.div({ klass: 'panel-footer'},
-                    'Panel footer'
+                html.div({ klass: "panel-footer"},
+                    "Panel footer"
                 )
             );
 
             // contextual
-            html.div({ klass: 'panel panel-primary'},
-                html.div({ klass: 'panel-heading'},
-                    html.h3({ klass: 'panel-title'},
-                        'Panel title'
+            html.div({ klass: "panel panel-primary"},
+                html.div({ klass: "panel-heading"},
+                    html.h3({ klass: "panel-title"},
+                        "Panel title"
                     )
                 ),
-                html.div({ klass: 'panel-body'},
-                    'Panel content'
+                html.div({ klass: "panel-body"},
+                    "Panel content"
                 )
             );
         }
     });
 
     examples.panelsWithTables = code({
-        group: 'Panels',
-        label: 'Panels with tables',
-        links: ['http://getbootstrap.com/components/#panels-tables'],
+        group: "Panels",
+        label: "Panels with tables",
+        links: ["http://getbootstrap.com/components/#panels-tables"],
         example : function(html) {
             // with content
 
-            html.div({ klass: 'panel panel-default'},
-                html.div({ klass: 'panel-heading'},
-                    'Panel heading'
+            html.div({ klass: "panel panel-default"},
+                html.div({ klass: "panel-heading"},
+                    "Panel heading"
                 ),
-                html.div({ klass: 'panel-body'},
+                html.div({ klass: "panel-body"},
                     html.p(
-                        'Some default panel content here. Nulla vitae elit libero, a pharetra augue. Aenean lacinia bibendum nulla sed consectetur. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Nullam id dolor id nibh ultricies vehicula ut id elit.'
+                        "Some default panel content here. Nulla vitae elit libero, a pharetra augue. Aenean lacinia bibendum nulla sed consectetur. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Nullam id dolor id nibh ultricies vehicula ut id elit."
                     )
                 ),
-                html.table({ klass: 'table'},
+                html.table({ klass: "table"},
                     html.thead(
                         html.tr(
                             html.th(
-                                '#'
+                                "#"
                             ),
                             html.th(
-                                'First Name'
+                                "First Name"
                             ),
                             html.th(
-                                'Last Name'
+                                "Last Name"
                             ),
                             html.th(
-                                'Username'
+                                "Username"
                             )
                         )
                     ),
                     html.tbody(
                         html.tr(
                             html.td(
-                                '1'
+                                "1"
                             ),
                             html.td(
-                                'Mark'
+                                "Mark"
                             ),
                             html.td(
-                                'Otto'
+                                "Otto"
                             ),
                             html.td(
-                                '@mdo'
+                                "@mdo"
                             )
                         ),
                         html.tr(
                             html.td(
-                                '2'
+                                "2"
                             ),
                             html.td(
-                                'Jacob'
+                                "Jacob"
                             ),
                             html.td(
-                                'Thornton'
+                                "Thornton"
                             ),
                             html.td(
-                                '@fat'
+                                "@fat"
                             )
                         ),
                         html.tr(
                             html.td(
-                                '3'
+                                "3"
                             ),
                             html.td(
-                                'Larry'
+                                "Larry"
                             ),
                             html.td(
-                                'the Bird'
+                                "the Bird"
                             ),
                             html.td(
-                                '@twitter'
+                                "@twitter"
                             )
                         )
                     )
@@ -1226,68 +1226,68 @@ define(['widgetjs/core', 'lodash', 'jquery', 'prettify', 'code'], function(widge
 
             // with only table
 
-            html.div({ klass: 'panel panel-default'},
-                html.div({ klass: 'panel-heading'},
-                    'Panel heading'
+            html.div({ klass: "panel panel-default"},
+                html.div({ klass: "panel-heading"},
+                    "Panel heading"
                 ),
-                html.table({ klass: 'table'},
+                html.table({ klass: "table"},
                     html.thead(
                         html.tr(
                             html.th(
-                                '#'
+                                "#"
                             ),
                             html.th(
-                                'First Name'
+                                "First Name"
                             ),
                             html.th(
-                                'Last Name'
+                                "Last Name"
                             ),
                             html.th(
-                                'Username'
+                                "Username"
                             )
                         )
                     ),
                     html.tbody(
                         html.tr(
                             html.td(
-                                '1'
+                                "1"
                             ),
                             html.td(
-                                'Mark'
+                                "Mark"
                             ),
                             html.td(
-                                'Otto'
+                                "Otto"
                             ),
                             html.td(
-                                '@mdo'
+                                "@mdo"
                             )
                         ),
                         html.tr(
                             html.td(
-                                '2'
+                                "2"
                             ),
                             html.td(
-                                'Jacob'
+                                "Jacob"
                             ),
                             html.td(
-                                'Thornton'
+                                "Thornton"
                             ),
                             html.td(
-                                '@fat'
+                                "@fat"
                             )
                         ),
                         html.tr(
                             html.td(
-                                '3'
+                                "3"
                             ),
                             html.td(
-                                'Larry'
+                                "Larry"
                             ),
                             html.td(
-                                'the Bird'
+                                "the Bird"
                             ),
                             html.td(
-                                '@twitter'
+                                "@twitter"
                             )
                         )
                     )

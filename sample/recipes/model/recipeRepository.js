@@ -1,9 +1,9 @@
 define([
-	'klassified',
-	'jquery',
-	'jstorage',
-	'model/defaultRecipesData',
-	'model/recipe'
+	"klassified",
+	"jquery",
+	"jstorage",
+	"model/defaultRecipesData",
+	"model/recipe"
 ], function (object, jQuery, jstorage, defaultRecepies, recipe) {
 
 	/**
@@ -14,7 +14,7 @@ define([
 		my.initialize = function(spec) {
 			my.super(spec);
 			my.model = spec.model;
-			my.prefix = spec.prefix || '';
+			my.prefix = spec.prefix || "";
 		};
 
 		// Protected API
@@ -25,7 +25,7 @@ define([
 
 		my.storageGet = function (options) {
 			if(!options.id || !options.onSuccess) {
-				throw new Error('Option "id" and "onSuccess" are required');
+				throw new Error("Option \"id\" and \"onSuccess\" are required");
 			}
 
 			options.onSuccess(my.dataToModel(jQuery.jStorage.get(my.key(options.id))));
@@ -33,7 +33,7 @@ define([
 
 		my.storageFindAll = function(options) {
 			if(!options.onSuccess ) {
-				throw new Error('Option "onSuccess" is required');
+				throw new Error("Option \"onSuccess\" is required");
 			}
 
 			options.onSuccess(jQuery.jStorage.index()
@@ -48,12 +48,12 @@ define([
 
 		my.storageSave = function(options) {
 			if(!options.model) {
-				throw new Error('Option "model" is required');
+				throw new Error("Option \"model\" is required");
 			}
 
 			options.id = options.id || options.model.id;
 			if(!options.id) {
-				throw new Error('Option "id" or "model.id" is required');
+				throw new Error("Option \"id\" or \"model.id\" is required");
 			}
 
 			jQuery.jStorage.set(my.key(options.id), options.model);
@@ -63,12 +63,12 @@ define([
 
 		my.storageUpdate = function(options) {
 			if(!options.model) {
-				throw new Error('Option "model" is required');
+				throw new Error("Option \"model\" is required");
 			}
 
 			options.id = options.id || options.model.id;
 			if(!options.id) {
-				throw new Error('Option "id" or "model.id" is required');
+				throw new Error("Option \"id\" or \"model.id\" is required");
 			}
 
 			jQuery.jStorage.set(my.key(options.id), options.model);
@@ -79,7 +79,7 @@ define([
 		my.storageRemove = function(options) {
 			options.id = options.id || options.model.id;
 			if(!options.id) {
-				throw new Error('Option "id" or "model.id" is required');
+				throw new Error("Option \"id\" or \"model.id\" is required");
 			}
 
 			jQuery.jStorage.deleteKey(my.key(options.id));
@@ -137,7 +137,7 @@ define([
 
 		my.initialize = function(spec) {
 			my.super(spec);
-			my.prefix = 'myrecipe';
+			my.prefix = "myrecipe";
 			my.model = recipe.recipe;
 		};
 

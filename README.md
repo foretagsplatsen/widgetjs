@@ -12,8 +12,8 @@ var counterWidget = function () {
 
 	that.renderContentOn = function (html) {
 		html.h1(count.toString());
-		html.button('+').click(function() { count++; that.update();});
-		html.button('-').click(function() { count--; that.update();});
+		html.button("+").click(function() { count++; that.update();});
+		html.button("-").click(function() { count--; that.update();});
 	};
 
 	return that;
@@ -45,18 +45,18 @@ Include the minified version in your project:
 Use with requirejs:
 ``` javascript
 requirejs.config({
-	baseUrl: '.',
+	baseUrl: ".",
 	paths: {
-		'widgetjs' : '<widget js path>/src/WidgetJS.min.js'
+		"widgetjs" : "<widget js path>/src/WidgetJS.min.js"
 	}
 });
 ```
 or
 ``` javascript
 requirejs.config({
-	baseUrl: '.',
+	baseUrl: ".",
 	paths: {
-		'widgetjs' : '<widget js path>/src/'
+		"widgetjs" : "<widget js path>/src/"
 	}
 });
 ```

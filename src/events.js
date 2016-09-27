@@ -49,7 +49,7 @@ define([],
             };
 
             /**
-             * Removed 'binding' attached to event.
+             * Removed "binding" attached to event.
              * @param name {String} Name of event
              * @param binding {eventBinding} Binding
              */
@@ -121,7 +121,7 @@ define([],
             var events = [];
 
             /**
-             * Lazily makes sure that an event exists for 'name'.
+             * Lazily makes sure that an event exists for "name".
              *
              * @param name {String}
              * @returns {event} Also return the event
@@ -154,7 +154,7 @@ define([],
             };
 
             /**
-             * Removed 'binding' attached to event.
+             * Removed "binding" attached to event.
              * @param name {String} Name of event
              * @param binding {eventBinding} Binding
              */
@@ -289,13 +289,13 @@ define([],
             var categories = {};
 
             /**
-             * Register a new event category with 'name'.
+             * Register a new event category with "name".
              * @param name
              * @returns {eventCategory}
              */
             that.register = function (name) {
                 if (categories[name]) {
-                    throw ('A event category is already registered for ' + name);
+                    throw ("A event category is already registered for " + name);
                 }
                 categories[name] = eventCategory();
 

@@ -1,6 +1,6 @@
 define(
-	['./routeFactory', '../events', './routeMatchResult', 'jquery',	'./url',
-		'klassified'],
+	["./routeFactory", "../events", "./routeMatchResult", "jquery",	"./url",
+		"klassified"],
 	function(routeFactory, events, routeMatchResult, jQuery, url, object) {
 
 		/**
@@ -11,7 +11,7 @@ define(
 		 *
 		 * @example
 		 *		var aRouteFromSegments = route({segments: arrayOfRouteSegments});
-		 *		var aRouteFromPattern = route('/segmentA/#aParameter/?andAnOptionalParameter');
+		 *		var aRouteFromPattern = route("/segmentA/#aParameter/?andAnOptionalParameter");
 		 *
 		 * Route pattern strings are parsed into segment arrays by `routeFactory`.
 		 *
@@ -19,9 +19,9 @@ define(
 		 * of route segments. A route match a URL if the segments matches the route segments.
 		 *
 		 * @example
-		 *	route('/User/#id').matchUrl('/User/john').matched(); // => true
+		 *	route("/User/#id").matchUrl("/User/john").matched(); // => true
 		 *
-		 * Route would match URL since first segment in URL match Route (both 'User') and second
+		 * Route would match URL since first segment in URL match Route (both "User") and second
 		 * segment is matched since a route parameter will match all values (if no constraints).
 		 *
 		 * Some segments can be optional and other mandatory. The strategy to match route with optional
@@ -37,13 +37,13 @@ define(
 		 *
 		 * @example
 		 *
-		 *		var result = route('/user/#id').matchUrl('/user/john');
-		 *		console.dir(result.getValues()); // => { user: 'john'}
+		 *		var result = route("/user/#id").matchUrl("/user/john");
+		 *		console.dir(result.getValues()); // => { user: "john"}
 		 *
 		 * Routes can also be used as patterns for creating URLs
 		 *
-		 *		var url = route('/user/#id').expand({id: 'john'});
-		 *		console.log(url); // => '/user/john'
+		 *		var url = route("/user/#id").expand({id: "john"});
+		 *		console.log(url); // => "/user/john"
 		 *
 		 *
 		 * @param {string|{}} spec Route pattern or route spec
@@ -85,7 +85,7 @@ define(
 			// Public
 			//
 
-			that.onMatched = my.events.createEvent('matched');
+			that.onMatched = my.events.createEvent("matched");
 
 			// @deprecated Use event property instead
 			that.on = my.events.on;
@@ -104,7 +104,7 @@ define(
 				}
 
 				var result = createMatchResult(match, url);
-                my.events.trigger('matched', result);
+                my.events.trigger("matched", result);
 
 				return result;
 			};
@@ -140,7 +140,7 @@ define(
 
 					// Validate segment
 					if (!routeSegment.match(urlSegment)) {
-						throw new Error('Could not generate a valid URL');
+						throw new Error("Could not generate a valid URL");
 					}
 
 					urlSegments.push(urlSegment);
@@ -153,12 +153,12 @@ define(
 						query[param] = params[param];
 						// Handle array param values
 						if(query[param] instanceof Array) {
-							query[param] = query[param].join(',');
+							query[param] = query[param].join(",");
 						}
 					}
 				});
 
-				return url.build(urlSegments.join('/'), query).toString();
+				return url.build(urlSegments.join("/"), query).toString();
 			};
 
 			/**
@@ -179,7 +179,7 @@ define(
 			 * @returns {string}
 			 */
 			that.toString = function() {
-				return 'route(' + segments.join('/') + ')';
+				return "route(" + segments.join("/") + ")";
 			};
 
 			//
@@ -246,9 +246,9 @@ define(
 				});
 
 				if(optionalPositions.length > 15)  {
-					throw new Error ('Too many optional arguments. "' + optionalPositions.length +
-						'"" optionals would generate  ' + Math.pow(2,optionalPositions.length) +
-						' optional sequences.');
+					throw new Error ("Too many optional arguments. \"" + optionalPositions.length +
+						"\" optionals would generate  " + Math.pow(2,optionalPositions.length) +
+						" optional sequences.");
 				}
 
 				// Generate possible sequences
@@ -269,7 +269,7 @@ define(
 			}
 
 			/**
-			 * Create a 'routeMatchResult' from a matched sequence.
+			 * Create a "routeMatchResult" from a matched sequence.
 			 *
 			 * @param {segment[]} match Matched segment sequence
 			 * @param {url} url Matched URL

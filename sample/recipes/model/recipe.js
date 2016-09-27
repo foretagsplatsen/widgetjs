@@ -1,5 +1,5 @@
 define([
-	'klassified'
+	"klassified"
 ], function (object) {
 
 	/**
@@ -22,7 +22,7 @@ define([
 		};
 
 		that.toString = function() {
-			return '' + that.amount + ' ' + that.unit + ' ' + that.name;
+			return "" + that.amount + " " + that.unit + " " + that.name;
 		};
 	});
 
@@ -63,11 +63,11 @@ define([
 
 		my.initialize = function(spec) {
 			my.super(spec);
-			that.id = spec.id || '';
-			that.image = spec.image || '';
-			that.name = spec.name || '';
+			that.id = spec.id || "";
+			that.image = spec.image || "";
+			that.name = spec.name || "";
 			that.source = spec.source;
-			that.description = spec.description || '';
+			that.description = spec.description || "";
 			that.instructions = spec.instructions && spec.instructions.map(function(instructionSpec) {
 				return recipeInstruction(instructionSpec);
 			}) || [];
@@ -77,7 +77,7 @@ define([
 		};
 
 		that.newIngredient = function() {
-			that.ingredients.push(recipeIngredient({name: '', amount: '', unit: ''}));
+			that.ingredients.push(recipeIngredient({name: "", amount: "", unit: ""}));
 		};
 
 		that.removeIngredientAtIndex = function(index) {
@@ -85,7 +85,7 @@ define([
 		};
 
 		that.newInstruction = function() {
-			that.instructions.push(recipeInstruction({text: ' '}));
+			that.instructions.push(recipeInstruction({text: " "}));
 		};
 
 		that.removeInstructionAtIndex = function(index) {

@@ -31,9 +31,9 @@
 (function () {
 
     // Regular Expressions for parsing tags and attributes
-    var startTag = /^<([-A-Za-z0-9_]+)((?:\s+[a-zA-Z_:][-a-zA-Z0-9_:.]+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/,
+    var startTag = /^<([-A-Za-z0-9_]+)((?:\s+[a-zA-Z_:][-a-zA-Z0-9_:.]+(?:\s*=\s*(?:(?:"[^"]*")|(?:"[^"]*")|[^>\s]+))?)*)\s*(\/?)>/,
         endTag = /^<\/([-A-Za-z0-9_]+)[^>]*>/,
-        attr = /([a-zA-Z_:][-a-zA-Z0-9_:.]+)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
+        attr = /([a-zA-Z_:][-a-zA-Z0-9_:.]+)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:"((?:\\.|[^"])*)")|([^>\s]+)))?/g;
 
     // Empty Elements - HTML 5
     var empty = makeMap("area,base,basefont,br,col,frame,hr,img,input,isindex,link,meta,param,embed");
@@ -63,7 +63,7 @@
         while (html) {
             chars = true;
 
-            // Make sure we're not in a script or style element
+            // Make sure we"re not in a script or style element
             if (!stack.last() || !special[stack.last()]) {
 
                 // Comment
@@ -158,7 +158,7 @@
                     attrs.push({
                         name: name,
                         value: value,
-                        escaped: value.replace(/(^|[^\\])"/g, '$1\\\"') //"
+                        escaped: value.replace(/(^|[^\\])"/g, "$1\\\"") //"
                     });
                 });
 
@@ -198,7 +198,7 @@
                 results += "<" + tag;
 
                 for (var i = 0; i < attrs.length; i++)
-                    results += " " + attrs[i].name + '="' + attrs[i].escaped + '"';
+                    results += " " + attrs[i].name + "="" + attrs[i].escaped + """;
                 results += ">";
             },
             end: function (tag) {
@@ -242,7 +242,7 @@
             documentElement = doc.documentElement ||
                 doc.getDocumentElement && doc.getDocumentElement();
 
-        // If we're dealing with an empty document then we
+        // If we"re dealing with an empty document then we
         // need to pre-populate it with the HTML document structure
         if (!documentElement && doc.createElement) (function () {
             var html = doc.createElement("html");
@@ -258,13 +258,13 @@
             for (var i in one)
                 one[i] = doc.getElementsByTagName(i)[0];
 
-        // If we're working with a document, inject contents into
+        // If we"re working with a document, inject contents into
         // the body element
         var curParentNode = one.body;
 
         HTMLParser(html, {
             start: function (tagName, attrs, unary) {
-                // If it's a pre-built element, then we can ignore
+                // If it"s a pre-built element, then we can ignore
                 // its construction
                 if (one[tagName]) {
                     curParentNode = one[tagName];

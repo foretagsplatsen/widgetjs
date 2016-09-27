@@ -1,5 +1,5 @@
 define([
-	'./abstractSegment'
+	"./abstractSegment"
 ], function(abstractSegment) {
 
 	/**
@@ -34,7 +34,7 @@ define([
 		 * @returns {boolean}
 		 */
 		that.match = function(segmentString) {
-			return ['#', '?'].indexOf(segmentString[0]) === -1;
+			return ["#", "?"].indexOf(segmentString[0]) === -1;
 		};
 	});
 

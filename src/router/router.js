@@ -1,11 +1,11 @@
 define(
 	[
-		'jquery',
-		'../events',
-		'./route',
-		'./url',
-		'./hashLocation',
-		'klassified'
+		"jquery",
+		"../events",
+		"./route",
+		"./url",
+		"./hashLocation",
+		"klassified"
 	],
 	function(jQuery, events, route, url, hashLocation, object) {
 
@@ -61,19 +61,19 @@ define(
 			 * Triggered when a route is matched with `routeMatchResult` as argument.
 			 * @type {event}
 			 */
-            that.onRouteMatched = my.events.createEvent('routeMatched');
+            that.onRouteMatched = my.events.createEvent("routeMatched");
 
 			/**
-			 * Triggered when a route is not matched with 'url' as argument.
+			 * Triggered when a route is not matched with "url" as argument.
 			 * @type {event}
 			 */
-            that.onRouteNotFound = my.events.createEvent('routeNotFound');
+            that.onRouteNotFound = my.events.createEvent("routeNotFound");
 
 			/**
 			 * Triggered each time a URL is resolved with `url` as argument
 			 * @type {event}
 			 */
-            that.onResolveUrl = my.events.createEvent('resolveUrl');
+            that.onResolveUrl = my.events.createEvent("resolveUrl");
 
             // @deprecated Use event property instead
             that.on = my.events.on;
@@ -106,33 +106,33 @@ define(
 			 *
 			 *		// Simplest possible route
 			 *		aRouter.addRoute({
-			 *			pattern: '/user/#id',
+			 *			pattern: "/user/#id",
 			 *			action: function(id, query) { console.log(id, query);},
 			 *		});
 			 *
 			 *		// Route with name and priority,
 			 *		aRouter.addRoute({
-			 *			name: 'user',
-			 *			pattern: '/user/#id',
+			 *			name: "user",
+			 *			pattern: "/user/#id",
 			 *			priority: 4000,
 			 *			action: function(id) { console.log(id);},
 			 *		});
 			 *
 			 *		// Route with only pattern and custom onMatched event handler,
-			 *		var route = aRouter.addRoute({ pattern: ''/user/#id''});
+			 *		var route = aRouter.addRoute({ pattern: ""/user/#id""});
 			 *		route.onMatched(function(result) {
 			 *			console.dir(result.getValues());
 			 *		});
 			 *
 			 *		// Route with route options,
 			 *		aRouter.addRoute({
-			 *			pattern: '/user/#id',
+			 *			pattern: "/user/#id",
 			 *			priority: 4000,
 			 *			defaults: {
-			 *				id: 'john_doe'
+			 *				id: "john_doe"
 			 *			},
 			 *			constraints: {
-			 *				id: ['john_doe', 'jane_doe']
+			 *				id: ["john_doe", "jane_doe"]
 			 *			}
 			 *		});
 			 *
@@ -207,7 +207,7 @@ define(
 			that.removeRoute = function(route) {
 				var index = my.routeTable.indexOf(route);
 				if(index === -1) {
-					throw new Error('Route not in route table');
+					throw new Error("Route not in route table");
 				}
 
 				my.routeTable.splice(index, 1);
@@ -222,7 +222,7 @@ define(
             };
 
 			/**
-			 * Pipes URL matching 'routeSpec' to another router.
+			 * Pipes URL matching "routeSpec" to another router.
 			 *
 			 * @param {{}} routeSpec Same options as `addRoute`
 			 * @param {router} router
@@ -231,7 +231,7 @@ define(
 			 */
 			that.pipeRoute = function (routeSpec, router) {
 				if(!routeSpec || !routeSpec.pattern) {
-					throw new Error('Route pattern required');
+					throw new Error("Route pattern required");
 				}
 
 				var aRoute = that.addRoute(routeSpec);
@@ -267,11 +267,11 @@ define(
 			 *
 			 * @example
 			 *  // Link to a route by name (recommended)
-			 *	aRouter.linkTo('users-list', {user: 'jane'});
+			 *	aRouter.linkTo("users-list", {user: "jane"});
 			 *
 			 *	// Link to a path
-			 *	aRouter.linkTo('/user/mikael');
-			 *	aRouter.linkTo('/user/', {sortBy: 'name'});
+			 *	aRouter.linkTo("/user/mikael");
+			 *	aRouter.linkTo("/user/", {sortBy: "name"});
 			 *
 			 * @param {string} routeName Name of route or path
 			 * @param {{}} [parameters]
@@ -297,8 +297,8 @@ define(
 			 * Link to a path
 			 *
 			 * @example
-			 *	aRouter.linkToPath('/user/mikael');
-			 *	aRouter.linkToPath('/user/', {sortBy: 'name'});
+			 *	aRouter.linkToPath("/user/mikael");
+			 *	aRouter.linkToPath("/user/", {sortBy: "name"});
 			 *
 			 * @param {string} path
 			 * @param {{}} query
@@ -323,11 +323,11 @@ define(
 			 *
 			 * @example
 			 *	// Redirect to a route by name
-			 *	aRouter.redirectTo('users-list', {user: 'jane'});
+			 *	aRouter.redirectTo("users-list", {user: "jane"});
 			 *
 			 *	// Redirect to a path
-			 *	aRouter.redirectTo('/user/mikael');
-			 *	aRouter.redirectTo('/user/', {sortBy: 'name'});
+			 *	aRouter.redirectTo("/user/mikael");
+			 *	aRouter.redirectTo("/user/", {sortBy: "name"});
 			 *
 			 * @param {string} routeName
 			 * @param {{}} [parameters]
@@ -352,8 +352,8 @@ define(
 			 * Redirect to a path
 			 *
 			 * @example
-			 *	aRouter.redirectToPath('/user/mikael');
-			 *	aRouter.redirectToPath('/user/', {sortBy: 'name'});
+			 *	aRouter.redirectToPath("/user/mikael");
+			 *	aRouter.redirectToPath("/user/", {sortBy: "name"});
 			 *
 			 * @param {string} path
 			 * @param {{}} query

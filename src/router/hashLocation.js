@@ -1,18 +1,18 @@
 define([
-	'jquery',
-	'../events',
-	'./url',
-	'klassified'
+	"jquery",
+	"../events",
+	"./url",
+	"klassified"
 ], function(jQuery, events, url, object) {
 
 	/**
-	 * In modern browsers we use the 'hashchange' event to listen for location changes. If not supported
+	 * In modern browsers we use the "hashchange" event to listen for location changes. If not supported
 	 * we poll for changes using a timer.
 	 */
-	var noHashChangeSupport = !('onhashchange' in window);
+	var noHashChangeSupport = !("onhashchange" in window);
 
 	/**
-	 * Num ms between each location change poll on browsers without 'hashchange'
+	 * Num ms between each location change poll on browsers without "hashchange"
 	 */
 	var pollInterval = 25;
 
@@ -21,10 +21,10 @@ define([
 	 *
 	 * @example
 	 *		var location = hash();
-	 *		hash.on('changed', function(newUrl) { window.alert(newUrl); });
+	 *		hash.on("changed", function(newUrl) { window.alert(newUrl); });
 	 *		location.start();
-	 *		location.setUrl('newUrl');
-	 *		location.setUrl('anotherUrl');
+	 *		location.setUrl("newUrl");
+	 *		location.setUrl("anotherUrl");
 	 *		location.back();
 	 *
 	 * @param {{}} [spec]
@@ -50,7 +50,7 @@ define([
 		 *
 		 * @type {event}
 		 */
-        that.onChanged = my.events.createEvent('changed');
+        that.onChanged = my.events.createEvent("changed");
 
 		/**
 		 * Set hash fragment to URL
@@ -121,7 +121,7 @@ define([
 			if (noHashChangeSupport) {
 				pollTimerId = setInterval(check, pollInterval);
 			} else {
-				jQuery(window).bind('hashchange', check);
+				jQuery(window).bind("hashchange", check);
 			}
 		};
 
@@ -133,7 +133,7 @@ define([
 				clearInterval(pollTimerId);
 				pollTimerId = null;
 			}
-			jQuery(window).unbind('hashchange', check);
+			jQuery(window).unbind("hashchange", check);
 		};
 
 		//
@@ -149,15 +149,15 @@ define([
 		}
 
 		function urlToHash(aUrl) {
-			if(typeof aUrl === 'string') {
+			if(typeof aUrl === "string") {
 				aUrl = url({rawUrl: aUrl});
 			}
-			return '#!/' + aUrl.toString();
+			return "#!/" + aUrl.toString();
 		}
 
 		function urlFromHash(aHash) {
 			// Remove hash/hash-bang and any leading /
-			return url({rawUrl: aHash.replace(/^#!?[\/]?/, '')});
+			return url({rawUrl: aHash.replace(/^#!?[\/]?/, "")});
 		}
 
 		function setCurrentHash(newHash) {
