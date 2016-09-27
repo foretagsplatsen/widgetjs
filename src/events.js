@@ -30,6 +30,62 @@ define([],
                 return bindCallback(callback);
             };
 
+        /**
+         * Binds a callback to an event
+         *
+         * @param spec.callback {function} Callback to execute on event
+         * @param spec.event {event} Event to bind callback to
+
+         * @returns {eventBinding}
+         */
+        var eventBinding = function(spec) {
+            spec = spec || {};
+            var that = {};
+
+            var callback = spec.callback;
+            var event = spec.event;
+
+            /**
+             * Is bound to an event
+             * @returns {boolean}
+             */
+            that.isBound = function() {
+                return event !== undefined;
+            };
+
+            /**
+             * Remove itself from event, if bound.
+             */
+            that.unbind = function() {
+                if (that.isBound()) {
+                    event.off(that);
+                    event = undefined;
+                }
+            };
+
+            /**
+             * @param anEvent
+             */
+            that.bind = function(anEvent) {
+                that.unbind();
+                if (anEvent) {
+                    event = anEvent;
+                }
+            };
+
+            /**
+             * Executes connected callback
+             * @param params
+             */
+            that.execute = function(params) {
+                if (callback) {
+                    callback.apply(that, params);
+                }
+            };
+
+            return that;
+        };
+
             /**
              * Like on() except callback will only be fired once
              *
@@ -218,62 +274,6 @@ define([],
                 }
                 return event;
             }
-
-            return that;
-        };
-
-        /**
-         * Binds a callback to an event
-         *
-         * @param spec.callback {function} Callback to execute on event
-         * @param spec.event {event} Event to bind callback to
-
-         * @returns {eventBinding}
-         */
-        var eventBinding = function(spec) {
-            spec = spec || {};
-            var that = {};
-
-            var callback = spec.callback;
-            var event = spec.event;
-
-            /**
-             * Is bound to an event
-             * @returns {boolean}
-             */
-            that.isBound = function() {
-                return event !== undefined;
-            };
-
-            /**
-             * Remove itself from event, if bound.
-             */
-            that.unbind = function() {
-                if (that.isBound()) {
-                    event.off(that);
-                    event = undefined;
-                }
-            };
-
-            /**
-             * @param anEvent
-             */
-            that.bind = function(anEvent) {
-                that.unbind();
-                if (anEvent) {
-                    event = anEvent;
-                }
-            };
-
-            /**
-             * Executes connected callback
-             * @param params
-             */
-            that.execute = function(params) {
-                if (callback) {
-                    callback.apply(that, params);
-                }
-            };
 
             return that;
         };
