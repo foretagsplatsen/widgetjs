@@ -314,7 +314,7 @@ define(
 
 			for (mask = 1; mask < total; mask++) {
 				result = [];
-				i = input.length - 1;
+				var i = input.length - 1;
 				do {
 					if ((mask & (1 << i)) !== 0) {
 						result.unshift(input[i]);
