@@ -97,14 +97,14 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
 
     test("linkTo() creates links to paths in app", function() {
         var my = {}; // reference to protected methods using "my";
-        var aWidget = widget({}, my);
+        widget({}, my);
 
         assert.equal(my.linkTo("foo/bar"), "#!/foo/bar", "Hash-bang convention hidden in hash.js");
     });
 
     test("redirectTo() redirects to paths in app", function() {
         var my = {}; // reference to protected methods using "my";
-        var aWidget = widget({}, my);
+        widget({}, my);
 
         my.redirectTo("foo/bar");
         assert.equal(window.location.hash, my.linkTo("foo/bar"), "Use hash-bang convention hidden in hash.js");

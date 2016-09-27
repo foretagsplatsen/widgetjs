@@ -46,7 +46,7 @@ define(
 		test("Router options", function() {
 			// Arrange a router with options set
 			var anotherMy = {};
-			var anotherRouter = router({
+			router({
 				locationHandler: { isFake: true, onChanged: function() {} }
 			}, anotherMy);
 
@@ -87,7 +87,7 @@ define(
 			// Act: add routes with different priorities
 			var invoiceRoute = aRouter.addRoute({pattern: "/invoice/"});
 			var ticketRoute = aRouter.addRoute({pattern: "/ticket/"});
-			var customerRoute = aRouter.addRoute({pattern: "/customer/", priority: 2});
+			aRouter.addRoute({pattern: "/customer/", priority: 2});
 			var orderRoute = aRouter.addRoute({pattern: "/order/", priority: 2});
 			var userRoute = aRouter.addRoute({pattern: "/user/", priority: 1});
 
@@ -165,7 +165,7 @@ define(
 
 		test("resolveUrl executes action on match", function(start) {
 			// Arrange: setup a route
-			var userRoute = aRouter.addRoute({
+			aRouter.addRoute({
 				pattern: "/user/",
 				action: function() {
 					start(); // execute asserts
@@ -214,7 +214,7 @@ define(
 		test("resolveUrl pass optional value defaults to action", function(start) {
 			// Arrange a route that have two optional parameters
 			//  with defaukts
-			var userRoute = aRouter.addRoute({
+			aRouter.addRoute({
 				pattern: "/user/?userid/order/?orderid",
 				defaults: {
 					userid: "bengan",
@@ -234,7 +234,7 @@ define(
 
 		test("resolveUrl pass query as last argument to action", function(start) {
 			// Arrange a route that have one parameter
-			var userRoute = aRouter.addRoute({
+			aRouter.addRoute({
 				pattern: "/user/#userid/order",
 				action: function(userid, query) {
 					// Assert: that parameters and query was passed ok
@@ -286,7 +286,7 @@ define(
 
 		test("Add route with constraints", function(start) {
 			// Arrange a route with constraints
-			var userRoute = aRouter.addRoute({
+			aRouter.addRoute({
 				pattern: "/user/#name/",
 				constraints: {
 					name: ["nicolas", "Mikael"]

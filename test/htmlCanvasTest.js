@@ -200,7 +200,7 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
     test("can render arrays", function() {
         withCanvas(function(html) {
             // Arrange a div with10 sub span supplied to DIV as an array
-            var div = html.div($.map([1,2,3,4,5,6,7,8,9,10], function(num) {
+            html.div($.map([1,2,3,4,5,6,7,8,9,10], function(num) {
                 return html.span(num.toString());
             })).id("test_div");
 
@@ -213,7 +213,7 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
     test("can render several objects using html.render", function() {
         withCanvas(function(html) {
             // Arrange
-            var div = html.div(function(html) {
+            html.div(function(html) {
 				html.render(html.span("hello"), html.span("world"));
 			}).id("test_div");
 
@@ -302,7 +302,7 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
 			var htmlString = "<div id=\"unescaped\">foo</div>";
 
             // Act: render the string
-			var result = html.render(htmlString);
+			html.render(htmlString);
 
             // Assert
             assert.notOk(jQuery("#unescaped").get(0), "div was not injected");
@@ -315,7 +315,7 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
 			var htmlString = "<>&foo";
 
             // Act: render the string
-			var result = html.render(htmlString);
+			html.render(htmlString);
 
             // Assert
             assert.equal(jQuery("#sandbox").html(), "&lt;&gt;&amp;foo", "content was escaped");
@@ -328,7 +328,7 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
 			var htmlString = "<div>hello</div>";
 
             // Act: render the string
-			var result = html.div({id: "not-escaped"}).html(htmlString);
+			html.div({id: "not-escaped"}).html(htmlString);
 
             // Assert
             assert.equal(jQuery("#not-escaped").html(), htmlString, "content was not escaped");
