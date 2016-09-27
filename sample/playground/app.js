@@ -4,7 +4,7 @@ define([
 	"./outputWidget"
 ], function(widgetjs, editorWidget, outputWidget) {
 
-	var counterCode = "function counterWidget(spec, my) {\n\tspec = spec || {};\n\tmy = my || {};\n\n\tvar that = widgetjs.widget(spec, my);\n\n\tvar count = 0;\n\n\tthat.renderContentOn = function(html) {\n\t\thtml.h1(count.toString());\n\t\thtml.button(\"+\").click(function() { count++; that.update();});\n\t\thtml.button(\"-\").click(function() { count--; that.update();});\n\t};\n\n\treturn that;\n};\n\nreturn counterWidget();";
+	var counterCode = "function counterWidget(spec, my) {\n\tspec = spec || {};\n\tmy = my || {};\n\n\tvar that = widgetjs.widget(spec, my);\n\n\tvar count = 0;\n\n\tthat.renderContentOn = function(html) {\n\t\thtml.h1(count.toString());\n\t\thtml.button(\"+\").click(function() { count++; that.update();});\n\t\thtml.button(\"-\").click(function() { count--; that.update();});\n\t};\n\n\treturn that;\n};\n\nreturn counterWidget();";
 
 	/**
 	 * JSFiddle like playground for trying out WIDGET-JS
@@ -12,8 +12,8 @@ define([
 	 * @return {playgroundApp}
 	 */
 	function playgroundApp(spec, my) {
-		spec = spec || {};
-		my = my || {};
+		spec = spec || {};
+		my = my || {};
 
 		var that = widgetjs.widget(spec, my);
 

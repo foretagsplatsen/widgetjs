@@ -19,15 +19,15 @@ define([
   * @return {editorWidget}
   */
   function editorWidget(spec, my) {
-    spec = spec || {};
-    my = my || {};
+    spec = spec || {};
+    my = my || {};
 
     var that = widgetjs.widget(spec, my);
 
     var showLineNumbers = spec.showLineNumbers === undefined ? true : spec.showLineNumbers;
-    var theme = spec.theme || "monokai";
-    var mode = spec.mode || "javascript";
-    var code = spec.code || "";
+    var theme = spec.theme || "monokai";
+    var mode = spec.mode || "javascript";
+    var code = spec.code || "";
 
     var editor;
 

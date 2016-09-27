@@ -19,7 +19,7 @@ define(
 		 *		var titleWidget = function(spec) {
 		 *			var that = widget(spec);
 		 *
-		 *			var title = spec.title || "Hello World";
+		 *			var title = spec.title || "Hello World";
 		 *
 		 *			that.renderContentOn = function(html) {
 		 *				html.h1(title)
@@ -343,7 +343,7 @@ define(
 			 *			);
 			 *		};
 			 *
-			 * @param {htmlCanvas} html
+			 * @param {htmlCanvas} html
 			 */
 			that.renderContentOn = function(html) {};
 

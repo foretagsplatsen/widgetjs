@@ -16,7 +16,7 @@ define([
 		 * Static segment match if URL and route segment
 		 * strings are identical.
 		 *
-		 * @param {string} urlSegment
+		 * @param {string} urlSegment
 		 * @returns {boolean}
 		 */
 		that.match = function(urlSegment) {

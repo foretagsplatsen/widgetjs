@@ -127,7 +127,7 @@ define([
 		 * @example
 		 *	parsePath("/a/path/to?foo=bar"); // => "/a/path/to"
 		 *
-		 * @param {string} rawUrl
+		 * @param {string} rawUrl
 		 * @returns {string}
 		 */
 		function parsePath(rawUrl) {

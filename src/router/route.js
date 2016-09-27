@@ -193,7 +193,7 @@ define(
 			 * @returns {boolean}
 			 */
 			function isMatch(urlSegments, sequence) {
-				sequence = sequence || segments;
+				sequence = sequence || segments;
 
 				// Can not match if different sizes
 				if(urlSegments.length != sequence.length && !ignoreTrailingSegments) {
