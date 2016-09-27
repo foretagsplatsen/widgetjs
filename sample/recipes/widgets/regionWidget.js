@@ -1,6 +1,6 @@
 define([
-	'widgetjs/core'
-], function (widgetjs) {
+	"widgetjs/core"
+], function(widgetjs) {
 
 	var regionWidget = widgetjs.widget.subclass(function(that, my) {
 
@@ -16,7 +16,7 @@ define([
 			widgets = newWidgets;
 
 			widgets.forEach(function(aWidget) {
-				that.trigger('added', aWidget);
+				that.trigger("added", aWidget);
 			});
 
 			that.update();
@@ -24,7 +24,7 @@ define([
 
 		that.empty = function() {
 			widgets.forEach(function(aWidget) {
-				that.trigger('removed', aWidget);
+				that.trigger("removed", aWidget);
 			});
 
 			widgets = [];

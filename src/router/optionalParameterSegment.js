@@ -1,5 +1,5 @@
 define([
-	'./parameterSegment'
+	"./parameterSegment"
 ], function(parameterSegment) {
 
 	/**
@@ -45,7 +45,7 @@ define([
 		 * @returns {*}
 		 */
 		that.toString = function() {
-			return 'optional(' + that.getName() + ')';
+			return "optional(" + that.getName() + ")";
 		};
 	});
 
@@ -56,7 +56,7 @@ define([
 		 * @returns {boolean}
 		 */
 		that.match = function(segmentString) {
-			return segmentString.substr(0, 1) === '?';
+			return segmentString.substr(0, 1) === "?";
 		};
 	});
 

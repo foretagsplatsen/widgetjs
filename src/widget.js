@@ -1,14 +1,44 @@
 define(
 	[
-		'klassified',
-		'./widget-extensions',
-		'./router',
-		'./events',
-		'./htmlCanvas',
-		'jquery'
+		"klassified",
+		"./widget-extensions",
+		"./router",
+		"./events",
+		"./htmlCanvas",
+		"jquery"
 	],
 
-	function (object, ext, router, events, htmlCanvas, jQuery) {
+	function(object, ext, router, events, htmlCanvas, jQuery) {
+
+		/**
+		 * Creates unique ids used by widgets to identify their root div.
+		 */
+		var idGenerator = (function() {
+			var that = {};
+			var id = 0;
+
+			that.newId = function() {
+				id += 1;
+				return id.toString();
+			};
+
+			return that;
+		})();
+
+		/**
+		 * Helpers for keeping track of the currently rendered widget.
+		 */
+		var currentWidget = (function() {
+			var current;
+			return {
+				get: function() {
+					return current;
+				},
+				set: function(widget) {
+					current = widget;
+				}
+			};
+		})();
 
 		/**
 		 * Base for all widgets. A widget can keep state in variables, contain logic and
@@ -19,7 +49,7 @@ define(
 		 *		var titleWidget = function(spec) {
 		 *			var that = widget(spec);
 		 *
-		 *			var title = spec.title || 'Hello World';
+		 *			var title = spec.title || "Hello World";
 		 *
 		 *			that.renderContentOn = function(html) {
 		 *				html.h1(title)
@@ -28,10 +58,10 @@ define(
 		 *			return that;
 		 *		};
 		 *
-		 *		var helloWorldWidget = titleWidget({title: 'Hello Widget!'});
+		 *		var helloWorldWidget = titleWidget({title: "Hello Widget!"});
 		 *
 		 *		$(document).ready(function() {
-		 *			helloWorldWidget.appendTo('BODY');
+		 *			helloWorldWidget.appendTo("BODY");
 		 *		});
 		 *
 		 * Widgets can also be rendered on a HTML canvas (since widget implements `appendToBrush()`). Eg.
@@ -79,7 +109,7 @@ define(
 			 *
 			 * @returns {String}
 			 */
-			that.getId = function () {
+			that.getId = function() {
 				return id;
 			};
 
@@ -121,11 +151,11 @@ define(
 			 * Renders the widget on a JQuery / DOM
 			 *
 			 * @example
-			 * widget.appendTo('BODY');
+			 * widget.appendTo("BODY");
 			 *
 			 * @param aJQuery
 			 */
-			that.appendTo = function (aJQuery) {
+			that.appendTo = function(aJQuery) {
 				my.withAttachHooks(function() {
 					renderBasicOn(htmlCanvas(aJQuery));
 				});
@@ -137,7 +167,7 @@ define(
 			 *
 			 * @param aJQuery
 			 */
-			that.replace = function (aJQuery) {
+			that.replace = function(aJQuery) {
 				my.withAttachHooks(function() {
 					var canvas = htmlCanvas(aJQuery);
 					canvas.root.asJQuery().empty();
@@ -149,12 +179,12 @@ define(
 			 * Answers a jQuery that match the root DOM element. By default
 			 * by selecting an element that have the same ID as the widget.
 			 *
-			 * See 'renderOn'
+			 * See "renderOn"
 			 *
 			 * @returns {*}
 			 */
-			that.asJQuery = function () {
-				return jQuery('#' + that.getId());
+			that.asJQuery = function() {
+				return jQuery("#" + that.getId());
 			};
 
 			/**
@@ -162,20 +192,20 @@ define(
 			 *
 			 * @returns {boolean}
 			 */
-			that.isRendered = function () {
+			that.isRendered = function() {
 				return that.asJQuery().length > 0;
 			};
 
 			/**
 			 * Implementation for `appendToBrush()` to allow a widget to be
-			 * appended to a brush. See 'htmlCanvas'.
+			 * appended to a brush. See "htmlCanvas".
 			 *
 			 * Basically it allows us to do:
 			 *		html.div(widget);
 			 *
 			 * @param aTagBrush
 			 */
-			that.appendToBrush = function (aTagBrush) {
+			that.appendToBrush = function(aTagBrush) {
 				my.withAttachHooks(function() {
 					renderBasicOn(htmlCanvas(aTagBrush.asJQuery()));
 				});
@@ -187,7 +217,7 @@ define(
 			 */
 			that.triggerWillAttach = function() {
 				my.willAttach();
-				children.forEach(function (widget) {
+				children.forEach(function(widget) {
 					widget.triggerWillAttach();
 				});
 			};
@@ -198,7 +228,7 @@ define(
 			 */
 			that.triggerDidAttach = function() {
 				my.didAttach();
-				children.forEach(function (widget) {
+				children.forEach(function(widget) {
 					widget.triggerDidAttach();
 				});
 				that.onAttach.trigger();
@@ -277,29 +307,29 @@ define(
 			}
 
 			/**
-			 * Main entry point for rendering. For convenience 'renderOn' will	wrap the content
-			 * rendered by 'renderContentOn' in a root element (renderRootOn) that will be matched
+			 * Main entry point for rendering. For convenience "renderOn" will	wrap the content
+			 * rendered by "renderContentOn" in a root element (renderRootOn) that will be matched
 			 * by asJQuery.
 			 *
-			 * Usually concrete widgets override 'renderContentOn' to render it content. Widgets
-			 * can override 'renderOn' but must then make sure that it can be matched by 'asJQuery'.
+			 * Usually concrete widgets override "renderContentOn" to render it content. Widgets
+			 * can override "renderOn" but must then make sure that it can be matched by "asJQuery".
 			 *
 			 * One way to do that is to make sure to have only one root element and setting the ID of
 			 * that element to the ID of the widget.
 			 *
 			 * @example
 			 *
-			 *		that.renderOn = function (html) {
+			 *		that.renderOn = function(html) {
 			 *			html.ul({id: that.getId()}
-			 *				html.li('BMW'),
-			 *				html.li('Toyota')
+			 *				html.li("BMW"),
+			 *				html.li("Toyota")
 			 *			);
 			 *		};
 			 *
 			 *
 			 * @param html
 			 */
-			that.renderOn = function (html) {
+			that.renderOn = function(html) {
 				// Renders widget by wrapping `renderContentOn()` in a root element.
 				my.renderRootOn(html).render(that.renderContentOn);
 			};
@@ -309,7 +339,7 @@ define(
 				if(parent) {
 					parent.registerChild(that);
 				}
-				withCurrentWidget(function () {
+				withCurrentWidget(function() {
 					children = [];
 					fn();
 				}, that);
@@ -320,15 +350,15 @@ define(
 			};
 
 			/**
-			 * Renders a wrapper element (by default a 'widgetjs-widget' tag) and
+			 * Renders a wrapper element (by default a "widgetjs-widget" tag) and
 			 * set the element ID to the ID of the widget so that it can be found by
-			 * 'asJQuery' eg. when we re-render using 'update'.
+			 * "asJQuery" eg. when we re-render using "update".
 			 *
 			 * @param html
 			 * @returns {htmlBrush}
 			 */
-			my.renderRootOn = function (html) {
-				return html.tag('widgetjs-widget').id(id);
+			my.renderRootOn = function(html) {
+				return html.tag("widgetjs-widget").id(id);
 			};
 
 			/**
@@ -336,16 +366,16 @@ define(
 			 *
 			 * @example
 			 *
-			 *		that.renderContentOn = function (html) {
+			 *		that.renderContentOn = function(html) {
 			 *			html.ul(
-			 *				html.li('BMW'),
-			 *				html.li('Toyota')
+			 *				html.li("BMW"),
+			 *				html.li("Toyota")
 			 *			);
 			 *		};
 			 *
-			 * @param {htmlCanvas} html
+			 * @param {htmlCanvas} html
 			 */
-			that.renderContentOn = function (html) {};
+			that.renderContentOn = function(html) {};
 
 			/**
 			 * Hook evaluated before the widget is attached (or reattached due
@@ -373,10 +403,10 @@ define(
 			 * Re-renders the widget and replace it in the DOM
 			 *
 			 * Content is first re-rendered on a document fragment. Update then replace the element matched
-			 * by 'asJQuery' with the new content.
+			 * by "asJQuery" with the new content.
 			 *
 			 */
-			that.update = function () {
+			that.update = function() {
 				if (my.inUpdateTransaction || !that.isRendered()) {
 					return;
 				}
@@ -409,7 +439,6 @@ define(
 				}
 			};
 
-
 			/**
 			 * Evaluate `fn`, ensuring that an update will be
 			 * performed after evaluating the function. Nested calls
@@ -434,36 +463,6 @@ define(
 
 			return that;
 		});
-
-		/**
-		 * Creates unique ids used by widgets to identify their root div.
-		 */
-		var idGenerator = (function () {
-			var that = {};
-			var id = 0;
-
-			that.newId = function () {
-				id += 1;
-				return id.toString();
-			};
-
-			return that;
-		})();
-
-		/**
-		 * Helpers for keeping track of the currently rendered widget.
-		 */
-		var currentWidget = (function () {
-			var current;
-			return {
-				get: function () {
-					return current;
-				},
-				set: function (widget) {
-					current = widget;
-				}
-			};
-		})();
 
 		/**
 		 * Return true if the parent widget is rendering the receiver.

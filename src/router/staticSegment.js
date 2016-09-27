@@ -1,5 +1,5 @@
 define([
-	'./abstractSegment'
+	"./abstractSegment"
 ], function(abstractSegment) {
 
 	/**
@@ -16,7 +16,7 @@ define([
 		 * Static segment match if URL and route segment
 		 * strings are identical.
 		 *
-		 * @param {string} urlSegment
+		 * @param {string} urlSegment
 		 * @returns {boolean}
 		 */
 		that.match = function(urlSegment) {
@@ -34,7 +34,7 @@ define([
 		 * @returns {boolean}
 		 */
 		that.match = function(segmentString) {
-			return ['#', '?'].indexOf(segmentString[0]) === -1;
+			return ["#", "?"].indexOf(segmentString[0]) === -1;
 		};
 	});
 

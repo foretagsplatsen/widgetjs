@@ -1,8 +1,8 @@
 define([
-    'jquery',
-	'widgetjs/router/hashLocation',
-    'chai'
-], function (jQuery, hash, chai) {
+    "jquery",
+	"widgetjs/router/hashLocation",
+    "chai"
+], function(jQuery, hash, chai) {
 
         var assert = chai.assert;
 
@@ -16,7 +16,7 @@ define([
 					return;
 				}
 				var fn = steps.shift();
-				setTimeout(function () {
+				setTimeout(function() {
 					next(fn.apply(next, arguments));
 				}, 10);
 			}
@@ -26,16 +26,17 @@ define([
 
 		function setHash(aHash) {
 			window.location.hash = aHash;
-			window.open(window.location, '_self', true);
-			jQuery(window).trigger( 'hashchange');
+			window.open(window.location, "_self", true);
+			jQuery(window).trigger( "hashchange");
 		}
 
-		var my, hashLocation;
+		var my;
+		var hashLocation;
 
 		suite("hashLocation");
 
         beforeEach(function() {
-				window.location.hash = '';
+				window.location.hash = "";
 
 				my = {};
 				hashLocation = hash({}, my);
@@ -45,72 +46,72 @@ define([
             if(hashLocation) {
                 hashLocation.stop();
             }
-            window.location.hash = '';
+            window.location.hash = "";
 		});
 
-		test("hash defaults", function () {
+		test("hash defaults", function() {
 			// Assert that defaults are correct
-			assert.equal(my.currentHash, undefined, 'current hash is undefined');
-			assert.equal(my.history.length, 0, 'history is empty');
+			assert.equal(my.currentHash, undefined, "current hash is undefined");
+			assert.equal(my.history.length, 0, "history is empty");
 		});
 
-		test("start() initilize hash", function () {
+		test("start() initilize hash", function() {
 			// Arrange: set a location hash
-			window.location.hash = '#!/test';
+			window.location.hash = "#!/test";
 
 			// Act: start listening
 			hashLocation.start();
 
 			// Assert that hash is current location and history is set
-			assert.equal(my.currentHash, '#!/test', 'current hash is window location hash');
-			assert.equal(my.history.length, 1, 'history have one entry');
-			assert.equal(my.history[0], my.currentHash, 'history entry is current hash');
+			assert.equal(my.currentHash, "#!/test", "current hash is window location hash");
+			assert.equal(my.history.length, 1, "history have one entry");
+			assert.equal(my.history[0], my.currentHash, "history entry is current hash");
 		});
 
-		test("start() resets hash", function () {
+		test("start() resets hash", function() {
 			// Arrange: add some history
 			hashLocation.start();
-			setHash('#!/a');
-			setHash('#!/b');
+			setHash("#!/a");
+			setHash("#!/b");
 
 			// Act: restart hash
 			hashLocation.start();
 
 			// Assert that hash was reset,
-			assert.equal(my.history.length, 1, 'history have one entry');
-			assert.equal(my.history[0], my.currentHash, 'history entry is current hash');
+			assert.equal(my.history.length, 1, "history have one entry");
+			assert.equal(my.history[0], my.currentHash, "history entry is current hash");
 		});
 
-		test("getUrl() returns location.hash minus hash-bang", function () {
+		test("getUrl() returns location.hash minus hash-bang", function() {
 			// Arrange: set a location hash
-			window.location.hash = '#!/test';
+			window.location.hash = "#!/test";
 
 			// Act: get current URL
 			hashLocation.start();
 			var currentUrl = hashLocation.getUrl();
 
 			// Assert that URL is location hash minus hash-bang
-			assert.equal(currentUrl.toString(), 'test', 'URL is location hash minus hash-bang');
+			assert.equal(currentUrl.toString(), "test", "URL is location hash minus hash-bang");
 		});
 
-		test("setUrl() adds hash-bang", function () {
+		test("setUrl() adds hash-bang", function() {
 			// Act: set url
 			hashLocation.start();
-			hashLocation.setUrl('test');
+			hashLocation.setUrl("test");
 
 			// Assert that current hash is set correctly
-			assert.equal(my.currentHash, '#!/test', 'Hash-bang is added to location hash');
+			assert.equal(my.currentHash, "#!/test", "Hash-bang is added to location hash");
 		});
 
-		test("linkToUrl() return link for href:s", function () {
+		test("linkToUrl() return link for href:s", function() {
 			// Act: create link to URL
-			var link = hashLocation.linkToUrl('someurl');
+			var link = hashLocation.linkToUrl("someurl");
 
 			// Assert that URL have hash-bang
-			assert.equal(link, '#!/someurl', 'Hash-bang is added to URL');
+			assert.equal(link, "#!/someurl", "Hash-bang is added to URL");
 		});
 
-		test("setUrl() triggers change", function (done) {
+		test("setUrl() triggers change", function(done) {
             var anotherHashLocation = hash();
 
 			// Arrange: listen for url changes
@@ -122,55 +123,55 @@ define([
 
 			// Act: set URL
             anotherHashLocation.start();
-            anotherHashLocation.setUrl('test');
+            anotherHashLocation.setUrl("test");
 
-			// Assert that 'change' callback was executed with url
-			assert.equal(capturedUrl, 'test', 'Parameter in "changed event" is URL');
+			// Assert that "change" callback was executed with url
+			assert.equal(capturedUrl, "test", "Parameter in \"changed event\" is URL");
 
             anotherHashLocation.stop();
 		});
 
-		test("back()", function (done) {
+		test("back()", function(done) {
 			delayedSteps(
-				function () {
+				function() {
 					hashLocation.stop();
-					window.location.hash = ''; // start hash
+					window.location.hash = ""; // start hash
 					hashLocation.start();
 				},
-				function () {
-					hashLocation.setUrl('a');
+				function() {
+					hashLocation.setUrl("a");
 				},
-				function () {
-					hashLocation.setUrl('b');
+				function() {
+					hashLocation.setUrl("b");
 				},
-				function () {
-					assert.equal(hashLocation.getUrl().toString(), 'b', 'location is last url');
+				function() {
+					assert.equal(hashLocation.getUrl().toString(), "b", "location is last url");
 				},
-				function () {
+				function() {
 					hashLocation.back();
 				},
-				function () {
-					assert.equal(hashLocation.getUrl().toString(), 'a', 'back sets url to previous url');
+				function() {
+					assert.equal(hashLocation.getUrl().toString(), "a", "back sets url to previous url");
 				},
-				function () {
+				function() {
 					hashLocation.back();
 				},
-				function () {
-					assert.equal(hashLocation.getUrl().toString(), '', 'back set to start url');
+				function() {
+					assert.equal(hashLocation.getUrl().toString(), "", "back set to start url");
 				},
-				function () {
+				function() {
 					hashLocation.back();
 				},
-				function () {
-					assert.equal(hashLocation.getUrl().toString(), '', 'can not back furter than start');
+				function() {
+					assert.equal(hashLocation.getUrl().toString(), "", "can not back furter than start");
 				},
-				function () {
-					hashLocation.back('fallback');
+				function() {
+					hashLocation.back("fallback");
 				},
-				function () {
-					assert.equal(hashLocation.getUrl().toString(), 'fallback', 'but can give a fallback url');
+				function() {
+					assert.equal(hashLocation.getUrl().toString(), "fallback", "but can give a fallback url");
 				},
-				function () {
+				function() {
 					done();
 				}
 			);

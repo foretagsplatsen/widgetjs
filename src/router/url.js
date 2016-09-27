@@ -1,21 +1,21 @@
 define([
-	'klassified'
+	"klassified"
 ],
-	function (object) {
+	function(object) {
 
 		/**
 		 * Token/Char used to separate segments in URL paths.
 		 * @type {string}
 		 */
-		var urlSeparator = '/';
+		var urlSeparator = "/";
 
 		/**
 		 * A `url` actually represents the fragment part of the actual url.
 		 *
 		 * @example
-		 *	var url = url({rawUrl: 'path/to?foo=a&bar=b'});
-		 *	url.getPath(); // => 'path/to'
-		 *	url.getQuery(); // => {foo: 'a', bar: 'b'}
+		 *	var url = url({rawUrl: "path/to?foo=a&bar=b"});
+		 *	url.getPath(); // => "path/to"
+		 *	url.getQuery(); // => {foo: "a", bar: "b"}
 		 *	url.matchRoute(aRoute); // => true
 		 *
 		 * @param {string} rawUrl
@@ -30,12 +30,11 @@ define([
 
 			my.initialize = function(spec) {
 				my.super(spec);
-				rawUrl = spec.rawUrl || '';
+				rawUrl = spec.rawUrl || "";
 				path = parsePath(rawUrl);
 				query = parseQuery(rawUrl);
 				segments = parseSegments(path);
 			};
-
 
 			//
 			// Public
@@ -45,21 +44,21 @@ define([
 			 * URL path
 			 * @returns {string}
 			 */
-			that.getPath = function () { return path; };
+			that.getPath = function() { return path; };
 
 			/**
 			 * Key/Value pairs parsed from query
 			 *
 			 * @returns {{}}
 			 */
-			that.getQuery = function () { return query; };
+			that.getQuery = function() { return query; };
 
 			/**
 			 * Segments in path parsed by splitting `path` by `urlSeparator`
 			 *
 			 * @returns {string[]}
 			 */
-			that.getSegments = function () { return segments; };
+			that.getSegments = function() { return segments; };
 
 			/**
 			 * Answers true if the route is a match for the receiver
@@ -67,7 +66,7 @@ define([
 			 * @param route
 			 * @returns {boolean}
 			 */
-			that.matchRoute = function (route) {
+			that.matchRoute = function(route) {
 				return route.matchUrl(that);
 			};
 
@@ -84,22 +83,22 @@ define([
 		 * Create URL from path and query
 		 *
 		 * @example
-		 *	var aUrl = url('/path/to', {foo: 'bar' });
-		 *	aUrl.toString(); // => 'path/to?foo=bar'
+		 *	var aUrl = url("/path/to", {foo: "bar" });
+		 *	aUrl.toString(); // => "path/to?foo=bar"
 		 *
 		 * @param {string} path
 		 * @param {{}} query
 		 * @returns {url}
 		 */
 		url.build = function(path, query) {
-			if (typeof(path) === 'undefined' || path === null || typeof path !== "string") {
-				throw 'accepts only string paths';
+			if (typeof(path) === "undefined" || path === null || typeof path !== "string") {
+				throw "accepts only string paths";
 			}
 
 			if (query) {
                 var queryPart = decodeURIComponent(jQuery.param(query));
                 if(queryPart) {
-                    return url({rawUrl: path + '?' + queryPart});
+                    return url({rawUrl: path + "?" + queryPart});
                 }
             }
 
@@ -111,7 +110,7 @@ define([
 		 * duplicated `urlSeparator`.
 		 *
 		 * @example
-		 *	parseSegments('/a/path/to'); // => ['a', 'path', 'to']
+		 *	parseSegments("/a/path/to"); // => ["a", "path", "to"]
 		 *
 		 * @param path
 		 * @returns {string[]}
@@ -126,13 +125,13 @@ define([
 		 * Returns path from a raw URL
 		 *
 		 * @example
-		 *	parsePath('/a/path/to?foo=bar'); // => '/a/path/to'
+		 *	parsePath("/a/path/to?foo=bar"); // => "/a/path/to"
 		 *
-		 * @param {string} rawUrl
+		 * @param {string} rawUrl
 		 * @returns {string}
 		 */
 		function parsePath(rawUrl) {
-			return rawUrl.replace(/\?.*$/g, '');
+			return rawUrl.replace(/\?.*$/g, "");
 		}
 
 		/**
@@ -140,7 +139,7 @@ define([
 		 * object literal with key/values.
 		 *
 		 * @example
-		 *	parsePath('/a/path/to?foo=bar&test=1'); // => {foo: 'bar', test: '1'}
+		 *	parsePath("/a/path/to?foo=bar&test=1"); // => {foo: "bar", test: "1"}
 		 *
 		 * @param {string} rawUrl
 		 * @returns {{}}
@@ -151,7 +150,7 @@ define([
 			var query = {};
 			var pair;
 			if (result && result.length >= 2) {
-				(result[1].split("&")).forEach(function (each) {
+				(result[1].split("&")).forEach(function(each) {
 					pair = each.split("=");
 					query[pair[0]] = pair[1];
 				});

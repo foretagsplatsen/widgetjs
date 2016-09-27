@@ -1,5 +1,5 @@
 define([
-	'./abstractSegment'
+	"./abstractSegment"
 ], function(abstractSegment) {
 
 	/**
@@ -10,7 +10,7 @@ define([
 	 */
 	function parameterValidator(constraint) {
 		// Custom function that take a url segment as argument
-		if(typeof constraint === 'function') {
+		if(typeof constraint === "function") {
 			return constraint;
 		}
 
@@ -23,7 +23,7 @@ define([
 		}
 
 		// Match valid options in an array
-		if(Object.prototype.toString.call(constraint) === '[object Array]') {
+		if(Object.prototype.toString.call(constraint) === "[object Array]") {
 			var options = constraint.map(function(option) {
 				return option.toLowerCase();
 			});
@@ -32,6 +32,7 @@ define([
 				return options.indexOf(val) !== -1;
 			};
 		}
+		return null;
 	}
 
 	/**
@@ -110,7 +111,7 @@ define([
 		 * @returns {*}
 		 */
 		that.toString = function() {
-			return 'param(' + that.getName() + ')';
+			return "param(" + that.getName() + ")";
 		};
 	});
 
@@ -122,7 +123,7 @@ define([
 		 * @returns {boolean}
 		 */
 		that.match = function(segmentString) {
-			return segmentString.substr(0, 1) === '#';
+			return segmentString.substr(0, 1) === "#";
 		};
 	});
 

@@ -1,6 +1,6 @@
 define([
-	'widgetjs/widget',
-    'htmlparser'
+	"widgetjs/widget",
+    "htmlparser"
 ], function(widget) {
 
     function isBlank(str) {
@@ -11,20 +11,20 @@ define([
         return (/^\s*[\r\n]/).test(str);
     }
 
-    var attributes = ('href for id media rel src style title type blur focus focusin focusout load resize scroll unload ' +
-        'click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave change select submit ' +
-        'keydown keypress keyup error dragstart dragenter dragover dragleave drop dragend').split(' ');
+    var attributes = ("href for id media rel src style title type blur focus focusin focusout load resize scroll unload " +
+        "click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave change select submit " +
+        "keydown keypress keyup error dragstart dragenter dragover dragleave drop dragend").split(" ");
 
     function converterWidget() {
 		var that = widget();
 
 		that.renderContentOn = function(html) {
-            html.h1('HTML');
-            html.textarea({id: 'html', cols: '60', rows: '20', style: 'width: 100%'});
+            html.h1("HTML");
+            html.textarea({id: "html", cols: "60", rows: "20", style: "width: 100%"});
 
-            html.button('Convert').click(function() {
+            html.button("Convert").click(function() {
 
-                var markup = $('#html').val();
+                var markup = $("#html").val();
 
                 var current = {
                     children: []
@@ -33,21 +33,21 @@ define([
 
                 // Write Code
 
-                var results = '';
+                var results = "";
                 var level = 0;
 
                 function indent() {
                     for(var indentIndex = 0; indentIndex < level; indentIndex += 1) {
-                        results += '\t';
+                        results += "\t";
                     }
                 }
 
                 function newline() {
-                    results += '\n';
+                    results += "\n";
                 }
 
                 function writeTagStart (tag) {
-                    results += 'html.' + tag + '(';
+                    results += "html." + tag + "(";
                 }
 
                 function writeTagEnd () {
@@ -55,11 +55,11 @@ define([
                 }
 
                 function writeText (text) {
-                    results += "'" + text + "'";
+                    results += """ + text + """;
                 }
 
                 function writeSeparator () {
-                    results += ', ';
+                    results += ", ";
                 }
 
                 function writeAttributes (attrs) {
@@ -67,22 +67,22 @@ define([
                         return;
                     }
 
-                    results += '{';
+                    results += "{";
                     for (var i = 0; i < attrs.length; i++){
                         var name = attrs[i].name;
                         if(attributes.indexOf(name) < 0) {
-                            name = "'" + name + "'";
+                            name = """ + name + """;
                         }
-                        if(name === 'class') {
-                            name = 'klass';
+                        if(name === "class") {
+                            name = "klass";
                         }
 
-                        results += ' ' + name + ": '" + attrs[i].escaped + "'";
+                        results += " " + name + ": "" + attrs[i].escaped + """;
                         if(i < attrs.length - 1) {
-                            results += ', ';
+                            results += ", ";
                         }
                     }
-                    results += '}';
+                    results += "}";
                 }
 
 
@@ -125,7 +125,7 @@ define([
 
                     },
                     chars: function(str) {
-                        var text = str.replace(/^\s+|\s+$/g, ' '); // allow only one blank before/after
+                        var text = str.replace(/^\s+|\s+$/g, " "); // allow only one blank before/after
                         if(isBlankline(text) || isBlank(text)) {
                             return;
                         }
@@ -143,13 +143,13 @@ define([
                     }
                 });
 
-                $('#code').val(results);
+                $("#code").val(results);
 
                 return false;
             });
 
-            html.h1('Code');
-            html.textarea({id: 'code', cols: '60', rows: '20', style: 'width: 100%'});
+            html.h1("Code");
+            html.textarea({id: "code", cols: "60", rows: "20", style: "width: 100%"});
         };
 
 

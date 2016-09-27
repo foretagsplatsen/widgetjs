@@ -1,10 +1,10 @@
 define(
 	[
-		'./router/url',
-		'./router/route',
-		'./router/router'
+		"./router/url",
+		"./router/route",
+		"./router/router"
 	],
-	function (url, route, router) {
+	function(url, route, router) {
 
 		var routerSingleton = router();
 

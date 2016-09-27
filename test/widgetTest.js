@@ -9,9 +9,9 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
         var my = {};
         var aWidget = widget(my);
         aWidget.renderContentOn = function(html) {
-            html.h1('Hello world');
+            html.h1("Hello world");
         };
-        aWidget.appendTo(jQuery('body'));
+        aWidget.appendTo(jQuery("body"));
 
         // execute test
         callback(aWidget, my);
@@ -21,8 +21,8 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
     };
 
     var withCanvas = function(callback) {
-        $("BODY").append("<div id='sandbox'></div>");
-        var sandbox = jQuery('#sandbox');
+        $("BODY").append("<div id=\"sandbox\"></div>");
+        var sandbox = jQuery("#sandbox");
 
         var html = htmlCanvas(sandbox);
         callback(html);
@@ -43,8 +43,8 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
     });
 
     test("widgets identifier set from spec", function() {
-        var aWidget = widget({id : 'anId'});
-        assert.equal(aWidget.id(), 'anId', 'id() set to id in spec()');
+        var aWidget = widget({id : "anId"});
+        assert.equal(aWidget.id(), "anId", "id() set to id in spec()");
     });
 
     test("widgets supports events", function() {
@@ -55,15 +55,15 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
             var that = widget({}, my);
 
             that.aMethod = function() {
-                that.trigger('anEvent');
+                that.trigger("anEvent");
             };
 
             return that;
         })();
 
         // Assert: that callback is executed when
-        aWidget.on('anEvent', function() {
-            assert.ok(true, 'event triggered on widget()');
+        aWidget.on("anEvent", function() {
+            assert.ok(true, "event triggered on widget()");
         });
 
         // event is triggered
@@ -77,10 +77,10 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
             var my = {};
             var that = widget({}, my);
 
-            that.onAnEvent = my.events.createEvent('anEvent');
+            that.onAnEvent = my.events.createEvent("anEvent");
 
             that.aMethod = function() {
-                that.trigger('anEvent');
+                that.trigger("anEvent");
             };
 
             return that;
@@ -88,7 +88,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
 
         // Assert: that callback is executed when
         aWidget.onAnEvent(function() {
-            assert.ok(true, 'event triggered on widget()');
+            assert.ok(true, "event triggered on widget()");
         });
 
         // event is triggered
@@ -96,18 +96,18 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
     });
 
     test("linkTo() creates links to paths in app", function() {
-        var my = {}; // reference to protected methods using 'my';
-        var aWidget = widget({}, my);
+        var my = {}; // reference to protected methods using "my";
+        widget({}, my);
 
-        assert.equal(my.linkTo('foo/bar'), '#!/foo/bar', 'Hash-bang convention hidden in hash.js');
+        assert.equal(my.linkTo("foo/bar"), "#!/foo/bar", "Hash-bang convention hidden in hash.js");
     });
 
     test("redirectTo() redirects to paths in app", function() {
-        var my = {}; // reference to protected methods using 'my';
-        var aWidget = widget({}, my);
+        var my = {}; // reference to protected methods using "my";
+        widget({}, my);
 
-        my.redirectTo('foo/bar');
-        assert.equal(window.location.hash, my.linkTo('foo/bar'), 'Use hash-bang convention hidden in hash.js');
+        my.redirectTo("foo/bar");
+        assert.equal(window.location.hash, my.linkTo("foo/bar"), "Use hash-bang convention hidden in hash.js");
     });
 
     test("Render", function() {
@@ -119,7 +119,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
     test("Update", function() {
         withWidget(function(aWidget) {
             aWidget.renderContentOn = function(html) {
-                html.div().id('foo');
+                html.div().id("foo");
             };
 
             aWidget.update();
@@ -146,14 +146,14 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
                 var that = widget();
 
                 that.renderContentOn = function(html) {
-                    html.div('div').addClass('aDiv');
+                    html.div("div").addClass("aDiv");
                 };
 
                 return that;
             })();
 
             // and a DIV with existing content
-            var divQuery = html.div(html.span('content')).id('aDiv').asJQuery();
+            var divQuery = html.div(html.span("content")).id("aDiv").asJQuery();
 
             // Act: append widget to DIV
             aWidget.appendTo(divQuery);
@@ -171,14 +171,14 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
                 var that = widget();
 
                 that.renderContentOn = function(html) {
-                    html.div('div').addClass('aDiv');
+                    html.div("div").addClass("aDiv");
                 };
 
                 return that;
             })();
 
             // and a DIV with existing content
-            var divQuery = html.div(html.span('content')).id('aDiv').asJQuery();
+            var divQuery = html.div(html.span("content")).id("aDiv").asJQuery();
 
             // Act: replace content with jQuery
             aWidget.replace(divQuery);
@@ -196,18 +196,17 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
                 var that = widget();
 
                 that.renderContentOn = function(html) {
-                    html.div('div').addClass('aDiv');
+                    html.div("div").addClass("aDiv");
                 };
 
                 return that;
             })();
 
-
             // Act: append widget to canvas
             html.render(aWidget);
 
             // Assert: that widget was rendered in canvas
-            assert.ok(html.root.asJQuery().find('.aDiv').get(0), "widget rendered inside canvas");
+            assert.ok(html.root.asJQuery().find(".aDiv").get(0), "widget rendered inside canvas");
         });
     });
 
@@ -218,34 +217,33 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
                 var that = widget();
 
                 that.renderContentOn = function(html) {
-                    html.div('div').addClass('aDiv');
+                    html.div("div").addClass("aDiv");
                 };
 
                 return that;
             })();
 
             // Assert: false before render
-            assert.ok(!aWidget.isRendered(), 'isRendered() is false when not rendered');
+            assert.ok(!aWidget.isRendered(), "isRendered() is false when not rendered");
 
             // Act: render widget
             html.render(aWidget);
 
             // Assert: true ehrn rendered
-            assert.ok(aWidget.isRendered(), 'isRendered() is true when rendereded');
+            assert.ok(aWidget.isRendered(), "isRendered() is true when rendereded");
         });
     });
-
 
     test("renderRoot() can be overridden in widget", function() {
         withCanvas(function(html) {
 
-            // Arrange: a widget that renders it's root as
+            // Arrange: a widget that renders it"s root as
             // form instead of DIV
             var aWidget = (function() {
                 var my = {};
                 var that = widget({}, my);
 
-                my.renderRootOn = function (html) {
+                my.renderRootOn = function(html) {
                     return html.form().id(that.id());
                 };
 
@@ -256,7 +254,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
             html.render(aWidget);
 
             // Assert: that form is rendered with id
-            assert.equal(html.root.asJQuery().find('FORM').get(0).id, aWidget.id(), "root rendered as FORM");
+            assert.equal(html.root.asJQuery().find("FORM").get(0).id, aWidget.id(), "root rendered as FORM");
 
         });
     });
