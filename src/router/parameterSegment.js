@@ -32,6 +32,7 @@ define([
 				return options.indexOf(val) !== -1;
 			};
 		}
+		return null;
 	}
 
 	/**

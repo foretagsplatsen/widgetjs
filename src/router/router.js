@@ -544,6 +544,7 @@ define(
 							return true;
 						}
 					}
+					return null;
 				});
 
 				if (numMatched === 0) {
