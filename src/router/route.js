@@ -235,7 +235,7 @@ define(
 			/**
 			 * Pre-calculate all optional sequences of segments.
 			 */
-			function ensureOptionalSequences () {
+			function ensureOptionalSequences() {
 				// Find positions for optionals
 				var optionalPositions = [];
 				segments.forEach(function(segment, index) {
