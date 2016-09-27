@@ -20,7 +20,8 @@ define(
 			next();
 		}
 
-		var my, aRouter;
+		var my;
+		var aRouter;
 
 		suite("router");
 

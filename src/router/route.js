@@ -307,8 +307,10 @@ define(
 		 * @returns {[[]]} Array with all subset arrays
 		 */
 		function orderedSubsets(input) {
-			var results = [], result, mask,
-				total = Math.pow(2, input.length);
+			var results = [];
+			var result;
+			var mask;
+			var total = Math.pow(2, input.length);
 
 			for (mask = 1; mask < total; mask++) {
 				result = [];

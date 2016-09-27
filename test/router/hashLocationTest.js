@@ -30,7 +30,8 @@ define([
 			jQuery(window).trigger( "hashchange");
 		}
 
-		var my, hashLocation;
+		var my;
+		var hashLocation;
 
 		suite("hashLocation");
 
