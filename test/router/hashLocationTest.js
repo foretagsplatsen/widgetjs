@@ -4,42 +4,41 @@ define([
     "chai"
 ], function(jQuery, hash, chai) {
 
-        var assert = chai.assert;
+    // Helpers
 
-        // Helpers
+	function delayedSteps() {
+		var steps = Array.prototype.slice.call(arguments);
 
-		function delayedSteps() {
-			var steps = Array.prototype.slice.call(arguments);
-
-			function next() {
-				if (steps.length === 0) {
-					return;
-				}
-				var fn = steps.shift();
-				setTimeout(function() {
-					next(fn.apply(next, arguments));
-				}, 10);
+		function next() {
+			if (steps.length === 0) {
+				return;
 			}
-
-			next();
+			var fn = steps.shift();
+			setTimeout(function() {
+				next(fn.apply(next, arguments));
+			}, 10);
 		}
 
-		function setHash(aHash) {
-			window.location.hash = aHash;
-			window.open(window.location, "_self", true);
-			jQuery(window).trigger( "hashchange");
-		}
+		next();
+	}
 
-		var my;
-		var hashLocation;
+	function setHash(aHash) {
+		window.location.hash = aHash;
+		window.open(window.location, "_self", true);
+		jQuery(window).trigger( "hashchange");
+	}
 
-		suite("hashLocation");
+	var my;
+	var hashLocation;
+
+	describe("hashLocation", function() {
 
         beforeEach(function() {
-				window.location.hash = "";
+			window.location.hash = "";
 
-				my = {};
-				hashLocation = hash({}, my);
+			my = {};
+			hashLocation = hash({}, my);
+			jasmine.clock().install();
         });
 
         afterEach(function() {
@@ -47,15 +46,16 @@ define([
                 hashLocation.stop();
             }
             window.location.hash = "";
+			jasmine.clock().uninstall();
 		});
 
-		test("hash defaults", function() {
+		it("hash defaults", function() {
 			// Assert that defaults are correct
-			assert.equal(my.currentHash, undefined, "current hash is undefined");
-			assert.equal(my.history.length, 0, "history is empty");
+			expect(my.currentHash).toBe(undefined);
+			expect(my.history.length).toBe(0);
 		});
 
-		test("start() initilize hash", function() {
+		it("start() initilize hash", function() {
 			// Arrange: set a location hash
 			window.location.hash = "#!/test";
 
@@ -63,12 +63,12 @@ define([
 			hashLocation.start();
 
 			// Assert that hash is current location and history is set
-			assert.equal(my.currentHash, "#!/test", "current hash is window location hash");
-			assert.equal(my.history.length, 1, "history have one entry");
-			assert.equal(my.history[0], my.currentHash, "history entry is current hash");
+			expect(my.currentHash).toBe("#!/test");
+			expect(my.history.length).toBe(1);
+			expect(my.history[0]).toBe(my.currentHash);
 		});
 
-		test("start() resets hash", function() {
+		it("start() resets hash", function() {
 			// Arrange: add some history
 			hashLocation.start();
 			setHash("#!/a");
@@ -78,11 +78,11 @@ define([
 			hashLocation.start();
 
 			// Assert that hash was reset,
-			assert.equal(my.history.length, 1, "history have one entry");
-			assert.equal(my.history[0], my.currentHash, "history entry is current hash");
+			expect(my.history.length).toBe(1);
+			expect(my.history[0]).toBe(my.currentHash);
 		});
 
-		test("getUrl() returns location.hash minus hash-bang", function() {
+		it("getUrl() returns location.hash minus hash-bang", function() {
 			// Arrange: set a location hash
 			window.location.hash = "#!/test";
 
@@ -91,27 +91,27 @@ define([
 			var currentUrl = hashLocation.getUrl();
 
 			// Assert that URL is location hash minus hash-bang
-			assert.equal(currentUrl.toString(), "test", "URL is location hash minus hash-bang");
+			expect(currentUrl.toString()).toBe("test");
 		});
 
-		test("setUrl() adds hash-bang", function() {
+		it("setUrl() adds hash-bang", function() {
 			// Act: set url
 			hashLocation.start();
 			hashLocation.setUrl("test");
 
 			// Assert that current hash is set correctly
-			assert.equal(my.currentHash, "#!/test", "Hash-bang is added to location hash");
+			expect(my.currentHash).toBe("#!/test");
 		});
 
-		test("linkToUrl() return link for href:s", function() {
+		it("linkToUrl() return link for href:s", function() {
 			// Act: create link to URL
 			var link = hashLocation.linkToUrl("someurl");
 
 			// Assert that URL have hash-bang
-			assert.equal(link, "#!/someurl", "Hash-bang is added to URL");
+			expect(link).toBe("#!/someurl");
 		});
 
-		test("setUrl() triggers change", function(done) {
+		it("setUrl() triggers change", function(done) {
             var anotherHashLocation = hash();
 
 			// Arrange: listen for url changes
@@ -126,12 +126,12 @@ define([
             anotherHashLocation.setUrl("test");
 
 			// Assert that "change" callback was executed with url
-			assert.equal(capturedUrl, "test", "Parameter in \"changed event\" is URL");
+			expect(capturedUrl.toString()).toBe("test");
 
             anotherHashLocation.stop();
 		});
 
-		test("back()", function(done) {
+		it("back()", function(callback) {
 			delayedSteps(
 				function() {
 					hashLocation.stop();
@@ -145,35 +145,37 @@ define([
 					hashLocation.setUrl("b");
 				},
 				function() {
-					assert.equal(hashLocation.getUrl().toString(), "b", "location is last url");
+					expect(hashLocation.getUrl().toString()).toBe("b");
 				},
 				function() {
 					hashLocation.back();
 				},
 				function() {
-					assert.equal(hashLocation.getUrl().toString(), "a", "back sets url to previous url");
+					expect(hashLocation.getUrl().toString()).toBe("a");
 				},
 				function() {
 					hashLocation.back();
 				},
 				function() {
-					assert.equal(hashLocation.getUrl().toString(), "", "back set to start url");
+					expect(hashLocation.getUrl().toString()).toBe("");
 				},
 				function() {
 					hashLocation.back();
 				},
 				function() {
-					assert.equal(hashLocation.getUrl().toString(), "", "can not back furter than start");
+					expect(hashLocation.getUrl().toString()).toBe("");
 				},
 				function() {
 					hashLocation.back("fallback");
 				},
 				function() {
-					assert.equal(hashLocation.getUrl().toString(), "fallback", "but can give a fallback url");
+					expect(hashLocation.getUrl().toString()).toBe("fallback");
 				},
 				function() {
-					done();
+					callback();
 				}
 			);
+			jasmine.clock().tick(131);
 		});
+	});
 });
