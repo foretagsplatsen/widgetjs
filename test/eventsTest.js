@@ -1,243 +1,239 @@
-define(function(require) {
+define(["widgetjs/events"], function(events) {
+    describe("events", function() {
 
-    var assert = require("chai").assert;
-    var events = require("widgetjs/events");
+        it("Bind callback to event", function() {
+            // Arrange: an event
+            var anEvent = events.event();
 
-    suite("events");
+            // Act: bind a callback
+            anEvent(function() {
+                expect(true).toBeTruthy();
+            });
 
-    test("Bind callback to event", function() {
-        // Arrange: an event
-        var anEvent = events.event();
-
-        // Act: bind a callback
-        anEvent(function() {
-            assert.ok(true);
+            // and execute
+            anEvent.trigger();
         });
 
-        // and execute
-        anEvent.trigger();
-    });
+        it("Bind multiple callbacks to an event", function() {
+            // Arrange: an event
+            var anEvent = events.event();
 
-    test("Bind multiple callbacks to an event", function() {
-        // Arrange: an event
-        var anEvent = events.event();
+            // Act: bind two callbacks and trigger event
+            var counter = 0;
+            anEvent(function() { counter++;});
+            anEvent(function() { counter++;});
 
-        // Act: bind two callbacks and trigger event
-        var counter = 0;
-        anEvent(function() { counter++;});
-        anEvent(function() { counter++;});
+            anEvent.trigger();
 
-        anEvent.trigger();
-
-        // Assert: that both where executed
-        assert.ok(counter, 2, "Both callbacks executed");
-    });
-
-    test("Trigger pass values to callbacks", function() {
-        // Arrange: an event
-        var anEvent = events.event();
-
-        // Act: bind two callbacks and trigger event
-        var counter = 0;
-        anEvent(function(num, str) {
-            assert.equal(num, 2);
-            assert.equal(str, "text");
-            counter++;
-        });
-        anEvent(function() {
-            assert.equal(arguments.length, 2);
-            counter++;
+            // Assert: that both where executed
+            expect(counter).toBe(2);
         });
 
-        anEvent.trigger(2, "text");
+        it("Trigger pass values to callbacks", function() {
+            // Arrange: an event
+            var anEvent = events.event();
 
-        // Assert: that both where executed
-        assert.ok(counter, 2, "Both callbacks executed");
-    });
+            // Act: bind two callbacks and trigger event
+            var counter = 0;
+            anEvent(function(num, str) {
+                expect(num).toBe(2);
+                expect(str).toBe("text");
+                counter++;
+            });
+            anEvent(function() {
+                expect(arguments.length).toBe(2);
+                counter++;
+            });
 
-    test("Bind callback to event using on", function() {
-        // Arrange: an event
-        var anEvent = events.event();
+            anEvent.trigger(2, "text");
 
-        // bind a callback using on
-        anEvent.on(function() {
-            assert.ok(true);
+            // Assert: that both where executed
+            expect(counter).toBe(2);
         });
 
-        anEvent.trigger();
-    });
+        it("Bind callback to event using on", function() {
+            // Arrange: an event
+            var anEvent = events.event();
 
-    test("Un-Bind callback using off", function() {
-        // Arrange: an event
-        var anEvent = events.event();
+            // bind a callback using on
+            anEvent.on(function() {
+                expect(true).toBeTruthy();
+            });
 
-        // bind a callback using on
-        var eventBinding = anEvent.on(function() {
-            assert.ok(false); // assert not executed
+            anEvent.trigger();
         });
 
-        // unbind using off
-        anEvent.off(eventBinding);
+        it("Un-Bind callback using off", function() {
+            // Arrange: an event
+            var anEvent = events.event();
 
-        anEvent.trigger();
-    });
+            // bind a callback using on
+            var eventBinding = anEvent.on(function() {
+                jasmine.fail();
+            });
 
-    test("Un-Bind callback using unbind", function() {
-        // Arrange: an event
-        var anEvent = events.event();
+            // unbind using off
+            anEvent.off(eventBinding);
 
-        // bind a callback using on
-        var eventBinding = anEvent.on(function() {
-            assert.ok(false); // assert not executed
+            anEvent.trigger();
         });
 
-        // Unbind
-        eventBinding.unbind();
+        it("Un-Bind callback using unbind", function() {
+            // Arrange: an event
+            var anEvent = events.event();
 
-        anEvent.trigger();
-    });
+            // bind a callback using on
+            var eventBinding = anEvent.on(function() {
+                jasmine.fail();
+            });
 
-    test("Bind and trigger callback only once using onceOn", function() {
-        // Arrange: an event
-        var anEvent = events.event();
+            // Unbind
+            eventBinding.unbind();
 
-        // Act: bind a callback using on
-        var counter = 0;
-        anEvent.onceOn(function() {
-            counter++;
+            anEvent.trigger();
         });
 
-        // and trigger twice
-        anEvent.trigger();
-        anEvent.trigger();
+        it("Bind and trigger callback only once using onceOn", function() {
+            // Arrange: an event
+            var anEvent = events.event();
 
-        assert.equal(counter, 1, "Callback executed only once");
-    });
+            // Act: bind a callback using on
+            var counter = 0;
+            anEvent.onceOn(function() {
+                counter++;
+            });
 
-    test("Event dispose unbinds all callbacks", function() {
-        // Arrange: an event
-        var anEvent = events.event();
+            // and trigger twice
+            anEvent.trigger();
+            anEvent.trigger();
 
-        // Act: bind two callbacks and trigger event
-        var firstBinding = anEvent(function() {});
-        var secondBinding = anEvent(function() {});
-
-        anEvent.dispose();
-
-        // Assert: that both where unbound
-        assert.equal(firstBinding.isBound(), false, "first unbound");
-        assert.equal(secondBinding.isBound(), false, "second unbound");
-    });
-
-    test("Event Category keeps a list of events", function() {
-        // Act: create an event handler ans some events
-        var someEvents = events.eventCategory();
-        var anEvent = someEvents.createEvent();
-        var anotherEvent = someEvents.createEvent();
-
-        // Assert: events created
-        assert.ok(anEvent.on, "first event");
-        assert.ok(anotherEvent.on, "second event");
-    });
-
-    test("Event Category can keep named events", function() {
-        // Act: create an event handler ans some events
-        var someEvents = events.eventCategory();
-        var anEvent = someEvents.createEvent("namedEvent");
-
-        // Assert: events created
-        assert.ok(anEvent.on, "first event");
-    });
-
-    test("Event Category can bind callback to named event using on", function() {
-        // Arrange: an event
-        var someEvents = events.eventCategory();
-        var anEvent = someEvents.createEvent("namedEvent");
-
-        // bind a callback using on
-        someEvents.on("namedEvent", function() {
-            assert.ok(true);
+            expect(counter).toBe(1);
         });
 
-        // Act: trigger named event
-        anEvent.trigger("namedEvent");
-    });
+        it("Event dispose unbinds all callbacks", function() {
+            // Arrange: an event
+            var anEvent = events.event();
 
-    test("Event Category can un-bind named event callbacks using off", function() {
-        // Arrange: an event
-        var someEvents = events.eventCategory();
-        var anEvent = someEvents.createEvent("namedEvent");
+            // Act: bind two callbacks and trigger event
+            var firstBinding = anEvent(function() {});
+            var secondBinding = anEvent(function() {});
 
-        // bind a callback using on
-        var eventBinding = someEvents.on("namedEvent", function() {
-            assert.ok(false); // assert not executed
+            anEvent.dispose();
+
+            // Assert: that both where unbound
+            expect(firstBinding.isBound()).toBeFalsy();
+            expect(secondBinding.isBound()).toBeFalsy();
         });
 
-        // unbind using off
-        someEvents.off("namedEvent", eventBinding);
+        it("Event Category keeps a list of events", function() {
+            // Act: create an event handler ans some events
+            var someEvents = events.eventCategory();
+            var anEvent = someEvents.createEvent();
+            var anotherEvent = someEvents.createEvent();
 
-        anEvent.trigger("namedEvent");
-    });
-
-    test("Event Category can bind and trigger named event callback only once using onceOn", function() {
-        // Arrange: an event
-        var someEvents = events.eventCategory();
-        var anEvent = someEvents.createEvent("namedEvent");
-
-        // Act: bind a callback using on
-        var counter = 0;
-        someEvents.onceOn("namedEvent", function() {
-            counter++;
+            // Assert: events created
+            expect(anEvent.on).toBeTruthy();
+            expect(anotherEvent.on).toBeTruthy();
         });
 
-        // and trigger twice
-        anEvent.trigger("namedEvent");
-        anEvent.trigger("namedEvent");
+        it("Event Category can keep named events", function() {
+            // Act: create an event handler ans some events
+            var someEvents = events.eventCategory();
+            var anEvent = someEvents.createEvent("namedEvent");
 
-        assert.equal(counter, 1, "Callback executed only once");
-    });
-
-    test("Event Category can bind dispose unbinds all events and there callbacks", function() {
-        // Arrange: two events in a event handler
-        var someEvents = events.eventCategory();
-        var anEvent = someEvents.createEvent("namedEvent");
-        var anotherEvent = someEvents.createEvent("namedEvent");
-
-        // Act: bind two callbacks and trigger event
-        var firstBinding = anEvent(function() {});
-        var secondBinding = anEvent(function() {});
-        var thirdBinding = anotherEvent(function() {});
-        var fourthBinding = anotherEvent(function() {});
-
-        someEvents.dispose();
-
-        // Assert: that all where unbound
-        assert.equal(firstBinding.isBound(), false, "1");
-        assert.equal(secondBinding.isBound(), false, "2");
-        assert.equal(thirdBinding.isBound(), false, "3");
-        assert.equal(fourthBinding.isBound(), false, "4");
-    });
-
-    test("Event Manager is a singleton", function() {
-        assert.equal(events, events);
-    });
-
-    test("Event Manager keeps list of named event categories", function() {
-        var triggered = false;
-
-        events.at("c1").on("foo", function() {
-            triggered = true;
+            // Assert: events created
+            expect(anEvent.on).toBeTruthy();
         });
-        assert.ok(!triggered, "should only be executed once triggered");
 
-        events.at("c1").trigger("bar");
-        assert.ok(!triggered, "should not be executed on other events");
+        it("Event Category can bind callback to named event using on", function() {
+            // Arrange: an event
+            var someEvents = events.eventCategory();
+            var anEvent = someEvents.createEvent("namedEvent");
 
-        events.at("c2").trigger("foo");
-        assert.ok(!triggered, "should not be executed on event with same name in other category");
+            // bind a callback using on
+            someEvents.on("namedEvent", function() {
+                expect(true).toBeTruthy();
+            });
 
-        events.at("c1").trigger("foo");
-        assert.ok(triggered, "callback should be executed when event triggered");
+            // Act: trigger named event
+            anEvent.trigger("namedEvent");
+        });
+
+        it("Event Category can un-bind named event callbacks using off", function() {
+            // Arrange: an event
+            var someEvents = events.eventCategory();
+            var anEvent = someEvents.createEvent("namedEvent");
+
+            // bind a callback using on
+            var eventBinding = someEvents.on("namedEvent", function() {
+                expect(true).toBeFalsy();
+            });
+
+            // unbind using off
+            someEvents.off("namedEvent", eventBinding);
+
+            anEvent.trigger("namedEvent");
+        });
+
+        it("Event Category can bind and trigger named event callback only once using onceOn", function() {
+            // Arrange: an event
+            var someEvents = events.eventCategory();
+            var anEvent = someEvents.createEvent("namedEvent");
+
+            // Act: bind a callback using on
+            var counter = 0;
+            someEvents.onceOn("namedEvent", function() {
+                counter++;
+            });
+
+            // and trigger twice
+            anEvent.trigger("namedEvent");
+            anEvent.trigger("namedEvent");
+
+            expect(counter).toBe(1);
+        });
+
+        it("Event Category can bind dispose unbinds all events and there callbacks", function() {
+            // Arrange: two events in a event handler
+            var someEvents = events.eventCategory();
+            var anEvent = someEvents.createEvent("namedEvent");
+            var anotherEvent = someEvents.createEvent("namedEvent");
+
+            // Act: bind two callbacks and trigger event
+            var firstBinding = anEvent(function() {});
+            var secondBinding = anEvent(function() {});
+            var thirdBinding = anotherEvent(function() {});
+            var fourthBinding = anotherEvent(function() {});
+
+            someEvents.dispose();
+
+            // Assert: that all where unbound
+            expect(firstBinding.isBound()).toBeFalsy();
+            expect(secondBinding.isBound()).toBeFalsy();
+            expect(thirdBinding.isBound()).toBeFalsy();
+            expect(fourthBinding.isBound()).toBeFalsy();
+        });
+
+        it("Event Manager is a singleton", function() {
+            expect(events).toBe(events);
+        });
+
+        it("Event Manager keeps list of named event categories", function() {
+            var triggered = false;
+
+            events.at("c1").on("foo", function() {
+                triggered = true;
+            });
+            expect(!triggered).toBeTruthy();
+
+            events.at("c1").trigger("bar");
+            expect(!triggered).toBeTruthy();
+
+            events.at("c2").trigger("foo");
+            expect(!triggered).toBeTruthy();
+
+            events.at("c1").trigger("foo");
+            expect(triggered).toBeTruthy();
+        });
     });
-
 });
