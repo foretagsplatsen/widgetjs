@@ -83,7 +83,7 @@ gulp.task("optimize", ["strip"], function() {
 	var options = Object.assign(requireJSOptions);
 	options.optimize = "none";
 	options.include = ["core"];
-	options.exclude = ["jquery"];
+	options.exclude = ["jquery", "klassified"];
 	options.insertRequire = ["core"];
 	options.out = "widgetjs.js";
 
@@ -96,7 +96,7 @@ gulp.task("optimize:minify", ["strip"], function() {
 	var options = Object.assign(requireJSOptions);
 	delete options.optimize;
 	options.include = ["core"];
-	options.exclude = ["jquery"];
+	options.exclude = ["jquery", "klassified"];
 	options.insertRequire = ["core"];
 	options.out = "widgetjs.min.js";
 
