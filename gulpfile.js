@@ -20,11 +20,14 @@ var almond = fs.readFileSync(__dirname + "/node_modules/almond/almond.js");
 var wrap = {
 	start: "(function(root, factory) {\n" +
 	"    if (typeof define === \"function\" && define.amd) {\n" +
-	"        define(factory);\n" +
+	"        define(\"widgetjs\", [\"jquery\", \"klassified\"], factory);\n" +
 	"    } else {\n" +
-	"        root.widgetjs = factory(root.$);" +
+	"        root.widgetjs = factory(root.$, root.klassified);\n" +
 	"    }\n" +
-	"}(this, function($) {\n" + almond,
+	"}(this, function($, klassified) {\n" +
+	almond + "\n" +
+	"    define('jquery', function() { return $; })\n" +
+	"    define('klassified', function() { return klassified; })\n",
 	end: "    return require(\"widgetjs\");\n" +
 	"}));"
 };
@@ -82,12 +85,12 @@ var requireJSOptions = {
 gulp.task("optimize", ["strip"], function() {
 	var options = Object.assign(requireJSOptions);
 	options.optimize = "none";
-	options.include = ["core"];
+	options.include = ["widgetjs"];
 	options.exclude = ["jquery", "klassified"];
-	options.insertRequire = ["core"];
+	options.insertRequire = ["widgetjs"];
 	options.out = "widgetjs.js";
 
-	return gulp.src("strip/core.js")
+	return gulp.src("strip/widgetjs.js")
 		.pipe(plugins.optimizer(options))
 		.pipe(gulp.dest("dist"));
 });
@@ -95,12 +98,12 @@ gulp.task("optimize", ["strip"], function() {
 gulp.task("optimize:minify", ["strip"], function() {
 	var options = Object.assign(requireJSOptions);
 	delete options.optimize;
-	options.include = ["core"];
+	options.include = ["widgetjs"];
 	options.exclude = ["jquery", "klassified"];
-	options.insertRequire = ["core"];
+	options.insertRequire = ["widgetjs"];
 	options.out = "widgetjs.min.js";
 
-	return gulp.src("strip/core.js")
+	return gulp.src("strip/widgetjs.js")
 		.pipe(plugins.optimizer(options))
 		.pipe(gulp.dest("dist"));
 });

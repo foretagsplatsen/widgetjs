@@ -8,7 +8,7 @@ define(
 		"jquery"
 	],
 
-	function(object, ext, router, events, htmlCanvas, jQuery) {
+	function(klassified, ext, router, events, htmlCanvas, jQuery) {
 
 		/**
 		 * Creates unique ids used by widgets to identify their root div.
@@ -78,7 +78,7 @@ define(
 		 *
 		 * @returns {widget}
 		 */
-		var widget = object.subclass(function(that, my) {
+		var widget = klassified.object.subclass(function(that, my) {
 
 			/**
 			 * Keep track of the rendered subwidgets

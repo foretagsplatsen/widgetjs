@@ -1,5 +1,5 @@
 define([
-    "widgetjs/core",
+    "widgetjs/widgetjs",
     "widgetjs/router",
     "documents",
     "widgets",

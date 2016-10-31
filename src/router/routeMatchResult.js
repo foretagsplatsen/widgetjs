@@ -1,6 +1,6 @@
 define([
 	"klassified"
-], function(object) {
+], function(klassified) {
 
 	/**
 	 * Route match result are used as the answer of matching a url against a route.
@@ -12,7 +12,7 @@ define([
 	 *
 	 * @returns {routeMatchResult}
 	 */
-	var routeMatchResult = object.subclass(function(that, my) {
+	var routeMatchResult = klassified.object.subclass(function(that, my) {
 
 		var url;
 		var route;

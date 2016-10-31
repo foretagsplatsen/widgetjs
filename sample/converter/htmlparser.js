@@ -198,7 +198,7 @@
                 results += "<" + tag;
 
                 for (var i = 0; i < attrs.length; i++)
-                    results += " " + attrs[i].name + "="" + attrs[i].escaped + """;
+					results += " " + attrs[i].name + "=\"" + attrs[i].escaped + "\"";
                 results += ">";
             },
             end: function(tag) {

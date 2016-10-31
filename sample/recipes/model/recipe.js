@@ -1,6 +1,6 @@
 define([
 	"klassified"
-], function(object) {
+], function(klassified) {
 
 	/**
 	 * Ingredience in recipe
@@ -12,7 +12,7 @@ define([
 	 *
 	 * @return {object} ingredient object
 	 */
-	var recipeIngredient = object.subclass(function(that, my) {
+	var recipeIngredient = klassified.object.subclass(function(that, my) {
 
 		my.initialize = function(spec) {
 			my.super(spec);
@@ -34,7 +34,7 @@ define([
 	 *
 	 * @return {object} instruction object
 	 */
-	var recipeInstruction = object.subclass(function(that, my) {
+	var recipeInstruction = klassified.object.subclass(function(that, my) {
 
 		my.initialize = function(spec) {
 			my.super(spec);
@@ -59,7 +59,7 @@ define([
 	 *
 	 * @return {[type]}      [description]
 	 */
-	var recipe = object.subclass(function(that, my) {
+	var recipe = klassified.object.subclass(function(that, my) {
 
 		my.initialize = function(spec) {
 			my.super(spec);

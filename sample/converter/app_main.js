@@ -2,7 +2,8 @@ requirejs.config({
     baseUrl: ".",
     paths:   {
         "jquery":   "../../bower_components/jquery/dist/jquery",
-        "widgetjs": "../../src/",
+		"klassified": "../../bower_components/klassified/dist/klassified",
+		"widgetjs": "../../src/",
         "bootstrap": "http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min",
         "lodash" : "http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min"
     },

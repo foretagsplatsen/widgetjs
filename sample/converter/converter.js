@@ -55,7 +55,7 @@ define([
                 }
 
                 function writeText (text) {
-                    results += """ + text + """;
+                    results += "\"" + text + "\"";
                 }
 
                 function writeSeparator () {
@@ -71,13 +71,13 @@ define([
                     for (var i = 0; i < attrs.length; i++){
                         var name = attrs[i].name;
                         if(attributes.indexOf(name) < 0) {
-                            name = """ + name + """;
+                            name = "\"" + name + "\"";
                         }
                         if(name === "class") {
                             name = "klass";
                         }
 
-                        results += " " + name + ": "" + attrs[i].escaped + """;
+                        results += " " + name + ": \"" + attrs[i].escaped + "\"";
                         if(i < attrs.length - 1) {
                             results += ", ";
                         }

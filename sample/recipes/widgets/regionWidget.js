@@ -1,5 +1,5 @@
 define([
-	"widgetjs/core"
+	"widgetjs/widgetjs"
 ], function(widgetjs) {
 
 	var regionWidget = widgetjs.widget.subclass(function(that, my) {

@@ -3,7 +3,7 @@ define([
 	"../events",
 	"./url",
 	"klassified"
-], function(jQuery, events, url, object) {
+], function(jQuery, events, url, klassified) {
 
 	/**
 	 * In modern browsers we use the "hashchange" event to listen for location changes. If not supported
@@ -32,7 +32,7 @@ define([
 	 * @param [my]
 	 * @returns {hashLocation}
 	 */
-	var hashLocation = object.subclass(function(that, my) {
+	var hashLocation = klassified.object.subclass(function(that, my) {
 
 		var pollTimerId = null;
 

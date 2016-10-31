@@ -1,5 +1,5 @@
 define([
-	"widgetjs/core"
+	"widgetjs"
 ], function(widgetjs) {
 
 	/**

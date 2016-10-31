@@ -1,4 +1,4 @@
-define(["widgetjs/core", "lodash", "jquery", "prettify", "code"], function(widgetjs, lodash, jQuery, prettify, code) {
+define(["widgetjs/widgetjs", "lodash", "jquery", "prettify", "code"], function(widgetjs, lodash, jQuery, prettify, code) {
 
     var examples = {};
 

@@ -1,6 +1,6 @@
 define([
 	"klassified"
-], function(object) {
+], function(klassified) {
 	/**
 	 * A segment represents a single part of a route that can be matched
 	 * against a URL segment using `match()`.
@@ -11,7 +11,7 @@ define([
 	 * @param my
 	 * @returns {abstractSegment}
 	 */
-	var abstractSegment = object.subclass(function(that, my) {
+	var abstractSegment = klassified.object.subclass(function(that, my) {
 
 		my.initialize = function(spec) {
 			my.super(spec);

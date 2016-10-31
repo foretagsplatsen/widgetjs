@@ -1,5 +1,5 @@
 define([
-	"widgetjs/core",
+	"widgetjs/widgetjs",
 	"model/recipeRepository"
 ], function(widgetjs, recipeRepository) {
 

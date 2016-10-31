@@ -1,9 +1,10 @@
 (function(root, factory) {
     if (typeof define === "function" && define.amd) {
-        define(factory);
+        define("widgetjs", ["jquery", "klassified"], factory);
     } else {
-        root.widgetjs = factory(root.$);    }
-}(this, function($) {
+        root.widgetjs = factory(root.$, root.klassified);
+    }
+}(this, function($, klassified) {
 /**
  * @license almond 0.2.9 Copyright (c) 2011-2014, The Dojo Foundation All Rights Reserved.
  * Available via the MIT or new BSD license.
@@ -425,6 +426,9 @@ var requirejs, require, define;
         jQuery: true
     };
 }());
+
+    define('jquery', function() { return $; })
+    define('klassified', function() { return klassified; })
 define(
 	'htmlCanvas',[
 		"jquery"
@@ -999,7 +1003,7 @@ define(
 define('router/url',[
 	"klassified"
 ],
-	function(object) {
+	function(klassified) {
 
 		/**
 		 * Token/Char used to separate segments in URL paths.
@@ -1019,7 +1023,7 @@ define('router/url',[
 		 * @param {string} rawUrl
 		 * @returns {url}
 		 */
-		var url = object.subclass(function(that, my) {
+		var url = klassified.object.subclass(function(that, my) {
 
 			var rawUrl;
 			var path;
@@ -1163,7 +1167,7 @@ define('router/url',[
 
 define('router/abstractSegment',[
 	"klassified"
-], function(object) {
+], function(klassified) {
 	/**
 	 * A segment represents a single part of a route that can be matched
 	 * against a URL segment using `match()`.
@@ -1174,7 +1178,7 @@ define('router/abstractSegment',[
 	 * @param my
 	 * @returns {abstractSegment}
 	 */
-	var abstractSegment = object.subclass(function(that, my) {
+	var abstractSegment = klassified.object.subclass(function(that, my) {
 
 		my.initialize = function(spec) {
 			my.super(spec);
@@ -1889,7 +1893,7 @@ define('events',[],
 
 define('router/routeMatchResult',[
 	"klassified"
-], function(object) {
+], function(klassified) {
 
 	/**
 	 * Route match result are used as the answer of matching a url against a route.
@@ -1901,7 +1905,7 @@ define('router/routeMatchResult',[
 	 *
 	 * @returns {routeMatchResult}
 	 */
-	var routeMatchResult = object.subclass(function(that, my) {
+	var routeMatchResult = klassified.object.subclass(function(that, my) {
 
 		var url;
 		var route;
@@ -2041,7 +2045,7 @@ define('router/routeMatchResult',[
 define(
 	'router/route',["./routeFactory", "../events", "./routeMatchResult", "jquery",	"./url",
 		"klassified"],
-	function(routeFactory, events, routeMatchResult, jQuery, url, object) {
+	function(routeFactory, events, routeMatchResult, jQuery, url, klassified) {
 
 		/**
 		 * Routes represent the path for which an action should be taken (see `matched` event).
@@ -2094,7 +2098,7 @@ define(
 		 * @param {{}} my
 		 * @returns {route}
 		 */
-		var route = object.subclass(function(that, my) {
+		var route = klassified.object.subclass(function(that, my) {
 
 			var segments;
 			var ignoreTrailingSegments;
@@ -2375,7 +2379,7 @@ define('router/hashLocation',[
 	"../events",
 	"./url",
 	"klassified"
-], function(jQuery, events, url, object) {
+], function(jQuery, events, url, klassified) {
 
 	/**
 	 * In modern browsers we use the "hashchange" event to listen for location changes. If not supported
@@ -2404,7 +2408,7 @@ define('router/hashLocation',[
 	 * @param [my]
 	 * @returns {hashLocation}
 	 */
-	var hashLocation = object.subclass(function(that, my) {
+	var hashLocation = klassified.object.subclass(function(that, my) {
 
 		var pollTimerId = null;
 
@@ -2564,7 +2568,7 @@ define(
 		"./hashLocation",
 		"klassified"
 	],
-	function(jQuery, events, route, url, hashLocation, object) {
+	function(jQuery, events, route, url, hashLocation, klassified) {
 
 		/**
 		 * Lazily creates a singleton instance of
@@ -2594,7 +2598,7 @@ define(
 		*
 		* @returns {{}}
 		*/
-		var router = object.subclass(function(that, my) {
+		var router = klassified.object.subclass(function(that, my) {
 
 			my.initialize = function(spec) {
 				my.super(spec);
@@ -3188,7 +3192,7 @@ define(
 		"jquery"
 	],
 
-	function(object, ext, router, events, htmlCanvas, jQuery) {
+	function(klassified, ext, router, events, htmlCanvas, jQuery) {
 
 		/**
 		 * Creates unique ids used by widgets to identify their root div.
@@ -3258,7 +3262,7 @@ define(
 		 *
 		 * @returns {widget}
 		 */
-		var widget = object.subclass(function(that, my) {
+		var widget = klassified.object.subclass(function(that, my) {
 
 			/**
 			 * Keep track of the rendered subwidgets
@@ -3669,7 +3673,7 @@ define(
 );
 
 define(
-	'core',[
+	'widgetjs',[
 		"./htmlCanvas",
 		"./widget",
 		"./widget-extensions",
@@ -3689,6 +3693,6 @@ define(
 );
 
 
-require(["core"]);
+require(["widgetjs"]);
     return require("widgetjs");
 }));

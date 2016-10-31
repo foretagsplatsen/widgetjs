@@ -1,7 +1,7 @@
 define([
 	"klassified"
 ],
-	function(object) {
+	function(klassified) {
 
 		/**
 		 * Token/Char used to separate segments in URL paths.
@@ -21,7 +21,7 @@ define([
 		 * @param {string} rawUrl
 		 * @returns {url}
 		 */
-		var url = object.subclass(function(that, my) {
+		var url = klassified.object.subclass(function(that, my) {
 
 			var rawUrl;
 			var path;

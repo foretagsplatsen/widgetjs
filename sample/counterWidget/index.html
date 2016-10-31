@@ -1,36 +1,41 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Counter</title>
-    <meta charset="UTF-8">
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
-    <script type="text/javascript" src="../../dist/widgetjs.min.js"></script>
+	<head>
+		<title>Counter</title>
+		<meta charset="UTF-8">
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+		<script type="text/javascript" src="../../bower_components/klassified/dist/klassified.min.js"></script>
+	</head>
 
-    <script type="text/javascript">
+	<body>
+		<script type="text/javascript" src="../../dist/widgetjs.js"></script>
+		<script type="text/javascript">
 
-     var counterWidget = function() {
-	 var that = widgetjs.widget();
+			var counterWidget = function() {
+				var that = widgetjs.widget();
 
-	 var count = 0;
+				var count = 0;
 
-	 that.renderContentOn = function(html) {
-	     html.h1(count.toString());
-	     html.button("+").click(function() { count++; that.update();});
-	     html.button("-").click(function() { count--; that.update();});
-	 };
+				that.renderContentOn = function(html) {
+					html.h1(count.toString());
+					html.button("+").click(function() {
+						count++;
+						that.update();
+					});
+					html.button("-").click(function() {
+						count--;
+						that.update();
+					});
+				};
 
-	 return that;
-     };
+				return that;
+			};
 
-     jQuery(document).ready(function() {
-	 counterWidget().appendTo("body");
-	 counterWidget().appendTo("body");
-     })
+			jQuery(document).ready(function() {
+				counterWidget().appendTo("body");
+				counterWidget().appendTo("body");
+			})
 
-    </script>
-</head>
-
-<body>
-</body>
-
+		</script>
+	</body>
 </html>

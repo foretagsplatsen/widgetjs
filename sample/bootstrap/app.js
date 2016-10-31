@@ -1,5 +1,5 @@
 define([
-	"widgetjs/core",
+	"widgetjs/widgetjs",
 	"styleExamples",
 	"componentsExamples",
 	"javascriptExamples",
@@ -136,7 +136,7 @@ define([
         };
 
         function refreshScrollspy () {
-            jQuery("[data-spy="scroll"]").each(function() {
+			jQuery("[data-spy=\"scroll\"]").each(function() {
                 jQuery(this).scrollspy("refresh");
             });
         }

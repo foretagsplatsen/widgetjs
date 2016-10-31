@@ -11,7 +11,7 @@ define([], function() {
 		files: files,
 		config: {
 			paths: {
-				"klassified": "bower_components/klassified/src/object",
+				"klassified": "bower_components/klassified/dist/klassified",
 				"jquery": "bower_components/jquery/dist/jquery",
 				"widgetjs": "src",
 				"chai": "bower_components/chai/chai",
