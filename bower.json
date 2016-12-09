@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "jquery": "~1.12",
-    "klassified": "foretagsplatsen/klassified#2.1.0"
+    "klassified": "foretagsplatsen/klassified#3.0.0"
   },
   "devDependencies": {
     "requirejs": "~2.1.10",

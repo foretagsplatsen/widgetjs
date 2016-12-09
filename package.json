@@ -37,7 +37,6 @@
     "almond": "~0.2.6",
     "del": "^2.2.0",
     "eslint": "^2.4.0",
-    "klassified": "foretagsplatsen/klassified#2.1.0",
     "gulp": "^3.9.1",
     "gulp-bump": "^2.2.0",
     "gulp-concat": "^2.6.0",
