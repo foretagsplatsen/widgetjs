@@ -257,6 +257,21 @@ define(
 				}
 			};
 
+			/**
+			 * Create and expose an event named `name`.
+			 */
+			my.createEvent = function(name) {
+				that[name] = my.events.createEvent();
+			};
+
+			/**
+			 * Create and expose one event per string argument.
+			 */
+			my.createEvents = function() {
+				var names = Array.prototype.slice.apply(arguments);
+				names.forEach(my.createEvent);
+			};
+
 			// Expose events
 			that.on = my.events.on;
 			that.onceOn = my.events.onceOn;

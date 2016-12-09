@@ -339,5 +339,23 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
 
 			expect(spy).toHaveBeenCalled();
 		});
+
+		it("widgets can create an event", function() {
+			withWidget(function(widget, my) {
+				expect(widget.foo).toBeUndefined();
+				my.createEvent("foo");
+				expect(widget.foo).toBeTruthy();
+			});
+		});
+
+		it("widgets can create events", function() {
+			withWidget(function(widget, my) {
+				expect(widget.foo).toBeUndefined();
+				expect(widget.bar).toBeUndefined();
+				my.createEvents("foo", "bar");
+				expect(widget.foo).toBeTruthy();
+				expect(widget.bar).toBeTruthy();
+			});
+		});
 	});
 });
