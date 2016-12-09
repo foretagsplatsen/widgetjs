@@ -398,7 +398,9 @@ define(
 			 *
 			 * @param {htmlCanvas} html
 			 */
-			that.renderContentOn = function(html) {};
+			that.renderContentOn = function(html) {
+				return my.subclassResponsibility();
+			};
 
 			/**
 			 * Hook evaluated before the widget is attached (or reattached due
