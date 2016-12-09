@@ -10,7 +10,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
         // create a widget
         var my = {};
 
-		var aWidget = widgetSubclass(my);
+		var aWidget = widgetSubclass({}, my);
 
         aWidget.appendTo(jQuery("body"));
 
