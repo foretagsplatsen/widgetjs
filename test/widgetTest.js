@@ -329,5 +329,15 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
 				expect(aWidget.willUpdateCalled).toBeTruthy();
 			});
 		});
+
+		it("widgets initialize their subwidgets", function() {
+			var spy = jasmine.createSpy("init");
+			var mySubclass = widget.subclass(function(that, my) {
+				my.initializeSubwidgets = spy;
+			});
+			mySubclass();
+
+			expect(spy).toHaveBeenCalled();
+		});
 	});
 });

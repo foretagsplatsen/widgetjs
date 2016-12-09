@@ -93,7 +93,14 @@ define(
 				// When within an update transaction, do not update the widget
 				my.inUpdateTransaction = false;
 				children = [];
+				my.initializeSubwidgets(spec);
 			};
+
+			/**
+			 * Hook evaluated at the end of widget initialization and
+			 * before any rendering.
+			 */
+			my.initializeSubwidgets = function(spec) {};
 
 			/** Events for widget */
 			my.events = events.eventCategory();
