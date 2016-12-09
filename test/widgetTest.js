@@ -6,7 +6,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
 		};
 	});
 
-    var withWidget = function(callback) {
+	function withWidget(callback) {
         // create a widget
         var my = {};
 
@@ -19,9 +19,9 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
 
         // clean-up : remove widget
         aWidget.asJQuery().remove();
-    };
+	}
 
-    var withCanvas = function(callback) {
+	function withCanvas(callback) {
         $("BODY").append("<div id=\"sandbox\"></div>");
         var sandbox = jQuery("#sandbox");
 
@@ -29,7 +29,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
         callback(html);
 
         sandbox.remove();
-    };
+	}
 
     // actual tests
 
