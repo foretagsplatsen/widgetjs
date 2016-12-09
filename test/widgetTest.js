@@ -1,12 +1,17 @@
 define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(widget, htmlCanvas, jQuery, chai) {
 
+	var widgetSubclass = widget.subclass(function(that, my) {
+		that.renderContentOn = function(html) {
+			html.h1("Hello world");
+		};
+	});
+
     var withWidget = function(callback) {
         // create a widget
         var my = {};
-        var aWidget = widget(my);
-        aWidget.renderContentOn = function(html) {
-            html.h1("Hello world");
-        };
+
+		var aWidget = widgetSubclass(my);
+
         aWidget.appendTo(jQuery("body"));
 
         // execute test
@@ -33,13 +38,13 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
 		it("widgets are assigned unique identifiers", function() {
 			withWidget(function(aWidget) {
 				for( var i=0; i<1000;i++) {
-					expect(widget().id() !== aWidget.id()).toBeTruthy();
+					expect(widgetSubclass().id() !== aWidget.id()).toBeTruthy();
 				}
 			});
 		});
 
 		it("widgets identifier set from spec", function() {
-			var aWidget = widget({id : "anId"});
+			var aWidget = widgetSubclass({id : "anId"});
 			expect(aWidget.id()).toBe("anId");
 		});
 
@@ -48,7 +53,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
 			// that triggers an event when executed.
 			var aWidget = (function() {
 				var my = {};
-				var that = widget({}, my);
+				var that = widgetSubclass({}, my);
 
 				that.aMethod = function() {
 					that.trigger("anEvent");
@@ -71,7 +76,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
 			// that triggers an event when executed.
 			var aWidget = (function() {
 				var my = {};
-				var that = widget({}, my);
+				var that = widgetSubclass({}, my);
 
 				that.onAnEvent = my.events.createEvent("anEvent");
 
@@ -93,14 +98,14 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
 
 		it("linkTo() creates links to paths in app", function() {
 			var my = {}; // reference to protected methods using "my";
-			widget({}, my);
+			widgetSubclass({}, my);
 
 			expect(my.linkTo("foo/bar")).toBe("#!/foo/bar");
 		});
 
 		it("redirectTo() redirects to paths in app", function() {
 			var my = {}; // reference to protected methods using "my";
-			widget({}, my);
+			widgetSubclass({}, my);
 
 			my.redirectTo("foo/bar");
 			expect(window.location.hash).toBe(my.linkTo("foo/bar"));
@@ -139,7 +144,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
 			withCanvas(function(html) {
 				// Arrange: a widget
 				var aWidget = (function() {
-					var that = widget();
+					var that = widgetSubclass();
 
 					that.renderContentOn = function(html) {
 						html.div("div").addClass("aDiv");
@@ -163,7 +168,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
 			withCanvas(function(html) {
 				// Arrange: a widget
 				var aWidget = (function() {
-					var that = widget();
+					var that = widgetSubclass();
 
 					that.renderContentOn = function(html) {
 						html.div("div").addClass("aDiv");
@@ -188,7 +193,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
 			withCanvas(function(html) {
 				// Arrange: a widget
 				var aWidget = (function() {
-					var that = widget();
+					var that = widgetSubclass();
 
 					that.renderContentOn = function(html) {
 						html.div("div").addClass("aDiv");
@@ -209,7 +214,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
 			withCanvas(function(html) {
 				// Arrange: a widget
 				var aWidget = (function() {
-					var that = widget();
+					var that = widgetSubclass();
 
 					that.renderContentOn = function(html) {
 						html.div("div").addClass("aDiv");
@@ -236,7 +241,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
 				// form instead of DIV
 				var aWidget = (function() {
 					var my = {};
-					var that = widget({}, my);
+					var that = widgetSubclass({}, my);
 
 					my.renderRootOn = function(html) {
 						return html.form().id(that.id());
@@ -257,7 +262,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
 			withCanvas(function(html) {
 				var aWidget = (function() {
 					var my = {};
-					var that = widget({}, my);
+					var that = widgetSubclass({}, my);
 
 					that.willAttachCalled = false;
 					that.didAttachCalled = false;
@@ -286,7 +291,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
 			withCanvas(function(html) {
 				var aWidget = (function() {
 					var my = {};
-					var that = widget({}, my);
+					var that = widgetSubclass({}, my);
 
 					that.willUpdateCalled = false;
 
@@ -307,7 +312,7 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
 			withCanvas(function(html) {
 				var aWidget = (function() {
 					var my = {};
-					var that = widget({}, my);
+					var that = widgetSubclass({}, my);
 
 					that.willUpdateCalled = false;
 
