@@ -93,7 +93,6 @@ define(
 				// When within an update transaction, do not update the widget
 				my.inUpdateTransaction = false;
 				children = [];
-				my.initializeSubwidgets(spec);
 			};
 
 			/**
@@ -101,6 +100,10 @@ define(
 			 * before any rendering.
 			 */
 			my.initializeSubwidgets = function(spec) {};
+
+			my.postInitialize = function(spec) {
+				my.initializeSubwidgets(spec);
+			};
 
 			/** Events for widget */
 			my.events = events.eventCategory();

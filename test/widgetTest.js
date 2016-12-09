@@ -340,6 +340,25 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
 			expect(spy).toHaveBeenCalled();
 		});
 
+		it("widgets initialize their subwidgets after themselves", function() {
+			// TODO: refactor when
+			// https://github.com/jasmine/jasmine/pull/1242 is merged
+			var init = jasmine.createSpy("init");
+			var initSub = jasmine.createSpy("init sub");
+
+			var mySubclass = widget.subclass(function(that, my) {
+				my.initialize = init;
+
+				my.initializeSubwidgets = function() {
+					expect(init).toHaveBeenCalled();
+					initSub();
+				};
+			});
+
+			mySubclass();
+			expect(initSub).toHaveBeenCalled();
+		});
+
 		it("widgets can create an event", function() {
 			withWidget(function(widget, my) {
 				expect(widget.foo).toBeUndefined();
