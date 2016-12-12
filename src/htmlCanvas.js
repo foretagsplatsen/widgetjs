@@ -67,7 +67,7 @@ define(
 		 *		}
 		 *
 		 *
-		 * @param {string|jQuery|htmlTagBrush} [rootElement] Element to  "paint" on. If not supplied a document fragment will be created
+		 * @param {string|jQuery|htmlTagBrush} [rootElement] Element to "paint" on. If not supplied a document fragment will be created
 		 *
 		 * @returns {htmlCanvas}
 		 */
@@ -517,7 +517,7 @@ define(
 
 				// Create a fragment if no object
 				if (typeof(object) === "undefined" || object === null) {
-					return  jQuery(document.createDocumentFragment()).get(0);
+					return jQuery(document.createDocumentFragment()).get(0);
 				}
 
 				// Any object that implements asJQuery eg. widget and tagBrush

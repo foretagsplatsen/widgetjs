@@ -38,7 +38,7 @@ define([
 
 		my.currentHash = undefined; // last hash fragment
 		my.history = []; // history of visited hash fragments
-        my.events = events.eventCategory();
+		my.events = events.eventCategory();
 
 		//
 		// Public
@@ -50,7 +50,7 @@ define([
 		 *
 		 * @type {event}
 		 */
-        that.onChanged = my.events.createEvent("changed");
+		that.onChanged = my.events.createEvent("changed");
 
 		/**
 		 * Set hash fragment to URL

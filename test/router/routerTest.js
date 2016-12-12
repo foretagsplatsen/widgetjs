@@ -3,7 +3,7 @@ define([
 	"chai"
 ], function(router, chai) {
 
-    function delayedSteps() {
+	function delayedSteps() {
 		var steps = Array.prototype.slice.call(arguments);
 
 		function next() {
@@ -215,7 +215,7 @@ define([
 
 		it("resolveUrl pass optional value defaults to action", function(done) {
 			// Arrange a route that have two optional parameters
-			//  with defaukts
+			// with defaukts
 			aRouter.addRoute({
 				pattern: "/user/?userid/order/?orderid",
 				defaults: {

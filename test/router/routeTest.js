@@ -3,7 +3,7 @@ define([
 	"chai"
 ], function(router,chai) {
 
-    function assertMatch(url, route, message) {
+	function assertMatch(url, route, message) {
 		expect(router.url({rawUrl: url}).matchRoute(router.route({ pattern: route })).isMatch()).toBeTruthy();
 	}
 
@@ -188,7 +188,7 @@ define([
 		});
 
 		it("Route parameter capture optional parameters mixed with parameters", function() {
-			var firstOptionalBothMatch = router.url({rawUrl: "hello/world"}).matchRoute(router.route({ pattern:  "?foo/#bar"})).getRouteParameters();
+			var firstOptionalBothMatch = router.url({rawUrl: "hello/world"}).matchRoute(router.route({ pattern: "?foo/#bar"})).getRouteParameters();
 			expect(firstOptionalBothMatch).toEqual({ foo: "hello", bar : "world"});
 
 			var firstOptionalOneMatch = router.url({rawUrl: "/world"}).matchRoute(router.route({ pattern: "?foo/#bar"})).getRouteParameters();
@@ -376,16 +376,16 @@ define([
 			expect(aRoute.matchUrl(router.url({rawUrl: "h"})).getRouteParameters()).toEqual({ a: undefined, b: undefined, c: "h"});
 		});
 
-        it("Ignore trailing segments route option", function() {
-            var aRoute = router.route({
+		it("Ignore trailing segments route option", function() {
+			var aRoute = router.route({
 				pattern: "hello/#foo",
 				options: {
 					ignoreTrailingSegments: true
 				}
 			});
 
-            expect(aRoute.matchUrl(router.url({rawUrl: "/hello/world"})).isMatch()).toBeTruthy();
-            expect(aRoute.matchUrl(router.url({rawUrl: "/hello/world/and/some/extra"})).isMatch()).toBeTruthy();
-        });
+			expect(aRoute.matchUrl(router.url({rawUrl: "/hello/world"})).isMatch()).toBeTruthy();
+			expect(aRoute.matchUrl(router.url({rawUrl: "/hello/world/and/some/extra"})).isMatch()).toBeTruthy();
+		});
 	});
 });
