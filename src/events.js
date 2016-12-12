@@ -12,7 +12,10 @@ define([],
         var event = function(spec, my) {
             my = my || {};
 
-            var that = function(callback) {
+			// DEPRECATED: use that.on() instead.
+			var that = function(callback) {
+				// eslint-disable-next-line no-console
+				console.warn("Using an event as a function is deprecated. Send on() to the event instead.");
                 return bindCallback(callback);
             };
 

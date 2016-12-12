@@ -70,6 +70,7 @@ define(
 		 *
 		 * It is therefor easy to compose widgets from other widgets.
 		 *
+		 * @virtual
 		 *
 		 * @param {Object} spec
 		 * @param {String} [spec.id] Unique id for widget. Also used for root element when attached/rendered to DOM.
@@ -78,7 +79,7 @@ define(
 		 *
 		 * @returns {widget}
 		 */
-		var widget = klassified.object.subclass(function(that, my) {
+		var widget = klassified.object.abstractSubclass(function(that, my) {
 
 			/**
 			 * Keep track of the rendered subwidgets
@@ -92,6 +93,16 @@ define(
 				// When within an update transaction, do not update the widget
 				my.inUpdateTransaction = false;
 				children = [];
+			};
+
+			/**
+			 * Hook evaluated at the end of widget initialization and
+			 * before any rendering.
+			 */
+			my.initializeSubwidgets = function(spec) {};
+
+			my.postInitialize = function(spec) {
+				my.initializeSubwidgets(spec);
 			};
 
 			/** Events for widget */
@@ -249,6 +260,21 @@ define(
 				}
 			};
 
+			/**
+			 * Create and expose an event named `name`.
+			 */
+			my.createEvent = function(name) {
+				that[name] = my.events.createEvent();
+			};
+
+			/**
+			 * Create and expose one event per string argument.
+			 */
+			my.createEvents = function() {
+				var names = Array.prototype.slice.apply(arguments);
+				names.forEach(my.createEvent);
+			};
+
 			// Expose events
 			that.on = my.events.on;
 			that.onceOn = my.events.onceOn;
@@ -375,7 +401,9 @@ define(
 			 *
 			 * @param {htmlCanvas} html
 			 */
-			that.renderContentOn = function(html) {};
+			that.renderContentOn = function(html) {
+				return my.subclassResponsibility();
+			};
 
 			/**
 			 * Hook evaluated before the widget is attached (or reattached due
