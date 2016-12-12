@@ -6,6 +6,7 @@
         root: true,
         extends: "eslint:recommended",
         formatter: "unix",
+        plugins: [ "ftgp" ],
         env: {
             browser: true,
             amd: true,
@@ -14,6 +15,13 @@
             jquery: true
         },
         rules: {
+            "ftgp/indent": [
+                2,
+                "tab",
+                {
+                    "SwitchCase": 1
+                }
+            ],
             semi: [error, "always"],
             quotes: [error, "double"],
             strict: [error, "never"],
