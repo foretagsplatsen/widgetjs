@@ -1,4 +1,9 @@
-define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(widget, htmlCanvas, jQuery, chai) {
+define([
+	"widgetjs/widget",
+	"widgetjs/htmlCanvas",
+	"jquery",
+	"chai"
+], function(widget, htmlCanvas, jQuery, chai) {
 
 	var widgetSubclass = widget.subclass(function(that, my) {
 		that.renderContentOn = function(html) {
@@ -7,33 +12,33 @@ define(["widgetjs/widget", "widgetjs/htmlCanvas", "jquery", "chai"], function(wi
 	});
 
 	function withWidget(callback) {
-        // create a widget
-        var my = {};
+		// create a widget
+		var my = {};
 
 		var aWidget = widgetSubclass({}, my);
 
-        aWidget.appendTo(jQuery("body"));
+		aWidget.appendTo(jQuery("body"));
 
-        // execute test
-        callback(aWidget, my);
+		// execute test
+		callback(aWidget, my);
 
-        // clean-up : remove widget
-        aWidget.asJQuery().remove();
+		// clean-up : remove widget
+		aWidget.asJQuery().remove();
 	}
 
 	function withCanvas(callback) {
-        $("BODY").append("<div id=\"sandbox\"></div>");
-        var sandbox = jQuery("#sandbox");
+		$("BODY").append("<div id=\"sandbox\"></div>");
+		var sandbox = jQuery("#sandbox");
 
-        var html = htmlCanvas(sandbox);
-        callback(html);
+		var html = htmlCanvas(sandbox);
+		callback(html);
 
-        sandbox.remove();
+		sandbox.remove();
 	}
 
-    // actual tests
+	// actual tests
 
-    describe("function", function() {
+	describe("function", function() {
 
 		it("widgets are assigned unique identifiers", function() {
 			withWidget(function(aWidget) {

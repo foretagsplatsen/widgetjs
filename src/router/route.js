@@ -78,7 +78,7 @@ define(
 				ensureOptionalSequences();
 			};
 
-            my.events = events.eventCategory();
+			my.events = events.eventCategory();
 
 			//
 			// Public
@@ -103,7 +103,7 @@ define(
 				}
 
 				var result = createMatchResult(match, url);
-                my.events.trigger("matched", result);
+				my.events.trigger("matched", result);
 
 				return result;
 			};
@@ -222,7 +222,7 @@ define(
 				}
 
 				// then optional sequences
-                var sequenceIndex;
+				var sequenceIndex;
 				for(sequenceIndex = 0; sequenceIndex < optionalSequences.length; sequenceIndex++) {
 					if(isMatch(urlSegments, optionalSequences[sequenceIndex])) {
 						return optionalSequences[sequenceIndex];

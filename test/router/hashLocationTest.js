@@ -1,10 +1,10 @@
 define([
-    "jquery",
+	"jquery",
 	"widgetjs/router/hashLocation",
-    "chai"
+	"chai"
 ], function(jQuery, hash, chai) {
 
-    // Helpers
+	// Helpers
 
 	function delayedSteps() {
 		var steps = Array.prototype.slice.call(arguments);
@@ -33,19 +33,19 @@ define([
 
 	describe("hashLocation", function() {
 
-        beforeEach(function() {
+		beforeEach(function() {
 			window.location.hash = "";
 
 			my = {};
 			hashLocation = hash({}, my);
 			jasmine.clock().install();
-        });
+		});
 
-        afterEach(function() {
-            if(hashLocation) {
-                hashLocation.stop();
-            }
-            window.location.hash = "";
+		afterEach(function() {
+			if(hashLocation) {
+				hashLocation.stop();
+			}
+			window.location.hash = "";
 			jasmine.clock().uninstall();
 		});
 
@@ -112,23 +112,23 @@ define([
 		});
 
 		it("setUrl() triggers change", function(done) {
-            var anotherHashLocation = hash();
+			var anotherHashLocation = hash();
 
 			// Arrange: listen for url changes
 			var capturedUrl;
-            anotherHashLocation.onChanged(function(url) {
+			anotherHashLocation.onChanged(function(url) {
 				capturedUrl = url;
 				done();
 			});
 
 			// Act: set URL
-            anotherHashLocation.start();
-            anotherHashLocation.setUrl("test");
+			anotherHashLocation.start();
+			anotherHashLocation.setUrl("test");
 
 			// Assert that "change" callback was executed with url
 			expect(capturedUrl.toString()).toBe("test");
 
-            anotherHashLocation.stop();
+			anotherHashLocation.stop();
 		});
 
 		it("back()", function(callback) {

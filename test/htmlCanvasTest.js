@@ -1,15 +1,15 @@
 define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, chai) {
-    var withCanvas = function(callback) {
-        $("BODY").append("<div id=\"sandbox\"></div>");
-        var sandbox = jQuery("#sandbox");
+	var withCanvas = function(callback) {
+		$("BODY").append("<div id=\"sandbox\"></div>");
+		var sandbox = jQuery("#sandbox");
 
-        var html = htmlCanvas(sandbox);
-        callback(html);
+		var html = htmlCanvas(sandbox);
+		callback(html);
 
-        sandbox.remove();
-    };
+		sandbox.remove();
+	};
 
-    describe("htmlCanvas", function() {
+	describe("htmlCanvas", function() {
 
 		it("htmlCanvas library", function() {
 			expect(htmlCanvas).toBeTruthy();
@@ -95,10 +95,11 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
 				var clicked = false;
 
 				// Arrange: a link with a click callback
-				html.a({
-					id: "test_link",
-					click: function() { clicked = true; }
-				},
+				html.a(
+					{
+						id: "test_link",
+						click: function() { clicked = true; }
+					},
 					"Click me!"
 				);
 
