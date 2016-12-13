@@ -498,7 +498,7 @@ define(
 		 *		}
 		 *
 		 *
-		 * @param {string|jQuery|htmlTagBrush} [rootElement] Element to  "paint" on. If not supplied a document fragment will be created
+		 * @param {string|jQuery|htmlTagBrush} [rootElement] Element to "paint" on. If not supplied a document fragment will be created
 		 *
 		 * @returns {htmlCanvas}
 		 */
@@ -948,7 +948,7 @@ define(
 
 				// Create a fragment if no object
 				if (typeof(object) === "undefined" || object === null) {
-					return  jQuery(document.createDocumentFragment()).get(0);
+					return jQuery(document.createDocumentFragment()).get(0);
 				}
 
 				// Any object that implements asJQuery eg. widget and tagBrush
@@ -1002,167 +1002,166 @@ define(
 
 define('router/url',[
 	"klassified"
-],
-	function(klassified) {
+], function(klassified) {
+
+	/**
+	 * Token/Char used to separate segments in URL paths.
+	 * @type {string}
+	 */
+	var urlSeparator = "/";
+
+	/**
+	 * A `url` actually represents the fragment part of the actual url.
+	 *
+	 * @example
+	 *	var url = url({rawUrl: "path/to?foo=a&bar=b"});
+	 *	url.getPath(); // => "path/to"
+	 *	url.getQuery(); // => {foo: "a", bar: "b"}
+	 *	url.matchRoute(aRoute); // => true
+	 *
+	 * @param {string} rawUrl
+	 * @returns {url}
+	 */
+	var url = klassified.object.subclass(function(that, my) {
+
+		var rawUrl;
+		var path;
+		var query;
+		var segments;
+
+		my.initialize = function(spec) {
+			my.super(spec);
+			rawUrl = spec.rawUrl || "";
+			path = parsePath(rawUrl);
+			query = parseQuery(rawUrl);
+			segments = parseSegments(path);
+		};
+
+		//
+		// Public
+		//
 
 		/**
-		 * Token/Char used to separate segments in URL paths.
-		 * @type {string}
+		 * URL path
+		 * @returns {string}
 		 */
-		var urlSeparator = "/";
+		that.getPath = function() { return path; };
 
 		/**
-		 * A `url` actually represents the fragment part of the actual url.
+		 * Key/Value pairs parsed from query
 		 *
-		 * @example
-		 *	var url = url({rawUrl: "path/to?foo=a&bar=b"});
-		 *	url.getPath(); // => "path/to"
-		 *	url.getQuery(); // => {foo: "a", bar: "b"}
-		 *	url.matchRoute(aRoute); // => true
-		 *
-		 * @param {string} rawUrl
-		 * @returns {url}
+		 * @returns {{}}
 		 */
-		var url = klassified.object.subclass(function(that, my) {
-
-			var rawUrl;
-			var path;
-			var query;
-			var segments;
-
-			my.initialize = function(spec) {
-				my.super(spec);
-				rawUrl = spec.rawUrl || "";
-				path = parsePath(rawUrl);
-				query = parseQuery(rawUrl);
-				segments = parseSegments(path);
-			};
-
-			//
-			// Public
-			//
-
-			/**
-			 * URL path
-			 * @returns {string}
-			 */
-			that.getPath = function() { return path; };
-
-			/**
-			 * Key/Value pairs parsed from query
-			 *
-			 * @returns {{}}
-			 */
-			that.getQuery = function() { return query; };
-
-			/**
-			 * Segments in path parsed by splitting `path` by `urlSeparator`
-			 *
-			 * @returns {string[]}
-			 */
-			that.getSegments = function() { return segments; };
-
-			/**
-			 * Answers true if the route is a match for the receiver
-			 *
-			 * @param route
-			 * @returns {boolean}
-			 */
-			that.matchRoute = function(route) {
-				return route.matchUrl(that);
-			};
-
-			/**
-			 * Returns `rawUrl`
-			 * @returns {string}
-			 */
-			that.toString = function() {
-				return rawUrl;
-			};
-		});
+		that.getQuery = function() { return query; };
 
 		/**
-		 * Create URL from path and query
+		 * Segments in path parsed by splitting `path` by `urlSeparator`
 		 *
-		 * @example
-		 *	var aUrl = url("/path/to", {foo: "bar" });
-		 *	aUrl.toString(); // => "path/to?foo=bar"
-		 *
-		 * @param {string} path
-		 * @param {{}} query
-		 * @returns {url}
+		 * @returns {string[]}
 		 */
-		url.build = function(path, query) {
-			if (typeof(path) === "undefined" || path === null || typeof path !== "string") {
-				throw "accepts only string paths";
-			}
+		that.getSegments = function() { return segments; };
 
-			if (query) {
-                var queryPart = decodeURIComponent(jQuery.param(query));
-                if(queryPart) {
-                    return url({rawUrl: path + "?" + queryPart});
-                }
-            }
-
-			return url({rawUrl: path});
+		/**
+		 * Answers true if the route is a match for the receiver
+		 *
+		 * @param route
+		 * @returns {boolean}
+		 */
+		that.matchRoute = function(route) {
+			return route.matchUrl(that);
 		};
 
 		/**
-		 * Splits URL path into segments. Removes leading, trailing, and
-		 * duplicated `urlSeparator`.
-		 *
-		 * @example
-		 *	parseSegments("/a/path/to"); // => ["a", "path", "to"]
-		 *
-		 * @param path
-		 * @returns {string[]}
-		 */
-		function parseSegments(path) {
-			// Split on separator and remove all leading, trailing, and
-			// duplicated `urlSeparator` by filtering empty strings.
-			return path.split(urlSeparator).filter(Boolean);
-		}
-
-		/**
-		 * Returns path from a raw URL
-		 *
-		 * @example
-		 *	parsePath("/a/path/to?foo=bar"); // => "/a/path/to"
-		 *
-		 * @param {string} rawUrl
+		 * Returns `rawUrl`
 		 * @returns {string}
 		 */
-		function parsePath(rawUrl) {
-			return rawUrl.replace(/\?.*$/g, "");
+		that.toString = function() {
+			return rawUrl;
+		};
+	});
+
+	/**
+	 * Create URL from path and query
+	 *
+	 * @example
+	 *	var aUrl = url("/path/to", {foo: "bar" });
+	 *	aUrl.toString(); // => "path/to?foo=bar"
+	 *
+	 * @param {string} path
+	 * @param {{}} query
+	 * @returns {url}
+	 */
+	url.build = function(path, query) {
+		if (typeof(path) === "undefined" || path === null || typeof path !== "string") {
+			throw "accepts only string paths";
 		}
 
-		/**
-		 * Extract query key/value(s) from a rawUrl and return them as an
-		 * object literal with key/values.
-		 *
-		 * @example
-		 *	parsePath("/a/path/to?foo=bar&test=1"); // => {foo: "bar", test: "1"}
-		 *
-		 * @param {string} rawUrl
-		 * @returns {{}}
-		 */
-		function parseQuery(rawUrl) {
-			// Extract query key/value(s) from a rawUrl and add them to `query` object.
-			var result = /[^?]*\?(.*)$/g.exec(rawUrl);
-			var query = {};
-			var pair;
-			if (result && result.length >= 2) {
-				(result[1].split("&")).forEach(function(each) {
-					pair = each.split("=");
-					query[pair[0]] = pair[1];
-				});
+		if (query) {
+			var queryPart = decodeURIComponent(jQuery.param(query));
+			if(queryPart) {
+				return url({rawUrl: path + "?" + queryPart});
 			}
-
-			return query;
 		}
 
-		return url;
+		return url({rawUrl: path});
+	};
+
+	/**
+	 * Splits URL path into segments. Removes leading, trailing, and
+	 * duplicated `urlSeparator`.
+	 *
+	 * @example
+	 *	parseSegments("/a/path/to"); // => ["a", "path", "to"]
+	 *
+	 * @param path
+	 * @returns {string[]}
+	 */
+	function parseSegments(path) {
+		// Split on separator and remove all leading, trailing, and
+		// duplicated `urlSeparator` by filtering empty strings.
+		return path.split(urlSeparator).filter(Boolean);
 	}
+
+	/**
+	 * Returns path from a raw URL
+	 *
+	 * @example
+	 *	parsePath("/a/path/to?foo=bar"); // => "/a/path/to"
+	 *
+	 * @param {string} rawUrl
+	 * @returns {string}
+	 */
+	function parsePath(rawUrl) {
+		return rawUrl.replace(/\?.*$/g, "");
+	}
+
+	/**
+	 * Extract query key/value(s) from a rawUrl and return them as an
+	 * object literal with key/values.
+	 *
+	 * @example
+	 *	parsePath("/a/path/to?foo=bar&test=1"); // => {foo: "bar", test: "1"}
+	 *
+	 * @param {string} rawUrl
+	 * @returns {{}}
+	 */
+	function parseQuery(rawUrl) {
+		// Extract query key/value(s) from a rawUrl and add them to `query` object.
+		var result = /[^?]*\?(.*)$/g.exec(rawUrl);
+		var query = {};
+		var pair;
+		if (result && result.length >= 2) {
+			(result[1].split("&")).forEach(function(each) {
+				pair = each.split("=");
+				query[pair[0]] = pair[1];
+			});
+		}
+
+		return query;
+	}
+
+	return url;
+}
 );
 
 define('router/abstractSegment',[
@@ -1561,335 +1560,338 @@ define('router/routeFactory',[
 });
 
 define('events',[],
-    function() {
+	function() {
 
-        /**
-         * Keeps a list of bindings/callbacks that can be added using **push()** and
-         * removed using **remove()**. *trigger()* executes all callbacks one by one in registration order.
-         *
-         * @param [spec] {Object}
-         * @param [my] {Object}
-         * @returns {event}
-         */
-        var event = function(spec, my) {
-            my = my || {};
+		/**
+		 * Keeps a list of bindings/callbacks that can be added using **push()** and
+		 * removed using **remove()**. *trigger()* executes all callbacks one by one in registration order.
+		 *
+		 * @param [spec] {Object}
+		 * @param [my] {Object}
+		 * @returns {event}
+		 */
+		var event = function(spec, my) {
+			my = my || {};
 
-            var that = function(callback) {
-                return bindCallback(callback);
-            };
+			// DEPRECATED: use that.on() instead.
+			var that = function(callback) {
+				// eslint-disable-next-line no-console
+				console.warn("Using an event as a function is deprecated. Send on() to the event instead.");
+				return bindCallback(callback);
+			};
 
-            var bindings = [];
+			var bindings = [];
 
-            // #### Public API
+			// #### Public API
 
-            /**
-             * Binds callback to event. The callback will be invoked whenever the event is fired.
-             *
-             * @param callback {function}
-             * @returns {eventBinding}
-             */
-            that.on = function(callback) {
-                return bindCallback(callback);
-            };
+			/**
+			 * Binds callback to event. The callback will be invoked whenever the event is fired.
+			 *
+			 * @param callback {function}
+			 * @returns {eventBinding}
+			 */
+			that.on = function(callback) {
+				return bindCallback(callback);
+			};
 
-        /**
-         * Binds a callback to an event
-         *
-         * @param spec.callback {function} Callback to execute on event
-         * @param spec.event {event} Event to bind callback to
+			/**
+			 * Binds a callback to an event
+			 *
+			 * @param spec.callback {function} Callback to execute on event
+			 * @param spec.event {event} Event to bind callback to
 
-         * @returns {eventBinding}
-         */
-        var eventBinding = function(spec) {
-            spec = spec || {};
-            var that = {};
+			 * @returns {eventBinding}
+			 */
+			var eventBinding = function(spec) {
+				spec = spec || {};
+				var that = {};
 
-            var callback = spec.callback;
-            var event = spec.event;
+				var callback = spec.callback;
+				var event = spec.event;
 
-            /**
-             * Is bound to an event
-             * @returns {boolean}
-             */
-            that.isBound = function() {
-                return event !== undefined;
-            };
+				/**
+				 * Is bound to an event
+				 * @returns {boolean}
+				 */
+				that.isBound = function() {
+					return event !== undefined;
+				};
 
-            /**
-             * Remove itself from event, if bound.
-             */
-            that.unbind = function() {
-                if (that.isBound()) {
-                    event.off(that);
-                    event = undefined;
-                }
-            };
+				/**
+				 * Remove itself from event, if bound.
+				 */
+				that.unbind = function() {
+					if (that.isBound()) {
+						event.off(that);
+						event = undefined;
+					}
+				};
 
-            /**
-             * @param anEvent
-             */
-            that.bind = function(anEvent) {
-                that.unbind();
-                if (anEvent) {
-                    event = anEvent;
-                }
-            };
+				/**
+				 * @param anEvent
+				 */
+				that.bind = function(anEvent) {
+					that.unbind();
+					if (anEvent) {
+						event = anEvent;
+					}
+				};
 
-            /**
-             * Executes connected callback
-             * @param params
-             */
-            that.execute = function(params) {
-                if (callback) {
-                    callback.apply(that, params);
-                }
-            };
+				/**
+				 * Executes connected callback
+				 * @param params
+				 */
+				that.execute = function(params) {
+					if (callback) {
+						callback.apply(that, params);
+					}
+				};
 
-            return that;
-        };
+				return that;
+			};
 
-            /**
-             * Like on() except callback will only be fired once
-             *
-             * @param callback {function}
-             * @returns {eventBinding}
-             */
-            that.onceOn = function(callback) {
-                var onceBinding = eventBinding({
-                    callback: function() {
-                        my.remove(onceBinding);
-                        callback.apply(that, arguments);
-                    }
-                });
+			/**
+			 * Like on() except callback will only be fired once
+			 *
+			 * @param callback {function}
+			 * @returns {eventBinding}
+			 */
+			that.onceOn = function(callback) {
+				var onceBinding = eventBinding({
+					callback: function() {
+						my.remove(onceBinding);
+						callback.apply(that, arguments);
+					}
+				});
 
-                bindings.push(onceBinding);
-                return onceBinding;
-            };
+				bindings.push(onceBinding);
+				return onceBinding;
+			};
 
-            /**
-             * Removed "binding" attached to event.
-             * @param name {String} Name of event
-             * @param binding {eventBinding} Binding
-             */
-            that.off = function(binding) {
-                my.remove(binding);
-            };
+			/**
+			 * Removed "binding" attached to event.
+			 * @param name {String} Name of event
+			 * @param binding {eventBinding} Binding
+			 */
+			that.off = function(binding) {
+				my.remove(binding);
+			};
 
-            /**
-             * Trigger event by executing all callbacks one by one in registration order.
-             *
-             * @param arguments {Object|Object[]} Arguments passed to callback of each binding
-             */
-            that.trigger = function() {
-                var params = Array.prototype.slice.call(arguments);
-                bindings.forEach(function(binding) {
-                    binding.execute(params);
-                });
-            };
+			/**
+			 * Trigger event by executing all callbacks one by one in registration order.
+			 *
+			 * @param arguments {Object|Object[]} Arguments passed to callback of each binding
+			 */
+			that.trigger = function() {
+				var params = Array.prototype.slice.call(arguments);
+				bindings.forEach(function(binding) {
+					binding.execute(params);
+				});
+			};
 
-            /**
-             * Unbind all callbacks bound to this event.
-             */
-            that.dispose = function() {
-                bindings.slice().forEach(function(binding) {
-                    binding.unbind();
-                });
-            };
+			/**
+			 * Unbind all callbacks bound to this event.
+			 */
+			that.dispose = function() {
+				bindings.slice().forEach(function(binding) {
+					binding.unbind();
+				});
+			};
 
-            /**
-             * @param binding {eventBinding}
-             */
-            my.push = function(binding) {
-                bindings.push(binding);
-                binding.bind(that);
-            };
+			/**
+			 * @param binding {eventBinding}
+			 */
+			my.push = function(binding) {
+				bindings.push(binding);
+				binding.bind(that);
+			};
 
-            /**
-             * @param binding {eventBinding}
-             */
-            my.remove = function(binding) {
-                bindings.splice(bindings.indexOf(binding), 1);
-            };
+			/**
+			 * @param binding {eventBinding}
+			 */
+			my.remove = function(binding) {
+				bindings.splice(bindings.indexOf(binding), 1);
+			};
 
-            /**
-             * Create and add callback binding to event
-             *
-             * @param callback
-             * @returns {eventBinding}
-             */
-            function bindCallback(callback) {
-                var binding = eventBinding({ callback: callback, event: that });
-                bindings.push(binding);
-                return binding;
-            }
+			/**
+			 * Create and add callback binding to event
+			 *
+			 * @param callback
+			 * @returns {eventBinding}
+			 */
+			function bindCallback(callback) {
+				var binding = eventBinding({ callback: callback, event: that });
+				bindings.push(binding);
+				return binding;
+			}
 
-            return that;
-        };
+			return that;
+		};
 
-        /**
-         * Keeps a list of events.
-         *
-         * @returns {{}}
-         */
-        var eventCategory = function() {
-            var that = {};
+		/**
+		 * Keeps a list of events.
+		 *
+		 * @returns {{}}
+		 */
+		var eventCategory = function() {
+			var that = {};
 
-            // Map of events with name as key
-            var namedEvents = {};
-            var events = [];
+			// Map of events with name as key
+			var namedEvents = {};
+			var events = [];
 
-            /**
-             * Lazily makes sure that an event exists for "name".
-             *
-             * @param name {String}
-             * @returns {event} Also return the event
-             */
-            function ensureEventHolderFor(name) {
-                if (!hasEventNamed(name)) {
-                    addEvent(event(), name);
-                }
-                return namedEvents[name];
-            }
+			/**
+			 * Lazily makes sure that an event exists for "name".
+			 *
+			 * @param name {String}
+			 * @returns {event} Also return the event
+			 */
+			function ensureEventHolderFor(name) {
+				if (!hasEventNamed(name)) {
+					addEvent(event(), name);
+				}
+				return namedEvents[name];
+			}
 
-            /**
-             * Create a new event and if name i supplied adds it to event manager
-             *
-             * @param [name] {string} Name of event in eventHandler
-             * @returns {event}
-             */
-            that.createEvent = function(name) {
-                return addEvent(event(), name);
-            };
+			/**
+			 * Create a new event and if name i supplied adds it to event manager
+			 *
+			 * @param [name] {string} Name of event in eventHandler
+			 * @returns {event}
+			 */
+			that.createEvent = function(name) {
+				return addEvent(event(), name);
+			};
 
-            /**
-             * Binds callback to a named event. The callback will be invoked whenever the event is fired.
-             *
-             * @param name {String}
-             * @param callback {function}
-             */
-            that.on = function(name, callback) {
-                return ensureEventHolderFor(name).on(callback);
-            };
+			/**
+			 * Binds callback to a named event. The callback will be invoked whenever the event is fired.
+			 *
+			 * @param name {String}
+			 * @param callback {function}
+			 */
+			that.on = function(name, callback) {
+				return ensureEventHolderFor(name).on(callback);
+			};
 
-            /**
-             * Removed "binding" attached to event.
-             * @param name {String} Name of event
-             * @param binding {eventBinding} Binding
-             */
-            that.off = function(name, binding) {
-                return ensureEventHolderFor(name).off(binding);
-            };
+			/**
+			 * Removed "binding" attached to event.
+			 * @param name {String} Name of event
+			 * @param binding {eventBinding} Binding
+			 */
+			that.off = function(name, binding) {
+				return ensureEventHolderFor(name).off(binding);
+			};
 
-            /**
-             * Like on() except callback will only be fired once
-             *
-             * @param name
-             * @param callback
-             * @returns {*}
-             */
-            that.onceOn = function(name, callback) {
-                return ensureEventHolderFor(name).onceOn(callback);
-            };
+			/**
+			 * Like on() except callback will only be fired once
+			 *
+			 * @param name
+			 * @param callback
+			 * @returns {*}
+			 */
+			that.onceOn = function(name, callback) {
+				return ensureEventHolderFor(name).onceOn(callback);
+			};
 
-            /**
-             * Trigger all callbacks attached to event
-             * @param name
-             * @param arguments Any arguments to trigger is sent as arguments to callback.
-             */
-            that.trigger = function(name) {
-                var params = Array.prototype.slice.call(arguments, 1);
-                var event = ensureEventHolderFor(name);
-                event.trigger.apply(that, params);
-            };
+			/**
+			 * Trigger all callbacks attached to event
+			 * @param name
+			 * @param arguments Any arguments to trigger is sent as arguments to callback.
+			 */
+			that.trigger = function(name) {
+				var params = Array.prototype.slice.call(arguments, 1);
+				var event = ensureEventHolderFor(name);
+				event.trigger.apply(that, params);
+			};
 
-            /**
-             * Dispose all events.
-             */
-            that.dispose = function() {
-                events.forEach(function(event) {
-                    event.dispose();
-                });
+			/**
+			 * Dispose all events.
+			 */
+			that.dispose = function() {
+				events.forEach(function(event) {
+					event.dispose();
+				});
 
-                namedEvents = {};
-                events = [];
-            };
+				namedEvents = {};
+				events = [];
+			};
 
-            /**
-             * Answers true if an event with name exists
-             *
-             * @param name {String}
-             * @returns {boolean}
-             */
-            function hasEventNamed(name) {
-                return namedEvents[name] !== undefined;
-            }
+			/**
+			 * Answers true if an event with name exists
+			 *
+			 * @param name {String}
+			 * @returns {boolean}
+			 */
+			function hasEventNamed(name) {
+				return namedEvents[name] !== undefined;
+			}
 
-            /**
-             * @param event {event}
-             * @param [name] {string}
-             * @returns {event}
-             */
-            function addEvent(event, name) {
-                events.push(event);
-                if(name) {
-                    namedEvents[name] = event;
-                }
-                return event;
-            }
+			/**
+			 * @param event {event}
+			 * @param [name] {string}
+			 * @returns {event}
+			 */
+			function addEvent(event, name) {
+				events.push(event);
+				if(name) {
+					namedEvents[name] = event;
+				}
+				return event;
+			}
 
-            return that;
-        };
+			return that;
+		};
 
-        /**
-         * Singleton object that keeps a list of named event categories.
-         */
-        var eventManager = (function() {
-            var that = {};
+		/**
+		 * Singleton object that keeps a list of named event categories.
+		 */
+		var eventManager = (function() {
+			var that = {};
 
-            // Map of event categories with (category) name as key
-            var categories = {};
+			// Map of event categories with (category) name as key
+			var categories = {};
 
-            /**
-             * Register a new event category with "name".
-             * @param name
-             * @returns {eventCategory}
-             */
-            that.register = function(name) {
-                if (categories[name]) {
-                    throw ("A event category is already registered for " + name);
-                }
-                categories[name] = eventCategory();
+			/**
+			 * Register a new event category with "name".
+			 * @param name
+			 * @returns {eventCategory}
+			 */
+			that.register = function(name) {
+				if (categories[name]) {
+					throw ("A event category is already registered for " + name);
+				}
+				categories[name] = eventCategory();
 
-                return categories[name];
-            };
+				return categories[name];
+			};
 
-            /**
-             * Returns event category by name. Creates a new category if not already
-             * registered.
-             * @param name
-             * @returns {*}
-             */
-            that.at = function(name) {
-                if (!categories[name]) {
-                    that.register(name);
-                }
+			/**
+			 * Returns event category by name. Creates a new category if not already
+			 * registered.
+			 * @param name
+			 * @returns {*}
+			 */
+			that.at = function(name) {
+				if (!categories[name]) {
+					that.register(name);
+				}
 
-                return categories[name];
-            };
+				return categories[name];
+			};
 
-            return that;
-        })();
+			return that;
+		})();
 
-        // Exports Singleton event manager
-        // but also expose event and event category
+		// Exports Singleton event manager
+		// but also expose event and event category
 
-        eventManager.eventCategory = eventCategory;
-        //@deprecated Spelling mistake
-        eventManager.eventhandler = eventCategory;
-        eventManager.event = event;
+		eventManager.eventCategory = eventCategory;
+		//@deprecated Spelling mistake
+		eventManager.eventhandler = eventCategory;
+		eventManager.event = event;
 
-        return eventManager;
-    });
+		return eventManager;
+	});
 
 define('router/routeMatchResult',[
 	"klassified"
@@ -2122,7 +2124,7 @@ define(
 				ensureOptionalSequences();
 			};
 
-            my.events = events.eventCategory();
+			my.events = events.eventCategory();
 
 			//
 			// Public
@@ -2147,7 +2149,7 @@ define(
 				}
 
 				var result = createMatchResult(match, url);
-                my.events.trigger("matched", result);
+				my.events.trigger("matched", result);
 
 				return result;
 			};
@@ -2266,7 +2268,7 @@ define(
 				}
 
 				// then optional sequences
-                var sequenceIndex;
+				var sequenceIndex;
 				for(sequenceIndex = 0; sequenceIndex < optionalSequences.length; sequenceIndex++) {
 					if(isMatch(urlSegments, optionalSequences[sequenceIndex])) {
 						return optionalSequences[sequenceIndex];
@@ -2414,7 +2416,7 @@ define('router/hashLocation',[
 
 		my.currentHash = undefined; // last hash fragment
 		my.history = []; // history of visited hash fragments
-        my.events = events.eventCategory();
+		my.events = events.eventCategory();
 
 		//
 		// Public
@@ -2426,7 +2428,7 @@ define('router/hashLocation',[
 		 *
 		 * @type {event}
 		 */
-        that.onChanged = my.events.createEvent("changed");
+		that.onChanged = my.events.createEvent("changed");
 
 		/**
 		 * Set hash fragment to URL
@@ -2585,19 +2587,19 @@ define(
 		};
 
 		/**
-		* Router allow you to keep state in the URL. When a user visits a specific URL the application
-		* can be transformed accordingly.
-		*
-		* Router have a routing table consisting of an array of routes. When the router resolves a URL
-		* each route is matched against the URL one-by-one. The order is defined by the route priority
-		* property (lower first). If two routes have the same priority or if priority is omitted, routes
-		* are matched in registration order.
-		*
-		* @param [spec]
-		* @param [spec.locationHandler] hashSingleton by default
-		*
-		* @returns {{}}
-		*/
+		 * Router allow you to keep state in the URL. When a user visits a specific URL the application
+		 * can be transformed accordingly.
+		 *
+		 * Router have a routing table consisting of an array of routes. When the router resolves a URL
+		 * each route is matched against the URL one-by-one. The order is defined by the route priority
+		 * property (lower first). If two routes have the same priority or if priority is omitted, routes
+		 * are matched in registration order.
+		 *
+		 * @param [spec]
+		 * @param [spec.locationHandler] hashSingleton by default
+		 *
+		 * @returns {{}}
+		 */
 		var router = klassified.object.subclass(function(that, my) {
 
 			my.initialize = function(spec) {
@@ -2612,7 +2614,7 @@ define(
 			};
 
 			// Events
-            my.events = events.eventCategory();
+			my.events = events.eventCategory();
 
 			//
 			// Public
@@ -2622,22 +2624,22 @@ define(
 			 * Triggered when a route is matched with `routeMatchResult` as argument.
 			 * @type {event}
 			 */
-            that.onRouteMatched = my.events.createEvent("routeMatched");
+			that.onRouteMatched = my.events.createEvent("routeMatched");
 
 			/**
 			 * Triggered when a route is not matched with "url" as argument.
 			 * @type {event}
 			 */
-            that.onRouteNotFound = my.events.createEvent("routeNotFound");
+			that.onRouteNotFound = my.events.createEvent("routeNotFound");
 
 			/**
 			 * Triggered each time a URL is resolved with `url` as argument
 			 * @type {event}
 			 */
-            that.onResolveUrl = my.events.createEvent("resolveUrl");
+			that.onResolveUrl = my.events.createEvent("resolveUrl");
 
-            // @deprecated Use event property instead
-            that.on = my.events.on;
+			// @deprecated Use event property instead
+			that.on = my.events.on;
 
 			//
 			// Public
@@ -2720,7 +2722,7 @@ define(
 					});
 				}
 
-                newRoute.name = routeSpec.name;
+				newRoute.name = routeSpec.name;
 				newRoute.fallThrough = routeSpec.fallThrough;
 
 				newRoute.priority = routeSpec.priority;
@@ -2736,17 +2738,17 @@ define(
 			 * @param {function} predicate
 			 * @returns {route} Matched route or null if not matched
 			 */
-            that.findRoute = function(predicate) {
-                var numRoutes = my.routeTable.length;
-                for(var routeIndex = 0; routeIndex < numRoutes; routeIndex++) {
-                    var route = my.routeTable[routeIndex];
-                    if(predicate(route)) {
-                        return route;
-                    }
-                }
+			that.findRoute = function(predicate) {
+				var numRoutes = my.routeTable.length;
+				for(var routeIndex = 0; routeIndex < numRoutes; routeIndex++) {
+					var route = my.routeTable[routeIndex];
+					if(predicate(route)) {
+						return route;
+					}
+				}
 
-                return null;
-            };
+				return null;
+			};
 
 			/**
 			 * Finds route by name
@@ -2754,11 +2756,11 @@ define(
 			 * @param {string} routeName
 			 * @returns {route}
 			 */
-            that.getRouteByName = function(routeName) {
-                return that.findRoute(function(route) {
-                    return route.name && route.name === routeName;
-                });
-            };
+			that.getRouteByName = function(routeName) {
+				return that.findRoute(function(route) {
+					return route.name && route.name === routeName;
+				});
+			};
 
 			/**
 			 * Removes a route from routing table
@@ -2777,10 +2779,10 @@ define(
 			/**
 			 * Removes all routes from routing table.
 			 */
-            that.clear = function() {
-                my.routeTable = [];
-                my.lastMatch = undefined;
-            };
+			that.clear = function() {
+				my.routeTable = [];
+				my.lastMatch = undefined;
+			};
 
 			/**
 			 * Pipes URL matching "routeSpec" to another router.
@@ -2827,7 +2829,7 @@ define(
 			 * Constructs a link that can be used eg. in href.
 			 *
 			 * @example
-			 *  // Link to a route by name (recommended)
+			 *	// Link to a route by name (recommended)
 			 *	aRouter.linkTo("users-list", {user: "jane"});
 			 *
 			 *	// Link to a path
@@ -2840,19 +2842,19 @@ define(
 			 *
 			 * @returns {string}
 			 */
-            that.linkTo = function(routeName, parameters, includeCurrentParameters) {
-                var route = that.getRouteByName(routeName);
-                if(route) {
+			that.linkTo = function(routeName, parameters, includeCurrentParameters) {
+				var route = that.getRouteByName(routeName);
+				if(route) {
 					return my.location.linkToUrl(that.expand({
 						routeName: route.name,
 						parameters: parameters,
 						excludeCurrentParameters: !includeCurrentParameters
 					}));
-                }
+				}
 
-                // fallback to path (eg. /user/john) if route is not defined
+				// fallback to path (eg. /user/john) if route is not defined
 				return that.linkToPath(routeName, parameters);
-            };
+			};
 
 			/**
 			 * Link to a path
@@ -2865,7 +2867,7 @@ define(
 			 * @param {{}} query
 			 * @returns {string}
 			 */
-            that.linkToPath = function(path, query) {
+			that.linkToPath = function(path, query) {
 				return that.linkToUrl(url.build(path, query));
 			};
 
@@ -2897,17 +2899,17 @@ define(
 			 * @returns {string}
 			 */
 			that.redirectTo = function(routeName, parameters, includeCurrentParameters) {
-                var route = that.getRouteByName(routeName);
-                if(route) {
+				var route = that.getRouteByName(routeName);
+				if(route) {
 					return my.location.setUrl(that.expand({
 						routeName: route.name,
 						parameters: parameters,
 						excludeCurrentParameters: !includeCurrentParameters
 					}));
-                }
+				}
 
-                return that.redirectToPath(routeName, parameters);
-            };
+				return that.redirectToPath(routeName, parameters);
+			};
 
 			/**
 			 * Redirect to a path
@@ -3017,13 +3019,13 @@ define(
 			 *
 			 * @returns {{}} Parameter values with parameter names as keys
 			 */
-            that.getParameters = function() {
+			that.getParameters = function() {
 				if (!my.lastMatch) {
 					return my.location.getUrl().getQuery();
 				}
 
 				return my.lastMatch.getParameters();
-            };
+			};
 
 			/**
 			 * Returns parameter value by name
@@ -3031,10 +3033,10 @@ define(
 			 * @param {string} parameterName
 			 * @returns {*}
 			 */
-            that.getParameter = function(parameterName) {
-                var parameters = that.getParameters();
-                return parameters[parameterName];
-            };
+			that.getParameter = function(parameterName) {
+				var parameters = that.getParameters();
+				return parameters[parameterName];
+			};
 
 			that.setDefaultParameter = function(parameterName, value) {
 				my.defaultParameters[parameterName] = value;
@@ -3047,7 +3049,7 @@ define(
 			 * @param {string|url} aFallbackUrl
 			 * @returns {string} URL
 			 */
-            that.back = function(aFallbackUrl) {
+			that.back = function(aFallbackUrl) {
 				return my.location.back(aFallbackUrl);
 			};
 
@@ -3080,7 +3082,7 @@ define(
 
 			/**
 			 * Tries to resolve URL by matching the URL against all routes in
-			 * route table. Unless  `fallThrough`is set on the matched route router
+			 * route table. Unless `fallThrough`is set on the matched route router
 			 * will stop on first match.
 			 *
 			 * Last match is also stored as `my.lastMatch`
@@ -3124,8 +3126,8 @@ define(
 				var routeIndex = my.routeTable.length;
 				if(route.priority !== undefined) {
 					do { --routeIndex; } while (my.routeTable[routeIndex] &&
-					(my.routeTable[routeIndex].priority === undefined ||
-					route.priority < my.routeTable[routeIndex].priority));
+						(my.routeTable[routeIndex].priority === undefined ||
+							route.priority < my.routeTable[routeIndex].priority));
 					routeIndex += 1;
 				}
 				my.routeTable.splice(routeIndex, 0, route);
@@ -3254,6 +3256,7 @@ define(
 		 *
 		 * It is therefor easy to compose widgets from other widgets.
 		 *
+		 * @virtual
 		 *
 		 * @param {Object} spec
 		 * @param {String} [spec.id] Unique id for widget. Also used for root element when attached/rendered to DOM.
@@ -3262,7 +3265,7 @@ define(
 		 *
 		 * @returns {widget}
 		 */
-		var widget = klassified.object.subclass(function(that, my) {
+		var widget = klassified.object.abstractSubclass(function(that, my) {
 
 			/**
 			 * Keep track of the rendered subwidgets
@@ -3276,6 +3279,16 @@ define(
 				// When within an update transaction, do not update the widget
 				my.inUpdateTransaction = false;
 				children = [];
+			};
+
+			/**
+			 * Hook evaluated at the end of widget initialization and
+			 * before any rendering.
+			 */
+			my.initializeSubwidgets = function(spec) {};
+
+			my.postInitialize = function(spec) {
+				my.initializeSubwidgets(spec);
 			};
 
 			/** Events for widget */
@@ -3433,6 +3446,21 @@ define(
 				}
 			};
 
+			/**
+			 * Create and expose an event named `name`.
+			 */
+			my.createEvent = function(name) {
+				that[name] = my.events.createEvent();
+			};
+
+			/**
+			 * Create and expose one event per string argument.
+			 */
+			my.createEvents = function() {
+				var names = Array.prototype.slice.apply(arguments);
+				names.forEach(my.createEvent);
+			};
+
 			// Expose events
 			that.on = my.events.on;
 			that.onceOn = my.events.onceOn;
@@ -3559,7 +3587,9 @@ define(
 			 *
 			 * @param {htmlCanvas} html
 			 */
-			that.renderContentOn = function(html) {};
+			that.renderContentOn = function(html) {
+				return my.subclassResponsibility();
+			};
 
 			/**
 			 * Hook evaluated before the widget is attached (or reattached due
