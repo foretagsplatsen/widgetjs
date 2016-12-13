@@ -79,7 +79,7 @@ define(
 		 *
 		 * @returns {widget}
 		 */
-		var widget = klassified.object.abstractSubclass(function(that, my) {
+		var widget = klassified.object.subclass(function(that, my) {
 
 			/**
 			 * Keep track of the rendered subwidgets
