@@ -5,7 +5,7 @@ define([
 	"./events",
 	"./htmlCanvas",
 	"jquery"
-], function(klassified, ext, router, events, htmlCanvas, jQuery) {
+], function(klassified, widgetExtensions, router, events, htmlCanvas) {
 
 	/**
 	 * Creates unique ids used by widgets to identify their root div.
@@ -480,9 +480,9 @@ define([
 
 		// Third party protected extensions** added to `my`.
 		// See widget-extensions.js
-		for (var extProperty in ext) {
-			if (ext.hasOwnProperty(extProperty)) {
-				my[extProperty] = ext[extProperty];
+		for (var extProperty in widgetExtensions) {
+			if (widgetExtensions.hasOwnProperty(extProperty)) {
+				my[extProperty] = widgetExtensions[extProperty];
 			}
 		}
 

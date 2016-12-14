@@ -1,6 +1,6 @@
 define([
 	"jquery",
-	"../events",
+	"src/events",
 	"./url",
 	"klassified"
 ], function(jQuery, events, url, klassified) {

@@ -1,7 +1,7 @@
 define([
 	"src/router/router",
 	"chai"
-], function(router, chai) {
+], function(router) {
 
 	function delayedSteps() {
 		var steps = Array.prototype.slice.call(arguments);

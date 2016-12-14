@@ -4,11 +4,11 @@ define([
 	"./widget-extensions",
 	"./router",
 	"./events"
-], function(htmlCanvas, widget, ext, router, events) {
+], function(htmlCanvas, widget, widgetExtensions, router, events) {
 	return {
 		htmlCanvas: htmlCanvas,
 		widget: widget,
-		ext: ext,
+		ext: widgetExtensions,
 		router: router,
 		events: events
 	};

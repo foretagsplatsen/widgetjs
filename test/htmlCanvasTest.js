@@ -1,4 +1,8 @@
-define(["src/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, chai) {
+define([
+	"src/htmlCanvas",
+	"jquery",
+	"chai"
+], function(htmlCanvas, jQuery) {
 	function withCanvas(callback) {
 		$("BODY").append("<div id=\"sandbox\"></div>");
 		var sandbox = jQuery("#sandbox");

@@ -3,7 +3,7 @@ define([
 	"src/htmlCanvas",
 	"jquery",
 	"chai"
-], function(widget, htmlCanvas, jQuery, chai) {
+], function(widget, htmlCanvas, jQuery) {
 
 	var widgetSubclass = widget.subclass(function(that, my) {
 		that.renderContentOn = function(html) {

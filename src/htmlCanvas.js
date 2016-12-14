@@ -1,6 +1,6 @@
 define([
 	"jquery"
-], function(jQuery) {
+], function() {
 
 	/**
 	 * @typedef {function} renderer

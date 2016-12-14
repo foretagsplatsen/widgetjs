@@ -1,9 +1,9 @@
 define([
+	"./abstractSegment",
 	"./parameterSegment",
 	"./optionalParameterSegment",
-	"./staticSegment",
-	"./abstractSegment"
-], function(parameterSegment, optionalParameterSegment, staticSegment, abstractSegment) {
+	"./staticSegment"
+], function(abstractSegment) {
 
 	/**
 	 * Token/Char used to separate segments in route patterns.

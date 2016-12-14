@@ -2,7 +2,7 @@ define([
 	"jquery",
 	"src/router/hashLocation",
 	"chai"
-], function(jQuery, hash, chai) {
+], function(jQuery, hashLocationModel) {
 
 	// Helpers
 
@@ -37,7 +37,7 @@ define([
 			window.location.hash = "";
 
 			my = {};
-			hashLocation = hash({}, my);
+			hashLocation = hashLocationModel({}, my);
 			jasmine.clock().install();
 		});
 
@@ -112,7 +112,7 @@ define([
 		});
 
 		it("setUrl() triggers change", function(done) {
-			var anotherHashLocation = hash();
+			var anotherHashLocation = hashLocationModel();
 
 			// Arrange: listen for url changes
 			var capturedUrl;

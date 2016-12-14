@@ -1,11 +1,11 @@
 define([
-	"jquery",
-	"../events",
+	"src/events",
 	"./route",
 	"./url",
 	"./hashLocation",
-	"klassified"
-], function(jQuery, events, route, url, hashLocation, klassified) {
+	"klassified",
+	"jquery"
+], function(events, route, url, hashLocation, klassified) {
 
 	/**
 	 * Lazily creates a singleton instance of

@@ -1,7 +1,11 @@
 define([
-	"./routeFactory", "../events", "./routeMatchResult", "jquery", "./url",
-	"klassified"
-], function(routeFactory, events, routeMatchResult, jQuery, url, klassified) {
+	"./routeFactory",
+	"src/events",
+	"./routeMatchResult",
+	"./url",
+	"klassified",
+	"jquery"
+], function(routeFactory, events, routeMatchResult, url, klassified) {
 
 	/**
 	 * Routes represent the path for which an action should be taken (see `matched` event).
