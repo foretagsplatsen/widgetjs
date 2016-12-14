@@ -25,7 +25,7 @@ define([
 	function setHash(aHash) {
 		window.location.hash = aHash;
 		window.open(window.location, "_self", true);
-		jQuery(window).trigger( "hashchange");
+		jQuery(window).trigger("hashchange");
 	}
 
 	var my;
@@ -42,7 +42,7 @@ define([
 		});
 
 		afterEach(function() {
-			if(hashLocation) {
+			if (hashLocation) {
 				hashLocation.stop();
 			}
 			window.location.hash = "";

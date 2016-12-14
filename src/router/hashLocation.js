@@ -20,12 +20,12 @@ define([
 	 * Manages and listens for changes in the hash fragment of the URL.
 	 *
 	 * @example
-	 *		var location = hash();
-	 *		hash.on("changed", function(newUrl) { window.alert(newUrl); });
-	 *		location.start();
-	 *		location.setUrl("newUrl");
-	 *		location.setUrl("anotherUrl");
-	 *		location.back();
+	 *        var location = hash();
+	 *        hash.on("changed", function(newUrl) { window.alert(newUrl); });
+	 *        location.start();
+	 *        location.setUrl("newUrl");
+	 *        location.setUrl("anotherUrl");
+	 *        location.back();
 	 *
 	 * @param {{}} [spec]
 	 *
@@ -148,7 +148,7 @@ define([
 		}
 
 		function urlToHash(aUrl) {
-			if(typeof aUrl === "string") {
+			if (typeof aUrl === "string") {
 				aUrl = url({rawUrl: aUrl});
 			}
 			return "#!/" + aUrl.toString();
@@ -162,7 +162,7 @@ define([
 		function setCurrentHash(newHash) {
 			newHash = newHash || getWindowHash();
 
-			if(my.currentHash !== newHash) {
+			if (my.currentHash !== newHash) {
 				my.currentHash = newHash;
 				my.history.push(my.currentHash);
 			}
