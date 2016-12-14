@@ -357,7 +357,7 @@ define([
 
 				// addClass()
 				h1.addClass("foo");
-				expect(h1.asJQuery().hasClass("foo"));
+				expect(h1.asJQuery().hasClass("foo")).toBeTruthy();
 
 				// removeClass()
 				h1.removeClass("foo");
