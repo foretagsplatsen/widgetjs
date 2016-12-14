@@ -1,5 +1,5 @@
 define([
-	"widgetjs/router",
+	"src/router",
 	"chai"
 ], function(router,chai) {
 

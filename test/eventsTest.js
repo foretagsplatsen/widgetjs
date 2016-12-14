@@ -1,4 +1,4 @@
-define(["widgetjs/events"], function(events) {
+define(["src/events"], function(events) {
 	describe("events", function() {
 
 		it("Bind callback to event", function() {

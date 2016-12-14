@@ -1,6 +1,6 @@
 define([
 	"jquery",
-	"widgetjs/router/hashLocation",
+	"src/router/hashLocation",
 	"chai"
 ], function(jQuery, hash, chai) {
 

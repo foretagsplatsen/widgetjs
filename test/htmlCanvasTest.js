@@ -1,4 +1,4 @@
-define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, chai) {
+define(["src/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, chai) {
 	var withCanvas = function(callback) {
 		$("BODY").append("<div id=\"sandbox\"></div>");
 		var sandbox = jQuery("#sandbox");

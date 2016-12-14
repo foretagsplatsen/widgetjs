@@ -1,6 +1,6 @@
 define([
-	"widgetjs/widget",
-	"widgetjs/htmlCanvas",
+	"src/widget",
+	"src/htmlCanvas",
 	"jquery",
 	"chai"
 ], function(widget, htmlCanvas, jQuery, chai) {
