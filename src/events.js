@@ -8,15 +8,15 @@ define([], function() {
 	 * @param [my] {Object}
 	 * @returns {event}
 	 */
-	var event = function(spec, my) {
+	function event(spec, my) {
 		my = my || {};
 
 		// DEPRECATED: use that.on() instead.
-		var that = function(callback) {
+		function that(callback) {
 			// eslint-disable-next-line no-console
 			console.warn("Using an event as a function is deprecated. Send on() to the event instead.");
 			return bindCallback(callback);
-		};
+		}
 
 		var bindings = [];
 
@@ -40,7 +40,7 @@ define([], function() {
 
 		 * @returns {eventBinding}
 		 */
-		var eventBinding = function(spec) {
+		function eventBinding(spec) {
 			spec = spec || {};
 			var that = {};
 
@@ -86,7 +86,7 @@ define([], function() {
 			};
 
 			return that;
-		};
+		}
 
 		/**
 		 * Like on() except callback will only be fired once
@@ -164,14 +164,14 @@ define([], function() {
 		}
 
 		return that;
-	};
+	}
 
 	/**
 	 * Keeps a list of events.
 	 *
 	 * @returns {{}}
 	 */
-	var eventCategory = function() {
+	function eventCategory() {
 		var that = {};
 
 		// Map of events with name as key
@@ -278,7 +278,7 @@ define([], function() {
 		}
 
 		return that;
-	};
+	}
 
 	/**
 	 * Singleton object that keeps a list of named event categories.

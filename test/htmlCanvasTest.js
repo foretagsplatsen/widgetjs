@@ -1,5 +1,5 @@
 define(["src/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, chai) {
-	var withCanvas = function(callback) {
+	function withCanvas(callback) {
 		$("BODY").append("<div id=\"sandbox\"></div>");
 		var sandbox = jQuery("#sandbox");
 
@@ -7,7 +7,7 @@ define(["src/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, chai) 
 		callback(html);
 
 		sandbox.remove();
-	};
+	}
 
 	describe("htmlCanvas", function() {
 
@@ -234,9 +234,9 @@ define(["src/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, chai) 
 		it("can render with html function", function() {
 			withCanvas(function(html) {
 				// Arrange a function that take a canvas as argument.
-				var htmlFn = function(html2) {
+				function htmlFn(html2) {
 					html2.span("Test").addClass("aSpan");
-				};
+				}
 
 				// and render a DIV with function as argument
 				html.div({id: "aDiv"}, htmlFn);
@@ -249,7 +249,7 @@ define(["src/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, chai) 
 
 		it("delegates rendering to objects implementing appendToBrush()", function() {
 			withCanvas(function(html) {
-				var appendableObject = function() {
+				function appendableObject() {
 					var that = {};
 
 					that.appendToBrush = function(aTagBrush) {
@@ -257,27 +257,7 @@ define(["src/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, chai) 
 					};
 
 					return that;
-				};
-
-				// Act: render object
-				html.render(appendableObject());
-
-				// Assert
-				expect(jQuery("#sandbox").html()).toBe("content");
-			});
-		});
-
-		it("delegates rendering to objects implementing appendToBrush()", function() {
-			withCanvas(function(html) {
-				var appendableObject = function() {
-					var that = {};
-
-					that.appendToBrush = function(aTagBrush) {
-						aTagBrush.render("content");
-					};
-
-					return that;
-				};
+				}
 
 				// Act: render object
 				html.render(appendableObject());

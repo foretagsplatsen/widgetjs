@@ -13,13 +13,13 @@ define([
 	 *
 	 * @returns {hashLocation}
 	 */
-	var hashSingleton = function() {
+	function hashSingleton() {
 		if (!hashSingleton.instance) {
 			hashSingleton.instance = hashLocation();
 		}
 
 		return hashSingleton.instance;
-	};
+	}
 
 	/**
 	 * Router allow you to keep state in the URL. When a user visits a specific URL the application
