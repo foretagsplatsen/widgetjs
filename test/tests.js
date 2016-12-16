@@ -13,7 +13,6 @@ define([], function() {
 			paths: {
 				"klassified": "bower_components/klassified/dist/klassified",
 				"jquery": "bower_components/jquery/dist/jquery",
-				"widgetjs": "src",
 				"chai": "bower_components/chai/chai",
 				"chai-jquery": "bower_components/chai-jquery/chai-jquery"
 			},

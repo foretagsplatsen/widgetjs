@@ -1,5 +1,9 @@
-define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, chai) {
-	var withCanvas = function(callback) {
+define([
+	"src/htmlCanvas",
+	"jquery",
+	"chai"
+], function(htmlCanvas, jQuery) {
+	function withCanvas(callback) {
 		$("BODY").append("<div id=\"sandbox\"></div>");
 		var sandbox = jQuery("#sandbox");
 
@@ -7,7 +11,7 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
 		callback(html);
 
 		sandbox.remove();
-	};
+	}
 
 	describe("htmlCanvas", function() {
 
@@ -62,7 +66,11 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
 		it("render object literal attributes", function() {
 			withCanvas(function(html) {
 				// Arrange: a div with attributes
-				html.div({id: "test_div", klass : "test_class", "special_attribute" : "test"}, "content");
+				html.div({
+					id: "test_div",
+					klass: "test_class",
+					"special_attribute": "test"
+				}, "content");
 
 				// Assert: that DIV was rendered
 				var divEl = jQuery("#test_div");
@@ -79,7 +87,10 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
 		it("can omit attributes", function() {
 			withCanvas(function(html) {
 				// Arrange: a div with attributes
-				html.div({id: "test_div", "special_attribute" : html.omit()}, "content");
+				html.div({
+					id: "test_div",
+					"special_attribute": html.omit()
+				}, "content");
 
 				// Assert: that DIV was rendered
 				var divEl = jQuery("#test_div");
@@ -133,8 +144,8 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
 		it("tags can be nested", function() {
 			withCanvas(function(html) {
 				// Arrange: a inner and outer div with a span as inner child
-				html.div({"id" : "outer_div"},
-					html.div({"id" : "inner_div"},
+				html.div({"id": "outer_div"},
+					html.div({"id": "inner_div"},
 						html.span("Some text")
 					)
 				);
@@ -151,8 +162,8 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
 				// Arrange: a inner and outer div with a span as inner child
 				// where the child is omited based on a flag
 				var hasSomeText = false;
-				html.div({"id" : "outer_div"},
-					html.div({"id" : "inner_div"},
+				html.div({"id": "outer_div"},
+					html.div({"id": "inner_div"},
 						hasSomeText ? html.span("Some text") : html.omit()
 					)
 				);
@@ -192,7 +203,7 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
 		it("can render arrays", function() {
 			withCanvas(function(html) {
 				// Arrange a div with10 sub span supplied to DIV as an array
-				html.div($.map([1,2,3,4,5,6,7,8,9,10], function(num) {
+				html.div($.map([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], function(num) {
 					return html.span(num.toString());
 				})).id("test_div");
 
@@ -227,12 +238,12 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
 		it("can render with html function", function() {
 			withCanvas(function(html) {
 				// Arrange a function that take a canvas as argument.
-				var htmlFn = function(html2) {
+				function htmlFn(html2) {
 					html2.span("Test").addClass("aSpan");
-				};
+				}
 
 				// and render a DIV with function as argument
-				html.div({id : "aDiv"}, htmlFn);
+				html.div({id: "aDiv"}, htmlFn);
 
 				// Assert
 				expect(jQuery("#aDiv").get(0)).toBeTruthy();
@@ -242,7 +253,7 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
 
 		it("delegates rendering to objects implementing appendToBrush()", function() {
 			withCanvas(function(html) {
-				var appendableObject = function() {
+				function appendableObject() {
 					var that = {};
 
 					that.appendToBrush = function(aTagBrush) {
@@ -250,27 +261,7 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
 					};
 
 					return that;
-				};
-
-				// Act: render object
-				html.render(appendableObject());
-
-				// Assert
-				expect(jQuery("#sandbox").html()).toBe("content");
-			});
-		});
-
-		it("delegates rendering to objects implementing appendToBrush()", function() {
-			withCanvas(function(html) {
-				var appendableObject = function() {
-					var that = {};
-
-					that.appendToBrush = function(aTagBrush) {
-						aTagBrush.render("content");
-					};
-
-					return that;
-				};
+				}
 
 				// Act: render object
 				html.render(appendableObject());
@@ -352,7 +343,7 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
 		it("attr() get/set style", function() {
 			withCanvas(function(html) {
 				// Arrange: a heading with id (set using map)
-				var h1 = html.h1().attr({id : "aHeading"});
+				var h1 = html.h1().attr({id: "aHeading"});
 
 				// Assert: that id is set
 				expect(h1.asJQuery().attr("id")).toBe("aHeading");
@@ -366,7 +357,7 @@ define(["widgetjs/htmlCanvas", "jquery", "chai"], function(htmlCanvas, jQuery, c
 
 				// addClass()
 				h1.addClass("foo");
-				expect(h1.asJQuery().hasClass("foo"));
+				expect(h1.asJQuery().hasClass("foo")).toBeTruthy();
 
 				// removeClass()
 				h1.removeClass("foo");

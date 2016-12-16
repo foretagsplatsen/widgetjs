@@ -1,7 +1,7 @@
 define([
-	"widgetjs/router",
+	"src/router",
 	"chai"
-], function(router,chai) {
+], function(router) {
 
 	function assertMatch(url, route, message) {
 		expect(router.url({rawUrl: url}).matchRoute(router.route({ pattern: route })).isMatch()).toBeTruthy();

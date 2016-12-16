@@ -12,10 +12,10 @@ define([
 	 * A `url` actually represents the fragment part of the actual url.
 	 *
 	 * @example
-	 *	var url = url({rawUrl: "path/to?foo=a&bar=b"});
-	 *	url.getPath(); // => "path/to"
-	 *	url.getQuery(); // => {foo: "a", bar: "b"}
-	 *	url.matchRoute(aRoute); // => true
+	 *    var url = url({rawUrl: "path/to?foo=a&bar=b"});
+	 *    url.getPath(); // => "path/to"
+	 *    url.getQuery(); // => {foo: "a", bar: "b"}
+	 *    url.matchRoute(aRoute); // => true
 	 *
 	 * @param {string} rawUrl
 	 * @returns {url}
@@ -82,8 +82,8 @@ define([
 	 * Create URL from path and query
 	 *
 	 * @example
-	 *	var aUrl = url("/path/to", {foo: "bar" });
-	 *	aUrl.toString(); // => "path/to?foo=bar"
+	 *    var aUrl = url("/path/to", {foo: "bar" });
+	 *    aUrl.toString(); // => "path/to?foo=bar"
 	 *
 	 * @param {string} path
 	 * @param {{}} query
@@ -96,7 +96,7 @@ define([
 
 		if (query) {
 			var queryPart = decodeURIComponent(jQuery.param(query));
-			if(queryPart) {
+			if (queryPart) {
 				return url({rawUrl: path + "?" + queryPart});
 			}
 		}
@@ -109,7 +109,7 @@ define([
 	 * duplicated `urlSeparator`.
 	 *
 	 * @example
-	 *	parseSegments("/a/path/to"); // => ["a", "path", "to"]
+	 *    parseSegments("/a/path/to"); // => ["a", "path", "to"]
 	 *
 	 * @param path
 	 * @returns {string[]}
@@ -124,7 +124,7 @@ define([
 	 * Returns path from a raw URL
 	 *
 	 * @example
-	 *	parsePath("/a/path/to?foo=bar"); // => "/a/path/to"
+	 *    parsePath("/a/path/to?foo=bar"); // => "/a/path/to"
 	 *
 	 * @param {string} rawUrl
 	 * @returns {string}
@@ -138,7 +138,7 @@ define([
 	 * object literal with key/values.
 	 *
 	 * @example
-	 *	parsePath("/a/path/to?foo=bar&test=1"); // => {foo: "bar", test: "1"}
+	 *    parsePath("/a/path/to?foo=bar&test=1"); // => {foo: "bar", test: "1"}
 	 *
 	 * @param {string} rawUrl
 	 * @returns {{}}
@@ -159,5 +159,4 @@ define([
 	}
 
 	return url;
-}
-);
+});

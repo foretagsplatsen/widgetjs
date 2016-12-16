@@ -1,9 +1,9 @@
 define([
+	"./abstractSegment",
 	"./parameterSegment",
 	"./optionalParameterSegment",
-	"./staticSegment",
-	"./abstractSegment"
-], function(parameterSegment, optionalParameterSegment, staticSegment, abstractSegment) {
+	"./staticSegment"
+], function(abstractSegment) {
 
 	/**
 	 * Token/Char used to separate segments in route patterns.
@@ -16,14 +16,14 @@ define([
 	 * separated by `routePatternSeparator`.
 	 *
 	 * @example
-	 *	routeFactory(`/foo/#bar/?baz`);
+	 *    routeFactory(`/foo/#bar/?baz`);
 	 *
 	 * @param {string} pattern
 	 * @param {{}} options
 	 * @returns {abstractSegment[]}
 	 */
 	function routeFactory(pattern, options) {
-		if(!pattern) {
+		if (!pattern) {
 			return [];
 		}
 
@@ -54,9 +54,9 @@ define([
 		var segments = abstractSegment.allSubclasses();
 
 		// Find segment type from string
-		for(var i = 0; i < segments.length; i++) {
+		for (var i = 0; i < segments.length; i++) {
 			var segment = segments[i];
-			if(segment.match(segmentString)) {
+			if (segment.match(segmentString)) {
 				return segment({
 					segmentString: segmentString,
 					options: options

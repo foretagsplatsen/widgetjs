@@ -95,7 +95,7 @@ define([
 		 * @returns {Array}
 		 */
 		that.getActionArguments = function() {
-			var actionArguments =  Object.keys(routeParameters).map(function(parameterName) {
+			var actionArguments = Object.keys(routeParameters).map(function(parameterName) {
 				return routeParameters[parameterName];
 			});
 			actionArguments.push(url.getQuery());
@@ -111,14 +111,14 @@ define([
 
 			// Fill with route parameters
 			for (var parameterName in routeParameters) {
-				if(routeParameters.hasOwnProperty(parameterName)) {
+				if (routeParameters.hasOwnProperty(parameterName)) {
 					allValues[parameterName] = routeParameters[parameterName];
 				}
 			}
 
 			// Fill with query parameters
 			for (var queryParameterName in queryParameters) {
-				if(queryParameters.hasOwnProperty(queryParameterName)) {
+				if (queryParameters.hasOwnProperty(queryParameterName)) {
 					allValues[queryParameterName] = queryParameters[queryParameterName];
 				}
 			}

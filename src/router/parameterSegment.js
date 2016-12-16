@@ -10,12 +10,12 @@ define([
 	 */
 	function parameterValidator(constraint) {
 		// Custom function that take a url segment as argument
-		if(typeof constraint === "function") {
+		if (typeof constraint === "function") {
 			return constraint;
 		}
 
 		// Match against RegExp
-		if(constraint instanceof RegExp) {
+		if (constraint instanceof RegExp) {
 			var exp = new RegExp(constraint);
 			return function(urlSegment) {
 				return exp.test(urlSegment);
@@ -23,7 +23,7 @@ define([
 		}
 
 		// Match valid options in an array
-		if(Object.prototype.toString.call(constraint) === "[object Array]") {
+		if (Object.prototype.toString.call(constraint) === "[object Array]") {
 			var options = constraint.map(function(option) {
 				return option.toLowerCase();
 			});

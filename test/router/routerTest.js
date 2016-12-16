@@ -1,7 +1,7 @@
 define([
-	"widgetjs/router/router",
+	"src/router/router",
 	"chai"
-], function(router, chai) {
+], function(router) {
 
 	function delayedSteps() {
 		var steps = Array.prototype.slice.call(arguments);
@@ -49,7 +49,7 @@ define([
 			// Arrange a router with options set
 			var anotherMy = {};
 			router({
-				locationHandler: { isFake: true, onChanged: function() {} }
+				locationHandler: {isFake: true, onChanged: function() {}}
 			}, anotherMy);
 
 			// Assert that options where applied
@@ -58,7 +58,7 @@ define([
 
 		it("Add route", function() {
 			// Act: add a route
-			var route = aRouter.addRoute({ pattern: "/users/" });
+			var route = aRouter.addRoute({pattern: "/users/"});
 
 			// Assert that route was added to route table
 			expect(my.routeTable.length).toBe(1);
@@ -90,7 +90,10 @@ define([
 			var invoiceRoute = aRouter.addRoute({pattern: "/invoice/"});
 			var ticketRoute = aRouter.addRoute({pattern: "/ticket/"});
 			aRouter.addRoute({pattern: "/customer/", priority: 2});
-			var orderRoute = aRouter.addRoute({pattern: "/order/", priority: 2});
+			var orderRoute = aRouter.addRoute({
+				pattern: "/order/",
+				priority: 2
+			});
 			var userRoute = aRouter.addRoute({pattern: "/user/", priority: 1});
 
 			// Assert that route was added to route table in correct order
@@ -433,7 +436,7 @@ define([
 
 			// Act: get path from parameters
 			var url = aRouter.expand({
-				parameters: { userId: "john", includeDetails : true}
+				parameters: {userId: "john", includeDetails: true}
 			});
 
 			// Assert that all parameters was set as query parameters
@@ -448,11 +451,11 @@ define([
 			});
 
 			// and navigate to that route
-			aRouter.redirectTo("/user/john", { includeCompanies : true});
+			aRouter.redirectTo("/user/john", {includeCompanies: true});
 
 			// Act: get path from parameters for current location
 			var url = aRouter.expand({
-				parameters: { includeDetails : true}
+				parameters: {includeDetails: true}
 			});
 
 			// Assert that route parameters was injected in url and
@@ -484,13 +487,16 @@ define([
 			aRouter.addRoute({name: "user", pattern: "/user/#userId"});
 
 			// and navigate to that route
-			aRouter.redirectTo("/user/john", {includeCompanies : true});
+			aRouter.redirectTo("/user/john", {includeCompanies: true});
 
 			// Act: get parameters from URL
 			var parameters = aRouter.getParameters();
 
 			// Assert that parameters contains both query and URL parameters
-			expect(parameters).toEqual({userId : "john", includeCompanies: "true"});
+			expect(parameters).toEqual({
+				userId: "john",
+				includeCompanies: "true"
+			});
 		});
 
 		it("GetParameter", function() {
@@ -498,7 +504,7 @@ define([
 			aRouter.addRoute({name: "user", pattern: "/user/#userId"});
 
 			// and navigate to that route
-			aRouter.redirectTo("/user/john", {includeCompanies : true});
+			aRouter.redirectTo("/user/john", {includeCompanies: true});
 
 			// Act: get parameters from URL
 			var userIdParameter = aRouter.getParameter("userId");
@@ -520,25 +526,25 @@ define([
 
 			delayedSteps(
 				function() {
-					aRouter.redirectTo("a/b", {foo : "bar"});
+					aRouter.redirectTo("a/b", {foo: "bar"});
 				},
 				function() {
 					expect(aRouter.getUrl().toString()).toBe("a/b?foo=bar");
 				},
 				function() {
-					aRouter.setParameters({value : "hello"});
+					aRouter.setParameters({value: "hello"});
 				},
 				function() {
 					expect(aRouter.getUrl().toString()).toBe("a/hello?foo=bar");
 				},
 				function() {
-					aRouter.setParameters({foo : "world"});
+					aRouter.setParameters({foo: "world"});
 				},
 				function() {
 					expect(aRouter.getUrl().toString()).toBe("a/hello?foo=world");
 				},
 				function() {
-					aRouter.setParameters({extra : "fun"});
+					aRouter.setParameters({extra: "fun"});
 				},
 				function() {
 					expect(aRouter.getUrl().toString()).toBe("a/hello?foo=world&extra=fun");

@@ -1,9 +1,9 @@
 define([
-	"widgetjs/widget",
-	"widgetjs/htmlCanvas",
+	"src/widget",
+	"src/htmlCanvas",
 	"jquery",
 	"chai"
-], function(widget, htmlCanvas, jQuery, chai) {
+], function(widget, htmlCanvas, jQuery) {
 
 	var widgetSubclass = widget.subclass(function(that, my) {
 		that.renderContentOn = function(html) {
@@ -42,14 +42,14 @@ define([
 
 		it("widgets are assigned unique identifiers", function() {
 			withWidget(function(aWidget) {
-				for( var i=0; i<1000;i++) {
+				for (var i = 0; i < 1000; i++) {
 					expect(widgetSubclass().id() !== aWidget.id()).toBeTruthy();
 				}
 			});
 		});
 
 		it("widgets identifier set from spec", function() {
-			var aWidget = widgetSubclass({id : "anId"});
+			var aWidget = widgetSubclass({id: "anId"});
 			expect(aWidget.id()).toBe("anId");
 		});
 
