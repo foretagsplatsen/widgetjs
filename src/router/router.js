@@ -45,7 +45,7 @@ define([
 			my.defaultParameters = {};
 
 			// Listen for URL changes and resolve URL when changed
-			my.location.onChanged(function() { my.resolveUrl(); });
+			my.location.changed.register(function() { my.resolveUrl(); });
 		};
 
 		// Events

@@ -49,7 +49,7 @@ define([
 			// Arrange a router with options set
 			var anotherMy = {};
 			router({
-				locationHandler: {isFake: true, onChanged: function() {}}
+				locationHandler: {isFake: true, changed: {register: function() {}}}
 			}, anotherMy);
 
 			// Assert that options where applied
