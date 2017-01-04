@@ -128,7 +128,7 @@ define([
                 doc = options.doc;
 
             var route = my.router.addRoute({ pattern: options.pattern, name: options.name});
-            route.onMatched(function(result) {
+            route.matched.register(function(result) {
                 if(options.action) {
                     options.action.apply(my.router, [doc].concat(result.getActionArguments()));
                 }

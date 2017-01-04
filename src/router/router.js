@@ -45,7 +45,7 @@ define([
 			my.defaultParameters = {};
 
 			// Listen for URL changes and resolve URL when changed
-			my.location.onChanged(function() { my.resolveUrl(); });
+			my.location.changed.register(function() { my.resolveUrl(); });
 		};
 
 		// Events
@@ -59,13 +59,15 @@ define([
 		 * Triggered when a route is matched with `routeMatchResult` as argument.
 		 * @type {event}
 		 */
-		that.onRouteMatched = my.events.createEvent("routeMatched");
+		that.routeMatched = my.events.createEvent("routeMatched");
+		that.onRouteMatched = that.routeMatched; // deprecated
 
 		/**
 		 * Triggered when a route is not matched with "url" as argument.
 		 * @type {event}
 		 */
-		that.onRouteNotFound = my.events.createEvent("routeNotFound");
+		that.routeNotFound = my.events.createEvent("routeNotFound");
+		that.onRouteNotFound = that.routeNotFound; // deprecated
 
 		/**
 		 * Triggered each time a URL is resolved with `url` as argument
@@ -74,7 +76,7 @@ define([
 		that.onResolveUrl = my.events.createEvent("resolveUrl");
 
 		// @deprecated Use event property instead
-		that.on = my.events.on;
+		that.on = my.events.register;
 
 		//
 		// Public
@@ -116,9 +118,9 @@ define([
 			 *			action: function(id) { console.log(id);},
 			 *		});
 		 *
-		 *        // Route with only pattern and custom onMatched event handler,
+		 *        // Route with only pattern and custom matched event handler,
 		 *        var route = aRouter.addRoute({ pattern: ""/user/#id""});
-		 *        route.onMatched(function(result) {
+		 *        route.matched.register(function(result) {
 			 *			console.dir(result.getValues());
 			 *		});
 		 *
@@ -152,7 +154,7 @@ define([
 			});
 
 			if (routeSpec.action) {
-				newRoute.onMatched(function(result) {
+				newRoute.matched.register(function(result) {
 					routeSpec.action.apply(this, result.getActionArguments());
 				});
 			}
@@ -233,7 +235,7 @@ define([
 			}
 
 			var aRoute = that.addRoute(routeSpec);
-			aRoute.onMatched(function(result) {
+			aRoute.matched.register(function(result) {
 				router.resolveUrl(result.getUrl());
 			});
 
@@ -247,7 +249,7 @@ define([
 		 * @returns {route}
 		 */
 		that.pipeNotFound = function(router) {
-			return that.onRouteNotFound(function(aRawUrl) {
+			return that.routeNotFound.register(function(aRawUrl) {
 				router.resolveUrl(aRawUrl);
 			});
 		};
@@ -535,7 +537,7 @@ define([
 				if (result.isMatch()) {
 					my.lastMatch = result;
 					numMatched++;
-					that.onRouteMatched.trigger(result);
+					that.routeMatched.trigger(result);
 
 					if (candidateRoute.fallThrough === undefined ||
 						candidateRoute.fallThrough === false) {
@@ -546,7 +548,7 @@ define([
 			});
 
 			if (numMatched === 0) {
-				that.onRouteNotFound.trigger(currentUrl.toString());
+				that.routeNotFound.trigger(currentUrl.toString());
 			}
 		};
 
