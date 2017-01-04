@@ -116,7 +116,7 @@ define([
 
 			// Arrange: listen for url changes
 			var capturedUrl;
-			anotherHashLocation.onChanged(function(url) {
+			anotherHashLocation.changed.register(function(url) {
 				capturedUrl = url;
 				done();
 			});
