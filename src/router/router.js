@@ -116,9 +116,9 @@ define([
 			 *			action: function(id) { console.log(id);},
 			 *		});
 		 *
-		 *        // Route with only pattern and custom onMatched event handler,
+		 *        // Route with only pattern and custom matched event handler,
 		 *        var route = aRouter.addRoute({ pattern: ""/user/#id""});
-		 *        route.onMatched(function(result) {
+		 *        route.matched.register(function(result) {
 			 *			console.dir(result.getValues());
 			 *		});
 		 *
@@ -152,7 +152,7 @@ define([
 			});
 
 			if (routeSpec.action) {
-				newRoute.onMatched(function(result) {
+				newRoute.matched.register(function(result) {
 					routeSpec.action.apply(this, result.getActionArguments());
 				});
 			}
@@ -233,7 +233,7 @@ define([
 			}
 
 			var aRoute = that.addRoute(routeSpec);
-			aRoute.onMatched(function(result) {
+			aRoute.matched.register(function(result) {
 				router.resolveUrl(result.getUrl());
 			});
 
