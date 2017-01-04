@@ -88,14 +88,15 @@ define([
 		// Public
 		//
 
-		that.onMatched = my.events.createEvent("matched");
+		that.matched = my.events.createEvent("matched");
+		that.onMatched = that.matched; // deprecated
 
 		// @deprecated Use event property instead
 		that.on = my.events.on;
 
 		/**
 		 * Match route against URL by comparing segments. Triggers
-		 * `onMatched` event on match.
+		 * `matched` event on match.
 		 *
 		 * @param {url} url
 		 * @returns {routeMatchResult}
