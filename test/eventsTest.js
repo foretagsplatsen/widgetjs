@@ -1,13 +1,41 @@
 define(["src/events"], function(events) {
 	describe("events", function() {
 
+		var originalConsoleWarn;
+		var consoleWarn;
+
+		function resetConsoleWarn() {
+			consoleWarn = jasmine.createSpy("console.warn");
+		}
+
+		beforeEach(function() {
+			resetConsoleWarn();
+			// eslint-disable-next-line no-console
+			console.warn = consoleWarn;
+		});
+
+		afterEach(function() {
+			// eslint-disable-next-line jasmine/no-expect-in-setup-teardown
+			expect(consoleWarn).not.toHaveBeenCalled();
+		});
+
+		beforeAll(function() {
+			// eslint-disable-next-line no-console
+			originalConsoleWarn = console.warn;
+		});
+
+		afterAll(function() {
+			// eslint-disable-next-line no-console
+			console.warn = originalConsoleWarn;
+		});
+
 		it("Bind callback to event", function() {
 			// Arrange: an event
 			var anEvent = events.event();
 			var spy = jasmine.createSpy("callback");
 
 			// Act: bind a callback
-			anEvent(spy);
+			anEvent.register(spy);
 
 			// and execute
 			anEvent.trigger();
@@ -22,8 +50,8 @@ define(["src/events"], function(events) {
 			var spy = jasmine.createSpy("callback");
 
 			// Act: bind two callbacks and trigger event
-			anEvent(spy);
-			anEvent(spy);
+			anEvent.register(spy);
+			anEvent.register(spy);
 
 			anEvent.trigger();
 
@@ -38,8 +66,8 @@ define(["src/events"], function(events) {
 			var spy2 = jasmine.createSpy("callback2");
 
 			// Act: bind two callbacks and trigger event
-			anEvent(spy1);
-			anEvent(spy2);
+			anEvent.register(spy1);
+			anEvent.register(spy2);
 
 			anEvent.trigger(2, "text");
 
@@ -48,33 +76,59 @@ define(["src/events"], function(events) {
 			expect(spy2).toHaveBeenCalledWith(2, "text");
 		});
 
-		it("Bind callback to event using on", function() {
+		it("Deprecated on() method delegates to register", function() {
 			// Arrange: an event
 			var anEvent = events.event();
-			var spy = jasmine.createSpy("callback");
+			var spy = jasmine.createSpy("register");
 
-			// bind a callback using on
-			anEvent.on(spy);
+			anEvent.register = spy;
+			anEvent.on("foo");
 
-			anEvent.trigger();
-
-			expect(spy).toHaveBeenCalled();
+			expect(spy).toHaveBeenCalledWith("foo");
+			expect(consoleWarn).toHaveBeenCalled();
+			resetConsoleWarn();
 		});
 
-		it("Un-Bind callback using off", function() {
+		it("Deprecated 'using an event as a function' delegates to register", function() {
+			// Arrange: an event
+			var anEvent = events.event();
+			var spy = jasmine.createSpy("register");
+
+			anEvent.register = spy;
+			anEvent("foo");
+
+			expect(spy).toHaveBeenCalledWith("foo");
+			expect(consoleWarn).toHaveBeenCalled();
+			resetConsoleWarn();
+		});
+
+		it("Un-Bind callback using unregister", function() {
 			// Arrange: an event
 			var anEvent = events.event();
 			var spy = jasmine.createSpy("callback");
 
-			// bind a callback using on
-			var eventBinding = anEvent.on(spy);
+			// bind a callback
+			var eventBinding = anEvent.register(spy);
 
-			// unbind using off
-			anEvent.off(eventBinding);
+			// unbind
+			anEvent.unregister(eventBinding);
 
 			anEvent.trigger();
 
 			expect(spy).not.toHaveBeenCalled();
+		});
+
+		it("Deprecated off() method delegates to unregister", function() {
+			// Arrange: an event
+			var anEvent = events.event();
+			var spy = jasmine.createSpy("unregister");
+
+			anEvent.unregister = spy;
+			anEvent.off("foo");
+
+			expect(spy).toHaveBeenCalledWith("foo");
+			expect(consoleWarn).toHaveBeenCalled();
+			resetConsoleWarn();
 		});
 
 		it("Un-Bind callback using unbind", function() {
@@ -82,8 +136,8 @@ define(["src/events"], function(events) {
 			var anEvent = events.event();
 			var spy = jasmine.createSpy("callback");
 
-			// bind a callback using on
-			var eventBinding = anEvent.on(spy);
+			// bind a callback
+			var eventBinding = anEvent.register(spy);
 
 			// Unbind
 			eventBinding.unbind();
@@ -92,13 +146,13 @@ define(["src/events"], function(events) {
 			expect(spy).not.toHaveBeenCalled();
 		});
 
-		it("Bind and trigger callback only once using onceOn", function() {
+		it("Bind and trigger callback only once using registerOnce", function() {
 			// Arrange: an event
 			var anEvent = events.event();
 			var spy = jasmine.createSpy("callback");
 
-			// Act: bind a callback using on
-			anEvent.onceOn(spy);
+			// Act: bind a callback
+			anEvent.registerOnce(spy);
 
 			// and trigger twice
 			anEvent.trigger();
@@ -107,13 +161,26 @@ define(["src/events"], function(events) {
 			expect(spy).toHaveBeenCalledTimes(1);
 		});
 
+		it("Deprecated onceOn() method delegates to registerOnce", function() {
+			// Arrange: an event
+			var anEvent = events.event();
+			var spy = jasmine.createSpy("registerOnce");
+
+			anEvent.registerOnce = spy;
+			anEvent.onceOn(spy);
+
+			expect(spy).toHaveBeenCalled();
+			expect(consoleWarn).toHaveBeenCalled();
+			resetConsoleWarn();
+		});
+
 		it("Event dispose unbinds all callbacks", function() {
 			// Arrange: an event
 			var anEvent = events.event();
 
 			// Act: bind two callbacks and trigger event
-			var firstBinding = anEvent(function() {});
-			var secondBinding = anEvent(function() {});
+			var firstBinding = anEvent.register(function() {});
+			var secondBinding = anEvent.register(function() {});
 
 			anEvent.dispose();
 
@@ -142,13 +209,13 @@ define(["src/events"], function(events) {
 			expect(anEvent.on).toBeTruthy();
 		});
 
-		it("Event Category can bind callback to named event using on", function() {
+		it("Event Category can bind callback to named event using register", function() {
 			// Arrange: an event
 			var someEvents = events.eventCategory();
 			var anEvent = someEvents.createEvent("namedEvent");
 
-			// bind a callback using on
-			someEvents.on("namedEvent", function() {
+			// bind a callback
+			someEvents.register("namedEvent", function() {
 				expect(true).toBeTruthy();
 			});
 
@@ -156,36 +223,78 @@ define(["src/events"], function(events) {
 			anEvent.trigger("namedEvent");
 		});
 
-		it("Event Category can un-bind named event callbacks using off", function() {
+		it("Deprecated on() category method delegates to register", function() {
+			// Arrange: an event
+			var someEvents = events.eventCategory();
+			var spy = jasmine.createSpy("register");
+
+			someEvents.register = spy;
+
+			someEvents.on("namedEvent", "something else");
+
+			expect(spy).toHaveBeenCalledWith("namedEvent", "something else");
+			expect(consoleWarn).toHaveBeenCalled();
+			resetConsoleWarn();
+		});
+
+		it("Event Category can un-bind named event callbacks using unregister", function() {
 			// Arrange: an event
 			var someEvents = events.eventCategory();
 			var anEvent = someEvents.createEvent("namedEvent");
 			var spy = jasmine.createSpy("callback");
 
-			// bind a callback using on
-			var eventBinding = someEvents.on("namedEvent", spy);
+			// bind a callback
+			var eventBinding = someEvents.register("namedEvent", spy);
 
-			// unbind using off
-			someEvents.off("namedEvent", eventBinding);
+			// unbind
+			someEvents.unregister("namedEvent", eventBinding);
 
 			anEvent.trigger("namedEvent");
 			expect(spy).not.toHaveBeenCalled();
 		});
 
-		it("Event Category can bind and trigger named event callback only once using onceOn", function() {
+		it("Deprecated off() category method delegates to unregister", function() {
+			// Arrange: an event
+			var someEvents = events.eventCategory();
+			var spy = jasmine.createSpy("unregister");
+
+			someEvents.unregister = spy;
+
+			someEvents.off("namedEvent", "something else");
+
+			expect(spy).toHaveBeenCalledWith("namedEvent", "something else");
+			expect(consoleWarn).toHaveBeenCalled();
+			resetConsoleWarn();
+		});
+
+		it("Event Category can bind and trigger named event callback only once using registerOnce", function() {
 			// Arrange: an event
 			var someEvents = events.eventCategory();
 			var anEvent = someEvents.createEvent("namedEvent");
 			var spy = jasmine.createSpy("callback");
 
 			// Act: bind a callback
-			someEvents.onceOn("namedEvent", spy);
+			someEvents.registerOnce("namedEvent", spy);
 
 			// and trigger twice
 			anEvent.trigger("namedEvent");
 			anEvent.trigger("namedEvent");
 
 			expect(spy).toHaveBeenCalledTimes(1);
+		});
+
+		it("Deprecated onceOn() category method delegates to registerOnce", function() {
+			// Arrange: an event
+			var someEvents = events.eventCategory();
+			var spy = jasmine.createSpy("registerOnce");
+
+			someEvents.registerOnce = spy;
+
+			someEvents.onceOn("namedEvent", "something else");
+
+			expect(spy).toHaveBeenCalledWith("namedEvent", "something else");
+			expect(consoleWarn).toHaveBeenCalled();
+			resetConsoleWarn();
 		});
 
 		it("Event Category can bind dispose unbinds all events and there callbacks", function() {
@@ -195,10 +304,10 @@ define(["src/events"], function(events) {
 			var anotherEvent = someEvents.createEvent("namedEvent");
 
 			// Act: bind two callbacks and trigger event
-			var firstBinding = anEvent(function() {});
-			var secondBinding = anEvent(function() {});
-			var thirdBinding = anotherEvent(function() {});
-			var fourthBinding = anotherEvent(function() {});
+			var firstBinding = anEvent.register(function() {});
+			var secondBinding = anEvent.register(function() {});
+			var thirdBinding = anotherEvent.register(function() {});
+			var fourthBinding = anotherEvent.register(function() {});
 
 			someEvents.dispose();
 
@@ -216,7 +325,7 @@ define(["src/events"], function(events) {
 		it("Event Manager keeps list of named event categories", function() {
 			var triggered = false;
 
-			events.at("c1").on("foo", function() {
+			events.at("c1").register("foo", function() {
 				triggered = true;
 			});
 			expect(!triggered).toBeTruthy();
