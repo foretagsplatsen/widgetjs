@@ -59,7 +59,8 @@ define([
 		 * Triggered when a route is matched with `routeMatchResult` as argument.
 		 * @type {event}
 		 */
-		that.onRouteMatched = my.events.createEvent("routeMatched");
+		that.routeMatched = my.events.createEvent("routeMatched");
+		that.onRouteMatched = that.routeMatched; // deprecated
 
 		/**
 		 * Triggered when a route is not matched with "url" as argument.
@@ -536,7 +537,7 @@ define([
 				if (result.isMatch()) {
 					my.lastMatch = result;
 					numMatched++;
-					that.onRouteMatched.trigger(result);
+					that.routeMatched.trigger(result);
 
 					if (candidateRoute.fallThrough === undefined ||
 						candidateRoute.fallThrough === false) {
