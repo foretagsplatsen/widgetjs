@@ -2630,7 +2630,7 @@ define(
 			 * Triggered when a route is not matched with "url" as argument.
 			 * @type {event}
 			 */
-			that.onRouteNotFound = my.events.createEvent("routeNotFound");
+			that.routeNotFound = my.events.createEvent("routeNotFound");
 
 			/**
 			 * Triggered each time a URL is resolved with `url` as argument
@@ -2812,7 +2812,7 @@ define(
 			 * @returns {route}
 			 */
 			that.pipeNotFound = function(router) {
-				return that.onRouteNotFound(function(aRawUrl) {
+				return that.routeNotFound.register(function(aRawUrl) {
 					router.resolveUrl(aRawUrl);
 				});
 			};
@@ -3111,7 +3111,7 @@ define(
 				});
 
 				if (numMatched === 0) {
-					that.onRouteNotFound.trigger(currentUrl.toString());
+					that.routeNotFound.trigger(currentUrl.toString());
 				}
 			};
 
