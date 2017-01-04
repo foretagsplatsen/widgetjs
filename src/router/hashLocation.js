@@ -50,7 +50,8 @@ define([
 		 *
 		 * @type {event}
 		 */
-		that.onChanged = my.events.createEvent("changed");
+		that.changed = my.events.createEvent("changed");
+		that.onChanged = that.changed; // deprecated
 
 		/**
 		 * Set hash fragment to URL
@@ -167,7 +168,7 @@ define([
 				my.history.push(my.currentHash);
 			}
 
-			that.onChanged.trigger(urlFromHash(my.currentHash));
+			that.changed.trigger(urlFromHash(my.currentHash));
 		}
 
 		function check() {
