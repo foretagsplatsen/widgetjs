@@ -273,9 +273,9 @@ define([
 		};
 
 		// Expose events
-		that.on = my.events.on;
-		that.onceOn = my.events.onceOn;
-		that.off = my.events.off;
+		that.on = my.events.register;
+		that.onceOn = my.events.registerOnce;
+		that.off = my.events.unregister;
 		that.trigger = my.events.trigger;
 
 		//

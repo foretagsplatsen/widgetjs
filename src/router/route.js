@@ -91,7 +91,7 @@ define([
 		that.matched = my.events.createEvent("matched");
 
 		// @deprecated Use event property instead
-		that.on = my.events.on;
+		that.on = my.events.register;
 
 		/**
 		 * Match route against URL by comparing segments. Triggers
