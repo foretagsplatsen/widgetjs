@@ -104,34 +104,32 @@ define([
 			expect(my.routeTable[4]).toBe(ticketRoute);
 		});
 
-		it("resolveUrl executes route callback on match", function(done) {
+		it("resolveUrl executes route callback on match", function() {
 			// Arrange: setup a route
 			var userRoute = aRouter.addRoute({pattern: "/user/"});
-			userRoute.on("matched", function() {
-				this.unbind(); // clean-up
-				done(); // execute asserts
-			});
+			var spy = jasmine.createSpy("matched event");
+
+			userRoute.on("matched", spy);
 
 			// Act: resolve two different URL:s but only first should match
 			aRouter.resolveUrl("/user/");
 			aRouter.resolveUrl("/order/");
 
-			// Assert that callback was executed (done was called)
-			expect(true).toBeTruthy();
+			// Assert that callback was executed
+			expect(spy).toHaveBeenCalledTimes(1);
 		});
 
-		it("resolveUrl triggers resolveUrl event", function(done) {
+		it("resolveUrl triggers resolveUrl event", function() {
+			var spy = jasmine.createSpy("resolveUrl event");
+
 			// listen for "resolveUrl event" on router
-			aRouter.on("resolveUrl", function(url) {
-				this.unbind(); // clean-up
-				done(); // execute asserts
-			});
+			aRouter.on("resolveUrl", spy);
 
 			// Act: resolve any URL
 			aRouter.resolveUrl("/user/");
 
-			// Assert that callback was "resolveUrl event" executed
-			expect(true).toBeTruthy();
+			// Assert that callback was executed
+			expect(spy).toHaveBeenCalled();
 		});
 
 		it("resolveUrl triggers routeMatched event", function(done) {
@@ -168,21 +166,20 @@ define([
 			aRouter.resolveUrl("/user/");
 		});
 
-		it("resolveUrl executes action on match", function(done) {
+		it("resolveUrl executes action on match", function() {
+			var spy = jasmine.createSpy("action");
+
 			// Arrange: setup a route
 			aRouter.addRoute({
 				pattern: "/user/",
-				action: function() {
-					this.unbind(); // clean-up
-					done(); // execute asserts
-				}
+				action: spy
 			});
 
 			// Act: resolve a URL that match pattern
 			aRouter.resolveUrl("/user/");
 
-			// Assert that callback was executed (done was called)
-			expect(true).toBeTruthy();
+			// Assert that callback was executed
+			expect(spy).toHaveBeenCalled();
 		});
 
 		it("resolveUrl pass values to action", function(done) {
@@ -331,15 +328,13 @@ define([
 			expect(window.location.hash).toBe("#!/");
 		});
 
-		it("Pipe notfound to another router", function(done) {
+		it("Pipe notfound to another router", function() {
 			// Arrange another router with a route handler
 			var anotherRouter = router();
+			var spy = jasmine.createSpy("action");
 			anotherRouter.addRoute({
 				pattern: "APathNotInDefaultRouterButInPipedRouter",
-				action: function() {
-					this.unbind(); // clean-up: unbound this event
-					done();
-				}
+				action: spy
 			});
 
 			// Act: pipe to second router if not found in first
@@ -347,19 +342,17 @@ define([
 			aRouter.resolveUrl("APathNotInDefaultRouterButInPipedRouter");
 
 			// Assert that second router matched the route
-			expect(true).toBeTruthy();
+			expect(spy).toHaveBeenCalled();
 			anotherRouter.stop();
 		});
 
-		it("Pipe route to another router", function(done) {
+		it("Pipe route to another router", function() {
 			// Arrange another router with a route handler
 			var anotherRouter = router();
+			var spy = jasmine.createSpy("action");
 			anotherRouter.addRoute({
 				pattern: "/a/b/#c",
-				action: function() {
-					this.unbind(); // clean-up: unbound this event
-					done();
-				}
+				action: spy
 			});
 
 			// Act: pipe pattern tp second router
@@ -367,7 +360,7 @@ define([
 			aRouter.resolveUrl("/a/b/c");
 
 			// Assert that second router matched the route
-			expect(true).toBeTruthy();
+			expect(spy).toHaveBeenCalled();
 			anotherRouter.stop();
 		});
 

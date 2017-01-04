@@ -111,22 +111,23 @@ define([
 			expect(link).toBe("#!/someurl");
 		});
 
-		it("setUrl() triggers change", function(done) {
+		it("setUrl() triggers change", function() {
 			var anotherHashLocation = hashLocationModel();
+			var spy = jasmine.createSpy("changed event");
 
 			// Arrange: listen for url changes
-			var capturedUrl;
-			anotherHashLocation.changed.register(function(url) {
-				capturedUrl = url;
-				done();
-			});
+			anotherHashLocation.changed.register(spy);
 
 			// Act: set URL
 			anotherHashLocation.start();
 			anotherHashLocation.setUrl("test");
 
 			// Assert that "change" callback was executed with url
-			expect(capturedUrl.toString()).toBe("test");
+			expect(spy).toHaveBeenCalledWith({
+				asymmetricMatch: function(actual) {
+					return actual.toString() === "test";
+				}
+			});
 
 			anotherHashLocation.stop();
 		});
