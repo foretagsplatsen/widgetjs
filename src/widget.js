@@ -272,10 +272,15 @@ define([
 			names.forEach(my.createEvent);
 		};
 
-		// Expose events
+		// deprecated, please use the ones below instead
 		that.on = my.events.on;
 		that.onceOn = my.events.onceOn;
 		that.off = my.events.off;
+
+		// Expose events
+		that.register = my.events.register;
+		that.registerOnce = my.events.registerOnce;
+		that.unregister = my.events.unregister;
 		that.trigger = my.events.trigger;
 
 		//

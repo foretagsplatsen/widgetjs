@@ -76,7 +76,7 @@ define([
 		that.onResolveUrl = my.events.createEvent("resolveUrl");
 
 		// @deprecated Use event property instead
-		that.on = my.events.on;
+		that.on = my.events.register;
 
 		//
 		// Public

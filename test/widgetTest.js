@@ -68,7 +68,7 @@ define([
 			})();
 
 			// Assert: that callback is executed when
-			aWidget.on("anEvent", function() {
+			aWidget.register("anEvent", function() {
 				expect(true).toBeTruthy();
 			});
 
@@ -83,7 +83,7 @@ define([
 				var my = {};
 				var that = widgetSubclass({}, my);
 
-				that.onAnEvent = my.events.createEvent("anEvent");
+				that.anEvent = my.events.createEvent("anEvent");
 
 				that.aMethod = function() {
 					that.trigger("anEvent");
@@ -92,13 +92,15 @@ define([
 				return that;
 			})();
 
+			var spy = jasmine.createSpy("callback");
+
 			// Assert: that callback is executed when
-			aWidget.onAnEvent(function() {
-				expect(true).toBeTruthy();
-			});
+			aWidget.anEvent.register(spy);
 
 			// event is triggered
 			aWidget.aMethod();
+
+			expect(spy).toHaveBeenCalled();
 		});
 
 		it("linkTo() creates links to paths in app", function() {
