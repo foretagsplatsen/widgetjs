@@ -4,110 +4,107 @@ define(["src/events"], function(events) {
 		it("Bind callback to event", function() {
 			// Arrange: an event
 			var anEvent = events.event();
+			var spy = jasmine.createSpy("callback");
 
 			// Act: bind a callback
-			anEvent(function() {
-				expect(true).toBeTruthy();
-			});
+			anEvent(spy);
 
 			// and execute
 			anEvent.trigger();
+
+			// Assert
+			expect(spy).toHaveBeenCalled();
 		});
 
 		it("Bind multiple callbacks to an event", function() {
 			// Arrange: an event
 			var anEvent = events.event();
+			var spy = jasmine.createSpy("callback");
 
 			// Act: bind two callbacks and trigger event
-			var counter = 0;
-			anEvent(function() { counter++;});
-			anEvent(function() { counter++;});
+			anEvent(spy);
+			anEvent(spy);
 
 			anEvent.trigger();
 
 			// Assert: that both where executed
-			expect(counter).toBe(2);
+			expect(spy).toHaveBeenCalledTimes(2);
 		});
 
 		it("Trigger pass values to callbacks", function() {
 			// Arrange: an event
 			var anEvent = events.event();
+			var spy1 = jasmine.createSpy("callback1");
+			var spy2 = jasmine.createSpy("callback2");
 
 			// Act: bind two callbacks and trigger event
-			var counter = 0;
-			anEvent(function(num, str) {
-				expect(num).toBe(2);
-				expect(str).toBe("text");
-				counter++;
-			});
-			anEvent(function() {
-				expect(arguments.length).toBe(2);
-				counter++;
-			});
+			anEvent(spy1);
+			anEvent(spy2);
 
 			anEvent.trigger(2, "text");
 
 			// Assert: that both where executed
-			expect(counter).toBe(2);
+			expect(spy1).toHaveBeenCalledWith(2, "text");
+			expect(spy2).toHaveBeenCalledWith(2, "text");
 		});
 
 		it("Bind callback to event using on", function() {
 			// Arrange: an event
 			var anEvent = events.event();
+			var spy = jasmine.createSpy("callback");
 
 			// bind a callback using on
-			anEvent.on(function() {
-				expect(true).toBeTruthy();
-			});
+			anEvent.on(spy);
 
 			anEvent.trigger();
+
+			expect(spy).toHaveBeenCalled();
 		});
 
 		it("Un-Bind callback using off", function() {
 			// Arrange: an event
 			var anEvent = events.event();
+			var spy = jasmine.createSpy("callback");
 
 			// bind a callback using on
-			var eventBinding = anEvent.on(function() {
-				jasmine.fail();
-			});
+			var eventBinding = anEvent.on(spy);
 
 			// unbind using off
 			anEvent.off(eventBinding);
 
 			anEvent.trigger();
+
+			expect(spy).not.toHaveBeenCalled();
 		});
 
 		it("Un-Bind callback using unbind", function() {
 			// Arrange: an event
 			var anEvent = events.event();
+			var spy = jasmine.createSpy("callback");
 
 			// bind a callback using on
-			var eventBinding = anEvent.on(function() {
-				jasmine.fail();
-			});
+			var eventBinding = anEvent.on(spy);
 
 			// Unbind
 			eventBinding.unbind();
 
 			anEvent.trigger();
+			expect(spy).not.toHaveBeenCalled();
 		});
 
 		it("Bind and trigger callback only once using onceOn", function() {
 			// Arrange: an event
 			var anEvent = events.event();
+			var spy = jasmine.createSpy("callback");
 
 			// Act: bind a callback using on
-			var counter = 0;
-			anEvent.onceOn(function() {
-				counter++;
-			});
+			anEvent.onceOn(spy);
 
 			// and trigger twice
 			anEvent.trigger();
 			anEvent.trigger();
 
-			expect(counter).toBe(1);
+			expect(spy).toHaveBeenCalledTimes(1);
 		});
 
 		it("Event dispose unbinds all callbacks", function() {
@@ -163,34 +160,32 @@ define(["src/events"], function(events) {
 			// Arrange: an event
 			var someEvents = events.eventCategory();
 			var anEvent = someEvents.createEvent("namedEvent");
+			var spy = jasmine.createSpy("callback");
 
 			// bind a callback using on
-			var eventBinding = someEvents.on("namedEvent", function() {
-				expect(true).toBeFalsy();
-			});
+			var eventBinding = someEvents.on("namedEvent", spy);
 
 			// unbind using off
 			someEvents.off("namedEvent", eventBinding);
 
 			anEvent.trigger("namedEvent");
+			expect(spy).not.toHaveBeenCalled();
 		});
 
 		it("Event Category can bind and trigger named event callback only once using onceOn", function() {
 			// Arrange: an event
 			var someEvents = events.eventCategory();
 			var anEvent = someEvents.createEvent("namedEvent");
+			var spy = jasmine.createSpy("callback");
 
-			// Act: bind a callback using on
-			var counter = 0;
-			someEvents.onceOn("namedEvent", function() {
-				counter++;
-			});
+			// Act: bind a callback
+			someEvents.onceOn("namedEvent", spy);
 
 			// and trigger twice
 			anEvent.trigger("namedEvent");
 			anEvent.trigger("namedEvent");
 
-			expect(counter).toBe(1);
+			expect(spy).toHaveBeenCalledTimes(1);
 		});
 
 		it("Event Category can bind dispose unbinds all events and there callbacks", function() {
