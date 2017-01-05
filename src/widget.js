@@ -105,8 +105,10 @@ define([
 		/** Events for widget */
 		my.events = events.eventCategory();
 
-		that.onAttach = my.events.createEvent();
-		that.onDetach = my.events.createEvent();
+		that.attached = my.events.createEvent();
+		that.detached = my.events.createEvent();
+		that.onAttach = that.attached; // deprecated
+		that.onDetach = that.detached; // deprecated
 
 		//
 		// Public
@@ -152,7 +154,7 @@ define([
 				child.willDetach();
 			});
 			my.willDetach();
-			that.onDetach.trigger();
+			that.detached.trigger();
 		};
 
 		/**
@@ -239,7 +241,7 @@ define([
 			children.forEach(function(widget) {
 				widget.triggerDidAttach();
 			});
-			that.onAttach.trigger();
+			that.attached.trigger();
 		};
 
 		/**
