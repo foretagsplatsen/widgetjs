@@ -105,7 +105,7 @@ gulp.task("optimize:minify", ["strip"], function() {
 	options.insertRequire = ["src/widgetjs"];
 	options.out = "widgetjs.min.js";
 
-	return gulp.src("strip/widgetjs.js")
+	return gulp.src("strip/src/widgetjs.js")
 		.pipe(plugins.optimizer(options))
 		.pipe(gulp.dest("dist"));
 });
