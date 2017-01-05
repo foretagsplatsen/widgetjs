@@ -21,7 +21,7 @@ define([
 
 		my.code = outputWidget();
 		my.editor = editorWidget({code: counterCode});
-		my.editor.onChange(function() {
+		my.editor.changed.register(function() {
 			if(runOnChange) {
 				my.run();
 			}

@@ -31,7 +31,7 @@ define([
 
     var editor;
 
-    that.onChange = my.events.createEvent();
+    that.changed = my.events.createEvent();
 
     //
     // Public
@@ -43,7 +43,7 @@ define([
 
     that.setCode = function(newCode) {
       code = newCode;
-      that.onChange.trigger(code);
+      that.changed.trigger(code);
       that.update();
     };
 
@@ -74,7 +74,7 @@ define([
     my.codeChanged = function() {
       if(editor) {
         code = editor.getValue();
-        that.onChange.trigger(code);
+        that.changed.trigger(code);
       }
     };
 
