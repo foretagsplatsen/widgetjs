@@ -73,7 +73,8 @@ define([
 		 * Triggered each time a URL is resolved with `url` as argument
 		 * @type {event}
 		 */
-		that.onResolveUrl = my.events.createEvent("resolveUrl");
+		that.urlResolved = my.events.createEvent("resolveUrl");
+		that.onResolveUrl = that.urlResolved;
 
 		// @deprecated Use event property instead
 		that.on = my.events.register;
@@ -529,7 +530,7 @@ define([
 		my.resolveUrl = function(aUrl) {
 			var currentUrl = aUrl === undefined ? my.location.getUrl() : aUrl;
 
-			that.onResolveUrl.trigger(currentUrl);
+			that.urlResolved.trigger(currentUrl);
 
 			var numMatched = 0;
 			my.routeTable.some(function(candidateRoute) {
