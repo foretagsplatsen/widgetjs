@@ -44,22 +44,22 @@ define([
 	 * @example
 	 *
 	 *        var titleWidget = function(spec) {
-		 *			var that = widget(spec);
-		 *
-		 *			var title = spec.title || "Hello World";
-		 *
-		 *			that.renderContentOn = function(html) {
-		 *				html.h1(title)
-		 *			}
-		 *
-		 *			return that;
-		 *		};
+	 *			var that = widget(spec);
+	 *
+	 *			var title = spec.title || "Hello World";
+	 *
+	 *			that.renderContentOn = function(html) {
+	 *				html.h1(title)
+	 *			}
+	 *
+	 *			return that;
+	 *		};
 	 *
 	 *        var helloWorldWidget = titleWidget({title: "Hello Widget!"});
 	 *
 	 *        $(document).ready(function() {
-		 *			helloWorldWidget.appendTo("BODY");
-		 *		});
+	 *			helloWorldWidget.appendTo("BODY");
+	 *		});
 	 *
 	 * Widgets can also be rendered on a HTML canvas (since widget implements `appendToBrush()`). Eg.
 	 *
