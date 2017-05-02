@@ -37,7 +37,7 @@ define([
 		 *
 		 * @type {htmlTagBrush}
 		 */
-		this.root = new TagBrushConstructor({ element: rootElement });
+		this.root = htmlTagBrush({ element: rootElement });
 	}
 
 	/**
@@ -167,6 +167,8 @@ define([
 		}
 	}
 
+	var elementCache = {};
+
 	/**
 	 * Creates a new element from tagName
 	 *
@@ -174,7 +176,10 @@ define([
 	 * @returns {Element}
 	 */
 	TagBrushConstructor.prototype.createElement = function(tagName) {
-		return document.createElement(tagName);
+		if (!elementCache[tagName]) {
+			elementCache[tagName] = document.createElement(tagName);
+		}
+		return elementCache[tagName].cloneNode(false);
 	};
 
 	/**
