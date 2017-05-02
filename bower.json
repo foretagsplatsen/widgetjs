@@ -22,8 +22,6 @@
     "requirejs": "~2.1.10",
     "qunit": "1.11.0",
     "mocha": "^2.4.5",
-    "chai": "^3.5.0",
-    "chai-jquery": "~1.2.1",
     "google-code-prettify": "~1.0.1",
     "codemirror": "CodeMirror#~5.7.0"
   },

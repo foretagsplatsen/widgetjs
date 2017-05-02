@@ -12,15 +12,12 @@ define([], function() {
 		config: {
 			paths: {
 				"klassified": "bower_components/klassified/dist/klassified",
-				"jquery": "bower_components/jquery/dist/jquery",
-				"chai": "bower_components/chai/chai",
-				"chai-jquery": "bower_components/chai-jquery/chai-jquery"
+				"jquery": "bower_components/jquery/dist/jquery"
 			},
 			shim: {
 				"jquery": {
 					exports: "$"
-				},
-				"chai-jquery": ["jquery", "chai"]
+				}
 			}
 		}
 	};
