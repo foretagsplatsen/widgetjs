@@ -228,9 +228,9 @@ define([
 		it("throws error if object to append is null or undefined", function() {
 			withCanvas(function(html) {
 				expect(function() { html.render(null); })
-					.toThrowError("cannot append null or undefined to brush");
+					.toThrowError();
 				expect(function() { html.render(undefined); })
-					.toThrowError("cannot append null or undefined to brush");
+					.toThrowError();
 			});
 		});
 
@@ -380,8 +380,6 @@ define([
 				html.render(0); // toString()
 				html.render(3.14159265359); // toString()
 				html.render("<div>test</div>"); // => DIV element
-				html.render(true); // => nothing
-				html.render(false); // => nothing
 				html.render({}); // as attributes but since it have no keys => nothing
 				html.render([]); // as array but since empty => nothing
 

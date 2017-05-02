@@ -197,32 +197,38 @@ define([
 	 * @param {renderable|renderable[]|{}} object
 	 */
 	TagBrushConstructor.prototype.append = function(object) {
-		if (typeof(object) === "undefined" || object === null) {
-			throw new Error("cannot append null or undefined to brush");
-		}
-
-		// Ignore object if it"s a omit symbol
-		if (object === omitSymbol) {
+		if (object.appendToBrush) {
+			object.appendToBrush(this);
 			return;
 		}
 
-		if (typeof object === "object" && object.constructor === Array) {
-			for (var i = 0; i < object.length; i++) {
-				this.append(object[i]);
-			}
+		// Assume attributes
+		if (typeof object === "object") {
+			this.attr(object);
+			return;
 		}
-		else if (typeof object === "string") {
-			this.appendString(object);
-		} else if (typeof object === "function") {
-			this.appendFunction(object);
-		} else if (typeof object === "object" &&
-			object.appendToBrush /* eg. widget and tagBrush implement appendToBrush */) {
-			object.appendToBrush(this);
-		}
-		else if (typeof object === "object") {
-			this.attr(object); // assume attributes if none of above
-		} else {
-			jQuery(this.element).append(object); // default to jquery
+
+		throw new Error("Unsupported data type");
+	};
+
+	omitSymbol.appendToBrush = function(brush) {};
+
+	String.prototype.appendToBrush = function(brush) {
+		brush.appendString(this);
+	};
+
+	Function.prototype.appendToBrush = function(brush) {
+		brush.appendFunction(this);
+	};
+
+	Number.prototype.appendToBrush = function(brush) {
+		this.toString().appendToBrush(brush);
+	};
+
+	Array.prototype.appendToBrush = function(brush) {
+		var length = this.length;
+		for (var i = length - 1; i >= 0; i--) {
+			brush.append(this[length - i - 1]);
 		}
 	};
 
