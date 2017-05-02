@@ -1,8 +1,7 @@
 define([
 	"src/widget",
 	"src/htmlCanvas",
-	"jquery",
-	"chai"
+	"jquery"
 ], function(widget, htmlCanvas, jQuery) {
 
 	var widgetSubclass = widget.subclass(function(that, my) {

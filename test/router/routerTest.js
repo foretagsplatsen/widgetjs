@@ -1,6 +1,5 @@
 define([
-	"src/router/router",
-	"chai"
+	"src/router/router"
 ], function(router) {
 
 	function delayedSteps() {
@@ -286,24 +285,25 @@ define([
 			aRouter.resolveUrl("/user/");
 		});
 
-		it("Add route with constraints", function(done) {
-			// Arrange a route with constraints
+		it("Add route with constraints", function() {
+			var action = jasmine.createSpy("action");
+
 			aRouter.addRoute({
 				pattern: "/user/#name/",
 				constraints: {
 					name: ["nicolas", "Mikael"]
 				},
-				action: function(name) {
-					expect(true).toBeTruthy();
-					this.unbind(); // clean-up
-					done();
-				}
+				action: action
 			});
 
-			// Act: resolve one URL that match constraint and two more
 			aRouter.resolveUrl("/user/nicolas");
+			expect(action).toHaveBeenCalledWith("nicolas", jasmine.anything());
+			expect(action).toHaveBeenCalledTimes(1);
+
+			// resolve two URLs that do *not* match constraint
 			aRouter.resolveUrl("/user/john");
 			aRouter.resolveUrl("/user/james");
+			expect(action).toHaveBeenCalledTimes(1);
 		});
 
 		it("getUrl returns current location", function() {

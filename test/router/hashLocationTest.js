@@ -1,7 +1,6 @@
 define([
 	"jquery",
-	"src/router/hashLocation",
-	"chai"
+	"src/router/hashLocation"
 ], function(jQuery, hashLocationModel) {
 
 	// Helpers

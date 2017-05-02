@@ -1,6 +1,5 @@
 define([
-	"src/router",
-	"chai"
+	"src/router"
 ], function(router) {
 
 	function assertMatch(url, route, message) {
