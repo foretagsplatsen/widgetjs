@@ -36,7 +36,7 @@
   "devDependencies": {
     "almond": "~0.2.6",
     "del": "^2.2.0",
-    "eslint": "^2.4.0",
+    "eslint": "^3.19.0",
     "eslint-config-ftgp": "^1.1.0",
     "gulp": "^3.9.1",
     "gulp-bump": "^2.2.0",
