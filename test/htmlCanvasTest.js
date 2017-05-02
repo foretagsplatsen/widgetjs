@@ -25,8 +25,8 @@ define([
 			// Assert that:
 			expect(html).toBeTruthy();
 			expect(html.root).toBeTruthy();
-			expect(html.root.element()).toBeTruthy();
-			expect($("BODY").is(html.root.element())).toBeTruthy();
+			expect(html.root.element).toBeTruthy();
+			expect($("BODY").is(html.root.element)).toBeTruthy();
 		});
 
 		it("throws exception if jQuery dont match element", function() {
@@ -315,7 +315,7 @@ define([
 				var h1 = html.h1().id("aHeading");
 
 				// Assert
-				expect(h1.element()).toBe(jQuery("#aHeading").get(0));
+				expect(h1.element).toBe(jQuery("#aHeading").get(0));
 			});
 		});
 
