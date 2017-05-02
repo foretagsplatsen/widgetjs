@@ -282,8 +282,8 @@ define([
 	TagBrushConstructor.prototype.getElement = function(object) {
 
 		// Create a fragment if no object
-		if (typeof(object) === "undefined" || object === null) {
-			return jQuery(document.createDocumentFragment()).get(0);
+		if (object === undefined || object === null) {
+			return document.createDocumentFragment();
 		}
 
 		// Any object that implements asJQuery eg. widget and tagBrush
