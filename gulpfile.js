@@ -22,7 +22,9 @@ var wrap = {
 	"    if (typeof define === \"function\" && define.amd) {\n" +
 	"        define(\"widgetjs\", [\"jquery\", \"klassified\"], factory);\n" +
 	"    } else {\n" +
+	"        root.klassified = require('klassified');\n" +
 	"        root.widgetjs = factory(root.$, root.klassified);\n" +
+	"        Object.assign(root, root.widgetjs);\n" +
 	"    }\n" +
 	"}(this, function($, klassified) {\n" +
 	almond + "\n" +
