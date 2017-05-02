@@ -30,8 +30,8 @@
   ],
   "dependencies": {},
   "scripts": {
-    "build": "grunt build",
-    "test": "grunt test"
+    "build": "gulp build",
+    "test": "gulp test"
   },
   "devDependencies": {
     "almond": "~0.2.6",
