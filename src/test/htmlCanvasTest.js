@@ -1,5 +1,5 @@
 define([
-	"src/htmlCanvas",
+	"htmlCanvas",
 	"jquery"
 ], function(htmlCanvas, jQuery) {
 	function withCanvas(callback) {

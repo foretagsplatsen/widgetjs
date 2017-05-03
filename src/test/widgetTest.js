@@ -1,6 +1,6 @@
 define([
-	"src/widget",
-	"src/htmlCanvas",
+	"widget",
+	"htmlCanvas",
 	"jquery"
 ], function(widget, htmlCanvas, jQuery) {
 

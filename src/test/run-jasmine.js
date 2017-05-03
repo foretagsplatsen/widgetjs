@@ -8,9 +8,7 @@ require(["./tests"], function(options) {
 	config.baseUrl = "../";
 	require.config(config);
 
-	require(["./config"], function() {
-		require(options.files, function(files) {
-			jasmine.getEnv().execute();
-		});
+	require(options.files, function(files) {
+		jasmine.getEnv().execute();
 	});
 });

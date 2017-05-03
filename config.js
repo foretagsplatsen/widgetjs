@@ -5,7 +5,8 @@
  */
 
 requirejs.config({
-    paths: {},
-    shim: {},
-    enforceDefine: false
+	paths: {},
+	shim: {},
+	baseUrl: "src",
+	enforceDefine: false
 });

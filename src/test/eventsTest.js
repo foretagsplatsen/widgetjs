@@ -1,4 +1,6 @@
-define(["src/events"], function(events) {
+define([
+	"events"
+], function(events) {
 	describe("events", function() {
 
 		it("Bind callback to event", function() {

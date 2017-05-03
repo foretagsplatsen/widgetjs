@@ -32,9 +32,9 @@ var wrap = {
 	"}));"
 };
 
-var sources = ["./src/**/*.js"];
+var sources = ["./src/[!test]/**/*.js"];
 var misc = ["./gulpfile.js", "./eslintrc.js"];
-var tests = ["./test/**/*.js"];
+var tests = ["./src/test/**/*.js"];
 var all = sources.slice().concat(misc).concat(tests);
 
 gulp.task("default", ["test"]);
@@ -69,7 +69,7 @@ gulp.task("strip", function() {
 			start_comment: "start-test",
 			end_comment: "end-test"
 		}))
-		.pipe(gulp.dest("strip/src"));
+		.pipe(gulp.dest("strip"));
 });
 
 var requireJSOptions = {
@@ -86,12 +86,12 @@ gulp.task("optimize", ["strip"], function() {
 	var options = Object.assign(requireJSOptions);
 	options.baseUrl = "strip";
 	options.optimize = "none";
-	options.include = ["src/widgetjs"];
+	options.include = ["widgetjs"];
 	options.exclude = ["jquery", "klassified"];
-	options.insertRequire = ["src/widgetjs"];
+	options.insertRequire = ["widgetjs"];
 	options.out = "widgetjs.js";
 
-	return gulp.src("strip/src/widgetjs.js")
+	return gulp.src("strip/widgetjs.js")
 		.pipe(plugins.optimizer(options))
 		.pipe(gulp.dest("dist"));
 });
@@ -100,9 +100,9 @@ gulp.task("optimize:minify", ["strip"], function() {
 	var options = Object.assign(requireJSOptions);
 	delete options.optimize;
 	options.baseUrl = "strip";
-	options.include = ["src/widgetjs"];
+	options.include = ["widgetjs"];
 	options.exclude = ["jquery", "klassified"];
-	options.insertRequire = ["src/widgetjs"];
+	options.insertRequire = ["widgetjs"];
 	options.out = "widgetjs.min.js";
 
 	return gulp.src("strip/widgetjs.js")
