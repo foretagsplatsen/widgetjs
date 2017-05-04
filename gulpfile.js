@@ -32,7 +32,7 @@ var wrap = {
 	"}));"
 };
 
-var sources = ["./src/[!test]/**/*.js"];
+var sources = ["./src/**/*.js", "!src/test/"];
 var misc = ["./gulpfile.js", "./eslintrc.js"];
 var tests = ["./src/test/**/*.js"];
 var all = sources.slice().concat(misc).concat(tests);

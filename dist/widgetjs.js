@@ -893,7 +893,7 @@ define('htmlCanvas',[
 				}
 
 				else if (key === "klass") {
-					this.addClass(object[key]);
+					this.element.className = object[key];
 				} else {
 					this.setAttribute(key, object[key]);
 				}
