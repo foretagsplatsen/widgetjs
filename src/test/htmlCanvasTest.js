@@ -1,5 +1,5 @@
 define([
-	"src/htmlCanvas",
+	"htmlCanvas",
 	"jquery"
 ], function(htmlCanvas, jQuery) {
 	function withCanvas(callback) {
@@ -25,8 +25,8 @@ define([
 			// Assert that:
 			expect(html).toBeTruthy();
 			expect(html.root).toBeTruthy();
-			expect(html.root.element()).toBeTruthy();
-			expect($("BODY").is(html.root.element())).toBeTruthy();
+			expect(html.root.element).toBeTruthy();
+			expect($("BODY").is(html.root.element)).toBeTruthy();
 		});
 
 		it("throws exception if jQuery dont match element", function() {
@@ -228,9 +228,9 @@ define([
 		it("throws error if object to append is null or undefined", function() {
 			withCanvas(function(html) {
 				expect(function() { html.render(null); })
-					.toThrowError("cannot append null or undefined to brush");
+					.toThrowError();
 				expect(function() { html.render(undefined); })
-					.toThrowError("cannot append null or undefined to brush");
+					.toThrowError();
 			});
 		});
 
@@ -315,7 +315,7 @@ define([
 				var h1 = html.h1().id("aHeading");
 
 				// Assert
-				expect(h1.element()).toBe(jQuery("#aHeading").get(0));
+				expect(h1.element).toBe(jQuery("#aHeading").get(0));
 			});
 		});
 
@@ -380,8 +380,6 @@ define([
 				html.render(0); // toString()
 				html.render(3.14159265359); // toString()
 				html.render("<div>test</div>"); // => DIV element
-				html.render(true); // => nothing
-				html.render(false); // => nothing
 				html.render({}); // as attributes but since it have no keys => nothing
 				html.render([]); // as array but since empty => nothing
 

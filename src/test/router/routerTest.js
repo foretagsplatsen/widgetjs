@@ -1,5 +1,5 @@
 define([
-	"src/router/router"
+	"router/router"
 ], function(router) {
 
 	function delayedSteps() {

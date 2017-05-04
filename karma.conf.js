@@ -13,10 +13,9 @@ module.exports = function(config) {
 
 		// list of files / patterns to load in the browser
 		files: [
-			"test/run-karma.js",
+			"src/test/run-karma.js",
 			{pattern: "config.js", included: false},
 			{pattern: "src/**/*.js", included: false},
-			{pattern: "test/**/*.js", included: false},
 			{pattern: "bower_components/**/*.js", included: false}
 		],
 

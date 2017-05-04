@@ -1,5 +1,5 @@
 define([
-	"src/router"
+	"router"
 ], function(router) {
 
 	function assertMatch(url, route, message) {

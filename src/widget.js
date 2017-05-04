@@ -447,8 +447,9 @@ define([
 				var html = htmlCanvas();
 				renderBasicOn(html);
 
-				// Replace our self
-				that.asJQuery().replaceWith(html.root.element);
+				// Replace ourself
+				var elt = document.getElementById(that.getId());
+				elt.parentNode.replaceChild(html.root.element, elt);
 			});
 		};
 
