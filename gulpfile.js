@@ -11,7 +11,8 @@ var plugins = require("gulp-load-plugins")({
 		"gulp-strip-code": "stripCode",
 		"gulp-sequence": "sequence",
 		"gulp-requirejs-optimize": "optimizer",
-		"gulp-bump": "bump"
+		"gulp-bump": "bump",
+		"gulp-sourcemaps": "sourcemaps"
 	}
 });
 
@@ -106,7 +107,9 @@ gulp.task("optimize:minify", ["strip"], function() {
 	options.out = "widgetjs.min.js";
 
 	return gulp.src("strip/widgetjs.js")
+		.pipe(plugins.sourcemaps.init())
 		.pipe(plugins.optimizer(options))
+		.pipe(plugins.sourcemaps.write("./"))
 		.pipe(gulp.dest("dist"));
 });
 
