@@ -44,6 +44,7 @@
     "gulp-eslint": "^3.0.1",
     "gulp-load-plugins": "^1.4.0",
     "gulp-requirejs-optimize": "^1.2.0",
+    "gulp-sourcemaps": "2.6.0",
     "gulp-sequence": "^0.4.5",
     "gulp-shell": "^0.5.2",
     "gulp-strip-code": "^0.1.3",
