@@ -3669,10 +3669,6 @@ define('widget',[
 
 		/**
 		 * Re-renders the widget and replace it in the DOM
-		 *
-		 * Content is first re-rendered on a document fragment. Update then replace the element matched
-		 * by "asJQuery" with the new content.
-		 *
 		 */
 		that.update = function() {
 			if (my.inUpdateTransaction || !that.isRendered()) {
