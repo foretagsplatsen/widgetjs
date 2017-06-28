@@ -3681,13 +3681,12 @@ define('widget',[
 
 			my.willUpdate();
 			my.withAttachHooks(function() {
-				// Re-render
-				var html = htmlCanvas();
-				renderBasicOn(html);
+				// clear content of root
+				that.asJQuery().empty();
 
-				// Replace ourself
-				var elt = document.getElementById(that.getId());
-				elt.parentNode.replaceChild(html.root.element, elt);
+				// re-render content on root
+				var html = htmlCanvas(that.asJQuery());
+				renderBasicOn(html);
 			});
 		};
 
