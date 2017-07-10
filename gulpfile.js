@@ -109,6 +109,9 @@ gulp.task("optimize:minify", ["strip"], function() {
 	return gulp.src("strip/widgetjs.js")
 		.pipe(plugins.sourcemaps.init())
 		.pipe(plugins.optimizer(options))
+		.pipe(plugins.sourcemaps.mapSources((sourcePath, file) => {
+			return "../src/" + sourcePath;
+		}))
 		.pipe(plugins.sourcemaps.write("./"))
 		.pipe(gulp.dest("dist"));
 });
