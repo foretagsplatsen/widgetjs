@@ -444,7 +444,9 @@ define([
 
 				// re-render content on root
 				var html = htmlCanvas(that.asJQuery());
-				renderBasicOn(html);
+				my.withChildrenRegistration(function() {
+					that.renderContentOn(html);
+				});
 			});
 		};
 
