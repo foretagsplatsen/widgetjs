@@ -1,13 +1,14 @@
 {
-  "name": "widgetjs",
+  "name": "widget-js",
   "description": "A framework for building JavaScript applications with widgets.",
-  "version": "2.3.0",
+  "version": "3.0.0",
   "homepage": "http://github.com/foretagsplatsen/widgetjs",
   "author": "Företagsplatsen A.B.",
   "contributors": [
     "Nicolas Petton <nicolas@petton.fr>",
     "Henrik Wallström <henrik.wallstrom@foretagsplatsen.se>",
-    "Benjamin Van Ryseghem <benjamin@vanryseghem.com>"
+    "Benjamin Van Ryseghem <benjamin@vanryseghem.com>",
+    "Damien Cassou <damien.cassou@foretagsplatsen.se>"
   ],
   "licenses": [
     {
