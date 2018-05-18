@@ -20,12 +20,12 @@ define([
 		"sup table tbody td textarea tfoot th thead time title tr track tt ul var" +
 		"video wbr").split(" ");
 
-	// Supported HTML events
+	// Supported HTML attributes
 	var attributes = "href for id media rel src style title type".split(" ");
 
 	var omitSymbol = {};
 
-	// Supported HTML attributes
+	// Supported HTML events
 	var events = ("blur focus focusin focusout load resize scroll unload " +
 	"click dblclick mousedown mouseup mousemove mouseover " +
 	"mouseout mouseenter mouseleave change select submit " +
