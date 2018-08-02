@@ -36,7 +36,9 @@ define([], function() {
 		};
 
 		/**
-		 * Binds callback to event. The callback will be invoked whenever the event is fired.
+		 * Binds callback to event. The callback will be invoked
+		 * whenever the event is fired. Avoid adding the same callback
+		 * twice.
 		 *
 		 * @param callback {function}
 		 * @returns {eventBinding}
@@ -96,6 +98,17 @@ define([], function() {
 				if (callback) {
 					callback.apply(that, params);
 				}
+			};
+
+			/**
+			 * Returns true if and only if the receiver is triggering
+			 * the callback given as parameter.
+			 *
+			 * @param cb {function} callback to test against
+			 * @returns {boolean}
+			 */
+			that.isForCallback = function(cb) {
+				return callback === cb;
 			};
 
 			return that;
@@ -190,14 +203,25 @@ define([], function() {
 		};
 
 		/**
-		 * Create and add callback binding to event
+		 * Create and add callback binding to the receiver. Avoid
+		 * adding the same callback twice.
 		 *
 		 * @param callback
 		 * @returns {eventBinding}
 		 */
 		function bindCallback(callback) {
-			var binding = eventBinding({callback: callback, event: that});
+			var binding = bindings.filter(function(binding) {
+				return binding.isForCallback(callback);
+			})[0];
+
+			// Don't register the same callback twice:
+			if (binding) {
+				return binding;
+			}
+
+			binding = eventBinding({callback: callback, event: that});
 			bindings.push(binding);
+
 			return binding;
 		}
 
