@@ -21,11 +21,45 @@ define([
 		it("Bind multiple callbacks to an event", function() {
 			// Arrange: an event
 			var anEvent = events.event();
+			var spy1 = jasmine.createSpy("callback1");
+			var spy2 = jasmine.createSpy("callback2");
+
+			// Act: bind two callbacks and trigger event
+			anEvent.register(spy1);
+			anEvent.register(spy2);
+
+			anEvent.trigger();
+
+			// Assert: that both where executed
+			expect(spy1).toHaveBeenCalledTimes(1);
+			expect(spy2).toHaveBeenCalledTimes(1);
+		});
+
+		it("Bind same callback only once", function() {
+			// Arrange: an event
+			var anEvent = events.event();
+
 			var spy = jasmine.createSpy("callback");
 
 			// Act: bind two callbacks and trigger event
 			anEvent.register(spy);
 			anEvent.register(spy);
+
+			anEvent.trigger();
+
+			// Assert: that both where executed
+			expect(spy).toHaveBeenCalledTimes(1);
+		});
+
+		it("Bind same callback with anonymous functions", function() {
+			// Arrange: an event
+			var anEvent = events.event();
+
+			var spy = jasmine.createSpy("callback");
+
+			// Act: bind two callbacks and trigger event
+			anEvent.register(function() {spy();});
+			anEvent.register(function() {spy();});
 
 			anEvent.trigger();
 
