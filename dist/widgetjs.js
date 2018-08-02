@@ -451,15 +451,15 @@ define('htmlCanvas',[
 		"sup table tbody td textarea tfoot th thead time title tr track tt ul var" +
 		"video wbr").split(" ");
 
-	// Supported HTML events
+	// Supported HTML attributes
 	var attributes = "href for id media rel src style title type".split(" ");
 
 	var omitSymbol = {};
 
-	// Supported HTML attributes
+	// Supported HTML events
 	var events = ("blur focus focusin focusout load resize scroll unload " +
 	"click dblclick mousedown mouseup mousemove mouseover " +
-	"mouseout mouseenter mouseleave change select submit " +
+	"mouseout mouseenter mouseleave change input select submit " +
 	"keydown keypress keyup error dragstart dragenter dragover dragleave drop dragend").split(" ");
 
 	function HtmlCanvasConstructor(rootElement) {
@@ -1565,7 +1565,9 @@ define('events',[], function() {
 		};
 
 		/**
-		 * Binds callback to event. The callback will be invoked whenever the event is fired.
+		 * Binds callback to event. The callback will be invoked
+		 * whenever the event is fired. Avoid adding the same callback
+		 * twice.
 		 *
 		 * @param callback {function}
 		 * @returns {eventBinding}
@@ -1625,6 +1627,17 @@ define('events',[], function() {
 				if (callback) {
 					callback.apply(that, params);
 				}
+			};
+
+			/**
+			 * Returns true if and only if the receiver is triggering
+			 * the callback given as parameter.
+			 *
+			 * @param cb {function} callback to test against
+			 * @returns {boolean}
+			 */
+			that.isForCallback = function(cb) {
+				return callback === cb;
 			};
 
 			return that;
@@ -1719,14 +1732,25 @@ define('events',[], function() {
 		};
 
 		/**
-		 * Create and add callback binding to event
+		 * Create and add callback binding to the receiver. Avoid
+		 * adding the same callback twice.
 		 *
 		 * @param callback
 		 * @returns {eventBinding}
 		 */
 		function bindCallback(callback) {
-			var binding = eventBinding({callback: callback, event: that});
+			var binding = bindings.filter(function(binding) {
+				return binding.isForCallback(callback);
+			})[0];
+
+			// Don't register the same callback twice:
+			if (binding) {
+				return binding;
+			}
+
+			binding = eventBinding({callback: callback, event: that});
 			bindings.push(binding);
+
 			return binding;
 		}
 
