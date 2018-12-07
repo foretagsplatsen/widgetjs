@@ -374,6 +374,16 @@ define([
 		};
 
 		/**
+		 * Redirect to another location (as in window.location) path.
+		 *
+		 * @param {string} path
+		 * @return {undefined}
+		 */
+		that.redirectToLocationPath = function(path) {
+			window.location.href = path.startsWith("/") ? path : "/" + path;
+		};
+
+		/**
 		 * Constructs a new URL from parameters with a route as template. If no route is
 		 * supplied the last matched route is used.
 		 *
