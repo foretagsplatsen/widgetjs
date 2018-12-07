@@ -314,6 +314,8 @@ define([
 		my.redirectToPath = my.router.redirectToPath;
 		my.redirectToUrl = my.router.redirectToUrl;
 
+		my.redirectToLocationPath = my.router.redirectToLocationPath;
+
 		my.getParameters = my.router.getParameters;
 		my.getParameter = my.router.getParameter;
 		my.setParameters = my.router.setParameters;
