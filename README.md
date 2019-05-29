@@ -82,6 +82,9 @@ Build:
 yarn run build
 ```
 
+### Simple todo application demo
+[widgetjs-todo](https://github.com/opture/widgetjs-todo)
+
 ### Credits
 Thanks a ton to @NicolasPetton for HtmlCanvas and tricking us into developing and using Widget-JS at Företagsplatsen
 
