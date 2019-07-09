@@ -3,9 +3,9 @@ sudo: false
 # https://docs.travis-ci.com/user/languages/javascript-with-nodejs#Node.js-v4-(or-io.js-v3)-compiler-requirements
 dist: trusty
 node_js:
-  - "7"
-  - "6"
-  - "6.5"
+  - "8"
+  - "10"
+  - "12"
 
 before_script:
   - npm install -g bower
