@@ -9,6 +9,4 @@
 // and use in all widgets:
 // my.hello();
 
-define([], function() {
-	return {};
-});
+export default {};
