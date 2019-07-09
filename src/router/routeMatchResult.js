@@ -1,150 +1,147 @@
-define([
-	"klassified"
-], function(klassified) {
+import klassified from "klassified";
+
+/**
+ * Route match result are used as the answer of matching a url against a route.
+ *
+ * @param {{}} [spec]
+ * @param {{}} spec.url Matched URL
+ * @param {{}} spec.route Matched Route
+ * @param {{}} spec.values Hash with matched parameter names as keys and matching url segment values.
+ *
+ * @returns {routeMatchResult}
+ */
+var routeMatchResult = klassified.object.subclass(function(that, my) {
+
+	var url;
+	var route;
+	var urlParameters;
+	var routeParameters;
+	var parameters;
+
+	my.initialize = function(spec) {
+		my.super(spec);
+		url = spec.url;
+		route = spec.route;
+
+		urlParameters = (url && url.getQuery && url.getQuery()) || {};
+		routeParameters = spec.values || {};
+		parameters = mergeParameters(routeParameters, urlParameters);
+	};
+
+	//
+	// Public
+	//
 
 	/**
-	 * Route match result are used as the answer of matching a url against a route.
+	 * Matched route
 	 *
-	 * @param {{}} [spec]
-	 * @param {{}} spec.url Matched URL
-	 * @param {{}} spec.route Matched Route
-	 * @param {{}} spec.values Hash with matched parameter names as keys and matching url segment values.
-	 *
-	 * @returns {routeMatchResult}
+	 * @returns {route}
 	 */
-	var routeMatchResult = klassified.object.subclass(function(that, my) {
+	that.getRoute = function() {
+		return route;
+	};
 
-		var url;
-		var route;
-		var urlParameters;
-		var routeParameters;
-		var parameters;
+	/**
+	 * Matched URL
+	 *
+	 * @returns {url}
+	 */
+	that.getUrl = function() {
+		return url;
+	};
 
-		my.initialize = function(spec) {
-			my.super(spec);
-			url = spec.url;
-			route = spec.route;
+	/**
+	 * Answers true if route match URL
+	 *
+	 * @returns {boolean}
+	 */
+	that.isMatch = function() {
+		return true;
+	};
 
-			urlParameters = (url && url.getQuery && url.getQuery()) || {};
-			routeParameters = spec.values || {};
-			parameters = mergeParameters(routeParameters, urlParameters);
-		};
+	/**
+	 * Values for parameters in route
+	 *
+	 * @returns {{}}
+	 */
+	that.getRouteParameters = function() {
+		return routeParameters;
+	};
 
-		//
-		// Public
-		//
+	/**
+	 * Values for parameters in query
+	 *
+	 * @returns {{}}
+	 */
+	that.getQueryParameters = function() {
+		return url.getQuery();
+	};
 
-		/**
-		 * Matched route
-		 *
-		 * @returns {route}
-		 */
-		that.getRoute = function() {
-			return route;
-		};
+	/**
+	 * All matched parameters
+	 *
+	 * @returns {{}}
+	 */
+	that.getParameters = function() {
+		return parameters;
+	};
 
-		/**
-		 * Matched URL
-		 *
-		 * @returns {url}
-		 */
-		that.getUrl = function() {
-			return url;
-		};
+	/**
+	 * Constructs an array with all parameters in same order as in route pattern with
+	 * query parameter as the last value.
+	 *
+	 * @returns {Array}
+	 */
+	that.getActionArguments = function() {
+		var actionArguments = Object.keys(routeParameters).map(function(parameterName) {
+			return routeParameters[parameterName];
+		});
+		actionArguments.push(url.getQuery());
+		return actionArguments;
+	};
 
-		/**
-		 * Answers true if route match URL
-		 *
-		 * @returns {boolean}
-		 */
-		that.isMatch = function() {
-			return true;
-		};
+	//
+	// Private
+	//
 
-		/**
-		 * Values for parameters in route
-		 *
-		 * @returns {{}}
-		 */
-		that.getRouteParameters = function() {
-			return routeParameters;
-		};
+	function mergeParameters(routeParameters, queryParameters) {
+		var allValues = {};
 
-		/**
-		 * Values for parameters in query
-		 *
-		 * @returns {{}}
-		 */
-		that.getQueryParameters = function() {
-			return url.getQuery();
-		};
-
-		/**
-		 * All matched parameters
-		 *
-		 * @returns {{}}
-		 */
-		that.getParameters = function() {
-			return parameters;
-		};
-
-		/**
-		 * Constructs an array with all parameters in same order as in route pattern with
-		 * query parameter as the last value.
-		 *
-		 * @returns {Array}
-		 */
-		that.getActionArguments = function() {
-			var actionArguments = Object.keys(routeParameters).map(function(parameterName) {
-				return routeParameters[parameterName];
-			});
-			actionArguments.push(url.getQuery());
-			return actionArguments;
-		};
-
-		//
-		// Private
-		//
-
-		function mergeParameters(routeParameters, queryParameters) {
-			var allValues = {};
-
-			// Fill with route parameters
-			for (var parameterName in routeParameters) {
-				if (routeParameters.hasOwnProperty(parameterName)) {
-					allValues[parameterName] = routeParameters[parameterName];
-				}
+		// Fill with route parameters
+		for (var parameterName in routeParameters) {
+			if (routeParameters.hasOwnProperty(parameterName)) {
+				allValues[parameterName] = routeParameters[parameterName];
 			}
-
-			// Fill with query parameters
-			for (var queryParameterName in queryParameters) {
-				if (queryParameters.hasOwnProperty(queryParameterName)) {
-					allValues[queryParameterName] = queryParameters[queryParameterName];
-				}
-			}
-
-			return allValues;
-
 		}
-	});
 
-	routeMatchResult.class(function(that) {
+		// Fill with query parameters
+		for (var queryParameterName in queryParameters) {
+			if (queryParameters.hasOwnProperty(queryParameterName)) {
+				allValues[queryParameterName] = queryParameters[queryParameterName];
+			}
+		}
 
-		/**
-		 * Result to use when match does not match url
-		 */
-		that.routeNoMatchResult = (function() {
+		return allValues;
 
-			/** @typedef {routeMatchResult} routeNoMatchResult */
-			var instance = that();
-
-			instance.isMatch = function() {
-				return false;
-			};
-
-			return instance;
-		})();
-	});
-
-	return routeMatchResult;
+	}
 });
+
+routeMatchResult.class(function(that) {
+
+	/**
+	 * Result to use when match does not match url
+	 */
+	that.routeNoMatchResult = (function() {
+
+		/** @typedef {routeMatchResult} routeNoMatchResult */
+		var instance = that();
+
+		instance.isMatch = function() {
+			return false;
+		};
+
+		return instance;
+	})();
+});
+
+export default routeMatchResult;

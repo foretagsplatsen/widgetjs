@@ -1,20 +1,17 @@
-define([
-	"./router/url",
-	"./router/route",
-	"./router/router"
-], function(url, route, router) {
+import url from "./router/url";
+import route from "./router/route";
+import router from "./router/router";
 
-	var routerSingleton = router();
+var routerSingleton = router();
 
-	return {
-		url: url,
-		route: route,
-		router: router,
-		getRouter: function() {
-			return routerSingleton;
-		},
-		setRouter: function(newRouter) {
-			routerSingleton = newRouter;
-		}
-	};
-});
+export default {
+	url: url,
+	route: route,
+	router: router,
+	getRouter: function() {
+		return routerSingleton;
+	},
+	setRouter: function(newRouter) {
+		routerSingleton = newRouter;
+	}
+};
