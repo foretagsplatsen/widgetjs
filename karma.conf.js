@@ -1,22 +1,19 @@
 // Karma configuration
 // Generated on Wed Mar 23 2016 10:24:46 GMT+0100 (CET)
 
+var webpackConfig = require("./webpack.jasmine.config.js");
+
 module.exports = function(config) {
 	config.set({
-
 		// base path that will be used to resolve all patterns (eg. files, exclude)
 		basePath: "",
 
-		// frameworks to use
-		// available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-		frameworks: ["jasmine", "requirejs"],
+		// https://npmjs.org/browse/keyword/karma-adapter
+		frameworks: ["jasmine"],
 
 		// list of files / patterns to load in the browser
 		files: [
-			"src/test/run-karma.js",
-			{pattern: "config.js", included: false},
-			{pattern: "src/**/*.js", included: false},
-			{pattern: "bower_components/**/*.js", included: false}
+			"src/test/tests.js",
 		],
 
 		// list of files to exclude
@@ -25,22 +22,10 @@ module.exports = function(config) {
 		// preprocess matching files before serving them to the browser
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 		preprocessors: {
-			// source files, that you wanna generate coverage for
-			// do not include tests or libraries
-			// (these files will be instrumented by Istanbul)
-			"src/**/*.js": ["coverage"]
+			"src/test/**/*.js": ["webpack"]
 		},
 
-		coverageReporter: {
-			type: "html",
-			dir: "coverage/",
-			subdir: "PhantomJS"
-		},
-
-		// test results reporter to use
-		// possible values: "dots", "progress"
-		// available reporters: https://npmjs.org/browse/keyword/karma-reporter
-		reporters: ["dots", "coverage"],
+		webpack: webpackConfig,
 
 		// web server port
 		port: 9876,
@@ -53,11 +38,11 @@ module.exports = function(config) {
 		logLevel: config.LOG_INFO,
 
 		// enable / disable watching file and executing tests whenever any file changes
-		autoWatch: false,
+		autoWatch: true,
 
 		// start these browsers
 		// available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-		browsers: ["PhantomJS"],
+		browsers: ["Electron"],
 
 		// Continuous Integration mode
 		// if true, Karma captures browsers, runs the tests and exits
@@ -65,6 +50,8 @@ module.exports = function(config) {
 
 		// Concurrency level
 		// how many browser should be started simultaneous
-		concurrency: Infinity
+		concurrency: Infinity,
+
+		browserNoActivityTimeout: 20000
 	});
 };

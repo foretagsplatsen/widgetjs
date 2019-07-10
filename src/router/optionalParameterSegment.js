@@ -1,64 +1,61 @@
-define([
-	"./parameterSegment"
-], function(parameterSegment) {
+import parameterSegment from "./parameterSegment";
+
+/**
+ * Optional parameters can have a default value.
+ *
+ * @param {{}} spec abstractSegment string
+ * @param my
+ * @returns {parameter}
+ */
+var optionalParameterSegment = parameterSegment.subclass(function(that, my) {
+
+	my.initialize = function(spec) {
+		my.super(spec);
+		my.defaultValue = my.options.defaults && my.options.defaults[my.name];
+	};
+
+	//
+	// Public
+	//
 
 	/**
-	 * Optional parameters can have a default value.
+	 * Parameter value or default value if not matched.
 	 *
-	 * @param {{}} spec abstractSegment string
-	 * @param my
-	 * @returns {parameter}
+	 * @param {string} urlSegment
+	 * @returns {*}
 	 */
-	var optionalParameterSegment = parameterSegment.subclass(function(that, my) {
+	that.getValue = function(urlSegment) {
+		return urlSegment === undefined ?
+			my.defaultValue :
+			urlSegment;
+	};
 
-		my.initialize = function(spec) {
-			my.super(spec);
-			my.defaultValue = my.options.defaults && my.options.defaults[my.name];
-		};
+	/**
+	 * Always true.
+	 * @returns {boolean}
+	 */
+	that.isOptional = function() {
+		return true;
+	};
 
-		//
-		// Public
-		//
-
-		/**
-		 * Parameter value or default value if not matched.
-		 *
-		 * @param {string} urlSegment
-		 * @returns {*}
-		 */
-		that.getValue = function(urlSegment) {
-			return urlSegment === undefined ?
-				my.defaultValue :
-				urlSegment;
-		};
-
-		/**
-		 * Always true.
-		 * @returns {boolean}
-		 */
-		that.isOptional = function() {
-			return true;
-		};
-
-		/**
-		 * String representation for segment that can be used eg. when debugging.
-		 * @returns {*}
-		 */
-		that.toString = function() {
-			return "optional(" + that.getName() + ")";
-		};
-	});
-
-	optionalParameterSegment.class(function(that) {
-		/**
-		 * Match segment strings with a leading `?`.
-		 * @param {string} segmentString
-		 * @returns {boolean}
-		 */
-		that.match = function(segmentString) {
-			return segmentString.substr(0, 1) === "?";
-		};
-	});
-
-	return optionalParameterSegment;
+	/**
+	 * String representation for segment that can be used eg. when debugging.
+	 * @returns {*}
+	 */
+	that.toString = function() {
+		return "optional(" + that.getName() + ")";
+	};
 });
+
+optionalParameterSegment.class(function(that) {
+	/**
+	 * Match segment strings with a leading `?`.
+	 * @param {string} segmentString
+	 * @returns {boolean}
+	 */
+	that.match = function(segmentString) {
+		return segmentString.substr(0, 1) === "?";
+	};
+});
+
+export default optionalParameterSegment;

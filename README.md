@@ -62,25 +62,24 @@ requirejs.config({
 ```
 
 ### CODE
-You need [npm](https://npmjs.org/), [bower](https://github.com/twitter/bower) and [grunt](http://gruntjs.com/)
+You need [yarn](https://yarnpkg.com/), and [gulp](https://gulpjs.com/)
 
-Install depedencies
+Install dependencies
 ```
-bower install
+yarn
 ```
 
-```
-npm install
-```
 
 Lint + run tests :
 ```
-grunt
+yarn run lint
+yarn run build-test
+yarn run test
 ```
 
 Build:
 ```
-grunt dist
+yarn run build
 ```
 
 ### Credits

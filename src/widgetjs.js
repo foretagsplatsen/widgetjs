@@ -1,15 +1,5 @@
-define([
-	"./htmlCanvas",
-	"./widget",
-	"./widget-extensions",
-	"./router",
-	"./events"
-], function(htmlCanvas, widget, widgetExtensions, router, events) {
-	return {
-		htmlCanvas: htmlCanvas,
-		widget: widget,
-		ext: widgetExtensions,
-		router: router,
-		events: events
-	};
-});
+export {default as htmlCanvas} from "./htmlCanvas";
+export {default as widget} from "./widget";
+export {default as ext} from "./widget-extensions";
+export {default as router} from "./router";
+export {default as events} from "./events";
