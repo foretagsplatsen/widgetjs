@@ -3,6 +3,7 @@
   "description": "A framework for building JavaScript applications with widgets.",
   "version": "4.1.0",
   "homepage": "http://github.com/foretagsplatsen/widgetjs",
+  "main": "src/widgetjs.js",
   "author": "Företagsplatsen A.B.",
   "contributors": [
     "Nicolas Petton <nicolas@petton.fr>",
