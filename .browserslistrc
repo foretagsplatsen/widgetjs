@@ -1,0 +1,14 @@
+# The following specifies the browsers we support. This is used by
+# babel and specifically the preset-env plugin to decide which
+# transformations to apply.
+
+# See:
+# - https://babeljs.io/docs/en/babel-preset-env#browserslist-integration
+# - https://github.com/browserslist/browserslist#queries
+
+
+# This is
+> 0.5%           # browsers with at least 0.5% of market share, or
+last 2 versions  # , or
+Firefox ESR      # long-term support release, or
+not dead

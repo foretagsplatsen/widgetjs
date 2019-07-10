@@ -3,3 +3,5 @@ node_modules/
 bower_components/
 .idea/
 coverage/
+/yarn-error.log
+dist/jasmine.js

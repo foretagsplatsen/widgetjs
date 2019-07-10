@@ -1,71 +1,68 @@
-define([
-	"./abstractSegment",
-	"./parameterSegment",
-	"./optionalParameterSegment",
-	"./staticSegment"
-], function(abstractSegment) {
+import abstractSegment from "./abstractSegment";
+import "./parameterSegment";
+import "./optionalParameterSegment";
+import "./staticSegment";
 
-	/**
-	 * Token/Char used to separate segments in route patterns.
-	 * @type {string}
-	 */
-	var routePatternSeparator = "/";
+/**
+ * Token/Char used to separate segments in route patterns.
+ * @type {string}
+ */
+var routePatternSeparator = "/";
 
-	/**
-	 * Creates a route from pattern. A pattern is a string with route segments
-	 * separated by `routePatternSeparator`.
-	 *
-	 * @example
-	 *    routeFactory(`/foo/#bar/?baz`);
-	 *
-	 * @param {string} pattern
-	 * @param {{}} options
-	 * @returns {abstractSegment[]}
-	 */
-	function routeFactory(pattern, options) {
-		if (!pattern) {
-			return [];
-		}
-
-		options = options || {};
-		var segmentStrings = pattern.split(routePatternSeparator);
-
-		var nonEmptySegmentStrings = segmentStrings
-			.map(Function.prototype.call, String.prototype.trim)
-			.filter(Boolean);
-
-		var segmentArray = nonEmptySegmentStrings.map(function(segmentString) {
-			return segmentFactory(segmentString, options);
-		});
-
-		return segmentArray;
+/**
+ * Creates a route from pattern. A pattern is a string with route segments
+ * separated by `routePatternSeparator`.
+ *
+ * @example
+ *    routeFactory(`/foo/#bar/?baz`);
+ *
+ * @param {string} pattern
+ * @param {{}} options
+ * @returns {abstractSegment[]}
+ */
+function routeFactory(pattern, options) {
+	if (!pattern) {
+		return [];
 	}
 
-	/**
-	 * Create segment from string
-	 *
-	 * @param {string} segmentString
-	 * @param {{}} options
-	 * @returns {abstractSegment}
-	 */
-	function segmentFactory(segmentString, options) {
-		options = options || {};
+	options = options || {};
+	var segmentStrings = pattern.split(routePatternSeparator);
 
-		var segments = abstractSegment.allSubclasses();
+	var nonEmptySegmentStrings = segmentStrings
+		.map(Function.prototype.call, String.prototype.trim)
+		.filter(Boolean);
 
-		// Find segment type from string
-		for (var i = 0; i < segments.length; i++) {
-			var segment = segments[i];
-			if (segment.match(segmentString)) {
-				return segment({
-					segmentString: segmentString,
-					options: options
-				});
-			}
+	var segmentArray = nonEmptySegmentStrings.map(function(segmentString) {
+		return segmentFactory(segmentString, options);
+	});
+
+	return segmentArray;
+}
+
+/**
+ * Create segment from string
+ *
+ * @param {string} segmentString
+ * @param {{}} options
+ * @returns {abstractSegment}
+ */
+function segmentFactory(segmentString, options) {
+	options = options || {};
+
+	var segments = abstractSegment.allSubclasses();
+
+	// Find segment type from string
+	for (var i = 0; i < segments.length; i++) {
+		var segment = segments[i];
+		if (segment.match(segmentString)) {
+			return segment({
+				segmentString: segmentString,
+				options: options
+			});
 		}
-
-		return null;
 	}
 
-	return routeFactory;
-});
+	return null;
+}
+
+export default routeFactory;
