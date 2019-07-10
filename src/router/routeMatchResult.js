@@ -109,14 +109,14 @@ var routeMatchResult = klassified.object.subclass(function(that, my) {
 
 		// Fill with route parameters
 		for (var parameterName in routeParameters) {
-			if (routeParameters.hasOwnProperty(parameterName)) {
+			if (Object.prototype.hasOwnProperty.call(routeParameters, parameterName)) {
 				allValues[parameterName] = routeParameters[parameterName];
 			}
 		}
 
 		// Fill with query parameters
 		for (var queryParameterName in queryParameters) {
-			if (queryParameters.hasOwnProperty(queryParameterName)) {
+			if (Object.prototype.hasOwnProperty.call(queryParameters, queryParameterName)) {
 				allValues[queryParameterName] = queryParameters[queryParameterName];
 			}
 		}

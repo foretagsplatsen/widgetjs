@@ -453,7 +453,7 @@ TagBrushConstructor.prototype.css = function(key, value) {
  */
 TagBrushConstructor.prototype.attr = function(object) {
 	for (var key in object) {
-		if (object.hasOwnProperty(key)) {
+		if (Object.prototype.hasOwnProperty.call(object, key)) {
 			// Attach functions
 			if (typeof object[key] === "function") {
 				this.on(key, object[key]);
