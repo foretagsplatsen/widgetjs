@@ -1,35 +1,31 @@
-var gulp = require("gulp");
+const {src, task, series} = require("gulp");
+const eslint = require("gulp-eslint");
+
 var Server = require("karma").Server;
 
-var plugins = require("gulp-load-plugins")({
-	rename: {
-		"gulp-eslint": "eslint"
-	}
-});
-
 var sources = ["./src/**/*.js", "!src/test/"];
-var misc = ["./gulpfile.js", "./eslintrc.js"];
+var misc = ["./gulpfile.js", "./.eslintrc.js"];
 var tests = ["./src/test/**/*.js"];
 var all = sources.slice().concat(misc).concat(tests);
 
-gulp.task("default", ["lint", "test"]);
-
 // Lint
 
-gulp.task("lint", ["lint:js"]);
-
-gulp.task("lint:js", function() {
-	return gulp.src(all)
-		.pipe(plugins.eslint())
-		.pipe(plugins.eslint.format("unix"))
-		.pipe(plugins.eslint.failAfterError());
+task("lint:js", () => {
+	return src(all)
+		.pipe(eslint())
+		.pipe(eslint.format("unix"))
+		.pipe(eslint.failAfterError());
 });
+
+task("lint", series("lint:js"));
 
 // Test
 
-gulp.task("test", function(done) {
+task("test", (done) => {
 	new Server({
 		configFile: __dirname + "/karma.conf.js",
 		singleRun: true
 	}, done).start();
 });
+
+task("default", series("lint", "test"));

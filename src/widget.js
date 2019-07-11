@@ -484,7 +484,7 @@ var widget = klassified.object.subclass(function(that, my) {
 	// Third party protected extensions** added to `my`.
 	// See widget-extensions.js
 	for (var extProperty in widgetExtensions) {
-		if (widgetExtensions.hasOwnProperty(extProperty)) {
+		if (Object.prototype.hasOwnProperty.call(widgetExtensions, extProperty)) {
 			my[extProperty] = widgetExtensions[extProperty];
 		}
 	}
