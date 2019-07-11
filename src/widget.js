@@ -4,36 +4,8 @@ import router from "./router";
 import events from "./events";
 import htmlCanvas from "./htmlCanvas";
 import jQuery from "jquery";
-
-/**
- * Creates unique ids used by widgets to identify their root div.
- */
-var idGenerator = (function() {
-	var that = {};
-	var id = 0;
-
-	that.newId = function() {
-		id += 1;
-		return id.toString();
-	};
-
-	return that;
-})();
-
-/**
- * Helpers for keeping track of the currently rendered widget.
- */
-var currentWidget = (function() {
-	var current;
-	return {
-		get: function() {
-			return current;
-		},
-		set: function(widget) {
-			current = widget;
-		}
-	};
-})();
+import {getCurrentWidget, withCurrentWidget} from "./currentWidget";
+import {newId} from "./idGenerator";
 
 /**
  * Base for all widgets. A widget can keep state in variables, contain logic and
@@ -84,7 +56,7 @@ var widget = klassified.object.subclass(function(that, my) {
 
 	my.initialize = function(spec) {
 		my.super(spec);
-		id = spec.id || idGenerator.newId();
+		id = spec.id || newId();
 		// When within an update transaction, do not update the widget
 		my.inUpdateTransaction = false;
 		children = [];
@@ -292,7 +264,7 @@ var widget = klassified.object.subclass(function(that, my) {
 	 * @returns {String}
 	 */
 	my.nextId = function() {
-		return idGenerator.newId();
+		return newId();
 	};
 
 	/**
@@ -363,7 +335,7 @@ var widget = klassified.object.subclass(function(that, my) {
 	};
 
 	my.withChildrenRegistration = function(fn) {
-		var parent = currentWidget.get();
+		var parent = getCurrentWidget();
 		if (parent) {
 			parent.registerChild(that);
 		}
@@ -496,20 +468,7 @@ var widget = klassified.object.subclass(function(that, my) {
  * Return true if the parent widget is rendering the receiver.
  */
 function inRenderingLoop() {
-	return !!currentWidget.get();
-}
-
-/**
- * Set `widget` as the current widget while evaluating `fn`.
- */
-function withCurrentWidget(fn, widget) {
-	var current = currentWidget.get();
-	try {
-		currentWidget.set(widget);
-		fn();
-	} finally {
-		currentWidget.set(current);
-	}
+	return !!getCurrentWidget();
 }
 
 export default widget;
