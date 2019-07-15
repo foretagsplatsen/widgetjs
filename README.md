@@ -62,7 +62,7 @@ requirejs.config({
 ```
 
 ### CODE
-You need [yarn](https://yarnpkg.com/), and [gulp](https://gulpjs.com/)
+You need [yarn](https://yarnpkg.com/).
 
 Install dependencies
 ```

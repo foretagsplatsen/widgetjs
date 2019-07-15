@@ -13,5 +13,5 @@ install:
   - yarn install --frozen-lockfile
 
 script:
-  - gulp lint
-  - xvfb-run gulp test
+  - yarn run lint
+  - xvfb-run yarn run test

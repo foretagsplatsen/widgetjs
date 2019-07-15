@@ -9,6 +9,7 @@
 			sourceType: "module"
 		},
 		rules: {
+			"no-console": [error],
 			"quotes": [error, "double"],
 			"ftgp/require-class-comment": 0
 		}
