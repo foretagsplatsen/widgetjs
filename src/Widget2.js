@@ -43,7 +43,7 @@ import {newId} from "./idGenerator";
  *                           be generated and assigned.
  */
 export default class Widget2 {
-	constructor({id}) {
+	constructor({id} = {}) {
 		this._id = id || newId();
 
 		// When within an update transaction, do not update the widget
