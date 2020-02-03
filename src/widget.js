@@ -409,6 +409,7 @@ var widget = klassified.object.subclass(function(that, my) {
 			return;
 		}
 
+		that.willDetach();
 		my.willUpdate();
 		my.withAttachHooks(function() {
 			// clear content of root

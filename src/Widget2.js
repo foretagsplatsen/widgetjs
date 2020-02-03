@@ -410,6 +410,7 @@ export default class Widget2 {
 			return;
 		}
 
+		this.willDetach();
 		this._willUpdate();
 		this._withAttachHooks(() => {
 			// clear content of root
