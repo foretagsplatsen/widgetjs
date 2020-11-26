@@ -18,6 +18,8 @@ var tags = ("a abbr acronym address area article aside audio b bdi bdo big " +
 	"sup table tbody td textarea tfoot th thead time title tr track tt ul var" +
 	"video wbr").split(" ");
 
+var svgTags = ("svg circle path polygon rect text").split(" ");
+
 // Supported HTML attributes
 var attributes = "href for id media rel src style title type".split(" ");
 
@@ -62,7 +64,7 @@ HtmlCanvasConstructor.prototype.svgTag = function(tagName, children) {
 };
 
 /**
- * Tags builders for each supported tag type.
+ * Tags builders for each supported HTML tag type.
  *
  * @example
  *    html.h1("Title");
@@ -73,6 +75,16 @@ tags.forEach(function(tagName) {
 	HtmlCanvasConstructor.prototype[tagName] = function() {
 		var args = Array.prototype.slice.call(arguments);
 		return this.tag(tagName, args);
+	};
+});
+
+/**
+ * Tags builders for each supported SVG tag type.
+ */
+svgTags.forEach(function(tagName) {
+	HtmlCanvasConstructor.prototype[tagName] = function() {
+		var args = Array.prototype.slice.call(arguments);
+		return this.svgTag(tagName, args);
 	};
 });
 
