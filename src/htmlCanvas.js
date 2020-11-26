@@ -51,6 +51,16 @@ HtmlCanvasConstructor.prototype.tag = function(tagName, children) {
 	return tagBrush;
 };
 
+HtmlCanvasConstructor.prototype.svgTag = function(tagName, children) {
+	var tagBrush = htmlTagBrush({
+		tag: tagName,
+		namespaceURI: "http://www.w3.org/2000/svg",
+		children: children
+	});
+	this.root.appendBrush(tagBrush);
+	return tagBrush;
+};
+
 /**
  * Tags builders for each supported tag type.
  *
@@ -149,7 +159,9 @@ function TagBrushConstructor(spec) {
 	 *
 	 * @type {HTMLElement}
 	 */
-	this.element = spec.tag ? this.createElement(spec.tag) : this.getElement(spec.element);
+	this.element = spec.tag ?
+		this.createElement(spec.tag, spec.namespaceURI) :
+		this.getElement(spec.element);
 	if (!this.element) {
 		throw new Error("htmlTagBrush requires an element");
 	}
@@ -173,7 +185,10 @@ var elementCache = {};
  * @param {string} tagName
  * @returns {Element}
  */
-TagBrushConstructor.prototype.createElement = function(tagName) {
+TagBrushConstructor.prototype.createElement = function(tagName, namespaceURI) {
+	if (namespaceURI) {
+		return document.createElementNS(namespaceURI, tagName);
+	}
 	if (!elementCache[tagName]) {
 		elementCache[tagName] = document.createElement(tagName);
 	}
