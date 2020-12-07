@@ -18,6 +18,8 @@ var tags = ("a abbr acronym address area article aside audio b bdi bdo big " +
 	"sup table tbody td textarea tfoot th thead time title tr track tt ul var" +
 	"video wbr").split(" ");
 
+var svgTags = ("svg circle path polygon rect text").split(" ");
+
 // Supported HTML attributes
 var attributes = "href for id media rel src style title type".split(" ");
 
@@ -51,8 +53,18 @@ HtmlCanvasConstructor.prototype.tag = function(tagName, children) {
 	return tagBrush;
 };
 
+HtmlCanvasConstructor.prototype.svgTag = function(tagName, children) {
+	var tagBrush = htmlTagBrush({
+		tag: tagName,
+		namespaceURI: "http://www.w3.org/2000/svg",
+		children: children
+	});
+	this.root.appendBrush(tagBrush);
+	return tagBrush;
+};
+
 /**
- * Tags builders for each supported tag type.
+ * Tags builders for each supported HTML tag type.
  *
  * @example
  *    html.h1("Title");
@@ -63,6 +75,16 @@ tags.forEach(function(tagName) {
 	HtmlCanvasConstructor.prototype[tagName] = function() {
 		var args = Array.prototype.slice.call(arguments);
 		return this.tag(tagName, args);
+	};
+});
+
+/**
+ * Tags builders for each supported SVG tag type.
+ */
+svgTags.forEach(function(tagName) {
+	HtmlCanvasConstructor.prototype[tagName] = function() {
+		var args = Array.prototype.slice.call(arguments);
+		return this.svgTag(tagName, args);
 	};
 });
 
@@ -149,7 +171,9 @@ function TagBrushConstructor(spec) {
 	 *
 	 * @type {HTMLElement}
 	 */
-	this.element = spec.tag ? this.createElement(spec.tag) : this.getElement(spec.element);
+	this.element = spec.tag ?
+		this.createElement(spec.tag, spec.namespaceURI) :
+		this.getElement(spec.element);
 	if (!this.element) {
 		throw new Error("htmlTagBrush requires an element");
 	}
@@ -173,7 +197,10 @@ var elementCache = {};
  * @param {string} tagName
  * @returns {Element}
  */
-TagBrushConstructor.prototype.createElement = function(tagName) {
+TagBrushConstructor.prototype.createElement = function(tagName, namespaceURI) {
+	if (namespaceURI) {
+		return document.createElementNS(namespaceURI, tagName);
+	}
 	if (!elementCache[tagName]) {
 		elementCache[tagName] = document.createElement(tagName);
 	}

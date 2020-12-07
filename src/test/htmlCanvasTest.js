@@ -397,4 +397,25 @@ describe("htmlCanvas", function() {
 			expect(true).toBeTruthy();
 		});
 	});
+
+	describe("svg tags", () => {
+		it("can render an SVG element with svgTag", () => {
+			withCanvas((html) => {
+				let tag = html.svgTag("svg");
+
+				expect(tag.element.namespaceURI).toEqual("http://www.w3.org/2000/svg");
+			});
+		});
+
+		it("can render the svg-specific tags", () => {
+			withCanvas((html) => {
+				["svg", "circle", "path", "polygon", "rect", "text"].forEach((tagName) => {
+					let tag = html[tagName]();
+
+					expect(tag.element.namespaceURI).toEqual("http://www.w3.org/2000/svg");
+					expect(tag.element.tagName.toLowerCase()).toEqual(tagName);
+				});
+			});
+		});
+	});
 });
