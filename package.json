@@ -1,7 +1,7 @@
 {
   "name": "widgetjs",
   "description": "A framework for building JavaScript applications with widgets.",
-  "version": "5.0.7",
+  "version": "5.0.8",
   "homepage": "http://github.com/foretagsplatsen/widgetjs",
   "main": "src/widgetjs.js",
   "author": "Företagsplatsen A.B.",
