@@ -382,6 +382,22 @@ var router = klassified.object.subclass(function(that, my) {
 	};
 
 	/**
+	 * Change the URL to be `newLocation`.
+	 *
+	 * @param {string} newLocation - The new URL.
+	 */
+	that.setLocation = function(newLocation) {
+		window.location = newLocation;
+	};
+
+	/**
+	 * Reload the current URL, just like the "refresh" button.
+	 */
+	that.reloadPage = function() {
+		window.location.reload();
+	};
+
+	/**
 	 * Constructs a new URL from parameters with a route as template. If no route is
 	 * supplied the last matched route is used.
 	 *
