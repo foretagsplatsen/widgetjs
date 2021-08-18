@@ -1,4 +1,4 @@
-import events from "../events";
+import {eventCategory} from "yaem";
 import route from "./route";
 import url from "./url";
 import hashLocation from "./hashLocation";
@@ -47,7 +47,7 @@ var router = klassified.object.subclass(function(that, my) {
 	};
 
 	// Events
-	my.events = events.eventCategory();
+	my.events = eventCategory();
 
 	//
 	// Public

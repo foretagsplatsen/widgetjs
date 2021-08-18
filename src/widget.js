@@ -1,7 +1,7 @@
 import klassified from "klassified";
 import widgetExtensions from "./widget-extensions";
 import router from "./router";
-import events from "./events";
+import {eventCategory} from "yaem";
 import htmlCanvas from "./htmlCanvas";
 import jQuery from "jquery";
 import {getCurrentWidget, withCurrentWidget} from "./currentWidget";
@@ -73,7 +73,7 @@ var widget = klassified.object.subclass(function(that, my) {
 	};
 
 	/** Events for widget */
-	my.events = events.eventCategory();
+	my.events = eventCategory();
 
 	that.onAttach = my.events.createEvent();
 	that.onDetach = my.events.createEvent();

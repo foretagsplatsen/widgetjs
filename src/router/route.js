@@ -1,5 +1,5 @@
 import routeFactory from "./routeFactory";
-import events from "../events";
+import {eventCategory} from "yaem";
 import routeMatchResult from "./routeMatchResult";
 import url from "./url";
 import klassified from "klassified";
@@ -80,7 +80,7 @@ var route = klassified.object.subclass(function(that, my) {
 		ensureOptionalSequences();
 	};
 
-	my.events = events.eventCategory();
+	my.events = eventCategory();
 
 	//
 	// Public
