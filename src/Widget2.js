@@ -1,5 +1,5 @@
 import router from "./router";
-import events from "./events";
+import {eventCategory} from "yaem";
 import htmlCanvas from "./htmlCanvas";
 import jQuery from "jquery";
 import {getCurrentWidget, withCurrentWidget} from "./currentWidget";
@@ -53,7 +53,7 @@ export default class Widget2 {
 		this._children = [];
 
 		// Events for widget
-		this._events = events.eventCategory();
+		this._events = eventCategory();
 		this.onAttach = this._events.createEvent();
 		this.onDetach = this._events.createEvent();
 

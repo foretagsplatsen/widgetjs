@@ -1,5 +1,5 @@
 import jQuery from "jquery";
-import events from "../events";
+import {eventCategory} from "yaem";
 import url from "./url";
 import klassified from "klassified";
 
@@ -36,7 +36,7 @@ var hashLocation = klassified.object.subclass(function(that, my) {
 
 	my.currentHash = undefined; // last hash fragment
 	my.history = []; // history of visited hash fragments
-	my.events = events.eventCategory();
+	my.events = eventCategory();
 
 	//
 	// Public
