@@ -2798,10 +2798,10 @@ jsonfile@^4.0.0:
   optionalDependencies:
     graceful-fs "^4.1.6"
 
-karma-electron-launcher@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/karma-electron-launcher/-/karma-electron-launcher-0.2.0.tgz#862f988bd2f700bbea24803dabeccb0ef3ad717f"
-  integrity sha1-hi+Yi9L3ALvqJIA9q+zLDvOtcX8=
+karma-electron-launcher@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/karma-electron-launcher/-/karma-electron-launcher-0.3.0.tgz#108fce5c360dcf0aac75bd169fec0402a30e17b4"
+  integrity sha512-+IESj8bNN+oHvVdEpkuHQU9jgUGdnH74TvmGrGOKb4nGJHNUSzjsriD0E/6Jn6dt5JmQDvl2vGNJFWVFlGsArQ==
   dependencies:
     async "^0.9.0"
     merge "^1.2.0"
