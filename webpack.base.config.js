@@ -4,7 +4,7 @@ const aliases = require("./webpack.aliases.js");
 
 let config = {
 	mode: "development",
-	devtool: "cheap-eval-source-map",
+	devtool: "eval-cheap-source-map",
 	output: {
 		path: path.resolve(__dirname, "dist"),
 		filename: "widgetjs.js",
