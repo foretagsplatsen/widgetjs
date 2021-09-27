@@ -1965,10 +1965,10 @@ karma-electron-launcher@^0.3.0:
     merge "^1.2.0"
     ncp "^2.0.0"
 
-karma-electron@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/karma-electron/-/karma-electron-7.0.0.tgz#31d6ccd1406b893cf0010d8e7543ab259cf74be3"
-  integrity sha512-AMwpMCWbYVhqaw9gzUIzmsCftB1ttiNJE4lm+BKPgxmxszdNfIG3gNpxH2rUxwP4aKWucFPo1vAJ4nMQfNBZ3Q==
+karma-electron@^7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/karma-electron/-/karma-electron-7.1.0.tgz#3adb31c28bbd9c1dbafdd0db97a223691f1abaec"
+  integrity sha512-zmD8674Xw9RWaUeRVcfAt+28s6+WYMVYW/shJgEwjR/EPmudqE/W9/PFvcl+E+HR7AWTlyh6g9iq6Ju6RKf44A==
   dependencies:
     async "~3.0.1"
     combine-source-map "~0.8.0"
