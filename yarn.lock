@@ -3221,7 +3221,7 @@ y18n@^5.0.5:
   resolved "https://registry.yarnpkg.com/y18n/-/y18n-5.0.8.tgz#7f4934d0f7ca8c56f95314939ddcd2dd91ce1d55"
   integrity sha512-0pfFzegeDWJHJIAmTLRP2DwHjdF5s7jo9tuztdQxAhINCdvS+3nGINqPd00AphqJR/0LhANUS6/+7SCb98YOfA==
 
-yaem@foretagsplatsen/yaem#0.1.0:
+yaem@foretagsplatsen/yaem#v0.1.0:
   version "0.1.0"
   resolved "https://codeload.github.com/foretagsplatsen/yaem/tar.gz/63ec74b4e145cfe5eef4030f38b2f90a07688393"
 
