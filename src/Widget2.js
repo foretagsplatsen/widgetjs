@@ -302,27 +302,14 @@ export default class Widget2 {
 	}
 
 	/**
-	 * Main entry point for rendering. For convenience "renderOn" will    wrap the content
-	 * rendered by "renderContentOn" in a root element (renderRootOn) that will be matched
-	 * by asJQuery.
+	 * Main entry point for rendering. For convenience "renderOn" will
+	 * wrap the content rendered by "renderContentOn" in a root
+	 * element (renderRootOn) that will be matched by asJQuery.
 	 *
-	 * Usually concrete widgets override "renderContentOn" to render it content. Widgets
-	 * can override "renderOn" but must then make sure that it can be matched by "asJQuery".
-	 *
-	 * One way to do that is to make sure to have only one root element and setting the ID of
-	 * that element to the ID of the widget.
-	 *
-	 * @example
-	 *
-	 *        renderOn(html) {
-	 *			html.ul({id: that.getId()}
-	 *				html.li("BMW"),
-	 *				html.li("Toyota")
-	 *			);
-	 *		};
-	 *
-	 *
-	 * @param html
+	 * Usually concrete widgets override "renderContentOn" to render
+	 * its content instead of `renderOn`. It is also possible for
+	 * widgets to override `_makeRootTagOn` if they don't want the
+	 * `<widgetjs-widget>` tag.
 	 */
 	renderOn(html) {
 		// Renders widget by wrapping `renderContentOn()` in a root element.
@@ -355,7 +342,11 @@ export default class Widget2 {
 	 * @returns {htmlBrush}
 	 */
 	_renderRootOn(html) {
-		return html.tag("widgetjs-widget").id(this._id);
+		return this._makeRootTagOn(html).id(this._id);
+	}
+
+	_makeRootTagOn(html) {
+		return html.tag("widgetjs-widget");
 	}
 
 	/**
