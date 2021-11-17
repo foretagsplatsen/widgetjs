@@ -355,7 +355,11 @@ export default class Widget2 {
 	 * @returns {htmlBrush}
 	 */
 	_renderRootOn(html) {
-		return html.tag("widgetjs-widget").id(this._id);
+		return this._makeRootTagOn(html).id(this._id);
+	}
+
+	_makeRootTagOn(html) {
+		return html.tag("widgetjs-widget");
 	}
 
 	/**
