@@ -1,4 +1,5 @@
 import jQuery from "jquery";
+import classNames from "classnames";
 
 /**
  * @typedef {function} renderer
@@ -470,10 +471,7 @@ TagBrushConstructor.prototype.css = function(key, value) {
  * Set attributes using object literal.
  *
  * @example
- *	html.h1().attr({id : "myid", "class" : "myclass"});
- *
- * @note
- *	Use klass or "class" with quotation marks as key instead of class since its a reserved word.
+ *	html.h1().attr({id : "myid", class : "myclass"});
  *
  * @param object
  * @returns {{}}
@@ -486,8 +484,8 @@ TagBrushConstructor.prototype.attr = function(object) {
 				this.on(key, object[key]);
 			}
 
-			else if (key === "klass") {
-				this.element.className = object[key];
+			else if (key === "klass" || key === "class") {
+				this.element.className = classNames(object[key]);
 			} else {
 				this.setAttribute(key, object[key]);
 			}

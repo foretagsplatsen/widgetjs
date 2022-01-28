@@ -548,6 +548,11 @@ chrome-trace-event@^1.0.2:
   resolved "https://registry.yarnpkg.com/chrome-trace-event/-/chrome-trace-event-1.0.3.tgz#1015eced4741e15d06664a957dbbf50d041e26ac"
   integrity sha512-p3KULyQg4S7NIHixdwbGX+nFHkoBiA4YQmyWtjb8XngSKV124nJmRysgAeujbUVb15vh+RvFUfCPqU7rXk+hZg==
 
+classnames@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.1.tgz#dfcfa3891e306ec1dad105d0e88f4417b8535e8e"
+  integrity sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==
+
 cliui@^7.0.2:
   version "7.0.4"
   resolved "https://registry.yarnpkg.com/cliui/-/cliui-7.0.4.tgz#a0265ee655476fc807aea9df3df8df7783808b4f"
@@ -1042,7 +1047,6 @@ eslint-plugin-es@^3.0.0:
 
 eslint-plugin-ftgp@foretagsplatsen/ftgp-eslint#1.5.0:
   version "1.5.0"
-  uid "3fe4e8b616346d6c18566c4c85db40bdd239a5be"
   resolved "https://codeload.github.com/foretagsplatsen/ftgp-eslint/tar.gz/3fe4e8b616346d6c18566c4c85db40bdd239a5be"
   dependencies:
     change-case "^2.3.1"
