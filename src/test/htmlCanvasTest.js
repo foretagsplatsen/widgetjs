@@ -418,4 +418,51 @@ describe("htmlCanvas", function() {
 			});
 		});
 	});
+
+	describe("class names", () => {
+		it("assign a single class name", () => {
+			expectClassNamesToBecomeCSSClass({input: "foo", expectedOutput: "foo"});
+		});
+
+		it("assign 2 class names in a single string", () => {
+			expectClassNamesToBecomeCSSClass({input: "foo bar", expectedOutput: "foo bar"});
+		});
+
+		it("assign class names in an array", () => {
+			expectClassNamesToBecomeCSSClass({input: ["foo", "bar"], expectedOutput: "foo bar"});
+		});
+
+		it("assign class names in an object", () => {
+			expectClassNamesToBecomeCSSClass({input: {foo: true, bar: true}, expectedOutput: "foo bar"});
+		});
+
+		it("ignore class names in an object whose value is false", () => {
+			expectClassNamesToBecomeCSSClass({input: {foo: true, bar: false}, expectedOutput: "foo"});
+		});
+
+		it("assign class names in an object inside an array", () => {
+			expectClassNamesToBecomeCSSClass({input: [{foo: true}, {bar: false}], expectedOutput: "foo"});
+		});
+
+		it("assign class names in an array of mixed types", () => {
+			expectClassNamesToBecomeCSSClass({
+				input: [
+					"foo",
+					{bar: true},
+					{baz: false},
+					"yes no",
+					["another-yes", "another-no"]
+				],
+				expectedOutput: "foo bar yes no another-yes another-no"});
+		});
+
+		function expectClassNamesToBecomeCSSClass({input, expectedOutput}) {
+			withCanvas((html) => {
+				let tag = html.div({class: input});
+
+				expect(tag.element.className).toEqual(expectedOutput);
+			});
+		}
+	});
+
 });

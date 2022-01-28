@@ -1,4 +1,5 @@
 import jQuery from "jquery";
+import classNames from "classnames";
 
 /**
  * @typedef {function} renderer
@@ -484,7 +485,7 @@ TagBrushConstructor.prototype.attr = function(object) {
 			}
 
 			else if (key === "klass" || key === "class") {
-				this.element.className = object[key];
+				this.element.className = classNames(object[key]);
 			} else {
 				this.setAttribute(key, object[key]);
 			}

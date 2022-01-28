@@ -41,6 +41,7 @@
     "test": "karma start"
   },
   "devDependencies": {
+    "classnames": "^2.3.1",
     "electron": "^16.0.8",
     "eslint": "^8.7.0",
     "eslint-config-ftgp": "^1.3.1",
