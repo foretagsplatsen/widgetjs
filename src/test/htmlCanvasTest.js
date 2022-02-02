@@ -375,6 +375,26 @@ describe("htmlCanvas", function() {
 		});
 	});
 
+	it("addClass() with a complex argument", () => {
+		withCanvas((html) => {
+			let h1 = html.h1();
+
+			h1.addClass(["foo", {disabled: () => false}, ["bar"]]);
+
+			expect(h1.element.className).toEqual("foo disabled bar");
+		});
+	});
+
+	it("removeClass() with a complex argument", () => {
+		withCanvas((html) => {
+			let h1 = html.h1({class: "foo baz disabled bar"});
+
+			h1.removeClass(["foo", {disabled: () => false}, ["bar"]]);
+
+			expect(h1.element.className).toEqual("baz");
+		});
+	});
+
 	it("asJQuery() returns jQuery that match brush element", () => {
 		withCanvas((html) => {
 			// Arrange: a heading

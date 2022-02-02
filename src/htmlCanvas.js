@@ -495,23 +495,26 @@ TagBrushConstructor.prototype.attr = function(object) {
 };
 
 /**
- * Appends className to class attribute
- * @param className
+ * Appends className to class attribute.
+ *
+ * @param {object} className - Anything that can be passed to the
+ *   `classNames` library
  * @returns {htmlTagBrush}
  */
 TagBrushConstructor.prototype.addClass = function(className) {
-	this.asJQuery().addClass(className);
+	this.asJQuery().addClass(classNames(className));
 	return this;
 };
 
 /**
  * Removes className from class attribute
  *
- * @param {string} className
+ * @param {object} className - Anything that can be passed to the
+ *   `classNames` library
  * @returns {htmlTagBrush}
  */
 TagBrushConstructor.prototype.removeClass = function(className) {
-	this.asJQuery().removeClass(className);
+	this.asJQuery().removeClass(classNames(className));
 	return this;
 };
 
