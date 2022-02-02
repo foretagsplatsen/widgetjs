@@ -500,7 +500,7 @@ TagBrushConstructor.prototype.attr = function(object) {
  * @returns {htmlTagBrush}
  */
 TagBrushConstructor.prototype.addClass = function(className) {
-	this.asJQuery().addClass(className);
+	this.asJQuery().addClass(classNames(className));
 	return this;
 };
 
