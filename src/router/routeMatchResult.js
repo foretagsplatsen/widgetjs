@@ -1,4 +1,4 @@
-import klassified from "klassified";
+import { object } from "klassified";
 
 /**
  * Route match result are used as the answer of matching a url against a route.
@@ -10,7 +10,7 @@ import klassified from "klassified";
  *
  * @returns {routeMatchResult}
  */
-var routeMatchResult = klassified.object.subclass(function(that, my) {
+var routeMatchResult = object.subclass(function(that, my) {
 
 	var url;
 	var route;

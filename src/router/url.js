@@ -1,4 +1,4 @@
-import klassified from "klassified";
+import { object } from "klassified";
 
 /**
  * Token/Char used to separate segments in URL paths.
@@ -18,7 +18,7 @@ var urlSeparator = "/";
  * @param {string} rawUrl
  * @returns {url}
  */
-var url = klassified.object.subclass(function(that, my) {
+var url = object.subclass(function(that, my) {
 
 	var rawUrl;
 	var path;

@@ -9,7 +9,7 @@ define([
 	/**
 	 * Repository data store data using http://www.jstorage.info/
 	 */
-	var jStorageRepository = klassified.object.subclass(function(that, my) {
+	var jStorageRepository = object.subclass(function(that, my) {
 
 		my.initialize = function(spec) {
 			my.super(spec);
@@ -24,7 +24,7 @@ define([
 		};
 
 		my.storageGet = function(options) {
-			if(!options.id || !options.onSuccess) {
+			if (!options.id || !options.onSuccess) {
 				throw new Error("Option \"id\" and \"onSuccess\" are required");
 			}
 
@@ -32,7 +32,7 @@ define([
 		};
 
 		my.storageFindAll = function(options) {
-			if(!options.onSuccess ) {
+			if (!options.onSuccess ) {
 				throw new Error("Option \"onSuccess\" is required");
 			}
 
@@ -47,46 +47,45 @@ define([
 		};
 
 		my.storageSave = function(options) {
-			if(!options.model) {
+			if (!options.model) {
 				throw new Error("Option \"model\" is required");
 			}
 
 			options.id = options.id || options.model.id;
-			if(!options.id) {
+			if (!options.id) {
 				throw new Error("Option \"id\" or \"model.id\" is required");
 			}
 
 			jQuery.jStorage.set(my.key(options.id), options.model);
 
-			if(options.onSuccess) options.onSuccess(options.model);
+			if (options.onSuccess) {options.onSuccess(options.model);}
 		};
 
 		my.storageUpdate = function(options) {
-			if(!options.model) {
+			if (!options.model) {
 				throw new Error("Option \"model\" is required");
 			}
 
 			options.id = options.id || options.model.id;
-			if(!options.id) {
+			if (!options.id) {
 				throw new Error("Option \"id\" or \"model.id\" is required");
 			}
 
 			jQuery.jStorage.set(my.key(options.id), options.model);
 
-			if(options.onSuccess) options.onSuccess(options.model);
+			if (options.onSuccess) {options.onSuccess(options.model);}
 		};
 
 		my.storageRemove = function(options) {
 			options.id = options.id || options.model.id;
-			if(!options.id) {
+			if (!options.id) {
 				throw new Error("Option \"id\" or \"model.id\" is required");
 			}
 
 			jQuery.jStorage.deleteKey(my.key(options.id));
 
-			if(options.onSuccess) options.onSuccess();
+			if (options.onSuccess) {options.onSuccess();}
 		};
-
 
 		my.storageEmpty = function(options) {
 			jQuery.jStorage.index()
@@ -97,7 +96,7 @@ define([
 					return jQuery.jStorage.deleteKey(key);
 				});
 
-			if(options.onSuccess) options.onSuccess();
+			if (options.onSuccess) {options.onSuccess();}
 		};
 
 		my.modelToData = function(entity) {
@@ -105,11 +104,11 @@ define([
 		};
 
 		my.dataToModel = function(data) {
-			if(!my.model) {
+			if (!my.model) {
 				return data; // return data object-literal as default
 			}
 
-			if(Array.isArray(data)) {
+			if (Array.isArray(data)) {
 				return data.map(function(entry) {
 						objects.add(my.model(entry));
 				});
@@ -123,7 +122,7 @@ define([
 		that.get = my.storageGet;
 		that.findAll = my.storageFindAll;
 		that.save = my.storageSave;
-		that.update  = my.storageUpdate;
+		that.update = my.storageUpdate;
 		that.remove = my.storageRemove;
 		that.empty = my.storageEmpty;
 	});
@@ -143,7 +142,7 @@ define([
 
 		// Pre-populate with default data if empty
 		that.findAll({ onSuccess: function(recipes) {
-			if(recipes.length <= 0) {
+			if (recipes.length <= 0) {
 				saveDefaultRecipes();
 			}
 		}});
