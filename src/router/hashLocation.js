@@ -1,7 +1,7 @@
 import jQuery from "jquery";
 import {eventCategory} from "yaem";
 import url from "./url";
-import klassified from "klassified";
+import { object } from "klassified";
 
 /**
  * In modern browsers we use the "hashchange" event to listen for location changes. If not supported
@@ -30,7 +30,7 @@ var pollInterval = 25;
  * @param [my]
  * @returns {hashLocation}
  */
-var hashLocation = klassified.object.subclass(function(that, my) {
+var hashLocation = object.subclass(function(that, my) {
 
 	var pollTimerId = null;
 

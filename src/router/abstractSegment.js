@@ -1,4 +1,4 @@
-import klassified from "klassified";
+import { object } from "klassified";
 
 /**
  * A segment represents a single part of a route that can be matched
@@ -10,7 +10,7 @@ import klassified from "klassified";
  * @param my
  * @returns {abstractSegment}
  */
-var abstractSegment = klassified.object.subclass(function(that, my) {
+var abstractSegment = object.subclass(function(that, my) {
 
 	my.initialize = function(spec) {
 		my.super(spec);

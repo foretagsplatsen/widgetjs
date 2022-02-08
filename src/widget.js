@@ -1,4 +1,4 @@
-import klassified from "klassified";
+import { object } from "klassified";
 import widgetExtensions from "./widget-extensions";
 import router from "./router";
 import {eventCategory} from "yaem";
@@ -46,7 +46,7 @@ import {newId} from "./idGenerator";
  *
  * @returns {widget}
  */
-var widget = klassified.object.subclass(function(that, my) {
+var widget = object.subclass(function(that, my) {
 
 	/**
 	 * Keep track of the rendered subwidgets

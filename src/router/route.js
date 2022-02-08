@@ -2,7 +2,7 @@ import routeFactory from "./routeFactory";
 import {eventCategory} from "yaem";
 import routeMatchResult from "./routeMatchResult";
 import url from "./url";
-import klassified from "klassified";
+import { object } from "klassified";
 import "jquery";
 
 /**
@@ -56,7 +56,7 @@ import "jquery";
  * @param {{}} my
  * @returns {route}
  */
-var route = klassified.object.subclass(function(that, my) {
+var route = object.subclass(function(that, my) {
 
 	var segments;
 	var ignoreTrailingSegments;
