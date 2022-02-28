@@ -479,19 +479,23 @@ TagBrushConstructor.prototype.css = function(key, value) {
 TagBrushConstructor.prototype.attr = function(object) {
 	for (var key in object) {
 		if (Object.prototype.hasOwnProperty.call(object, key)) {
-			// Attach functions
-			if (typeof object[key] === "function") {
-				this.on(key, object[key]);
-			}
-
-			else if (key === "klass" || key === "class") {
-				this.element.className = classNames(object[key]);
-			} else {
-				this.setAttribute(key, object[key]);
-			}
+			this.addAttribute(key, object[key]);
 		}
 	}
 	return this;
+};
+
+TagBrushConstructor.prototype.addAttribute = function(key, value) {
+	// Attach functions
+	if (typeof value === "function") {
+		this.on(key, value);
+	}
+
+	else if (key === "klass" || key === "class") {
+		this.element.className = classNames(value);
+	} else {
+		this.setAttribute(key, value);
+	}
 };
 
 /**
