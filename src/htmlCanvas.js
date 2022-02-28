@@ -486,6 +486,10 @@ TagBrushConstructor.prototype.attr = function(object) {
 };
 
 TagBrushConstructor.prototype.addAttribute = function(key, value) {
+	if (!value) {
+		return;
+	}
+
 	// Attach functions
 	if (typeof value === "function") {
 		this.on(key, value);

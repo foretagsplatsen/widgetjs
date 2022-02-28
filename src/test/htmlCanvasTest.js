@@ -103,6 +103,46 @@ describe("htmlCanvas", function() {
 				expect(!divEl.is("[special_attribute]")).toBeTruthy();
 			});
 		});
+
+		it("when value is undefined", () => {
+			withCanvas((html) => {
+				let attributeName = "data-test";
+
+				let div = html.div({[attributeName]: undefined});
+
+				expect(div.element.hasAttribute("data-test")).toBeFalse();
+			});
+		});
+
+		it("when value is null", () => {
+			withCanvas((html) => {
+				let attributeName = "data-test";
+
+				let div = html.div({[attributeName]: null});
+
+				expect(div.element.hasAttribute("data-test")).toBeFalse();
+			});
+		});
+
+		it("when value if false", () => {
+			withCanvas((html) => {
+				let attributeName = "data-test";
+
+				let div = html.div({[attributeName]: false});
+
+				expect(div.element.hasAttribute("data-test")).toBeFalse();
+			});
+		});
+
+		it("when value is the empty string", () => {
+			withCanvas((html) => {
+				let attributeName = "data-test";
+
+				let div = html.div({[attributeName]: ""});
+
+				expect(div.element.hasAttribute("data-test")).toBeFalse();
+			});
+		});
 	});
 
 	it("callbacks can be attached to events", () => {
