@@ -85,21 +85,23 @@ describe("htmlCanvas", function() {
 		});
 	});
 
-	it("can omit attributes", () => {
-		withCanvas((html) => {
-			// Arrange: a div with attributes
-			html.div({
-				id: "test_div",
-				"special_attribute": html.omit()
-			}, "content");
+	describe("should omit an attribute", () => {
+		it("when value is html.omit()", () => {
+			withCanvas((html) => {
+				// Arrange: a div with attributes
+				html.div({
+					id: "test_div",
+					"special_attribute": html.omit()
+				}, "content");
 
-			// Assert: that DIV was rendered
-			var divEl = jQuery("#test_div");
+				// Assert: that DIV was rendered
+				var divEl = jQuery("#test_div");
 
-			expect(divEl.get(0)).toBeTruthy();
+				expect(divEl.get(0)).toBeTruthy();
 
-			// and class was set
-			expect(!divEl.is("[special_attribute]")).toBeTruthy();
+				// and class was set
+				expect(!divEl.is("[special_attribute]")).toBeTruthy();
+			});
 		});
 	});
 
