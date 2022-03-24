@@ -42,7 +42,7 @@
     "test": "karma start"
   },
   "devDependencies": {
-    "electron": "^17.1.2",
+    "electron": "^17.2.0",
     "eslint": "^8.11.0",
     "eslint-config-ftgp": "^2.1.1",
     "eslint-plugin-import": "^2.25.4",
