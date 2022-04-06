@@ -45,7 +45,7 @@
     "electron": "^18.0.1",
     "eslint": "^8.12.0",
     "eslint-config-ftgp": "^2.1.1",
-    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-node": "^11.1.0",
     "jasmine": "^4.0.2",
     "jasmine-reporters": "^2.5.0",
