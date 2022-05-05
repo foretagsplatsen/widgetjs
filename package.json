@@ -50,7 +50,7 @@
     "jasmine": "^4.1.0",
     "jasmine-reporters": "^2.5.0",
     "karma": "^6.3.19",
-    "karma-electron": "^7.1.0",
+    "karma-electron": "^7.2.0",
     "karma-jasmine": "^5.0.0",
     "karma-jasmine-diff-reporter": "^2.0.1",
     "karma-webpack": "^5.0.0",
