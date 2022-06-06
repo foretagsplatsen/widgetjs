@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "electron": "^19.0.3",
-    "eslint": "^8.16.0",
+    "eslint": "^8.17.0",
     "eslint-config-ftgp": "^2.1.1",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-node": "^11.1.0",
