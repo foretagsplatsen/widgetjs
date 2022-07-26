@@ -54,7 +54,7 @@
     "karma-jasmine": "^5.0.1",
     "karma-jasmine-diff-reporter": "^2.0.1",
     "karma-webpack": "^5.0.0",
-    "webpack": "^5.73.0",
+    "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
     "yaem": "foretagsplatsen/yaem#v0.1.0"
   },
