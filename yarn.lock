@@ -1912,10 +1912,10 @@ jsonfile@^6.0.1:
   optionalDependencies:
     graceful-fs "^4.1.6"
 
-karma-electron@^7.2.0:
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/karma-electron/-/karma-electron-7.2.0.tgz#2c2b2b821d75dfc4721b1e0a0e545733325c0aff"
-  integrity sha512-+6iYnL/rxPOhGh8Kg4W8nkajJRiaIMx4ivGqvEsoFzfGnXt0zJ+p55oM2OZm9mRvq6CcIGD9GHG91e3GIoNdYQ==
+karma-electron@^7.3.0:
+  version "7.3.0"
+  resolved "https://registry.yarnpkg.com/karma-electron/-/karma-electron-7.3.0.tgz#269897d2566262e6ddc594a3d408b84275014a5c"
+  integrity sha512-JCwAZxtzLo+Qk6HD8MqlU+c6mB7A5jZYNb+ftbMNxutnmi1hzb8/wIqJzpw087R7jV5ZzNHujMq8mStI5n4Q6Q==
   dependencies:
     async "~3.2.2"
     combine-source-map "~0.8.0"
