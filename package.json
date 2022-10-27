@@ -48,7 +48,7 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-node": "^11.1.0",
     "jasmine": "^4.4.0",
-    "jasmine-reporters": "^2.5.0",
+    "jasmine-reporters": "^2.5.1",
     "karma": "^6.4.1",
     "karma-electron": "^7.3.0",
     "karma-jasmine": "^5.0.1",
