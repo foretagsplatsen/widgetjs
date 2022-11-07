@@ -336,10 +336,10 @@
   resolved "https://registry.yarnpkg.com/@webpack-cli/serve/-/serve-1.7.0.tgz#e1993689ac42d2b16e9194376cfb6753f6254db1"
   integrity sha512-oxnCNGj88fL+xzV+dacXs44HcDwf1ovs3AuEzvP7mqXw7fQntqIhQ1BRmynh4qEKQSSSRSWVyXRjmTbZIX9V2Q==
 
-"@xmldom/xmldom@^0.8.3":
-  version "0.8.3"
-  resolved "https://registry.yarnpkg.com/@xmldom/xmldom/-/xmldom-0.8.3.tgz#beaf980612532aa9a3004aff7e428943aeaa0711"
-  integrity sha512-Lv2vySXypg4nfa51LY1nU8yDAGo/5YwF+EY/rUZgIbfvwVARcd67ttCM8SMsTeJy51YhHYavEq+FS6R0hW9PFQ==
+"@xmldom/xmldom@^0.8.5":
+  version "0.8.6"
+  resolved "https://registry.yarnpkg.com/@xmldom/xmldom/-/xmldom-0.8.6.tgz#8a1524eb5bd5e965c1e3735476f0262469f71440"
+  integrity sha512-uRjjusqpoqfmRkTaNuLJ2VohVr67Q5YwDATW3VU7PfzTj6IRaihGrYI7zckGZjxQPBIp63nfvJbM+Yu5ICh0Bg==
 
 "@xtuc/ieee754@^1.2.0":
   version "1.2.0"
@@ -1787,12 +1787,12 @@ jasmine-core@^4.1.0, jasmine-core@^4.5.0:
   resolved "https://registry.yarnpkg.com/jasmine-core/-/jasmine-core-4.5.0.tgz#1a6bd0bde3f60996164311c88a0995d67ceda7c3"
   integrity sha512-9PMzyvhtocxb3aXJVOPqBDswdgyAeSB81QnLop4npOpbqnheaTEwPc9ZloQeVswugPManznQBjD8kWDTjlnHuw==
 
-jasmine-reporters@^2.5.1:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/jasmine-reporters/-/jasmine-reporters-2.5.1.tgz#0c1a14b592e60ca5bb3c5c7cfb2eb1f77647c6a2"
-  integrity sha512-vFVTOveMTXTVh3yssjHZYhoHtqoz+Ch1JhIJNAcbUiZIBZprKuskbxtOIpJORCFlYKq5KhnTEzwI8Ts6Qcwuwg==
+jasmine-reporters@^2.5.2:
+  version "2.5.2"
+  resolved "https://registry.yarnpkg.com/jasmine-reporters/-/jasmine-reporters-2.5.2.tgz#b5dfa1d9c40b8020c5225e0e1e2b9953d66a4d69"
+  integrity sha512-qdewRUuFOSiWhiyWZX8Yx3YNQ9JG51ntBEO4ekLQRpktxFTwUHy24a86zD/Oi2BRTKksEdfWQZcQFqzjqIkPig==
   dependencies:
-    "@xmldom/xmldom" "^0.8.3"
+    "@xmldom/xmldom" "^0.8.5"
     mkdirp "^1.0.4"
 
 jasmine@^4.5.0:
