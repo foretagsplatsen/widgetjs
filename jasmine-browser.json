@@ -1,0 +1,8 @@
+{
+  "srcDir": ".",
+  "specDir": ".",
+  "specFiles": ["dist/jasmine.js"],
+  "browser": {
+    "name": "headlessChrome"
+  }
+}
