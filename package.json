@@ -39,27 +39,19 @@
     "build": "webpack --config webpack.config.js",
     "build-test": "webpack --config webpack.jasmine.config.js",
     "lint": "eslint --max-warnings 0 --format unix --report-unused-disable-directives .",
-    "test": "karma start"
+    "test": "jasmine-browser-runner runSpecs --config=jasmine-browser.json"
   },
   "devDependencies": {
-    "electron": "^25.1.1",
     "eslint": "^8.43.0",
     "eslint-config-ftgp": "^2.1.1",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-node": "^11.1.0",
     "jasmine": "^5.0.2",
+    "jasmine-browser-runner": "^2.0.0",
     "jasmine-reporters": "^2.5.2",
-    "karma": "^6.4.2",
-    "karma-electron": "^7.3.0",
-    "karma-jasmine": "^5.0.1",
-    "karma-jasmine-diff-reporter": "^3.0.0",
-    "karma-webpack": "^5.0.0",
     "webpack": "^5.87.0",
     "webpack-cli": "^5.1.4",
     "yaem": "foretagsplatsen/yaem#v0.1.0"
-  },
-  "resolutions": {
-    "minimist": "^1.2.3"
   },
   "peerDependencies": {
     "yaem": "foretagsplatsen/yaem#v0.1.0"
