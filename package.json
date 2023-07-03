@@ -42,7 +42,7 @@
     "test": "jasmine-browser-runner runSpecs --config=jasmine-browser.json"
   },
   "devDependencies": {
-    "eslint": "^8.43.0",
+    "eslint": "^8.44.0",
     "eslint-config-ftgp": "^2.1.1",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-node": "^11.1.0",
