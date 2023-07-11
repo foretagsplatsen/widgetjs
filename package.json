@@ -49,7 +49,7 @@
     "jasmine": "^5.0.2",
     "jasmine-browser-runner": "^2.1.0",
     "jasmine-reporters": "^2.5.2",
-    "webpack": "^5.88.0",
+    "webpack": "^5.88.1",
     "webpack-cli": "^5.1.4",
     "yaem": "foretagsplatsen/yaem#v0.1.0"
   },
