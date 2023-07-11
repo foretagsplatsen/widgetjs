@@ -3,7 +3,7 @@
 
 	module.exports = {
 		root: true,
-		extends: ["ftgp", "plugin:import/recommended"],
+		extends: ["plugin:@foretagsplatsen/eslint-plugin-ftgp/main", "plugin:import/recommended"],
 		parserOptions: {
 			ecmaVersion: 6,
 			sourceType: "module"

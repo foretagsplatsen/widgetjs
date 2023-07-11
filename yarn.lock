@@ -44,6 +44,15 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.44.0.tgz#961a5903c74139390478bdc808bcde3fc45ab7af"
   integrity sha512-Ag+9YM4ocKQx9AarydN0KY2j0ErMHNIocPDrVo8zAE44xLTjEtz81OdR68/cydGtk6m6jDb5Za3r2useMzYmSw==
 
+"@foretagsplatsen/eslint-plugin-ftgp@^2.1.1":
+  version "2.1.1"
+  resolved "https://npm.pkg.github.com/download/@foretagsplatsen/eslint-plugin-ftgp/2.1.1/b5a4528aa5d6bff5eedfa51faf96a68dfbc25b8b#b5a4528aa5d6bff5eedfa51faf96a68dfbc25b8b"
+  integrity sha512-tng4H6j3nnBRYC1zPE2BB+z1nhXB5u6m0LEkAQ9iyl9yHYQNFihD5DH0QvVnqxZeK6/JcubFhqVXoCAVd5RN2A==
+  dependencies:
+    eslint-plugin-ftgp "^3.0.0"
+    eslint-plugin-jasmine "^4.1.3"
+    eslint-plugin-promise "^6.0.0"
+
 "@humanwhocodes/config-array@^0.11.10":
   version "0.11.10"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.11.10.tgz#5a3ffe32cc9306365fb3fd572596cd602d5e12d2"
@@ -844,15 +853,6 @@ escape-string-regexp@^4.0.0:
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-4.0.0.tgz#14ba83a5d373e3d311e5afca29cf5bfad965bf34"
   integrity sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==
 
-eslint-config-ftgp@^2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/eslint-config-ftgp/-/eslint-config-ftgp-2.1.1.tgz#f214fd4005437f02ace646b6eb537fb91e613afb"
-  integrity sha512-VqMYWzQNAcBrDUWM6tIxRxfsz2v4kEBAaLoBHz4o5O4+xah46MXlG6EupPBFmTustRD6Y+Sf3rbqcFZdOQ2ieA==
-  dependencies:
-    eslint-plugin-ftgp "^3.0.0"
-    eslint-plugin-jasmine "^4.1.3"
-    eslint-plugin-promise "^6.0.0"
-
 eslint-import-resolver-node@^0.3.7:
   version "0.3.7"
   resolved "https://registry.yarnpkg.com/eslint-import-resolver-node/-/eslint-import-resolver-node-0.3.7.tgz#83b375187d412324a1963d84fa664377a23eb4d7"
@@ -923,9 +923,9 @@ eslint-plugin-node@^11.1.0:
     semver "^6.1.0"
 
 eslint-plugin-promise@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-promise/-/eslint-plugin-promise-6.0.0.tgz#017652c07c9816413a41e11c30adc42c3d55ff18"
-  integrity sha512-7GPezalm5Bfi/E22PnQxDWH2iW9GTvAlUNTztemeHb6c1BniSyoeTrM87JkC0wYdi6aQrZX9p2qEiAno8aTcbw==
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-promise/-/eslint-plugin-promise-6.1.1.tgz#269a3e2772f62875661220631bd4dafcb4083816"
+  integrity sha512-tjqWDwVZQo7UIPMeDReOpUgHCmCiH+ePnVT+5zVapL0uuHnegBUs2smM13CzOs2Xb5+MHMRFTs9v24yjba4Oig==
 
 eslint-scope@5.1.1:
   version "5.1.1"
