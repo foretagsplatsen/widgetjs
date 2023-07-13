@@ -3,13 +3,12 @@ import parameterSegment from "./parameterSegment";
 /**
  * Optional parameters can have a default value.
  *
- * @param {{}} spec abstractSegment string
+ * @param {{}} spec - abstractSegment string
  * @param my
  * @returns {parameter}
  */
-var optionalParameterSegment = parameterSegment.subclass(function(that, my) {
-
-	my.initialize = function(spec) {
+let optionalParameterSegment = parameterSegment.subclass((that, my) => {
+	my.initialize = function (spec) {
 		my.super(spec);
 		my.defaultValue = my.options.defaults && my.options.defaults[my.name];
 	};
@@ -24,17 +23,15 @@ var optionalParameterSegment = parameterSegment.subclass(function(that, my) {
 	 * @param {string} urlSegment
 	 * @returns {*}
 	 */
-	that.getValue = function(urlSegment) {
-		return urlSegment === undefined ?
-			my.defaultValue :
-			urlSegment;
+	that.getValue = function (urlSegment) {
+		return urlSegment === undefined ? my.defaultValue : urlSegment;
 	};
 
 	/**
 	 * Always true.
 	 * @returns {boolean}
 	 */
-	that.isOptional = function() {
+	that.isOptional = function () {
 		return true;
 	};
 
@@ -42,18 +39,18 @@ var optionalParameterSegment = parameterSegment.subclass(function(that, my) {
 	 * String representation for segment that can be used eg. when debugging.
 	 * @returns {*}
 	 */
-	that.toString = function() {
-		return "optional(" + that.getName() + ")";
+	that.toString = function () {
+		return `optional(${that.getName()})`;
 	};
 });
 
-optionalParameterSegment.class(function(that) {
+optionalParameterSegment.class((that) => {
 	/**
 	 * Match segment strings with a leading `?`.
 	 * @param {string} segmentString
 	 * @returns {boolean}
 	 */
-	that.match = function(segmentString) {
+	that.match = function (segmentString) {
 		return segmentString.substr(0, 1) === "?";
 	};
 });

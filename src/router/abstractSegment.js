@@ -6,13 +6,12 @@ import { object } from "klassified";
  *
  * @param {{}} spec
  * @param {string} segmentString
- * @param {{}} spec.options all route options
+ * @param {{}} spec.options - all route options
  * @param my
  * @returns {abstractSegment}
  */
-var abstractSegment = object.subclass(function(that, my) {
-
-	my.initialize = function(spec) {
+let abstractSegment = object.subclass((that, my) => {
+	my.initialize = function (spec) {
 		my.super(spec);
 		my.segmentString = spec.segmentString;
 		my.options = spec.options || {};
@@ -28,7 +27,7 @@ var abstractSegment = object.subclass(function(that, my) {
 	 * @param {string} urlSegment
 	 * @returns {boolean}
 	 */
-	that.match = function(urlSegment) {
+	that.match = function (urlSegment) {
 		return false;
 	};
 
@@ -38,7 +37,7 @@ var abstractSegment = object.subclass(function(that, my) {
 	 * @param {string} urlSegment
 	 * @returns {*}
 	 */
-	that.getValue = function(urlSegment) {
+	that.getValue = function (urlSegment) {
 		return my.segmentString;
 	};
 
@@ -47,7 +46,7 @@ var abstractSegment = object.subclass(function(that, my) {
 	 *
 	 * @returns {boolean}
 	 */
-	that.isParameter = function() {
+	that.isParameter = function () {
 		return false;
 	};
 
@@ -58,7 +57,7 @@ var abstractSegment = object.subclass(function(that, my) {
 	 *
 	 * @returns {boolean}
 	 */
-	that.isOptional = function() {
+	that.isOptional = function () {
 		return false;
 	};
 
@@ -66,13 +65,13 @@ var abstractSegment = object.subclass(function(that, my) {
 	 * String representation for segment that can be used eg. when debugging.
 	 * @returns {*}
 	 */
-	that.toString = function() {
+	that.toString = function () {
 		return my.segmentString;
 	};
 });
 
-abstractSegment.class(function(that) {
-	that.match = function(segmentString) {
+abstractSegment.class((that) => {
+	that.match = function (segmentString) {
 		return false;
 	};
 });

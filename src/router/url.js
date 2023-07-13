@@ -4,7 +4,7 @@ import { object } from "klassified";
  * Token/Char used to separate segments in URL paths.
  * @type {string}
  */
-var urlSeparator = "/";
+let urlSeparator = "/";
 
 /**
  * A `url` actually represents the fragment part of the actual url.
@@ -18,14 +18,13 @@ var urlSeparator = "/";
  * @param {string} rawUrl
  * @returns {url}
  */
-var url = object.subclass(function(that, my) {
+let url = object.subclass((that, my) => {
+	let rawUrl;
+	let path;
+	let query;
+	let segments;
 
-	var rawUrl;
-	var path;
-	var query;
-	var segments;
-
-	my.initialize = function(spec) {
+	my.initialize = function (spec) {
 		my.super(spec);
 		rawUrl = spec.rawUrl || "";
 		path = parsePath(rawUrl);
@@ -41,21 +40,27 @@ var url = object.subclass(function(that, my) {
 	 * URL path
 	 * @returns {string}
 	 */
-	that.getPath = function() { return path; };
+	that.getPath = function () {
+		return path;
+	};
 
 	/**
 	 * Key/Value pairs parsed from query
 	 *
 	 * @returns {{}}
 	 */
-	that.getQuery = function() { return query; };
+	that.getQuery = function () {
+		return query;
+	};
 
 	/**
 	 * Segments in path parsed by splitting `path` by `urlSeparator`
 	 *
 	 * @returns {string[]}
 	 */
-	that.getSegments = function() { return segments; };
+	that.getSegments = function () {
+		return segments;
+	};
 
 	/**
 	 * Answers true if the route is a match for the receiver
@@ -63,7 +68,7 @@ var url = object.subclass(function(that, my) {
 	 * @param route
 	 * @returns {boolean}
 	 */
-	that.matchRoute = function(route) {
+	that.matchRoute = function (route) {
 		return route.matchUrl(that);
 	};
 
@@ -71,7 +76,7 @@ var url = object.subclass(function(that, my) {
 	 * Returns `rawUrl`
 	 * @returns {string}
 	 */
-	that.toString = function() {
+	that.toString = function () {
 		return rawUrl;
 	};
 });
@@ -87,19 +92,19 @@ var url = object.subclass(function(that, my) {
  * @param {{}} query
  * @returns {url}
  */
-url.build = function(path, query) {
-	if (typeof(path) === "undefined" || path === null || typeof path !== "string") {
+url.build = function (path, query) {
+	if (path === undefined || path === null || typeof path !== "string") {
 		throw "accepts only string paths";
 	}
 
 	if (query) {
-		var queryPart = decodeURIComponent(jQuery.param(query));
+		let queryPart = decodeURIComponent(jQuery.param(query));
 		if (queryPart) {
-			return url({rawUrl: path + "?" + queryPart});
+			return url({ rawUrl: `${path}?${queryPart}` });
 		}
 	}
 
-	return url({rawUrl: path});
+	return url({ rawUrl: path });
 };
 
 /**
@@ -143,11 +148,11 @@ function parsePath(rawUrl) {
  */
 function parseQuery(rawUrl) {
 	// Extract query key/value(s) from a rawUrl and add them to `query` object.
-	var result = /[^?]*\?(.*)$/g.exec(rawUrl);
-	var query = {};
-	var pair;
+	let result = /[^?]*\?(.*)$/g.exec(rawUrl);
+	let query = {};
+	let pair;
 	if (result && result.length >= 2) {
-		(result[1].split("&")).forEach(function(each) {
+		result[1].split("&").forEach((each) => {
 			pair = each.split("=");
 			query[pair[0]] = pair[1];
 		});

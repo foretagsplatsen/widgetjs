@@ -1,9 +1,9 @@
+import "jquery";
+import { eventCategory } from "yaem";
+import { object } from "klassified";
 import routeFactory from "./routeFactory";
-import {eventCategory} from "yaem";
 import routeMatchResult from "./routeMatchResult";
 import url from "./url";
-import { object } from "klassified";
-import "jquery";
 
 /**
  * Routes represent the path for which an action should be taken (see `matched` event).
@@ -48,28 +48,28 @@ import "jquery";
  *        console.log(url); // => "/user/john"
  *
  *
- * @param {string|{}} spec Route pattern or route spec
- * @param {boolean} spec.ignoreTrailingSegments Route will match if all route segment match
+ * @param {string|{}} spec - Route pattern or route spec
+ * @param {boolean} spec.ignoreTrailingSegments - Route will match if all route segment match
  * even if url have trailing unmatched segments
- * @param {segment[]} [spec.segments] Array of route segments
+ * @param {segment[]} [spec.segments] - Array of route segments
  *
  * @param {{}} my
  * @returns {route}
  */
-var route = object.subclass(function(that, my) {
+let route = object.subclass((that, my) => {
+	let segments;
+	let ignoreTrailingSegments;
+	let optionalSequences;
 
-	var segments;
-	var ignoreTrailingSegments;
-	var optionalSequences;
-
-	my.initialize = function(spec) {
+	my.initialize = function (spec) {
 		my.super();
 		// Build segments from pattern
 		segments = routeFactory(spec.pattern, spec.options);
 
 		// Route match URL if all route segments match
 		// but URL still contain trailing segments (default false)
-		ignoreTrailingSegments = (spec.options && spec.options.ignoreTrailingSegments) || false;
+		ignoreTrailingSegments =
+			(spec.options && spec.options.ignoreTrailingSegments) || false;
 
 		// Array with all optional sequences, ie. all combinations
 		// of optional parameters. Array must be ordered to match URL:s
@@ -99,13 +99,13 @@ var route = object.subclass(function(that, my) {
 	 * @param {url} url
 	 * @returns {routeMatchResult}
 	 */
-	that.matchUrl = function(url) {
-		var match = findMatch(url);
+	that.matchUrl = function (url) {
+		let match = findMatch(url);
 		if (!match) {
 			return routeMatchResult.routeNoMatchResult;
 		}
 
-		var result = createMatchResult(match, url);
+		let result = createMatchResult(match, url);
 		my.events.trigger("matched", result);
 
 		return result;
@@ -115,17 +115,18 @@ var route = object.subclass(function(that, my) {
 	 * Expands route into a url. All non optional route parameters must exist
 	 * in `params`.
 	 *
-	 * @param {{}} params Key/Values where keys are route parameter names and values the values to use
+	 * @param {{}} params - Key/Values where keys are route parameter names and values the values to use
 	 *
 	 * @returns {string} URL string
 	 */
-	that.expand = function(params) {
-		params = params || {};
+	that.expand = function (params) {
+		params ||= {};
 
 		// Try to expand route into URL
-		var urlSegments = [];
-		segments.forEach(function(routeSegment) {
-			var urlSegment;
+		let urlSegments = [];
+
+		segments.forEach((routeSegment) => {
+			let urlSegment;
 			if (routeSegment.isParameter()) {
 				// Use supplied value for parameters
 				urlSegment = params[routeSegment.getName()];
@@ -135,8 +136,7 @@ var route = object.subclass(function(that, my) {
 			}
 
 			// Skip if no match and optional
-			if (urlSegment === undefined &&
-				routeSegment.isOptional()) {
+			if (urlSegment === undefined && routeSegment.isOptional()) {
 				return;
 			}
 
@@ -148,9 +148,9 @@ var route = object.subclass(function(that, my) {
 			urlSegments.push(urlSegment);
 		});
 
-		var query = {};
+		let query = {};
 
-		Object.keys(params).forEach(function(param) {
+		Object.keys(params).forEach((param) => {
 			if (!that.hasParameter(param)) {
 				query[param] = params[param];
 				// Handle array param values
@@ -169,10 +169,10 @@ var route = object.subclass(function(that, my) {
 	 * @param {string} name
 	 * @returns {boolean}
 	 */
-	that.hasParameter = function(name) {
-		return segments.some(function(segment) {
-			return segment.isParameter() && segment.getName() === name;
-		});
+	that.hasParameter = function (name) {
+		return segments.some(
+			(segment) => segment.isParameter() && segment.getName() === name
+		);
 	};
 
 	/**
@@ -180,8 +180,8 @@ var route = object.subclass(function(that, my) {
 	 *
 	 * @returns {string}
 	 */
-	that.toString = function() {
-		return "route(" + segments.join("/") + ")";
+	that.toString = function () {
+		return `route(${segments.join("/")})`;
 	};
 
 	//
@@ -192,11 +192,11 @@ var route = object.subclass(function(that, my) {
 	 * Checks if an array of url segments match a sequence of route segments.
 	 *
 	 * @param {string[]} urlSegments
-	 * @param {segments[]} [sequence] Route segments will be used as default
+	 * @param {segments[]} [sequence] - Route segments will be used as default
 	 * @returns {boolean}
 	 */
 	function isMatch(urlSegments, sequence) {
-		sequence = sequence || segments;
+		sequence ||= segments;
 
 		// Can not match if different sizes
 		if (urlSegments.length !== sequence.length && !ignoreTrailingSegments) {
@@ -204,8 +204,8 @@ var route = object.subclass(function(that, my) {
 		}
 
 		// All routeSegments much match corresponding URL segment
-		return sequence.every(function(routeSegment, index) {
-			var urlSegment = urlSegments[index];
+		return sequence.every((routeSegment, index) => {
+			let urlSegment = urlSegments[index];
 			return urlSegment !== undefined && routeSegment.match(urlSegment);
 		});
 	}
@@ -217,7 +217,7 @@ var route = object.subclass(function(that, my) {
 	 * @returns {segment[]}
 	 */
 	function findMatch(url) {
-		var urlSegments = url.getSegments();
+		let urlSegments = url.getSegments();
 
 		// Try match url segments
 		if (isMatch(urlSegments)) {
@@ -225,8 +225,12 @@ var route = object.subclass(function(that, my) {
 		}
 
 		// then optional sequences
-		var sequenceIndex;
-		for (sequenceIndex = 0; sequenceIndex < optionalSequences.length; sequenceIndex++) {
+		let sequenceIndex;
+		for (
+			sequenceIndex = 0;
+			sequenceIndex < optionalSequences.length;
+			sequenceIndex++
+		) {
 			if (isMatch(urlSegments, optionalSequences[sequenceIndex])) {
 				return optionalSequences[sequenceIndex];
 			}
@@ -240,27 +244,34 @@ var route = object.subclass(function(that, my) {
 	 */
 	function ensureOptionalSequences() {
 		// Find positions for optionals
-		var optionalPositions = [];
-		segments.forEach(function(segment, index) {
+		let optionalPositions = [];
+
+		segments.forEach((segment, index) => {
 			if (segment.isOptional()) {
 				optionalPositions.push(index);
 			}
 		});
 
 		if (optionalPositions.length > 15) {
-			throw new Error("Too many optional arguments. \"" + optionalPositions.length +
-				"\" optionals would generate  " + Math.pow(2, optionalPositions.length) +
-				" optional sequences.");
+			throw new Error(
+				`Too many optional arguments. "${
+					optionalPositions.length
+				}" optionals would generate  ${Math.pow(
+					2,
+					optionalPositions.length
+				)} optional sequences.`
+			);
 		}
 
 		// Generate possible sequences
-		var possibleOptionalSequences = orderedSubsets(optionalPositions);
+		let possibleOptionalSequences = orderedSubsets(optionalPositions);
 
-		possibleOptionalSequences.forEach(function(sequence) {
+		possibleOptionalSequences.forEach((sequence) => {
 			// Clone segments array and remove optionals matching
 			// indexes in index sequence
-			var optionalSequence = segments.slice();
-			sequence.forEach(function(optionalIndex, numRemoved) {
+			let optionalSequence = segments.slice();
+
+			sequence.forEach((optionalIndex, numRemoved) => {
 				// Remove optional but take in to account that we have already
 				// removed {numRemoved} from permutation.
 				optionalSequence.splice(optionalIndex - numRemoved, 1);
@@ -273,32 +284,36 @@ var route = object.subclass(function(that, my) {
 	/**
 	 * Create a "routeMatchResult" from a matched sequence.
 	 *
-	 * @param {segment[]} match Matched segment sequence
-	 * @param {url} url Matched URL
+	 * @param {segment[]} match - Matched segment sequence
+	 * @param {url} url - Matched URL
 	 *
 	 * @returns {routeMatchResult}
 	 */
 	function createMatchResult(match, url) {
-		var urlSegments = url.getSegments();
+		let urlSegments = url.getSegments();
 
-		var parameterValues = {};
-		segments.forEach(function(routeSegment) {
+		let parameterValues = {};
+
+		segments.forEach((routeSegment) => {
 			if (!routeSegment.isParameter()) {
 				return;
 			}
 
-			var matchedIndex = match.indexOf(routeSegment);
+			let matchedIndex = match.indexOf(routeSegment);
 			if (matchedIndex >= 0) {
-				parameterValues[routeSegment.getName()] = routeSegment.getValue(urlSegments[matchedIndex]);
+				parameterValues[routeSegment.getName()] = routeSegment.getValue(
+					urlSegments[matchedIndex]
+				);
 			} else {
-				parameterValues[routeSegment.getName()] = routeSegment.getValue();
+				parameterValues[routeSegment.getName()] =
+					routeSegment.getValue();
 			}
 		});
 
 		return routeMatchResult({
 			route: that,
-			url: url,
-			values: parameterValues
+			url,
+			values: parameterValues,
 		});
 	}
 });
@@ -314,14 +329,14 @@ var route = object.subclass(function(that, my) {
  * @returns {[[]]} Array with all subset arrays
  */
 function orderedSubsets(input) {
-	var results = [];
-	var result;
-	var mask;
-	var total = Math.pow(2, input.length);
+	let results = [];
+	let result;
+	let mask;
+	let total = Math.pow(2, input.length);
 
 	for (mask = 1; mask < total; mask++) {
 		result = [];
-		var i = input.length - 1;
+		let i = input.length - 1;
 		do {
 			if ((mask & (1 << i)) !== 0) {
 				result.unshift(input[i]);

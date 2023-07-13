@@ -1,9 +1,9 @@
-import router from "./router";
-import {eventCategory} from "yaem";
+import { eventCategory } from "yaem";
+import { getCurrentWidget, withCurrentWidget } from "./currentWidget";
+import { newId } from "./idGenerator";
 import htmlCanvas from "./htmlCanvas";
 import jQuery from "jquery";
-import {getCurrentWidget, withCurrentWidget} from "./currentWidget";
-import {newId} from "./idGenerator";
+import router from "./router";
 
 /**
  * Base for all widgets. A widget can keep state in variables, contain logic and
@@ -37,13 +37,13 @@ import {newId} from "./idGenerator";
  *
  * @virtual
  *
- * @param {String} [spec.id] Unique id for widget. Also used for root
+ * @param {string} [spec.id] - Unique id for widget. Also used for root
  *                           element when attached/rendered to DOM.
  *                           If not provided an ID will automatically
  *                           be generated and assigned.
  */
 export default class Widget2 {
-	constructor({id} = {}) {
+	constructor({ id } = {}) {
 		this._id = id || newId();
 
 		// When within an update transaction, do not update the widget
@@ -90,14 +90,12 @@ export default class Widget2 {
 	 * of `_initializeSubwidgets()`). In particular, don't override
 	 * `constructor()`.
 	 */
-	_initialize(spec) {
-	}
+	_initialize(spec) {}
 
 	/**
 	 * Hook evaluated at the end of initialization.
 	 */
-	_initializeSubwidgets(spec) {
-	}
+	_initializeSubwidgets(spec) {}
 
 	//
 	// Public
@@ -106,7 +104,7 @@ export default class Widget2 {
 	/**
 	 * Returns a unique id for the widget
 	 *
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	getId() {
 		return this._id;
@@ -182,7 +180,7 @@ export default class Widget2 {
 	 * See "renderOn".
 	 */
 	asJQuery() {
-		return jQuery("#" + this.getId());
+		return jQuery(`#${this.getId()}`);
 	}
 
 	/**
@@ -212,6 +210,7 @@ export default class Widget2 {
 	 */
 	triggerWillAttach() {
 		this._willAttach();
+
 		this._children.forEach((widget) => {
 			widget.triggerWillAttach();
 		});
@@ -262,7 +261,7 @@ export default class Widget2 {
 	_createEvents() {
 		let names = Array.prototype.slice.apply(arguments);
 
-		names.forEach(name => this._createEvent(name));
+		names.forEach((name) => this._createEvent(name));
 	}
 
 	//
@@ -273,7 +272,7 @@ export default class Widget2 {
 	 * Exposes the internal ID generator. Generates new unique IDs to
 	 * be used for sub-widgets, etc.
 	 *
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	_nextId() {
 		return newId();
@@ -282,8 +281,7 @@ export default class Widget2 {
 	/**
 	 * Widget specific dispose.
 	 */
-	_dispose() {
-	}
+	_dispose() {}
 
 	//
 	// Render
@@ -380,27 +378,23 @@ export default class Widget2 {
 	 * Hook evaluated before the widget is attached (or reattached due
 	 * to an update of rendering) to the DOM.
 	 */
-	_willAttach() {
-	}
+	_willAttach() {}
 
 	/**
 	 * Hook evaluated each time the widget is attached (or
 	 * reattached due to an update of rendering) to the DOM.
 	 */
-	_didAttach() {
-	}
+	_didAttach() {}
 
 	/**
 	 * Hook evaluated when a widget is detached from the DOM.
 	 */
-	_willDetach() {
-	}
+	_willDetach() {}
 
 	/**
 	 * Hook evaluated before widget update.
 	 */
-	_willUpdate() {
-	}
+	_willUpdate() {}
 
 	/**
 	 * Re-renders the widget and replace it in the DOM
@@ -412,6 +406,7 @@ export default class Widget2 {
 
 		this.willDetach();
 		this._willUpdate();
+
 		this._withAttachHooks(() => {
 			// clear content of root
 			this.asJQuery().empty();

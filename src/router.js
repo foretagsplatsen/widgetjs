@@ -1,17 +1,17 @@
-import url from "./router/url";
 import route from "./router/route";
 import router from "./router/router";
+import url from "./router/url";
 
-var routerSingleton = router();
+let routerSingleton = router();
 
 export default {
-	url: url,
-	route: route,
-	router: router,
-	getRouter: function() {
+	url,
+	route,
+	router,
+	getRouter: function () {
 		return routerSingleton;
 	},
-	setRouter: function(newRouter) {
+	setRouter: function (newRouter) {
 		routerSingleton = newRouter;
-	}
+	},
 };
