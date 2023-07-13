@@ -1,3 +1,4 @@
+// eslint-disable-next-line consistent-default-export-name/default-export-match-filename -- This is the standard naming
 const path = require("node:path");
 const webpack = require("webpack");
 const aliases = require("./webpack.aliases.js");

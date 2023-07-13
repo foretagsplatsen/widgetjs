@@ -1,9 +1,9 @@
 import "jquery";
 import { eventCategory } from "yaem";
 import { object } from "klassified";
-import routeFactory from "./routeFactory";
-import routeMatchResult from "./routeMatchResult";
-import url from "./url";
+import routeFactory from "./routeFactory.js";
+import routeMatchResult from "./routeMatchResult.js";
+import url from "./url.js";
 
 /**
  * Routes represent the path for which an action should be taken (see `matched` event).
@@ -56,7 +56,7 @@ import url from "./url";
  * @param {{}} my
  * @returns {route}
  */
-let route = object.subclass((that, my) => {
+const route = object.subclass((that, my) => {
 	let segments;
 	let ignoreTrailingSegments;
 	let optionalSequences;
@@ -151,12 +151,14 @@ let route = object.subclass((that, my) => {
 		let query = {};
 
 		Object.keys(params).forEach((param) => {
-			if (!that.hasParameter(param)) {
-				query[param] = params[param];
-				// Handle array param values
-				if (query[param] instanceof Array) {
-					query[param] = query[param].join(",");
-				}
+			if (that.hasParameter(param)) {
+				return;
+			}
+
+			query[param] = params[param];
+			// Handle array param values
+			if (query[param] instanceof Array) {
+				query[param] = query[param].join(",");
 			}
 		});
 
@@ -247,9 +249,11 @@ let route = object.subclass((that, my) => {
 		let optionalPositions = [];
 
 		segments.forEach((segment, index) => {
-			if (segment.isOptional()) {
-				optionalPositions.push(index);
+			if (!segment.isOptional()) {
+				return;
 			}
+
+			optionalPositions.push(index);
 		});
 
 		if (optionalPositions.length > 15) {

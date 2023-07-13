@@ -1,11 +1,11 @@
 import { eventCategory } from "yaem";
-import { getCurrentWidget, withCurrentWidget } from "./currentWidget";
-import { newId } from "./idGenerator";
+import { getCurrentWidget, withCurrentWidget } from "./currentWidget.js";
+import { newId } from "./idGenerator.js";
 import { object } from "klassified";
-import htmlCanvas from "./htmlCanvas";
+import htmlCanvas from "./htmlCanvas.js";
 import jQuery from "jquery";
-import router from "./router";
-import widgetExtensions from "./widget-extensions";
+import router from "./router.js";
+import widgetExtensions from "./widget-extensions.js";
 
 /**
  * Base for all widgets. A widget can keep state in variables, contain logic and
@@ -37,7 +37,7 @@ import widgetExtensions from "./widget-extensions";
  *
  * It is therefor easy to compose widgets from other widgets.
  *
- * @virtual
+ * @abstract
  *
  * @param {object} spec
  * @param {string} [spec.id] - Unique id for widget. Also used for root element when attached/rendered to DOM.
@@ -46,7 +46,7 @@ import widgetExtensions from "./widget-extensions";
  *
  * @returns {widget}
  */
-let widget = object.subclass((that, my) => {
+const widget = object.subclass((that, my) => {
 	/**
 	 * Keep track of the rendered subwidgets
 	 */
@@ -65,7 +65,7 @@ let widget = object.subclass((that, my) => {
 	 * Hook evaluated at the end of widget initialization and
 	 * before any rendering.
 	 */
-	my.initializeSubwidgets = function (spec) {};
+	my.initializeSubwidgets = function (_spec) {};
 
 	my.postInitialize = function (spec) {
 		my.initializeSubwidgets(spec);
@@ -380,7 +380,7 @@ let widget = object.subclass((that, my) => {
 	 *
 	 * @param {htmlCanvas} html
 	 */
-	that.renderContentOn = function (html) {
+	that.renderContentOn = function (_html) {
 		return my.subclassResponsibility();
 	};
 

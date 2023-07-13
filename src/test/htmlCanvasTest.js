@@ -1,4 +1,4 @@
-import htmlCanvas from "../htmlCanvas";
+import htmlCanvas from "../htmlCanvas.js";
 import jQuery from "jquery";
 
 function withCanvas(callback) {

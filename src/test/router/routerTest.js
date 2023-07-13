@@ -1,4 +1,4 @@
-import router from "../../router/router";
+import router from "../../router/router.js";
 
 function delayedSteps() {
 	let steps = Array.prototype.slice.call(arguments);

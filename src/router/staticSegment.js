@@ -1,4 +1,4 @@
-import abstractSegment from "./abstractSegment";
+import abstractSegment from "./abstractSegment.js";
 
 /**
  * A static segment match URL segments that are identical
@@ -8,7 +8,7 @@ import abstractSegment from "./abstractSegment";
  * @param [my]
  * @returns {segment}
  */
-let staticSegment = abstractSegment.subclass((that, my) => {
+const staticSegment = abstractSegment.subclass((that) => {
 	/**
 	 * Static segment match if URL and route segment
 	 * strings are identical.
@@ -33,5 +33,3 @@ staticSegment.class((that) => {
 		return ["#", "?"].indexOf(segmentString[0]) === -1;
 	};
 });
-
-export default staticSegment;

@@ -1,8 +1,8 @@
-import htmlCanvas from "../htmlCanvas";
+import htmlCanvas from "../htmlCanvas.js";
 import jQuery from "jquery";
-import widget from "../widget";
+import widget from "../widget.js";
 
-let widgetSubclass = widget.subclass((that, my) => {
+let widgetSubclass = widget.subclass((that) => {
 	that.renderContentOn = function (html) {
 		html.h1("Hello world");
 	};
@@ -135,7 +135,7 @@ describe("function", () => {
 	});
 
 	it("Remove", () => {
-		withWidget((aWidget, my) => {
+		withWidget((aWidget) => {
 			let id = `#${aWidget.id()}`;
 
 			expect(jQuery(id).get(0)).toBeTruthy();

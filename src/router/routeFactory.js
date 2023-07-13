@@ -1,7 +1,7 @@
-import "./optionalParameterSegment";
-import "./parameterSegment";
-import "./staticSegment";
-import abstractSegment from "./abstractSegment";
+import "./optionalParameterSegment.js";
+import "./parameterSegment.js";
+import "./staticSegment.js";
+import abstractSegment from "./abstractSegment.js";
 
 /**
  * Token/Char used to separate segments in route patterns.

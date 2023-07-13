@@ -10,7 +10,7 @@ import { object } from "klassified";
  * @param my
  * @returns {abstractSegment}
  */
-let abstractSegment = object.subclass((that, my) => {
+const abstractSegment = object.subclass((that, my) => {
 	my.initialize = function (spec) {
 		my.super(spec);
 		my.segmentString = spec.segmentString;
@@ -27,7 +27,7 @@ let abstractSegment = object.subclass((that, my) => {
 	 * @param {string} urlSegment
 	 * @returns {boolean}
 	 */
-	that.match = function (urlSegment) {
+	that.match = function (_urlSegment) {
 		return false;
 	};
 
@@ -37,7 +37,7 @@ let abstractSegment = object.subclass((that, my) => {
 	 * @param {string} urlSegment
 	 * @returns {*}
 	 */
-	that.getValue = function (urlSegment) {
+	that.getValue = function (_urlSegment) {
 		return my.segmentString;
 	};
 
@@ -71,7 +71,7 @@ let abstractSegment = object.subclass((that, my) => {
 });
 
 abstractSegment.class((that) => {
-	that.match = function (segmentString) {
+	that.match = function (_segmentString) {
 		return false;
 	};
 });

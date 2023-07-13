@@ -1,4 +1,4 @@
-import parameterSegment from "./parameterSegment";
+import parameterSegment from "./parameterSegment.js";
 
 /**
  * Optional parameters can have a default value.
@@ -7,7 +7,7 @@ import parameterSegment from "./parameterSegment";
  * @param my
  * @returns {parameter}
  */
-let optionalParameterSegment = parameterSegment.subclass((that, my) => {
+const optionalParameterSegment = parameterSegment.subclass((that, my) => {
 	my.initialize = function (spec) {
 		my.super(spec);
 		my.defaultValue = my.options.defaults && my.options.defaults[my.name];
@@ -54,5 +54,3 @@ optionalParameterSegment.class((that) => {
 		return segmentString.substr(0, 1) === "?";
 	};
 });
-
-export default optionalParameterSegment;

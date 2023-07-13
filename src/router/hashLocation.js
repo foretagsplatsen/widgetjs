@@ -1,7 +1,7 @@
 import { eventCategory } from "yaem";
 import { object } from "klassified";
 import jQuery from "jquery";
-import url from "./url";
+import url from "./url.js";
 
 /**
  * In modern browsers we use the "hashchange" event to listen for location changes. If not supported
@@ -30,7 +30,7 @@ let pollInterval = 25;
  * @param [my]
  * @returns {hashLocation}
  */
-let hashLocation = object.subclass((that, my) => {
+const hashLocation = object.subclass((that, my) => {
 	let pollTimerId = null;
 
 	my.currentHash = undefined; // last hash fragment

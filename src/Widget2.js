@@ -1,9 +1,9 @@
 import { eventCategory } from "yaem";
-import { getCurrentWidget, withCurrentWidget } from "./currentWidget";
-import { newId } from "./idGenerator";
-import htmlCanvas from "./htmlCanvas";
+import { getCurrentWidget, withCurrentWidget } from "./currentWidget.js";
+import { newId } from "./idGenerator.js";
+import htmlCanvas from "./htmlCanvas.js";
 import jQuery from "jquery";
-import router from "./router";
+import router from "./router.js";
 
 /**
  * Base for all widgets. A widget can keep state in variables, contain logic and
@@ -35,7 +35,7 @@ import router from "./router";
  *
  * It is therefore easy to compose widgets from other widgets.
  *
- * @virtual
+ * @abstract
  *
  * @param {string} [spec.id] - Unique id for widget. Also used for root
  *                           element when attached/rendered to DOM.
@@ -90,12 +90,12 @@ export default class Widget2 {
 	 * of `_initializeSubwidgets()`). In particular, don't override
 	 * `constructor()`.
 	 */
-	_initialize(spec) {}
+	_initialize() {}
 
 	/**
 	 * Hook evaluated at the end of initialization.
 	 */
-	_initializeSubwidgets(spec) {}
+	_initializeSubwidgets() {}
 
 	//
 	// Public
@@ -370,7 +370,7 @@ export default class Widget2 {
 	 *
 	 * @param {htmlCanvas} html
 	 */
-	renderContentOn(html) {
+	renderContentOn(_html) {
 		throw new Error("Subclass responsibility");
 	}
 

@@ -1,9 +1,9 @@
 import "jquery";
 import { eventCategory } from "yaem";
 import { object } from "klassified";
-import hashLocation from "./hashLocation";
-import route from "./route";
-import url from "./url";
+import hashLocation from "./hashLocation.js";
+import route from "./route.js";
+import url from "./url.js";
 
 /**
  * Lazily creates a singleton instance of
@@ -31,7 +31,7 @@ function hashSingleton() {
  *
  * @returns {{}}
  */
-let router = object.subclass((that, my) => {
+const router = object.subclass((that, my) => {
 	my.initialize = function (spec) {
 		my.super(spec);
 		my.location = spec.locationHandler || hashSingleton();
@@ -383,7 +383,7 @@ let router = object.subclass((that, my) => {
 	 * Redirect to another location (as in window.location) path.
 	 *
 	 * @param {string} path
-	 * @return {undefined}
+	 * @returns {undefined}
 	 */
 	that.redirectToLocationPath = function (path) {
 		window.location.href = path.startsWith("/") ? path : `/${path}`;
@@ -443,12 +443,14 @@ let router = object.subclass((that, my) => {
 
 		// Fill with defaults if needed
 		Object.keys(my.defaultParameters).forEach((parameterName) => {
-			if (!(parameterName in allParameters)) {
-				allParameters[parameterName] =
-					typeof my.defaultParameters[parameterName] === "function"
-						? my.defaultParameters[parameterName]()
-						: my.defaultParameters[parameterName];
+			if (parameterName in allParameters) {
+				return;
 			}
+
+			allParameters[parameterName] =
+				typeof my.defaultParameters[parameterName] === "function"
+					? my.defaultParameters[parameterName]()
+					: my.defaultParameters[parameterName];
 		});
 
 		// Expand template route and construct URL

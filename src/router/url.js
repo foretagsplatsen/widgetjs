@@ -18,7 +18,7 @@ let urlSeparator = "/";
  * @param {string} rawUrl
  * @returns {url}
  */
-let url = object.subclass((that, my) => {
+const url = object.subclass((that, my) => {
 	let rawUrl;
 	let path;
 	let query;

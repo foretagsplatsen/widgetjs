@@ -240,7 +240,7 @@ TagBrushConstructor.prototype.append = function (object) {
 	throw new Error("Unsupported data type");
 };
 
-omitSymbol.appendToBrush = function (brush) {};
+omitSymbol.appendToBrush = function (_brush) {};
 
 String.prototype.appendToBrush = function (brush) {
 	brush.appendString(this);
