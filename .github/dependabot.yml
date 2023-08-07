@@ -1,7 +1,15 @@
 version: 2
+registries:
+  # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#npm-registry
+  npm-github: # Define access for our private NPM registry
+    type: npm-registry
+    url: https://npm.pkg.github.com
+    token: ${{secrets.FINSIT_GITHUB}}
+    replaces-base: true
 updates:
   - package-ecosystem: "npm"
     directory: "/"
+    registries: "*"
     open-pull-requests-limit: 1000 # we don't want to limit PRs
     schedule:
       interval: "daily" # runs on every weekday, Monday to Friday
