@@ -44,7 +44,7 @@
   "devDependencies": {
     "@foretagsplatsen/eslint-plugin-ftgp": "^2.1.1",
     "eslint": "^8.44.0",
-    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-import": "^2.28.0",
     "eslint-plugin-node": "^11.1.0",
     "jasmine": "^5.0.2",
     "jasmine-browser-runner": "^2.1.0",
