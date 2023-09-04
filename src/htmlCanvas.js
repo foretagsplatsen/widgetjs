@@ -125,6 +125,27 @@ HtmlCanvasConstructor.prototype.renderNonBreaking = function(htmlString) {
 };
 
 /**
+ * Return a string containing the HTML code represented by the canvas'
+ * root element.
+ */
+HtmlCanvasConstructor.prototype.getHtml = function() {
+	let jQueryFragment = this.root.asJQuery();
+	let result = "";
+	if (jQueryFragment.children().length === 0) {
+		return jQueryFragment.text();
+	}
+
+	jQueryFragment
+		.children()
+		.get()
+		.forEach((each) => {
+			result += each.outerHTML;
+		});
+
+	return result;
+};
+
+/**
  * htmlCanvas provides a DSL that we use to add elements to the DOM using a HTML looking syntax.
  *
  * The basic metaphor used is one of painting on a canvas using brushes. The canvas is the

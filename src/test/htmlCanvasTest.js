@@ -527,4 +527,28 @@ describe("htmlCanvas", function() {
 		}
 	});
 
+	describe("getHtml()", () => {
+		it("returns the HTML inside a string", () => {
+			withCanvas(html => {
+				html.render((html) => html.div(html.p("foo")));
+
+				let result = html.getHtml();
+
+				expect(result).toEqual("<div><p>foo</p></div>");
+			});
+		});
+
+		it("returns the text when only text was added", () => {
+			withCanvas(html => {
+				let content = "some text";
+				html.render(content);
+
+				let result = html.getHtml();
+
+				expect(result).toEqual(content);
+			});
+		});
+
+	});
+
 });
