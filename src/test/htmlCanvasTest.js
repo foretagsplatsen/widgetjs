@@ -527,4 +527,35 @@ describe("htmlCanvas", function() {
 		}
 	});
 
+	describe("render()", () => {
+		it("accepts a ref attribute to retrieve the DOM element", () => {
+			withCanvas((html) => {
+				let element;
+				let rootRef = {};
+
+				html.render(
+					{ref: rootRef},
+					(html) => html.p("foo")
+				);
+
+				expect(rootRef.current.innerHTML).toEqual("<p>foo</p>");
+			});
+		});
+	});
+
+	describe("div()", () => {
+		it("accepts a ref attribute to retrieve the DOM element", () => {
+			withCanvas((html) => {
+				let element;
+				let rootRef = {};
+
+				html.div(
+					{ref: rootRef},
+					(html) => html.p("foo")
+				);
+
+				expect(rootRef.current.outerHTML).toEqual("<div><p>foo</p></div>");
+			});
+		});
+	});
 });

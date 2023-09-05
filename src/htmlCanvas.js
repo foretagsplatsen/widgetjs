@@ -490,6 +490,11 @@ TagBrushConstructor.prototype.addAttribute = function(key, value) {
 		return;
 	}
 
+	if (key === "ref" && value) {
+		value.current = this.element;
+		return;
+	}
+
 	// Attach functions
 	if (typeof value === "function") {
 		this.on(key, value);
