@@ -1760,15 +1760,15 @@ jake@^10.8.5:
     filelist "^1.0.4"
     minimatch "^3.1.2"
 
-jasmine-browser-runner@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/jasmine-browser-runner/-/jasmine-browser-runner-2.2.0.tgz#6450fe0da53a597c44def327e622e48dff2c43be"
-  integrity sha512-EKHp7sUsbKM42qlq44kx497IyQRmAXaNhrVogPAzIEs5LuKXhwSI7DZEjwr22o4rZf4T5pWDcLb3/WtB08f9Lg==
+jasmine-browser-runner@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/jasmine-browser-runner/-/jasmine-browser-runner-2.3.0.tgz#8a90e7c3af2e1e779c6d273f5f590b7dea5372c0"
+  integrity sha512-2sXbOxIlSupO0/YQVXGwZ7zO8cy084P+SZouriW9WIiiCuDUcTz5dTwoA4IE4qysTNgM7/O3ESoMzX8myCXoIg==
   dependencies:
     ejs "^3.1.6"
     express "^4.16.4"
     glob "^10.0.0"
-    selenium-webdriver "^4.8.2"
+    selenium-webdriver "^4.12.0"
 
 jasmine-core@~5.1.0:
   version "5.1.0"
@@ -2383,10 +2383,10 @@ schema-utils@^3.1.1, schema-utils@^3.2.0:
     ajv "^6.12.5"
     ajv-keywords "^3.5.2"
 
-selenium-webdriver@^4.8.2:
-  version "4.10.0"
-  resolved "https://registry.yarnpkg.com/selenium-webdriver/-/selenium-webdriver-4.10.0.tgz#0508cdfbb5ad8470d8fd19db1a69d3e87f474b79"
-  integrity sha512-hSQPw6jgc+ej/UEcdQPG/iBwwMeCEgZr9HByY/J8ToyXztEqXzU9aLsIyrlj1BywBcStO4JQK/zMUWWrV8+riA==
+selenium-webdriver@^4.12.0:
+  version "4.12.0"
+  resolved "https://registry.yarnpkg.com/selenium-webdriver/-/selenium-webdriver-4.12.0.tgz#a8dc8ecf129a2414c2ace6e429aba84722a950a5"
+  integrity sha512-zvPzmTsky6WfO6+BGMj2mCJsw7qKnfQONur2b+pGn8jeTiC+WAUOthZOnaK+HkX5wiU6L4uoMF+JIcOVstp25A==
   dependencies:
     jszip "^3.10.1"
     tmp "^0.2.1"
