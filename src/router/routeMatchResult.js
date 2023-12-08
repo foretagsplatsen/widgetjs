@@ -10,7 +10,7 @@ import { object } from "klassified";
  *
  * @returns {routeMatchResult}
  */
-var routeMatchResult = object.subclass(function(that, my) {
+const routeMatchResult = object.subclass(function(that, my) {
 
 	var url;
 	var route;

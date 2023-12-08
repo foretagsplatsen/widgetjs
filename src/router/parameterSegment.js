@@ -1,4 +1,4 @@
-import abstractSegment from "./abstractSegment";
+import abstractSegment from "./abstractSegment.js";
 
 /**
  * Constructs validator functions from constraints parameters.
@@ -40,7 +40,7 @@ function parameterValidator(constraint) {
  * @param [my]
  * @returns {parameterSegment}
  */
-var parameterSegment = abstractSegment.subclass(function(that, my) {
+const parameterSegment = abstractSegment.subclass(function(that, my) {
 
 	my.initialize = function(spec) {
 		my.super(spec);

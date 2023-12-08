@@ -1,6 +1,6 @@
 import jQuery from "jquery";
 import {eventCategory} from "yaem";
-import url from "./url";
+import url from "./url.js";
 import { object } from "klassified";
 
 /**
@@ -30,7 +30,7 @@ var pollInterval = 25;
  * @param [my]
  * @returns {hashLocation}
  */
-var hashLocation = object.subclass(function(that, my) {
+const hashLocation = object.subclass(function(that, my) {
 
 	var pollTimerId = null;
 

@@ -1,9 +1,9 @@
-import router from "./router";
+import router from "./router.js";
 import {eventCategory} from "yaem";
-import htmlCanvas from "./htmlCanvas";
+import htmlCanvas from "./htmlCanvas.js";
 import jQuery from "jquery";
-import {getCurrentWidget, withCurrentWidget} from "./currentWidget";
-import {newId} from "./idGenerator";
+import {getCurrentWidget, withCurrentWidget} from "./currentWidget.js";
+import {newId} from "./idGenerator.js";
 
 /**
  * Base for all widgets. A widget can keep state in variables, contain logic and

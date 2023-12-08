@@ -1,7 +1,7 @@
 import {eventCategory} from "yaem";
-import route from "./route";
-import url from "./url";
-import hashLocation from "./hashLocation";
+import route from "./route.js";
+import url from "./url.js";
+import hashLocation from "./hashLocation.js";
 import { object } from "klassified";
 import "jquery";
 
@@ -33,7 +33,7 @@ function hashSingleton() {
  *
  * @returns {{}}
  */
-var router = object.subclass(function(that, my) {
+const router = object.subclass(function(that, my) {
 
 	my.initialize = function(spec) {
 		my.super(spec);
