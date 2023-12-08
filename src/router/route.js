@@ -1,7 +1,7 @@
-import routeFactory from "./routeFactory";
+import routeFactory from "./routeFactory.js";
 import {eventCategory} from "yaem";
-import routeMatchResult from "./routeMatchResult";
-import url from "./url";
+import routeMatchResult from "./routeMatchResult.js";
+import url from "./url.js";
 import { object } from "klassified";
 import "jquery";
 
@@ -56,7 +56,7 @@ import "jquery";
  * @param {{}} my
  * @returns {route}
  */
-var route = object.subclass(function(that, my) {
+const route = object.subclass(function(that, my) {
 
 	var segments;
 	var ignoreTrailingSegments;

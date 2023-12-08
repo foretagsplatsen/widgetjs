@@ -10,7 +10,7 @@ import { object } from "klassified";
  * @param my
  * @returns {abstractSegment}
  */
-var abstractSegment = object.subclass(function(that, my) {
+const abstractSegment = object.subclass(function(that, my) {
 
 	my.initialize = function(spec) {
 		my.super(spec);
