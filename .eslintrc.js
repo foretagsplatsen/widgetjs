@@ -17,7 +17,9 @@ module.exports = {
 					"src/widgetjs.js",
 					// List of files not exporting anything:
 					"**/.eslintrc.js",
-					"webpack*"
+					"webpack*",
+					"src/router/optionalParameterSegment.js",
+					"src/router/staticSegment.js"
 				],
 			},
 		]

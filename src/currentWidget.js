@@ -4,7 +4,7 @@ export function getCurrentWidget() {
 	return currentWidget;
 }
 
-export function setCurrentWidget(widget) {
+function setCurrentWidget(widget) {
 	currentWidget = widget;
 }
 

@@ -1,5 +1,5 @@
-import widget from "../widget";
-import htmlCanvas from "../htmlCanvas";
+import widget from "../widget.js";
+import htmlCanvas from "../htmlCanvas.js";
 import jQuery from "jquery";
 
 var widgetSubclass = widget.subclass(function(that, my) {
