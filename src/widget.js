@@ -1,11 +1,11 @@
 import { object } from "klassified";
-import widgetExtensions from "./widget-extensions";
-import router from "./router";
+import widgetExtensions from "./widget-extensions.js";
+import router from "./router.js";
 import {eventCategory} from "yaem";
-import htmlCanvas from "./htmlCanvas";
+import htmlCanvas from "./htmlCanvas.js";
 import jQuery from "jquery";
-import {getCurrentWidget, withCurrentWidget} from "./currentWidget";
-import {newId} from "./idGenerator";
+import {getCurrentWidget, withCurrentWidget} from "./currentWidget.js";
+import {newId} from "./idGenerator.js";
 
 /**
  * Base for all widgets. A widget can keep state in variables, contain logic and
@@ -46,7 +46,7 @@ import {newId} from "./idGenerator";
  *
  * @returns {widget}
  */
-var widget = object.subclass(function(that, my) {
+const widget = object.subclass(function(that, my) {
 
 	/**
 	 * Keep track of the rendered subwidgets

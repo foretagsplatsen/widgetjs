@@ -18,7 +18,7 @@ var urlSeparator = "/";
  * @param {string} rawUrl
  * @returns {url}
  */
-var url = object.subclass(function(that, my) {
+const url = object.subclass(function(that, my) {
 
 	var rawUrl;
 	var path;

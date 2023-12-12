@@ -1,17 +1,27 @@
 module.exports = {
 	root: true,
-	extends: ["plugin:@foretagsplatsen/eslint-plugin-ftgp/main", "plugin:import/recommended"],
+	extends: ["plugin:@foretagsplatsen/main"],
 	parserOptions: {
 		ecmaVersion: 6,
 		sourceType: "module"
 	},
 	rules: {
-		"no-console": ["error"],
 		"quotes": ["error", "double"],
-		"ftgp/require-class-comment": 0,
-		"import/no-absolute-path": "error",
-		"import/no-self-import": "error",
-		"import/no-useless-path-segments": "error",
-		"import/no-cycle": "error",
+		"import/no-unused-modules": [
+			"error",
+			{
+				unusedExports: true,
+				missingExports: true,
+				ignoreExports: [
+					// List of files exporting stuff which are not imported:
+					"src/widgetjs.js",
+					// List of files not exporting anything:
+					"**/.eslintrc.js",
+					"webpack*",
+					"src/router/optionalParameterSegment.js",
+					"src/router/staticSegment.js"
+				],
+			},
+		]
 	}
 };

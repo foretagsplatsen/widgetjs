@@ -1,5 +1,5 @@
 import jQuery from "jquery";
-import hashLocationModel from "../../router/hashLocation";
+import hashLocationModel from "../../router/hashLocation.js";
 
 // Helpers
 
