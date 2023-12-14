@@ -1,11 +1,11 @@
 import { object } from "klassified";
 import widgetExtensions from "./widget-extensions.js";
 import router from "./router.js";
-import {eventCategory} from "yaem";
+import { eventCategory } from "yaem";
 import htmlCanvas from "./htmlCanvas.js";
 import jQuery from "jquery";
-import {getCurrentWidget, withCurrentWidget} from "./currentWidget.js";
-import {newId} from "./idGenerator.js";
+import { getCurrentWidget, withCurrentWidget } from "./currentWidget.js";
+import { newId } from "./idGenerator.js";
 
 /**
  * Base for all widgets. A widget can keep state in variables, contain logic and
@@ -46,15 +46,14 @@ import {newId} from "./idGenerator.js";
  *
  * @returns {widget}
  */
-const widget = object.subclass(function(that, my) {
-
+const widget = object.subclass(function (that, my) {
 	/**
 	 * Keep track of the rendered subwidgets
 	 */
 	var children;
 	var id;
 
-	my.initialize = function(spec) {
+	my.initialize = function (spec) {
 		my.super(spec);
 		id = spec.id || newId();
 		// When within an update transaction, do not update the widget
@@ -66,9 +65,9 @@ const widget = object.subclass(function(that, my) {
 	 * Hook evaluated at the end of widget initialization and
 	 * before any rendering.
 	 */
-	my.initializeSubwidgets = function(spec) {};
+	my.initializeSubwidgets = function (spec) {};
 
-	my.postInitialize = function(spec) {
+	my.postInitialize = function (spec) {
 		my.initializeSubwidgets(spec);
 	};
 
@@ -87,7 +86,7 @@ const widget = object.subclass(function(that, my) {
 	 *
 	 * @returns {String}
 	 */
-	that.getId = function() {
+	that.getId = function () {
 		return id;
 	};
 
@@ -103,8 +102,8 @@ const widget = object.subclass(function(that, my) {
 	 * this function.
 	 *
 	 */
-	that.dispose = function() {
-		children.forEach(function(child) {
+	that.dispose = function () {
+		children.forEach(function (child) {
 			child.dispose();
 		});
 		my.dispose();
@@ -117,8 +116,8 @@ const widget = object.subclass(function(that, my) {
 	 * DOM. The widegt and all its children will call `my.willDetach` in
 	 * turn.
 	 */
-	that.willDetach = function() {
-		children.forEach(function(child) {
+	that.willDetach = function () {
+		children.forEach(function (child) {
 			child.willDetach();
 		});
 		my.willDetach();
@@ -133,8 +132,8 @@ const widget = object.subclass(function(that, my) {
 	 *
 	 * @param aJQuery
 	 */
-	that.appendTo = function(aJQuery) {
-		my.withAttachHooks(function() {
+	that.appendTo = function (aJQuery) {
+		my.withAttachHooks(function () {
 			renderBasicOn(htmlCanvas(aJQuery));
 		});
 	};
@@ -145,8 +144,8 @@ const widget = object.subclass(function(that, my) {
 	 *
 	 * @param aJQuery
 	 */
-	that.replace = function(aJQuery) {
-		my.withAttachHooks(function() {
+	that.replace = function (aJQuery) {
+		my.withAttachHooks(function () {
 			var canvas = htmlCanvas(aJQuery);
 			canvas.root.asJQuery().empty();
 			renderBasicOn(canvas);
@@ -161,7 +160,7 @@ const widget = object.subclass(function(that, my) {
 	 *
 	 * @returns {*}
 	 */
-	that.asJQuery = function() {
+	that.asJQuery = function () {
 		return jQuery("#" + that.getId());
 	};
 
@@ -170,7 +169,7 @@ const widget = object.subclass(function(that, my) {
 	 *
 	 * @returns {boolean}
 	 */
-	that.isRendered = function() {
+	that.isRendered = function () {
 		return that.asJQuery().length > 0;
 	};
 
@@ -183,8 +182,8 @@ const widget = object.subclass(function(that, my) {
 	 *
 	 * @param aTagBrush
 	 */
-	that.appendToBrush = function(aTagBrush) {
-		my.withAttachHooks(function() {
+	that.appendToBrush = function (aTagBrush) {
+		my.withAttachHooks(function () {
 			renderBasicOn(htmlCanvas(aTagBrush.asJQuery()));
 		});
 	};
@@ -193,9 +192,9 @@ const widget = object.subclass(function(that, my) {
 	 * Trigger the `willAttach` event on the receiver and all
 	 * rendered subwidgets.
 	 */
-	that.triggerWillAttach = function() {
+	that.triggerWillAttach = function () {
 		my.willAttach();
-		children.forEach(function(widget) {
+		children.forEach(function (widget) {
 			widget.triggerWillAttach();
 		});
 	};
@@ -204,9 +203,9 @@ const widget = object.subclass(function(that, my) {
 	 * Trigger the `didAttach` event on the receiver and all
 	 * rendered subwidgets.
 	 */
-	that.triggerDidAttach = function() {
+	that.triggerDidAttach = function () {
 		my.didAttach();
-		children.forEach(function(widget) {
+		children.forEach(function (widget) {
 			widget.triggerDidAttach();
 		});
 		that.onAttach.trigger();
@@ -216,7 +215,7 @@ const widget = object.subclass(function(that, my) {
 	 * Evaluate `fn`, calling `willAttach` before and `didAttach` after
 	 * the evaluation.
 	 */
-	my.withAttachHooks = function(fn) {
+	my.withAttachHooks = function (fn) {
 		var inRendering = inRenderingLoop();
 		if (!inRendering) {
 			that.triggerWillAttach();
@@ -230,14 +229,14 @@ const widget = object.subclass(function(that, my) {
 	/**
 	 * Create and expose an event named `name`.
 	 */
-	my.createEvent = function(name) {
+	my.createEvent = function (name) {
 		that[name] = my.events.createEvent();
 	};
 
 	/**
 	 * Create and expose one event per string argument.
 	 */
-	my.createEvents = function() {
+	my.createEvents = function () {
 		var names = Array.prototype.slice.apply(arguments);
 		names.forEach(my.createEvent);
 	};
@@ -263,14 +262,14 @@ const widget = object.subclass(function(that, my) {
 	 *
 	 * @returns {String}
 	 */
-	my.nextId = function() {
+	my.nextId = function () {
 		return newId();
 	};
 
 	/**
 	 * Widget specific dispose.
 	 */
-	my.dispose = function() {};
+	my.dispose = function () {};
 
 	// Route / Controller extensions
 
@@ -301,7 +300,7 @@ const widget = object.subclass(function(that, my) {
 	 *
 	 */
 	function renderBasicOn(html) {
-		my.withChildrenRegistration(function() {
+		my.withChildrenRegistration(function () {
 			that.renderOn(html);
 		});
 	}
@@ -329,23 +328,23 @@ const widget = object.subclass(function(that, my) {
 	 *
 	 * @param html
 	 */
-	that.renderOn = function(html) {
+	that.renderOn = function (html) {
 		// Renders widget by wrapping `renderContentOn()` in a root element.
 		my.renderRootOn(html).render(that.renderContentOn);
 	};
 
-	my.withChildrenRegistration = function(fn) {
+	my.withChildrenRegistration = function (fn) {
 		var parent = getCurrentWidget();
 		if (parent) {
 			parent.registerChild(that);
 		}
-		withCurrentWidget(function() {
+		withCurrentWidget(function () {
 			children = [];
 			fn();
 		}, that);
 	};
 
-	that.registerChild = function(widget) {
+	that.registerChild = function (widget) {
 		children.push(widget);
 	};
 
@@ -357,7 +356,7 @@ const widget = object.subclass(function(that, my) {
 	 * @param html
 	 * @returns {htmlBrush}
 	 */
-	my.renderRootOn = function(html) {
+	my.renderRootOn = function (html) {
 		return html.tag("widgetjs-widget").id(id);
 	};
 
@@ -375,7 +374,7 @@ const widget = object.subclass(function(that, my) {
 	 *
 	 * @param {htmlCanvas} html
 	 */
-	that.renderContentOn = function(html) {
+	that.renderContentOn = function (html) {
 		return my.subclassResponsibility();
 	};
 
@@ -383,55 +382,54 @@ const widget = object.subclass(function(that, my) {
 	 * Hook evaluated before the widget is attached (or reattached due
 	 * to an update of rendering) to the DOM.
 	 */
-	my.willAttach = function() {};
+	my.willAttach = function () {};
 
 	/**
 	 * Hook evaluated each time the widget is attached (or
 	 * reattached due to an update of rendering) to the DOM.
 	 */
-	my.didAttach = function() {};
+	my.didAttach = function () {};
 
 	/**
 	 * Hook evaluated when a widget is detached from the DOM.
 	 */
-	my.willDetach = function() {};
+	my.willDetach = function () {};
 
 	/**
 	 * Hook evaluated before widget update.
 	 */
-	my.willUpdate = function() {};
+	my.willUpdate = function () {};
 
 	/**
 	 * Re-renders the widget and replace it in the DOM
 	 */
-	that.update = function() {
+	that.update = function () {
 		if (my.inUpdateTransaction || !that.isRendered()) {
 			return;
 		}
 
 		that.willDetach();
 		my.willUpdate();
-		my.withAttachHooks(function() {
+		my.withAttachHooks(function () {
 			// clear content of root
 			that.asJQuery().empty();
 
 			// re-render content on root
 			var html = htmlCanvas(that.asJQuery());
-			my.withChildrenRegistration(function() {
+			my.withChildrenRegistration(function () {
 				that.renderContentOn(html);
 			});
 		});
 	};
 
-	that.withinTransaction = function(fn, onDone) {
+	that.withinTransaction = function (fn, onDone) {
 		if (my.inUpdateTransaction) {
 			fn();
 		} else {
 			try {
 				my.inUpdateTransaction = true;
 				fn();
-			}
-			finally {
+			} finally {
 				my.inUpdateTransaction = false;
 				if (onDone) {
 					onDone();
@@ -446,18 +444,20 @@ const widget = object.subclass(function(that, my) {
 	 * to `withUpdate` or `update` will result in updating the
 	 * widget only once.
 	 */
-	that.withUpdate = function(fn) {
+	that.withUpdate = function (fn) {
 		that.withinTransaction(fn, that.update);
 	};
 
-	that.withNoUpdate = function(fn) {
+	that.withNoUpdate = function (fn) {
 		that.withinTransaction(fn);
 	};
 
 	// Third party protected extensions** added to `my`.
 	// See widget-extensions.js
 	for (var extProperty in widgetExtensions) {
-		if (Object.prototype.hasOwnProperty.call(widgetExtensions, extProperty)) {
+		if (
+			Object.prototype.hasOwnProperty.call(widgetExtensions, extProperty)
+		) {
 			my[extProperty] = widgetExtensions[extProperty];
 		}
 	}

@@ -18,9 +18,9 @@ module.exports = {
 					"**/.eslintrc.js",
 					"webpack*",
 					"src/router/optionalParameterSegment.js",
-					"src/router/staticSegment.js"
+					"src/router/staticSegment.js",
 				],
 			},
-		]
-	}
+		],
+	},
 };

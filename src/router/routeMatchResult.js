@@ -10,15 +10,14 @@ import { object } from "klassified";
  *
  * @returns {routeMatchResult}
  */
-const routeMatchResult = object.subclass(function(that, my) {
-
+const routeMatchResult = object.subclass(function (that, my) {
 	var url;
 	var route;
 	var urlParameters;
 	var routeParameters;
 	var parameters;
 
-	my.initialize = function(spec) {
+	my.initialize = function (spec) {
 		my.super(spec);
 		url = spec.url;
 		route = spec.route;
@@ -37,7 +36,7 @@ const routeMatchResult = object.subclass(function(that, my) {
 	 *
 	 * @returns {route}
 	 */
-	that.getRoute = function() {
+	that.getRoute = function () {
 		return route;
 	};
 
@@ -46,7 +45,7 @@ const routeMatchResult = object.subclass(function(that, my) {
 	 *
 	 * @returns {url}
 	 */
-	that.getUrl = function() {
+	that.getUrl = function () {
 		return url;
 	};
 
@@ -55,7 +54,7 @@ const routeMatchResult = object.subclass(function(that, my) {
 	 *
 	 * @returns {boolean}
 	 */
-	that.isMatch = function() {
+	that.isMatch = function () {
 		return true;
 	};
 
@@ -64,7 +63,7 @@ const routeMatchResult = object.subclass(function(that, my) {
 	 *
 	 * @returns {{}}
 	 */
-	that.getRouteParameters = function() {
+	that.getRouteParameters = function () {
 		return routeParameters;
 	};
 
@@ -73,7 +72,7 @@ const routeMatchResult = object.subclass(function(that, my) {
 	 *
 	 * @returns {{}}
 	 */
-	that.getQueryParameters = function() {
+	that.getQueryParameters = function () {
 		return url.getQuery();
 	};
 
@@ -82,7 +81,7 @@ const routeMatchResult = object.subclass(function(that, my) {
 	 *
 	 * @returns {{}}
 	 */
-	that.getParameters = function() {
+	that.getParameters = function () {
 		return parameters;
 	};
 
@@ -92,10 +91,12 @@ const routeMatchResult = object.subclass(function(that, my) {
 	 *
 	 * @returns {Array}
 	 */
-	that.getActionArguments = function() {
-		var actionArguments = Object.keys(routeParameters).map(function(parameterName) {
-			return routeParameters[parameterName];
-		});
+	that.getActionArguments = function () {
+		var actionArguments = Object.keys(routeParameters).map(
+			function (parameterName) {
+				return routeParameters[parameterName];
+			},
+		);
 		actionArguments.push(url.getQuery());
 		return actionArguments;
 	};
@@ -109,34 +110,42 @@ const routeMatchResult = object.subclass(function(that, my) {
 
 		// Fill with route parameters
 		for (var parameterName in routeParameters) {
-			if (Object.prototype.hasOwnProperty.call(routeParameters, parameterName)) {
+			if (
+				Object.prototype.hasOwnProperty.call(
+					routeParameters,
+					parameterName,
+				)
+			) {
 				allValues[parameterName] = routeParameters[parameterName];
 			}
 		}
 
 		// Fill with query parameters
 		for (var queryParameterName in queryParameters) {
-			if (Object.prototype.hasOwnProperty.call(queryParameters, queryParameterName)) {
-				allValues[queryParameterName] = queryParameters[queryParameterName];
+			if (
+				Object.prototype.hasOwnProperty.call(
+					queryParameters,
+					queryParameterName,
+				)
+			) {
+				allValues[queryParameterName] =
+					queryParameters[queryParameterName];
 			}
 		}
 
 		return allValues;
-
 	}
 });
 
-routeMatchResult.class(function(that) {
-
+routeMatchResult.class(function (that) {
 	/**
 	 * Result to use when match does not match url
 	 */
-	that.routeNoMatchResult = (function() {
-
+	that.routeNoMatchResult = (function () {
 		/** @typedef {routeMatchResult} routeNoMatchResult */
 		var instance = that();
 
-		instance.isMatch = function() {
+		instance.isMatch = function () {
 			return false;
 		};
 

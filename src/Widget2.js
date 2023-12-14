@@ -1,9 +1,9 @@
 import router from "./router.js";
-import {eventCategory} from "yaem";
+import { eventCategory } from "yaem";
 import htmlCanvas from "./htmlCanvas.js";
 import jQuery from "jquery";
-import {getCurrentWidget, withCurrentWidget} from "./currentWidget.js";
-import {newId} from "./idGenerator.js";
+import { getCurrentWidget, withCurrentWidget } from "./currentWidget.js";
+import { newId } from "./idGenerator.js";
 
 /**
  * Base for all widgets. A widget can keep state in variables, contain logic and
@@ -43,7 +43,7 @@ import {newId} from "./idGenerator.js";
  *                           be generated and assigned.
  */
 export default class Widget2 {
-	constructor({id} = {}) {
+	constructor({ id } = {}) {
 		this._id = id || newId();
 
 		// When within an update transaction, do not update the widget
@@ -90,14 +90,12 @@ export default class Widget2 {
 	 * of `_initializeSubwidgets()`). In particular, don't override
 	 * `constructor()`.
 	 */
-	_initialize(spec) {
-	}
+	_initialize(spec) {}
 
 	/**
 	 * Hook evaluated at the end of initialization.
 	 */
-	_initializeSubwidgets(spec) {
-	}
+	_initializeSubwidgets(spec) {}
 
 	//
 	// Public
@@ -262,7 +260,7 @@ export default class Widget2 {
 	_createEvents() {
 		let names = Array.prototype.slice.apply(arguments);
 
-		names.forEach(name => this._createEvent(name));
+		names.forEach((name) => this._createEvent(name));
 	}
 
 	//
@@ -282,8 +280,7 @@ export default class Widget2 {
 	/**
 	 * Widget specific dispose.
 	 */
-	_dispose() {
-	}
+	_dispose() {}
 
 	//
 	// Render
@@ -380,27 +377,23 @@ export default class Widget2 {
 	 * Hook evaluated before the widget is attached (or reattached due
 	 * to an update of rendering) to the DOM.
 	 */
-	_willAttach() {
-	}
+	_willAttach() {}
 
 	/**
 	 * Hook evaluated each time the widget is attached (or
 	 * reattached due to an update of rendering) to the DOM.
 	 */
-	_didAttach() {
-	}
+	_didAttach() {}
 
 	/**
 	 * Hook evaluated when a widget is detached from the DOM.
 	 */
-	_willDetach() {
-	}
+	_willDetach() {}
 
 	/**
 	 * Hook evaluated before widget update.
 	 */
-	_willUpdate() {
-	}
+	_willUpdate() {}
 
 	/**
 	 * Re-renders the widget and replace it in the DOM

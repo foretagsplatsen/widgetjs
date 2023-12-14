@@ -1,5 +1,5 @@
 import jQuery from "jquery";
-import {eventCategory} from "yaem";
+import { eventCategory } from "yaem";
 import url from "./url.js";
 import { object } from "klassified";
 
@@ -30,8 +30,7 @@ var pollInterval = 25;
  * @param [my]
  * @returns {hashLocation}
  */
-const hashLocation = object.subclass(function(that, my) {
-
+const hashLocation = object.subclass(function (that, my) {
 	var pollTimerId = null;
 
 	my.currentHash = undefined; // last hash fragment
@@ -56,7 +55,7 @@ const hashLocation = object.subclass(function(that, my) {
 	 *
 	 * @param {url|string} aUrl
 	 */
-	that.setUrl = function(aUrl) {
+	that.setUrl = function (aUrl) {
 		var aHash = urlToHash(aUrl);
 		setWindowHash(aHash);
 		setCurrentHash(aHash);
@@ -67,7 +66,7 @@ const hashLocation = object.subclass(function(that, my) {
 	 *
 	 * @returns {url}
 	 */
-	that.getUrl = function() {
+	that.getUrl = function () {
 		return urlFromHash(getWindowHash());
 	};
 
@@ -77,7 +76,7 @@ const hashLocation = object.subclass(function(that, my) {
 	 * @param {string|url} aUrl
 	 * @returns {string}
 	 */
-	that.linkToUrl = function(aUrl) {
+	that.linkToUrl = function (aUrl) {
 		return urlToHash(aUrl);
 	};
 
@@ -88,7 +87,7 @@ const hashLocation = object.subclass(function(that, my) {
 	 * @param {string|url} fallbackUrl
 	 * @returns {string} URL
 	 */
-	that.back = function(fallbackUrl) {
+	that.back = function (fallbackUrl) {
 		if (!that.isHistoryEmpty()) {
 			my.history.pop();
 			setWindowHash(my.history.pop());
@@ -102,7 +101,7 @@ const hashLocation = object.subclass(function(that, my) {
 	/**
 	 * Return `true` if the history is empty.
 	 */
-	that.isHistoryEmpty = function() {
+	that.isHistoryEmpty = function () {
 		return my.history.length <= 1;
 	};
 
@@ -110,7 +109,7 @@ const hashLocation = object.subclass(function(that, my) {
 	 * Start listening for URL changes. If `hashchange` is supported by the browser
 	 * it will be used, otherwise a timer will poll for changes.
 	 */
-	that.start = function() {
+	that.start = function () {
 		that.stop();
 
 		my.currentHash = getWindowHash();
@@ -126,7 +125,7 @@ const hashLocation = object.subclass(function(that, my) {
 	/**
 	 * Stop listening for location changes and unregister all bindings.
 	 */
-	that.stop = function() {
+	that.stop = function () {
 		if (pollTimerId) {
 			clearInterval(pollTimerId);
 			pollTimerId = null;
@@ -148,14 +147,14 @@ const hashLocation = object.subclass(function(that, my) {
 
 	function urlToHash(aUrl) {
 		if (typeof aUrl === "string") {
-			aUrl = url({rawUrl: aUrl});
+			aUrl = url({ rawUrl: aUrl });
 		}
 		return "#!/" + aUrl.toString();
 	}
 
 	function urlFromHash(aHash) {
 		// Remove hash/hash-bang and any leading /
-		return url({rawUrl: aHash.replace(/^#!?[/]?/, "")});
+		return url({ rawUrl: aHash.replace(/^#!?[/]?/, "") });
 	}
 
 	function setCurrentHash(newHash) {

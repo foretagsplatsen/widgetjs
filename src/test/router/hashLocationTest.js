@@ -11,7 +11,7 @@ function delayedSteps() {
 			return;
 		}
 		var fn = steps.shift();
-		setTimeout(function() {
+		setTimeout(function () {
 			next(fn.apply(next, arguments));
 		}, 10);
 	}
@@ -28,9 +28,8 @@ function setHash(aHash) {
 var my;
 var hashLocation;
 
-describe("hashLocation", function() {
-
-	beforeEach(function() {
+describe("hashLocation", function () {
+	beforeEach(function () {
 		window.location.hash = "";
 
 		my = {};
@@ -38,7 +37,7 @@ describe("hashLocation", function() {
 		jasmine.clock().install();
 	});
 
-	afterEach(function() {
+	afterEach(function () {
 		if (hashLocation) {
 			hashLocation.stop();
 		}
@@ -46,13 +45,13 @@ describe("hashLocation", function() {
 		jasmine.clock().uninstall();
 	});
 
-	it("hash defaults", function() {
+	it("hash defaults", function () {
 		// Assert that defaults are correct
 		expect(my.currentHash).toBe(undefined);
 		expect(my.history.length).toBe(0);
 	});
 
-	it("start() initilize hash", function() {
+	it("start() initilize hash", function () {
 		// Arrange: set a location hash
 		window.location.hash = "#!/test";
 
@@ -65,7 +64,7 @@ describe("hashLocation", function() {
 		expect(my.history[0]).toBe(my.currentHash);
 	});
 
-	it("start() resets hash", function() {
+	it("start() resets hash", function () {
 		// Arrange: add some history
 		hashLocation.start();
 		setHash("#!/a");
@@ -79,7 +78,7 @@ describe("hashLocation", function() {
 		expect(my.history[0]).toBe(my.currentHash);
 	});
 
-	it("getUrl() returns location.hash minus hash-bang", function() {
+	it("getUrl() returns location.hash minus hash-bang", function () {
 		// Arrange: set a location hash
 		window.location.hash = "#!/test";
 
@@ -91,7 +90,7 @@ describe("hashLocation", function() {
 		expect(currentUrl.toString()).toBe("test");
 	});
 
-	it("setUrl() adds hash-bang", function() {
+	it("setUrl() adds hash-bang", function () {
 		// Act: set url
 		hashLocation.start();
 		hashLocation.setUrl("test");
@@ -100,7 +99,7 @@ describe("hashLocation", function() {
 		expect(my.currentHash).toBe("#!/test");
 	});
 
-	it("linkToUrl() return link for href:s", function() {
+	it("linkToUrl() return link for href:s", function () {
 		// Act: create link to URL
 		var link = hashLocation.linkToUrl("someurl");
 
@@ -108,7 +107,7 @@ describe("hashLocation", function() {
 		expect(link).toBe("#!/someurl");
 	});
 
-	it("setUrl() triggers change", function() {
+	it("setUrl() triggers change", function () {
 		var anotherHashLocation = hashLocationModel();
 		var spy = jasmine.createSpy("changed event");
 
@@ -121,57 +120,57 @@ describe("hashLocation", function() {
 
 		// Assert that "change" callback was executed with url
 		expect(spy).toHaveBeenCalledWith({
-			asymmetricMatch: function(actual) {
+			asymmetricMatch: function (actual) {
 				return actual.toString() === "test";
-			}
+			},
 		});
 
 		anotherHashLocation.stop();
 	});
 
-	it("back()", function(callback) {
+	it("back()", function (callback) {
 		delayedSteps(
-			function() {
+			function () {
 				hashLocation.stop();
 				window.location.hash = ""; // start hash
 				hashLocation.start();
 			},
-			function() {
+			function () {
 				hashLocation.setUrl("a");
 			},
-			function() {
+			function () {
 				hashLocation.setUrl("b");
 			},
-			function() {
+			function () {
 				expect(hashLocation.getUrl().toString()).toBe("b");
 			},
-			function() {
+			function () {
 				hashLocation.back();
 			},
-			function() {
+			function () {
 				expect(hashLocation.getUrl().toString()).toBe("a");
 			},
-			function() {
+			function () {
 				hashLocation.back();
 			},
-			function() {
+			function () {
 				expect(hashLocation.getUrl().toString()).toBe("");
 			},
-			function() {
+			function () {
 				hashLocation.back();
 			},
-			function() {
+			function () {
 				expect(hashLocation.getUrl().toString()).toBe("");
 			},
-			function() {
+			function () {
 				hashLocation.back("fallback");
 			},
-			function() {
+			function () {
 				expect(hashLocation.getUrl().toString()).toBe("fallback");
 			},
-			function() {
+			function () {
 				callback();
-			}
+			},
 		);
 		jasmine.clock().tick(131);
 	});
