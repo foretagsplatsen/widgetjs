@@ -8,7 +8,7 @@ function delayedSteps() {
 			return;
 		}
 		var fn = steps.shift();
-		setTimeout(function() {
+		setTimeout(function () {
 			next(fn.apply(next, arguments));
 		}, 10);
 	}
@@ -19,9 +19,8 @@ function delayedSteps() {
 var my;
 var aRouter;
 
-describe("router", function() {
-
-	beforeEach(function() {
+describe("router", function () {
+	beforeEach(function () {
 		window.location.hash = "";
 
 		my = {};
@@ -29,51 +28,57 @@ describe("router", function() {
 		jasmine.clock().install();
 	});
 
-	afterEach(function() {
+	afterEach(function () {
 		aRouter.stop();
 		aRouter.clear();
 		aRouter = null;
 		jasmine.clock().uninstall();
 	});
 
-	it("Router defaults", function() {
+	it("Router defaults", function () {
 		// Assert that defaults are correct
 		expect(my.routeTable.length).toBe(0);
 		expect(my.lastMatch).toBe(undefined);
 	});
 
-	it("Router options", function() {
+	it("Router options", function () {
 		// Arrange a router with options set
 		var anotherMy = {};
-		router({
-			locationHandler: {isFake: true, changed: {register: function() {}}}
-		}, anotherMy);
+		router(
+			{
+				locationHandler: {
+					isFake: true,
+					changed: { register: function () {} },
+				},
+			},
+			anotherMy,
+		);
 
 		// Assert that options where applied
 		expect(anotherMy.location.isFake).toBeTruthy();
 	});
 
-	it("Add route", function() {
+	it("Add route", function () {
 		// Act: add a route
-		var route = aRouter.addRoute({pattern: "/users/"});
+		var route = aRouter.addRoute({ pattern: "/users/" });
 
 		// Assert that route was added to route table
 		expect(my.routeTable.length).toBe(1);
 		expect(my.routeTable[0]).toBe(route);
 	});
 
-	it("Remove route", function() {
+	it("Remove route", function () {
 		// Act: add and remove route
-		var route = aRouter.addRoute({pattern: "/users/"});
+		var route = aRouter.addRoute({ pattern: "/users/" });
 		aRouter.removeRoute(route);
 
 		// Assert that route was removed from route table
 		expect(my.routeTable.length).toBe(0);
 	});
 
-	it("Named routes", function() {
+	it("Named routes", function () {
 		// Arrange: a named route
-		var route = aRouter.addRoute({name: "users", pattern: "/users/"});
+		var route = aRouter.addRoute({ name: "users", pattern: "/users/" });
 
 		// Act: lookup route by name
 		var namedRoute = aRouter.getRouteByName("users");
@@ -82,16 +87,16 @@ describe("router", function() {
 		expect(namedRoute).toBe(route);
 	});
 
-	it("Add routes with priority", function() {
+	it("Add routes with priority", function () {
 		// Act: add routes with different priorities
-		var invoiceRoute = aRouter.addRoute({pattern: "/invoice/"});
-		var ticketRoute = aRouter.addRoute({pattern: "/ticket/"});
-		aRouter.addRoute({pattern: "/customer/", priority: 2});
+		var invoiceRoute = aRouter.addRoute({ pattern: "/invoice/" });
+		var ticketRoute = aRouter.addRoute({ pattern: "/ticket/" });
+		aRouter.addRoute({ pattern: "/customer/", priority: 2 });
 		var orderRoute = aRouter.addRoute({
 			pattern: "/order/",
-			priority: 2
+			priority: 2,
 		});
-		var userRoute = aRouter.addRoute({pattern: "/user/", priority: 1});
+		var userRoute = aRouter.addRoute({ pattern: "/user/", priority: 1 });
 
 		// Assert that route was added to route table in correct order
 		expect(my.routeTable.length).toBe(5);
@@ -101,9 +106,9 @@ describe("router", function() {
 		expect(my.routeTable[4]).toBe(ticketRoute);
 	});
 
-	it("resolveUrl executes route callback on match", function() {
+	it("resolveUrl executes route callback on match", function () {
 		// Arrange: setup a route
-		var userRoute = aRouter.addRoute({pattern: "/user/"});
+		var userRoute = aRouter.addRoute({ pattern: "/user/" });
 		var spy = jasmine.createSpy("matched event");
 
 		userRoute.on("matched", spy);
@@ -116,7 +121,7 @@ describe("router", function() {
 		expect(spy).toHaveBeenCalledTimes(1);
 	});
 
-	it("resolveUrl triggers resolveUrl event", function() {
+	it("resolveUrl triggers resolveUrl event", function () {
 		var spy = jasmine.createSpy("resolveUrl event");
 
 		// listen for "resolveUrl event" on router
@@ -129,12 +134,12 @@ describe("router", function() {
 		expect(spy).toHaveBeenCalled();
 	});
 
-	it("resolveUrl triggers routeMatched event", function(done) {
+	it("resolveUrl triggers routeMatched event", function (done) {
 		// Arrange: setup a route
-		var userRoute = aRouter.addRoute({pattern: "/user/"});
+		var userRoute = aRouter.addRoute({ pattern: "/user/" });
 
 		// listen for "matched event" on router
-		aRouter.on("routeMatched", function(result) {
+		aRouter.on("routeMatched", function (result) {
 			// Assert that callback was executed
 			expect(result).toBeTruthy();
 			expect(result.getRoute()).toEqual(userRoute);
@@ -147,10 +152,10 @@ describe("router", function() {
 		aRouter.resolveUrl("/user/");
 	});
 
-	it("resolveUrl triggers routeNotFound event", function(done) {
+	it("resolveUrl triggers routeNotFound event", function (done) {
 		// Arrange: setup no routes but
 		// a lister for "notFound event"
-		aRouter.on("routeNotFound", function(url) {
+		aRouter.on("routeNotFound", function (url) {
 			// Assert that callback was executed
 			expect(url).toBeTruthy();
 			expect(url.toString()).toEqual("/user/");
@@ -163,13 +168,13 @@ describe("router", function() {
 		aRouter.resolveUrl("/user/");
 	});
 
-	it("resolveUrl executes action on match", function() {
+	it("resolveUrl executes action on match", function () {
 		var spy = jasmine.createSpy("action");
 
 		// Arrange: setup a route
 		aRouter.addRoute({
 			pattern: "/user/",
-			action: spy
+			action: spy,
 		});
 
 		// Act: resolve a URL that match pattern
@@ -179,119 +184,119 @@ describe("router", function() {
 		expect(spy).toHaveBeenCalled();
 	});
 
-	it("resolveUrl pass values to action", function(done) {
+	it("resolveUrl pass values to action", function (done) {
 		// Arrange a route that have two mandatory parameters
 		aRouter.addRoute({
 			pattern: "/user/#userid/order/#orderid",
-			action: function(userid, orderid) {
+			action: function (userid, orderid) {
 				expect(userid === "john" && orderid === "1").toBeTruthy();
 				this.unbind(); // clean-up
 				done(); // execute asserts
-			}
+			},
 		});
 
 		// Act: resolve a URL that match pattern
 		aRouter.resolveUrl("/user/john/order/1");
 	});
 
-	it("resolveUrl pass optional values to action", function(done) {
+	it("resolveUrl pass optional values to action", function (done) {
 		// Arrange a route that have two mandatory parameters
 		aRouter.addRoute({
 			pattern: "/user/?userid/order/?orderid",
-			action: function(userid, orderid) {
+			action: function (userid, orderid) {
 				expect(userid).toBe(undefined);
 				expect(orderid).toBe("1");
 				this.unbind(); // clean-up
 				done(); // execute asserts
-			}
+			},
 		});
 
 		// Act: resolve a URL that match pattern
 		aRouter.resolveUrl("/user/order/1");
 	});
 
-	it("resolveUrl pass optional value defaults to action", function(done) {
+	it("resolveUrl pass optional value defaults to action", function (done) {
 		// Arrange a route that have two optional parameters
 		// with defaukts
 		aRouter.addRoute({
 			pattern: "/user/?userid/order/?orderid",
 			defaults: {
 				userid: "bengan",
-				orderid: "skor"
+				orderid: "skor",
 			},
-			action: function(userid, orderid) {
+			action: function (userid, orderid) {
 				expect(userid).toBe("bengan");
 				expect(orderid).toBe("1");
 				this.unbind(); // clean-up
 				done(); // execute asserts
-			}
+			},
 		});
 
 		// Act: resolve a URL that match pattern
 		aRouter.resolveUrl("/user/order/1");
 	});
 
-	it("resolveUrl pass query as last argument to action", function(done) {
+	it("resolveUrl pass query as last argument to action", function (done) {
 		// Arrange a route that have one parameter
 		aRouter.addRoute({
 			pattern: "/user/#userid/order",
-			action: function(userid, query) {
+			action: function (userid, query) {
 				// Assert: that parameters and query was passed ok
 				expect(userid).toBe("john");
 				expect(query.filter).toBe("open");
 				expect(query.orderBy).toBe("date");
 				this.unbind(); // clean-up
 				done(); // execute asserts
-			}
+			},
 		});
 
 		// Act: resolve a URL that match pattern
 		aRouter.resolveUrl("/user/john/order/?filter=open&orderBy=date");
 	});
 
-	it("resolveUrl continues if fallThrough", function(done) {
+	it("resolveUrl continues if fallThrough", function (done) {
 		// Arrange a 3 routes, where first have fallThrough
 		// set and the two other have not
 
 		aRouter.addRoute({
 			fallThrough: true,
 			pattern: "/user/",
-			action: function() {
+			action: function () {
 				expect(true).toBeTruthy();
 				this.unbind(); // clean-up
-			}
+			},
 		});
 
 		aRouter.addRoute({
 			pattern: "/user/",
-			action: function() {
+			action: function () {
 				expect(true).toBeTruthy();
 				this.unbind(); // clean-up
 				done(); // execute asserts
-			}
+			},
 		});
 
 		aRouter.addRoute({
 			pattern: "/user/",
-			action: function() {
+			action: function () {
 				expect(true).toBeTruthy();
 				this.unbind(); // clean-up
-			}
+			},
 		});
 
 		// Act: resolve a URL that match pattern
 		aRouter.resolveUrl("/user/");
 	});
 
-	it("Add route with constraints", function() {
+	it("Add route with constraints", function () {
 		var action = jasmine.createSpy("action");
 
 		aRouter.addRoute({
 			pattern: "/user/#name/",
 			constraints: {
-				name: ["nicolas", "Mikael"]
+				name: ["nicolas", "Mikael"],
 			},
-			action: action
+			action: action,
 		});
 
 		aRouter.resolveUrl("/user/nicolas");
@@ -306,7 +311,7 @@ describe("router", function() {
 		expect(action).toHaveBeenCalledTimes(1);
 	});
 
-	it("getUrl returns current location", function() {
+	it("getUrl returns current location", function () {
 		// Act: change hash and get url
 		window.location.hash = "#!/aPath";
 		var currentUrl = aRouter.getUrl();
@@ -315,12 +320,12 @@ describe("router", function() {
 		expect(currentUrl.toString()).toBe("aPath");
 	});
 
-	it("linkTo() creates links for href", function() {
+	it("linkTo() creates links for href", function () {
 		expect(aRouter.linkTo("aPath")).toBe("#!/aPath");
 		expect(aRouter.linkTo("")).toBe("#!/");
 	});
 
-	it("redirectTo() changes the current location to URL", function() {
+	it("redirectTo() changes the current location to URL", function () {
 		aRouter.redirectTo("aPath");
 
 		expect(window.location.hash).toBe("#!/aPath");
@@ -330,13 +335,13 @@ describe("router", function() {
 		expect(window.location.hash).toBe("#!/");
 	});
 
-	it("Pipe notfound to another router", function() {
+	it("Pipe notfound to another router", function () {
 		// Arrange another router with a route handler
 		var anotherRouter = router();
 		var spy = jasmine.createSpy("action");
 		anotherRouter.addRoute({
 			pattern: "APathNotInDefaultRouterButInPipedRouter",
-			action: spy
+			action: spy,
 		});
 
 		// Act: pipe to second router if not found in first
@@ -348,17 +353,17 @@ describe("router", function() {
 		anotherRouter.stop();
 	});
 
-	it("Pipe route to another router", function() {
+	it("Pipe route to another router", function () {
 		// Arrange another router with a route handler
 		var anotherRouter = router();
 		var spy = jasmine.createSpy("action");
 		anotherRouter.addRoute({
 			pattern: "/a/b/#c",
-			action: spy
+			action: spy,
 		});
 
 		// Act: pipe pattern tp second router
-		aRouter.pipeRoute({pattern: "a/#b/#c"}, anotherRouter);
+		aRouter.pipeRoute({ pattern: "a/#b/#c" }, anotherRouter);
 		aRouter.resolveUrl("/a/b/c");
 
 		// Assert that second router matched the route
@@ -366,58 +371,58 @@ describe("router", function() {
 		anotherRouter.stop();
 	});
 
-	it("back()", function(done) {
+	it("back()", function (done) {
 		aRouter.stop();
 		window.location.hash = ""; // start path
 		aRouter.start();
 
 		delayedSteps(
-			function() {
+			function () {
 				aRouter.redirectTo("a");
 			},
-			function() {
+			function () {
 				aRouter.redirectTo("b");
 			},
-			function() {
+			function () {
 				expect(aRouter.getUrl().toString()).toBe("b");
 			},
-			function() {
+			function () {
 				aRouter.back();
 			},
-			function() {
+			function () {
 				expect(aRouter.getUrl().toString()).toBe("a");
 			},
-			function() {
+			function () {
 				aRouter.back();
 			},
-			function() {
+			function () {
 				expect(aRouter.getUrl().toString()).toBe("");
 			},
-			function() {
+			function () {
 				aRouter.back();
 			},
-			function() {
+			function () {
 				expect(aRouter.getUrl().toString()).toBe("");
 			},
-			function() {
+			function () {
 				aRouter.back("fallback");
 			},
-			function() {
+			function () {
 				expect(aRouter.getUrl().toString()).toBe("fallback");
 			},
-			done
+			done,
 		);
 		jasmine.clock().tick(131);
 	});
 
-	it("Expand parameters for named route", function() {
+	it("Expand parameters for named route", function () {
 		// Arrange: a named route
-		aRouter.addRoute({name: "user", pattern: "/user/#userId"});
+		aRouter.addRoute({ name: "user", pattern: "/user/#userId" });
 
 		// Act: get path from parameters
 		var url = aRouter.expand({
 			routeName: "user",
-			parameters: {userId: "john", includeDetails: true}
+			parameters: { userId: "john", includeDetails: true },
 		});
 
 		// Assert that route parameters was injected in url and
@@ -425,48 +430,50 @@ describe("router", function() {
 		expect(url.toString()).toBe("user/john?includeDetails=true");
 	});
 
-	it("Expand parameters for empty route", function() {
+	it("Expand parameters for empty route", function () {
 		// Arrange: empty hash route
 		window.location.hash = ""; // start path
 
 		// Act: get path from parameters
 		var url = aRouter.expand({
-			parameters: {userId: "john", includeDetails: true}
+			parameters: { userId: "john", includeDetails: true },
 		});
 
 		// Assert that all parameters was set as query parameters
 		expect(url.toString()).toBe("?userId=john&includeDetails=true");
 	});
 
-	it("Expand parameters for current route", function() {
+	it("Expand parameters for current route", function () {
 		// Arrange: a named route
 		aRouter.addRoute({
 			name: "user",
-			pattern: "/user/#userId"
+			pattern: "/user/#userId",
 		});
 
 		// and navigate to that route
-		aRouter.redirectTo("/user/john", {includeCompanies: true});
+		aRouter.redirectTo("/user/john", { includeCompanies: true });
 
 		// Act: get path from parameters for current location
 		var url = aRouter.expand({
-			parameters: {includeDetails: true}
+			parameters: { includeDetails: true },
 		});
 
 		// Assert that route parameters was injected in url and
 		// other parameters was set in query
-		expect(url.toString()).toBe("user/john?includeCompanies=true&includeDetails=true");
+		expect(url.toString()).toBe(
+			"user/john?includeCompanies=true&includeDetails=true",
+		);
 	});
 
-	it("LinkTo with default parameters", function() {
+	it("LinkTo with default parameters", function () {
 		// Arrange: a route with non optional parameter #foo
 		aRouter.addRoute({
 			name: "bar",
-			pattern: "/#foo/bar"
+			pattern: "/#foo/bar",
 		});
 
 		// and a default parameter getter for #foo
-		aRouter.setDefaultParameter("foo", function() {
+		aRouter.setDefaultParameter("foo", function () {
 			return "default";
 		});
 
@@ -477,12 +484,12 @@ describe("router", function() {
 		expect(url.toString()).toBe("#!/default/bar");
 	});
 
-	it("GetParameters from current URL", function() {
+	it("GetParameters from current URL", function () {
 		// Arrange: a named route
-		aRouter.addRoute({name: "user", pattern: "/user/#userId"});
+		aRouter.addRoute({ name: "user", pattern: "/user/#userId" });
 
 		// and navigate to that route
-		aRouter.redirectTo("/user/john", {includeCompanies: true});
+		aRouter.redirectTo("/user/john", { includeCompanies: true });
 
 		// Act: get parameters from URL
 		var parameters = aRouter.getParameters();
@@ -490,20 +497,21 @@ describe("router", function() {
 		// Assert that parameters contains both query and URL parameters
 		expect(parameters).toEqual({
 			userId: "john",
-			includeCompanies: "true"
+			includeCompanies: "true",
 		});
 	});
 
-	it("GetParameter", function() {
+	it("GetParameter", function () {
 		// Arrange: a named route
-		aRouter.addRoute({name: "user", pattern: "/user/#userId"});
+		aRouter.addRoute({ name: "user", pattern: "/user/#userId" });
 
 		// and navigate to that route
-		aRouter.redirectTo("/user/john", {includeCompanies: true});
+		aRouter.redirectTo("/user/john", { includeCompanies: true });
 
 		// Act: get parameters from URL
 		var userIdParameter = aRouter.getParameter("userId");
-		var includeCompaniesParameter = aRouter.getParameter("includeCompanies");
+		var includeCompaniesParameter =
+			aRouter.getParameter("includeCompanies");
 		var unknownParameter = aRouter.getParameter("unknown");
 
 		// Assert that parameters contains both query and URL parameters
@@ -512,39 +520,41 @@ describe("router", function() {
 		expect(unknownParameter).toBeUndefined();
 	});
 
-	it("setParameters()", function(done) {
+	it("setParameters()", function (done) {
 		aRouter.stop();
 		window.location.hash = ""; // start path
 		aRouter.start();
 
-		aRouter.addRoute({pattern: "a/#value"});
+		aRouter.addRoute({ pattern: "a/#value" });
 
 		delayedSteps(
-			function() {
-				aRouter.redirectTo("a/b", {foo: "bar"});
+			function () {
+				aRouter.redirectTo("a/b", { foo: "bar" });
 			},
-			function() {
+			function () {
 				expect(aRouter.getUrl().toString()).toBe("a/b?foo=bar");
 			},
-			function() {
-				aRouter.setParameters({value: "hello"});
+			function () {
+				aRouter.setParameters({ value: "hello" });
 			},
-			function() {
+			function () {
 				expect(aRouter.getUrl().toString()).toBe("a/hello?foo=bar");
 			},
-			function() {
-				aRouter.setParameters({foo: "world"});
+			function () {
+				aRouter.setParameters({ foo: "world" });
 			},
-			function() {
+			function () {
 				expect(aRouter.getUrl().toString()).toBe("a/hello?foo=world");
 			},
-			function() {
-				aRouter.setParameters({extra: "fun"});
+			function () {
+				aRouter.setParameters({ extra: "fun" });
 			},
-			function() {
-				expect(aRouter.getUrl().toString()).toBe("a/hello?foo=world&extra=fun");
+			function () {
+				expect(aRouter.getUrl().toString()).toBe(
+					"a/hello?foo=world&extra=fun",
+				);
 			},
-			done
+			done,
 		);
 		jasmine.clock().tick(131);
 	});

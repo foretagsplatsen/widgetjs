@@ -8,10 +8,10 @@ export default {
 	url: url,
 	route: route,
 	router: router,
-	getRouter: function() {
+	getRouter: function () {
 		return routerSingleton;
 	},
-	setRouter: function(newRouter) {
+	setRouter: function (newRouter) {
 		routerSingleton = newRouter;
-	}
+	},
 };

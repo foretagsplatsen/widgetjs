@@ -1,5 +1,5 @@
 import routeFactory from "./routeFactory.js";
-import {eventCategory} from "yaem";
+import { eventCategory } from "yaem";
 import routeMatchResult from "./routeMatchResult.js";
 import url from "./url.js";
 import { object } from "klassified";
@@ -56,20 +56,20 @@ import "jquery";
  * @param {{}} my
  * @returns {route}
  */
-const route = object.subclass(function(that, my) {
-
+const route = object.subclass(function (that, my) {
 	var segments;
 	var ignoreTrailingSegments;
 	var optionalSequences;
 
-	my.initialize = function(spec) {
+	my.initialize = function (spec) {
 		my.super();
 		// Build segments from pattern
 		segments = routeFactory(spec.pattern, spec.options);
 
 		// Route match URL if all route segments match
 		// but URL still contain trailing segments (default false)
-		ignoreTrailingSegments = (spec.options && spec.options.ignoreTrailingSegments) || false;
+		ignoreTrailingSegments =
+			(spec.options && spec.options.ignoreTrailingSegments) || false;
 
 		// Array with all optional sequences, ie. all combinations
 		// of optional parameters. Array must be ordered to match URL:s
@@ -99,7 +99,7 @@ const route = object.subclass(function(that, my) {
 	 * @param {url} url
 	 * @returns {routeMatchResult}
 	 */
-	that.matchUrl = function(url) {
+	that.matchUrl = function (url) {
 		var match = findMatch(url);
 		if (!match) {
 			return routeMatchResult.routeNoMatchResult;
@@ -119,12 +119,12 @@ const route = object.subclass(function(that, my) {
 	 *
 	 * @returns {string} URL string
 	 */
-	that.expand = function(params) {
+	that.expand = function (params) {
 		params = params || {};
 
 		// Try to expand route into URL
 		var urlSegments = [];
-		segments.forEach(function(routeSegment) {
+		segments.forEach(function (routeSegment) {
 			var urlSegment;
 			if (routeSegment.isParameter()) {
 				// Use supplied value for parameters
@@ -135,8 +135,7 @@ const route = object.subclass(function(that, my) {
 			}
 
 			// Skip if no match and optional
-			if (urlSegment === undefined &&
-				routeSegment.isOptional()) {
+			if (urlSegment === undefined && routeSegment.isOptional()) {
 				return;
 			}
 
@@ -150,7 +149,7 @@ const route = object.subclass(function(that, my) {
 
 		var query = {};
 
-		Object.keys(params).forEach(function(param) {
+		Object.keys(params).forEach(function (param) {
 			if (!that.hasParameter(param)) {
 				query[param] = params[param];
 				// Handle array param values
@@ -169,8 +168,8 @@ const route = object.subclass(function(that, my) {
 	 * @param {string} name
 	 * @returns {boolean}
 	 */
-	that.hasParameter = function(name) {
-		return segments.some(function(segment) {
+	that.hasParameter = function (name) {
+		return segments.some(function (segment) {
 			return segment.isParameter() && segment.getName() === name;
 		});
 	};
@@ -180,7 +179,7 @@ const route = object.subclass(function(that, my) {
 	 *
 	 * @returns {string}
 	 */
-	that.toString = function() {
+	that.toString = function () {
 		return "route(" + segments.join("/") + ")";
 	};
 
@@ -204,7 +203,7 @@ const route = object.subclass(function(that, my) {
 		}
 
 		// All routeSegments much match corresponding URL segment
-		return sequence.every(function(routeSegment, index) {
+		return sequence.every(function (routeSegment, index) {
 			var urlSegment = urlSegments[index];
 			return urlSegment !== undefined && routeSegment.match(urlSegment);
 		});
@@ -226,7 +225,11 @@ const route = object.subclass(function(that, my) {
 
 		// then optional sequences
 		var sequenceIndex;
-		for (sequenceIndex = 0; sequenceIndex < optionalSequences.length; sequenceIndex++) {
+		for (
+			sequenceIndex = 0;
+			sequenceIndex < optionalSequences.length;
+			sequenceIndex++
+		) {
 			if (isMatch(urlSegments, optionalSequences[sequenceIndex])) {
 				return optionalSequences[sequenceIndex];
 			}
@@ -241,26 +244,30 @@ const route = object.subclass(function(that, my) {
 	function ensureOptionalSequences() {
 		// Find positions for optionals
 		var optionalPositions = [];
-		segments.forEach(function(segment, index) {
+		segments.forEach(function (segment, index) {
 			if (segment.isOptional()) {
 				optionalPositions.push(index);
 			}
 		});
 
 		if (optionalPositions.length > 15) {
-			throw new Error("Too many optional arguments. \"" + optionalPositions.length +
-				"\" optionals would generate  " + Math.pow(2, optionalPositions.length) +
-				" optional sequences.");
+			throw new Error(
+				'Too many optional arguments. "' +
+					optionalPositions.length +
+					'" optionals would generate  ' +
+					Math.pow(2, optionalPositions.length) +
+					" optional sequences.",
+			);
 		}
 
 		// Generate possible sequences
 		var possibleOptionalSequences = orderedSubsets(optionalPositions);
 
-		possibleOptionalSequences.forEach(function(sequence) {
+		possibleOptionalSequences.forEach(function (sequence) {
 			// Clone segments array and remove optionals matching
 			// indexes in index sequence
 			var optionalSequence = segments.slice();
-			sequence.forEach(function(optionalIndex, numRemoved) {
+			sequence.forEach(function (optionalIndex, numRemoved) {
 				// Remove optional but take in to account that we have already
 				// removed {numRemoved} from permutation.
 				optionalSequence.splice(optionalIndex - numRemoved, 1);
@@ -282,23 +289,26 @@ const route = object.subclass(function(that, my) {
 		var urlSegments = url.getSegments();
 
 		var parameterValues = {};
-		segments.forEach(function(routeSegment) {
+		segments.forEach(function (routeSegment) {
 			if (!routeSegment.isParameter()) {
 				return;
 			}
 
 			var matchedIndex = match.indexOf(routeSegment);
 			if (matchedIndex >= 0) {
-				parameterValues[routeSegment.getName()] = routeSegment.getValue(urlSegments[matchedIndex]);
+				parameterValues[routeSegment.getName()] = routeSegment.getValue(
+					urlSegments[matchedIndex],
+				);
 			} else {
-				parameterValues[routeSegment.getName()] = routeSegment.getValue();
+				parameterValues[routeSegment.getName()] =
+					routeSegment.getValue();
 			}
 		});
 
 		return routeMatchResult({
 			route: that,
 			url: url,
-			values: parameterValues
+			values: parameterValues,
 		});
 	}
 });

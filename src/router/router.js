@@ -1,4 +1,4 @@
-import {eventCategory} from "yaem";
+import { eventCategory } from "yaem";
 import route from "./route.js";
 import url from "./url.js";
 import hashLocation from "./hashLocation.js";
@@ -33,9 +33,8 @@ function hashSingleton() {
  *
  * @returns {{}}
  */
-const router = object.subclass(function(that, my) {
-
-	my.initialize = function(spec) {
+const router = object.subclass(function (that, my) {
+	my.initialize = function (spec) {
 		my.super(spec);
 		my.location = spec.locationHandler || hashSingleton();
 		my.routeTable = [];
@@ -43,7 +42,9 @@ const router = object.subclass(function(that, my) {
 		my.defaultParameters = {};
 
 		// Listen for URL changes and resolve URL when changed
-		my.location.changed.register(function() { my.resolveUrl(); });
+		my.location.changed.register(function () {
+			my.resolveUrl();
+		});
 	};
 
 	// Events
@@ -89,9 +90,9 @@ const router = object.subclass(function(that, my) {
 	 *
 	 * @param {url} [aUrl] A URL or current url as default
 	 */
-	that.resolveUrl = function(aUrl) {
+	that.resolveUrl = function (aUrl) {
 		if (typeof aUrl === "string") {
-			aUrl = url({rawUrl: aUrl});
+			aUrl = url({ rawUrl: aUrl });
 		}
 
 		my.resolveUrl(aUrl);
@@ -143,16 +144,16 @@ const router = object.subclass(function(that, my) {
 	 *
 	 * @returns {route}
 	 */
-	that.addRoute = function(routeSpec) {
+	that.addRoute = function (routeSpec) {
 		routeSpec = routeSpec || {};
 
 		var newRoute = route({
 			pattern: routeSpec.pattern,
-			options: routeSpec
+			options: routeSpec,
 		});
 
 		if (routeSpec.action) {
-			newRoute.matched.register(function(result) {
+			newRoute.matched.register(function (result) {
 				routeSpec.action.apply(this, result.getActionArguments());
 			});
 		}
@@ -173,7 +174,7 @@ const router = object.subclass(function(that, my) {
 	 * @param {function} predicate
 	 * @returns {route} Matched route or null if not matched
 	 */
-	that.findRoute = function(predicate) {
+	that.findRoute = function (predicate) {
 		var numRoutes = my.routeTable.length;
 		for (var routeIndex = 0; routeIndex < numRoutes; routeIndex++) {
 			var route = my.routeTable[routeIndex];
@@ -191,8 +192,8 @@ const router = object.subclass(function(that, my) {
 	 * @param {string} routeName
 	 * @returns {route}
 	 */
-	that.getRouteByName = function(routeName) {
-		return that.findRoute(function(route) {
+	that.getRouteByName = function (routeName) {
+		return that.findRoute(function (route) {
 			return route.name && route.name === routeName;
 		});
 	};
@@ -202,7 +203,7 @@ const router = object.subclass(function(that, my) {
 	 *
 	 * @param route
 	 */
-	that.removeRoute = function(route) {
+	that.removeRoute = function (route) {
 		var index = my.routeTable.indexOf(route);
 		if (index === -1) {
 			throw new Error("Route not in route table");
@@ -214,7 +215,7 @@ const router = object.subclass(function(that, my) {
 	/**
 	 * Removes all routes from routing table.
 	 */
-	that.clear = function() {
+	that.clear = function () {
 		my.routeTable = [];
 		my.lastMatch = undefined;
 	};
@@ -227,13 +228,13 @@ const router = object.subclass(function(that, my) {
 	 *
 	 * @returns {route}
 	 */
-	that.pipeRoute = function(routeSpec, router) {
+	that.pipeRoute = function (routeSpec, router) {
 		if (!routeSpec || !routeSpec.pattern) {
 			throw new Error("Route pattern required");
 		}
 
 		var aRoute = that.addRoute(routeSpec);
-		aRoute.matched.register(function(result) {
+		aRoute.matched.register(function (result) {
 			router.resolveUrl(result.getUrl());
 		});
 
@@ -246,8 +247,8 @@ const router = object.subclass(function(that, my) {
 	 * @param {router} router
 	 * @returns {route}
 	 */
-	that.pipeNotFound = function(router) {
-		return that.routeNotFound.register(function(aRawUrl) {
+	that.pipeNotFound = function (router) {
+		return that.routeNotFound.register(function (aRawUrl) {
 			router.resolveUrl(aRawUrl);
 		});
 	};
@@ -256,7 +257,7 @@ const router = object.subclass(function(that, my) {
 	 * Returns the current URL
 	 * @returns {url}
 	 */
-	that.getUrl = function() {
+	that.getUrl = function () {
 		return my.location.getUrl();
 	};
 
@@ -277,14 +278,16 @@ const router = object.subclass(function(that, my) {
 	 *
 	 * @returns {string}
 	 */
-	that.linkTo = function(routeName, parameters, includeCurrentParameters) {
+	that.linkTo = function (routeName, parameters, includeCurrentParameters) {
 		var route = that.getRouteByName(routeName);
 		if (route) {
-			return my.location.linkToUrl(that.expand({
-				routeName: route.name,
-				parameters: parameters,
-				excludeCurrentParameters: !includeCurrentParameters
-			}));
+			return my.location.linkToUrl(
+				that.expand({
+					routeName: route.name,
+					parameters: parameters,
+					excludeCurrentParameters: !includeCurrentParameters,
+				}),
+			);
 		}
 
 		// fallback to path (eg. /user/john) if route is not defined
@@ -302,7 +305,7 @@ const router = object.subclass(function(that, my) {
 	 * @param {{}} query
 	 * @returns {string}
 	 */
-	that.linkToPath = function(path, query) {
+	that.linkToPath = function (path, query) {
 		return that.linkToUrl(url.build(path, query));
 	};
 
@@ -312,7 +315,7 @@ const router = object.subclass(function(that, my) {
 	 * @param {url} aUrl
 	 * @returns {string}
 	 */
-	that.linkToUrl = function(aUrl) {
+	that.linkToUrl = function (aUrl) {
 		return my.location.linkToUrl(aUrl);
 	};
 
@@ -333,14 +336,20 @@ const router = object.subclass(function(that, my) {
 	 *
 	 * @returns {string}
 	 */
-	that.redirectTo = function(routeName, parameters, includeCurrentParameters) {
+	that.redirectTo = function (
+		routeName,
+		parameters,
+		includeCurrentParameters,
+	) {
 		var route = that.getRouteByName(routeName);
 		if (route) {
-			return my.location.setUrl(that.expand({
-				routeName: route.name,
-				parameters: parameters,
-				excludeCurrentParameters: !includeCurrentParameters
-			}));
+			return my.location.setUrl(
+				that.expand({
+					routeName: route.name,
+					parameters: parameters,
+					excludeCurrentParameters: !includeCurrentParameters,
+				}),
+			);
 		}
 
 		return that.redirectToPath(routeName, parameters);
@@ -357,7 +366,7 @@ const router = object.subclass(function(that, my) {
 	 * @param {{}} query
 	 * @returns {string}
 	 */
-	that.redirectToPath = function(path, query) {
+	that.redirectToPath = function (path, query) {
 		return that.redirectToUrl(url.build(path, query));
 	};
 
@@ -367,7 +376,7 @@ const router = object.subclass(function(that, my) {
 	 * @param {url} aUrl
 	 * @returns {string}
 	 */
-	that.redirectToUrl = function(aUrl) {
+	that.redirectToUrl = function (aUrl) {
 		return my.location.setUrl(aUrl);
 	};
 
@@ -377,7 +386,7 @@ const router = object.subclass(function(that, my) {
 	 * @param {string} path
 	 * @return {undefined}
 	 */
-	that.redirectToLocationPath = function(path) {
+	that.redirectToLocationPath = function (path) {
 		window.location.href = path.startsWith("/") ? path : "/" + path;
 	};
 
@@ -386,14 +395,14 @@ const router = object.subclass(function(that, my) {
 	 *
 	 * @param {string} newLocation - The new URL.
 	 */
-	that.setLocation = function(newLocation) {
+	that.setLocation = function (newLocation) {
 		window.location = newLocation;
 	};
 
 	/**
 	 * Reload the current URL, just like the "refresh" button.
 	 */
-	that.reloadPage = function() {
+	that.reloadPage = function () {
 		window.location.reload();
 	};
 
@@ -411,10 +420,11 @@ const router = object.subclass(function(that, my) {
 	 *
 	 * @returns {url}
 	 */
-	that.expand = function(options) {
+	that.expand = function (options) {
 		var routeName = options.routeName;
 		var suppliedParameters = options.parameters || {};
-		var excludeCurrentParameters = options.excludeCurrentParameters || false;
+		var excludeCurrentParameters =
+			options.excludeCurrentParameters || false;
 
 		// Pick a template route
 		var templateRoute;
@@ -427,21 +437,24 @@ const router = object.subclass(function(that, my) {
 		}
 
 		// Merge current parameters with supplied parameters
-		var currentParameters = !excludeCurrentParameters ? that.getParameters() : {};
+		var currentParameters = !excludeCurrentParameters
+			? that.getParameters()
+			: {};
 		var allParameters = merge(currentParameters, suppliedParameters);
 
 		// Fill with defaults if needed
-		Object.keys(my.defaultParameters).forEach(function(parameterName) {
+		Object.keys(my.defaultParameters).forEach(function (parameterName) {
 			if (!(parameterName in allParameters)) {
-				allParameters[parameterName] = typeof my.defaultParameters[parameterName] === "function" ?
-					my.defaultParameters[parameterName]() :
-					my.defaultParameters[parameterName];
+				allParameters[parameterName] =
+					typeof my.defaultParameters[parameterName] === "function"
+						? my.defaultParameters[parameterName]()
+						: my.defaultParameters[parameterName];
 			}
 		});
 
 		// Expand template route and construct URL
 		var aRawUrl = templateRoute.expand(allParameters);
-		return url({rawUrl: aRawUrl});
+		return url({ rawUrl: aRawUrl });
 	};
 
 	/**
@@ -452,11 +465,13 @@ const router = object.subclass(function(that, my) {
 	 *
 	 * @returns {string}
 	 */
-	that.linkToParameters = function(parameters, excludeCurrentParameters) {
-		return my.location.linkToUrl(that.expand({
-			parameters: parameters,
-			excludeCurrentParameters: excludeCurrentParameters
-		}));
+	that.linkToParameters = function (parameters, excludeCurrentParameters) {
+		return my.location.linkToUrl(
+			that.expand({
+				parameters: parameters,
+				excludeCurrentParameters: excludeCurrentParameters,
+			}),
+		);
 	};
 
 	/**
@@ -467,11 +482,13 @@ const router = object.subclass(function(that, my) {
 	 *
 	 * @returns {string}
 	 */
-	that.setParameters = function(parameters, excludeCurrentParameters) {
-		that.redirectToUrl(that.expand({
-			parameters: parameters,
-			excludeCurrentParameters: excludeCurrentParameters
-		}));
+	that.setParameters = function (parameters, excludeCurrentParameters) {
+		that.redirectToUrl(
+			that.expand({
+				parameters: parameters,
+				excludeCurrentParameters: excludeCurrentParameters,
+			}),
+		);
 	};
 
 	/**
@@ -480,7 +497,7 @@ const router = object.subclass(function(that, my) {
 	 *
 	 * @returns {{}} Parameter values with parameter names as keys
 	 */
-	that.getParameters = function() {
+	that.getParameters = function () {
 		if (!my.lastMatch) {
 			return my.location.getUrl().getQuery();
 		}
@@ -494,12 +511,12 @@ const router = object.subclass(function(that, my) {
 	 * @param {string} parameterName
 	 * @returns {*}
 	 */
-	that.getParameter = function(parameterName) {
+	that.getParameter = function (parameterName) {
 		var parameters = that.getParameters();
 		return parameters[parameterName];
 	};
 
-	that.setDefaultParameter = function(parameterName, value) {
+	that.setDefaultParameter = function (parameterName, value) {
 		my.defaultParameters[parameterName] = value;
 	};
 
@@ -510,14 +527,14 @@ const router = object.subclass(function(that, my) {
 	 * @param {string|url} aFallbackUrl
 	 * @returns {string} URL
 	 */
-	that.back = function(aFallbackUrl) {
+	that.back = function (aFallbackUrl) {
 		return my.location.back(aFallbackUrl);
 	};
 
 	/**
 	 * Return `true` if the history is empty
 	 */
-	that.isHistoryEmpty = function() {
+	that.isHistoryEmpty = function () {
 		return my.location.isHistoryEmpty();
 	};
 
@@ -525,7 +542,7 @@ const router = object.subclass(function(that, my) {
 	 * Start listening for location changes and automatically
 	 * resolve new URLs (including the current)
 	 */
-	that.start = function() {
+	that.start = function () {
 		my.location.start();
 		my.resolveUrl(); // resolve current url
 	};
@@ -533,7 +550,7 @@ const router = object.subclass(function(that, my) {
 	/**
 	 * Stop listening for location changes.
 	 */
-	that.stop = function() {
+	that.stop = function () {
 		my.location.stop();
 	};
 
@@ -550,21 +567,23 @@ const router = object.subclass(function(that, my) {
 	 *
 	 * @param {url} [aUrl] A URL or current url as default
 	 */
-	my.resolveUrl = function(aUrl) {
+	my.resolveUrl = function (aUrl) {
 		var currentUrl = aUrl === undefined ? my.location.getUrl() : aUrl;
 
 		that.onResolveUrl.trigger(currentUrl);
 
 		var numMatched = 0;
-		my.routeTable.some(function(candidateRoute) {
+		my.routeTable.some(function (candidateRoute) {
 			var result = currentUrl.matchRoute(candidateRoute);
 			if (result.isMatch()) {
 				my.lastMatch = result;
 				numMatched++;
 				that.routeMatched.trigger(result);
 
-				if (candidateRoute.fallThrough === undefined ||
-					candidateRoute.fallThrough === false) {
+				if (
+					candidateRoute.fallThrough === undefined ||
+					candidateRoute.fallThrough === false
+				) {
 					return true;
 				}
 			}
@@ -583,14 +602,16 @@ const router = object.subclass(function(that, my) {
 	 *
 	 * @param {route} route
 	 */
-	my.addRoute = function(route) {
+	my.addRoute = function (route) {
 		var routeIndex = my.routeTable.length;
 		if (route.priority !== undefined) {
 			do {
 				--routeIndex;
-			} while (my.routeTable[routeIndex] &&
+			} while (
+				my.routeTable[routeIndex] &&
 				(my.routeTable[routeIndex].priority === undefined ||
-					route.priority < my.routeTable[routeIndex].priority));
+					route.priority < my.routeTable[routeIndex].priority)
+			);
 			routeIndex += 1;
 		}
 		my.routeTable.splice(routeIndex, 0, route);
@@ -610,8 +631,8 @@ const router = object.subclass(function(that, my) {
 		var objects = Array.prototype.slice.call(arguments);
 
 		var target = {};
-		objects.forEach(function(obj) {
-			Object.keys(obj).forEach(function(key) {
+		objects.forEach(function (obj) {
+			Object.keys(obj).forEach(function (key) {
 				target[key] = obj[key];
 			});
 		});

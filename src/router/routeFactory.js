@@ -32,7 +32,7 @@ function routeFactory(pattern, options) {
 		.map(Function.prototype.call, String.prototype.trim)
 		.filter(Boolean);
 
-	var segmentArray = nonEmptySegmentStrings.map(function(segmentString) {
+	var segmentArray = nonEmptySegmentStrings.map(function (segmentString) {
 		return segmentFactory(segmentString, options);
 	});
 
@@ -57,7 +57,7 @@ function segmentFactory(segmentString, options) {
 		if (segment.match(segmentString)) {
 			return segment({
 				segmentString: segmentString,
-				options: options
+				options: options,
 			});
 		}
 	}

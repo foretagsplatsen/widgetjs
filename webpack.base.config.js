@@ -9,22 +9,22 @@ let config = {
 		path: path.resolve(__dirname, "dist"),
 		filename: "widgetjs.js",
 		libraryTarget: "umd",
-		library: "widgetjs"
+		library: "widgetjs",
 	},
 	resolve: {
 		modules: [path.resolve(__dirname, "js"), "node_modules"],
-		alias: aliases
+		alias: aliases,
 	},
 	plugins: [
 		new webpack.ProvidePlugin({
-			"$": "jquery",
+			$: "jquery",
 			jQuery: "jquery",
-			"window.jQuery": "jquery"
+			"window.jQuery": "jquery",
 		}),
 		new webpack.optimize.LimitChunkCountPlugin({
-			maxChunks: 1
-		})
-	]
+			maxChunks: 1,
+		}),
+	],
 };
 
 module.exports = config;

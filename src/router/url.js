@@ -18,14 +18,13 @@ var urlSeparator = "/";
  * @param {string} rawUrl
  * @returns {url}
  */
-const url = object.subclass(function(that, my) {
-
+const url = object.subclass(function (that, my) {
 	var rawUrl;
 	var path;
 	var query;
 	var segments;
 
-	my.initialize = function(spec) {
+	my.initialize = function (spec) {
 		my.super(spec);
 		rawUrl = spec.rawUrl || "";
 		path = parsePath(rawUrl);
@@ -41,21 +40,27 @@ const url = object.subclass(function(that, my) {
 	 * URL path
 	 * @returns {string}
 	 */
-	that.getPath = function() { return path; };
+	that.getPath = function () {
+		return path;
+	};
 
 	/**
 	 * Key/Value pairs parsed from query
 	 *
 	 * @returns {{}}
 	 */
-	that.getQuery = function() { return query; };
+	that.getQuery = function () {
+		return query;
+	};
 
 	/**
 	 * Segments in path parsed by splitting `path` by `urlSeparator`
 	 *
 	 * @returns {string[]}
 	 */
-	that.getSegments = function() { return segments; };
+	that.getSegments = function () {
+		return segments;
+	};
 
 	/**
 	 * Answers true if the route is a match for the receiver
@@ -63,7 +68,7 @@ const url = object.subclass(function(that, my) {
 	 * @param route
 	 * @returns {boolean}
 	 */
-	that.matchRoute = function(route) {
+	that.matchRoute = function (route) {
 		return route.matchUrl(that);
 	};
 
@@ -71,7 +76,7 @@ const url = object.subclass(function(that, my) {
 	 * Returns `rawUrl`
 	 * @returns {string}
 	 */
-	that.toString = function() {
+	that.toString = function () {
 		return rawUrl;
 	};
 });
@@ -87,19 +92,23 @@ const url = object.subclass(function(that, my) {
  * @param {{}} query
  * @returns {url}
  */
-url.build = function(path, query) {
-	if (typeof(path) === "undefined" || path === null || typeof path !== "string") {
+url.build = function (path, query) {
+	if (
+		typeof path === "undefined" ||
+		path === null ||
+		typeof path !== "string"
+	) {
 		throw "accepts only string paths";
 	}
 
 	if (query) {
 		var queryPart = decodeURIComponent(jQuery.param(query));
 		if (queryPart) {
-			return url({rawUrl: path + "?" + queryPart});
+			return url({ rawUrl: path + "?" + queryPart });
 		}
 	}
 
-	return url({rawUrl: path});
+	return url({ rawUrl: path });
 };
 
 /**
@@ -147,7 +156,7 @@ function parseQuery(rawUrl) {
 	var query = {};
 	var pair;
 	if (result && result.length >= 2) {
-		(result[1].split("&")).forEach(function(each) {
+		result[1].split("&").forEach(function (each) {
 			pair = each.split("=");
 			query[pair[0]] = pair[1];
 		});

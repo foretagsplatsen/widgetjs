@@ -2,11 +2,10 @@ module.exports = {
 	root: true,
 	extends: ["plugin:@foretagsplatsen/main"],
 	parserOptions: {
-		ecmaVersion: 6,
-		sourceType: "module"
+		ecmaVersion: 2022,
+		sourceType: "module",
 	},
 	rules: {
-		"quotes": ["error", "double"],
 		"import/no-unused-modules": [
 			"error",
 			{
@@ -19,9 +18,9 @@ module.exports = {
 					"**/.eslintrc.js",
 					"webpack*",
 					"src/router/optionalParameterSegment.js",
-					"src/router/staticSegment.js"
+					"src/router/staticSegment.js",
 				],
 			},
-		]
-	}
+		],
+	},
 };
