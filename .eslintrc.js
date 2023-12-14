@@ -2,8 +2,8 @@ module.exports = {
 	root: true,
 	extends: ["plugin:@foretagsplatsen/main"],
 	parserOptions: {
-		ecmaVersion: 6,
-		sourceType: "module"
+		ecmaVersion: 2022,
+		sourceType: "module",
 	},
 	rules: {
 		"quotes": ["error", "double"],
