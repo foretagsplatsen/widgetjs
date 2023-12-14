@@ -6,7 +6,6 @@ module.exports = {
 		sourceType: "module",
 	},
 	rules: {
-		"quotes": ["error", "double"],
 		"import/no-unused-modules": [
 			"error",
 			{
