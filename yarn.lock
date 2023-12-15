@@ -44,10 +44,10 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.55.0.tgz#b721d52060f369aa259cf97392403cb9ce892ec6"
   integrity sha512-qQfo2mxH5yVom1kacMtZZJFVdW+E70mqHMJvVg6WTLo+VBuQJ4TojZlfWBjK0ve5BdEeNAVxOsl/nvNMpJOaJA==
 
-"@foretagsplatsen/eslint-plugin@^4.0.1":
-  version "4.0.1"
-  resolved "https://npm.pkg.github.com/download/@foretagsplatsen/eslint-plugin/4.0.1/6ca5a9c9d03ce84361c35860b161e1cabd4152ea#6ca5a9c9d03ce84361c35860b161e1cabd4152ea"
-  integrity sha512-4xVqJWzuwxy7rbxay7/l9AoYJruZTi0AC0hv+jQ/O/2UW+rA25qSekQRklNF5YLNujbP/3cB98eQnuvemr6usQ==
+"@foretagsplatsen/eslint-plugin@^4.1.0":
+  version "4.1.0"
+  resolved "https://npm.pkg.github.com/download/@foretagsplatsen/eslint-plugin/4.1.0/35b712caee5de1d4f0dda19885c8491ccc3216eb#35b712caee5de1d4f0dda19885c8491ccc3216eb"
+  integrity sha512-0ulv7H13pPBNuXVqtjLDE/HZBMplFd+1Bc+RlxDAYTUM2LyyJ1GyNuvkQrO5WphJ/mBC2/bPeaEYSyyNFdO37A==
   dependencies:
     eslint-config-prettier "^9.1.0"
     eslint-import-resolver-exports "^1.0.0-beta.5"
