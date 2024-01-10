@@ -3,22 +3,22 @@ import jQuery from "jquery";
 
 function withCanvas(callback) {
 	$("BODY").append('<div id="sandbox"></div>');
-	var sandbox = jQuery("#sandbox");
+	let sandbox = jQuery("#sandbox");
 
-	var html = htmlCanvas(sandbox);
+	let html = htmlCanvas(sandbox);
 	callback(html);
 
 	sandbox.remove();
 }
 
-describe("htmlCanvas", function () {
+describe("htmlCanvas", () => {
 	it("htmlCanvas library", () => {
 		expect(htmlCanvas).toBeTruthy();
 	});
 
 	it("can be created on a jQuery", () => {
 		// Arrange: a canvas on BODY
-		var html = htmlCanvas("BODY");
+		let html = htmlCanvas("BODY");
 
 		// Assert that:
 		expect(html).toBeTruthy();
@@ -39,7 +39,7 @@ describe("htmlCanvas", function () {
 			html.h1("Hello World!");
 
 			// Assert: that H1 was rendered
-			var h1El = jQuery("#sandbox > H1");
+			let h1El = jQuery("#sandbox > H1");
 
 			expect(h1El.get(0)).toBeTruthy();
 
@@ -54,7 +54,7 @@ describe("htmlCanvas", function () {
 			html.a("Google").id("test_id").href("http://www.google.se");
 
 			// Assert: that A was rendered
-			var linkEl = jQuery("#test_id");
+			let linkEl = jQuery("#test_id");
 
 			expect(linkEl.get(0)).toBeTruthy();
 
@@ -76,7 +76,7 @@ describe("htmlCanvas", function () {
 			);
 
 			// Assert: that DIV was rendered
-			var divEl = jQuery("#test_div");
+			let divEl = jQuery("#test_div");
 
 			expect(divEl.get(0)).toBeTruthy();
 
@@ -101,7 +101,7 @@ describe("htmlCanvas", function () {
 				);
 
 				// Assert: that DIV was rendered
-				var divEl = jQuery("#test_div");
+				let divEl = jQuery("#test_div");
 
 				expect(divEl.get(0)).toBeTruthy();
 
@@ -153,7 +153,7 @@ describe("htmlCanvas", function () {
 
 	it("callbacks can be attached to events", () => {
 		withCanvas((html) => {
-			var clicked = false;
+			let clicked = false;
 
 			// Arrange: a link with a click callback
 			html.a(
@@ -167,7 +167,7 @@ describe("htmlCanvas", function () {
 			);
 
 			// Assert: that link was rendered
-			var linkEl = jQuery("#test_link");
+			let linkEl = jQuery("#test_link");
 
 			expect(linkEl.get(0)).toBeTruthy();
 
@@ -180,7 +180,7 @@ describe("htmlCanvas", function () {
 
 	it("callbacks can be attached using attributes", () => {
 		withCanvas((html) => {
-			var clicked = false;
+			let clicked = false;
 
 			// Arrange: a link with a click callback
 			html.a("Click me!")
@@ -190,7 +190,7 @@ describe("htmlCanvas", function () {
 				});
 
 			// Assert: that link was rendered
-			var linkEl = jQuery("#test_link");
+			let linkEl = jQuery("#test_link");
 
 			expect(linkEl.get(0)).toBeTruthy();
 
@@ -220,7 +220,8 @@ describe("htmlCanvas", function () {
 		withCanvas((html) => {
 			// Arrange: a inner and outer div with a span as inner child
 			// where the child is omited based on a flag
-			var hasSomeText = false;
+			let hasSomeText = false;
+
 			html.div(
 				{ id: "outer_div" },
 				html.div(
@@ -239,7 +240,7 @@ describe("htmlCanvas", function () {
 	it("parts can be assigned to variables", () => {
 		withCanvas((html) => {
 			// Arrange a button, assign to variable and then set class
-			var button = html.a("Home").id("test_button").href("/");
+			let button = html.a("Home").id("test_button").href("/");
 			button.addClass("button");
 
 			// Assert:
@@ -251,7 +252,7 @@ describe("htmlCanvas", function () {
 	it("render() can append objects to brush", () => {
 		withCanvas((html) => {
 			// Arrange: a DIV
-			var div = html.div().id("aDiv");
+			let div = html.div().id("aDiv");
 
 			// Act: render a SPAN in it
 			div.render(html.span("test").addClass("aSpan"));
@@ -265,9 +266,9 @@ describe("htmlCanvas", function () {
 		withCanvas((html) => {
 			// Arrange a div with10 sub span supplied to DIV as an array
 			html.div(
-				$.map([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], (num) => {
-					return html.span(num.toString());
-				}),
+				$.map([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], (num) =>
+					html.span(num.toString()),
+				),
 			).id("test_div");
 
 			// Assert:
@@ -318,7 +319,7 @@ describe("htmlCanvas", function () {
 	it("delegates rendering to objects implementing appendToBrush()", () => {
 		withCanvas((html) => {
 			function appendableObject() {
-				var that = {};
+				let that = {};
 
 				that.appendToBrush = (aTagBrush) => {
 					aTagBrush.render("content");
@@ -338,7 +339,7 @@ describe("htmlCanvas", function () {
 	it("rendering html strings not allowed by default", () => {
 		withCanvas((html) => {
 			// Arrange:
-			var htmlString = '<div id="unescaped">foo</div>';
+			let htmlString = '<div id="unescaped">foo</div>';
 
 			// Act: render the string
 			html.render(htmlString);
@@ -351,7 +352,7 @@ describe("htmlCanvas", function () {
 	it("rendering of strings is escaped ", () => {
 		withCanvas((html) => {
 			// Arrange:
-			var htmlString = "<>&foo";
+			let htmlString = "<>&foo";
 
 			// Act: render the string
 			html.render(htmlString);
@@ -364,7 +365,7 @@ describe("htmlCanvas", function () {
 	it("rendering using `html()` does not escape ", () => {
 		withCanvas((html) => {
 			// Arrange:
-			var htmlString = "<div>hello</div>";
+			let htmlString = "<div>hello</div>";
 
 			// Act: render the string
 			html.div({ id: "not-escaped" }).html(htmlString);
@@ -377,7 +378,7 @@ describe("htmlCanvas", function () {
 	it("element() returns brush element", () => {
 		withCanvas((html) => {
 			// Arrange: a heading
-			var h1 = html.h1().id("aHeading");
+			let h1 = html.h1().id("aHeading");
 
 			// Assert
 			expect(h1.element).toBe(jQuery("#aHeading").get(0));
@@ -387,7 +388,7 @@ describe("htmlCanvas", function () {
 	it("setAttribute() get/set style using key/value", () => {
 		withCanvas((html) => {
 			// Arrange: a heading with id
-			var h1 = html.h1().setAttribute("id", "aHeading");
+			let h1 = html.h1().setAttribute("id", "aHeading");
 
 			// Assert: id set
 			expect(h1.asJQuery().attr("id")).toBe("aHeading");
@@ -397,7 +398,7 @@ describe("htmlCanvas", function () {
 	it("css() get/set style", () => {
 		withCanvas((html) => {
 			// Arrange: a div
-			var div = html.div();
+			let div = html.div();
 
 			div.css("width", "100px");
 
@@ -408,7 +409,7 @@ describe("htmlCanvas", function () {
 	it("attr() get/set style", () => {
 		withCanvas((html) => {
 			// Arrange: a heading with id (set using map)
-			var h1 = html.h1().attr({ id: "aHeading" });
+			let h1 = html.h1().attr({ id: "aHeading" });
 
 			// Assert: that id is set
 			expect(h1.asJQuery().attr("id")).toBe("aHeading");
@@ -418,7 +419,7 @@ describe("htmlCanvas", function () {
 	it("addClass()/removeClass() add/remove class", () => {
 		withCanvas((html) => {
 			// Arrange: a heading
-			var h1 = html.h1().id("aHeading");
+			let h1 = html.h1().id("aHeading");
 
 			// addClass()
 			h1.addClass("foo");
@@ -455,14 +456,14 @@ describe("htmlCanvas", function () {
 	it("asJQuery() returns jQuery that match brush element", () => {
 		withCanvas((html) => {
 			// Arrange: a heading
-			var h1 = html.h1().id("aHeading");
+			let h1 = html.h1().id("aHeading");
 
 			// Assert
 			expect(h1.asJQuery().get(0)).toBe(jQuery("#aHeading").get(0));
 		});
 	});
 
-	//TODO: allow or throw exception?
+	// TODO: allow or throw exception?
 	it("can render almost everything", () => {
 		withCanvas((html) => {
 			html.render(0); // toString()

@@ -9,7 +9,7 @@ import classNames from "classnames";
 /** @typedef {({}|string|renderer|widget|htmlTagBrush|*)} renderable */
 
 // Supported HTML 'tags'
-var tags = (
+let tags = (
 	"a abbr acronym address area article aside audio b bdi bdo big " +
 	"blockquote body br button canvas caption cite code col colgroup command " +
 	"datalist dd del details dfn div dl dt em embed fieldset figcaption figure " +
@@ -21,15 +21,15 @@ var tags = (
 	"video wbr"
 ).split(" ");
 
-var svgTags = "svg circle path polygon rect text".split(" ");
+let svgTags = "svg circle path polygon rect text".split(" ");
 
 // Supported HTML attributes
-var attributes = "href for id media rel src style title type".split(" ");
+let attributes = "href for id media rel src style title type".split(" ");
 
-var omitSymbol = {};
+let omitSymbol = {};
 
 // Supported HTML events
-var events = (
+let events = (
 	"blur focus focusin focusout load resize scroll unload " +
 	"click dblclick mousedown mouseup mousemove mouseover " +
 	"mouseout mouseenter mouseleave change input select submit " +
@@ -53,16 +53,16 @@ function HtmlCanvasConstructor(rootElement) {
  * @param {renderable[]} [children] Renderable objects to append as children of brush.
  */
 HtmlCanvasConstructor.prototype.tag = function (tagName, children) {
-	var tagBrush = htmlTagBrush({ tag: tagName, children: children });
+	let tagBrush = htmlTagBrush({ tag: tagName, children });
 	this.root.appendBrush(tagBrush);
 	return tagBrush;
 };
 
 HtmlCanvasConstructor.prototype.svgTag = function (tagName, children) {
-	var tagBrush = htmlTagBrush({
+	let tagBrush = htmlTagBrush({
 		tag: tagName,
 		namespaceURI: "http://www.w3.org/2000/svg",
-		children: children,
+		children,
 	});
 	this.root.appendBrush(tagBrush);
 	return tagBrush;
@@ -76,9 +76,9 @@ HtmlCanvasConstructor.prototype.svgTag = function (tagName, children) {
  *    html.strong("Important stuff");
  *    html.span(html.strong(userName), " signed in.")
  */
-tags.forEach(function (tagName) {
+tags.forEach((tagName) => {
 	HtmlCanvasConstructor.prototype[tagName] = function () {
-		var args = Array.prototype.slice.call(arguments);
+		let args = Array.prototype.slice.call(arguments);
 		return this.tag(tagName, args);
 	};
 });
@@ -86,9 +86,9 @@ tags.forEach(function (tagName) {
 /**
  * Tags builders for each supported SVG tag type.
  */
-svgTags.forEach(function (tagName) {
+svgTags.forEach((tagName) => {
 	HtmlCanvasConstructor.prototype[tagName] = function () {
-		var args = Array.prototype.slice.call(arguments);
+		let args = Array.prototype.slice.call(arguments);
 		return this.svgTag(tagName, args);
 	};
 });
@@ -109,7 +109,7 @@ HtmlCanvasConstructor.prototype.omit = function () {
  * @param anObject
  */
 HtmlCanvasConstructor.prototype.render = function () {
-	var args = Array.prototype.slice.call(arguments);
+	let args = Array.prototype.slice.call(arguments);
 	this.root.render(args);
 };
 
@@ -179,6 +179,7 @@ function TagBrushConstructor(spec) {
 	this.element = spec.tag
 		? this.createElement(spec.tag, spec.namespaceURI)
 		: this.getElement(spec.element);
+
 	if (!this.element) {
 		throw new Error("htmlTagBrush requires an element");
 	}
@@ -194,7 +195,7 @@ function TagBrushConstructor(spec) {
 	}
 }
 
-var elementCache = {};
+let elementCache = {};
 
 /**
  * Creates a new element from tagName
@@ -206,9 +207,7 @@ TagBrushConstructor.prototype.createElement = function (tagName, namespaceURI) {
 	if (namespaceURI) {
 		return document.createElementNS(namespaceURI, tagName);
 	}
-	if (!elementCache[tagName]) {
-		elementCache[tagName] = document.createElement(tagName);
-	}
+	elementCache[tagName] ||= document.createElement(tagName);
 	return elementCache[tagName].cloneNode(false);
 };
 
@@ -256,8 +255,8 @@ Number.prototype.appendToBrush = function (brush) {
 };
 
 Array.prototype.appendToBrush = function (brush) {
-	var length = this.length;
-	for (var i = length - 1; i >= 0; i--) {
+	let length = this.length;
+	for (let i = length - 1; i >= 0; i--) {
 		brush.append(this[length - i - 1]);
 	}
 };
@@ -343,8 +342,8 @@ TagBrushConstructor.prototype.getElement = function (object) {
  * @returns {htmlTagBrush}
  */
 TagBrushConstructor.prototype.render = function () {
-	var args = Array.prototype.slice.call(arguments);
-	for (var i = 0; i < args.length; i++) {
+	let args = Array.prototype.slice.call(arguments);
+	for (let i = 0; i < args.length; i++) {
 		this.append(args[i]);
 	}
 	return this;
@@ -412,7 +411,7 @@ TagBrushConstructor.prototype.on = function (eventType, callback) {
  *	aBrush.click(function() { .. });
  *	aBrush.blur(function() { .. });
  */
-events.forEach(function (eventType) {
+events.forEach((eventType) => {
 	TagBrushConstructor.prototype[eventType] = function (callback) {
 		return this.on(eventType, callback);
 	};
@@ -442,7 +441,7 @@ TagBrushConstructor.prototype.setAttribute = function (key, value) {
  *	aBrush.src("javascript:0");
  *	aBrush.href("#");
  */
-attributes.forEach(function (attributeName) {
+attributes.forEach((attributeName) => {
 	TagBrushConstructor.prototype[attributeName] = function (value) {
 		return this.setAttribute(attributeName, value);
 	};
@@ -479,7 +478,7 @@ TagBrushConstructor.prototype.css = function (key, value) {
  * @returns {{}}
  */
 TagBrushConstructor.prototype.attr = function (object) {
-	for (var key in object) {
+	for (let key in object) {
 		if (Object.prototype.hasOwnProperty.call(object, key)) {
 			this.addAttribute(key, object[key]);
 		}

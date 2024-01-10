@@ -12,9 +12,7 @@ import "jquery";
  * @returns {hashLocation}
  */
 function hashSingleton() {
-	if (!hashSingleton.instance) {
-		hashSingleton.instance = hashLocation();
-	}
+	hashSingleton.instance ||= hashLocation();
 
 	return hashSingleton.instance;
 }
@@ -33,7 +31,7 @@ function hashSingleton() {
  *
  * @returns {{}}
  */
-const router = object.subclass(function (that, my) {
+const router = object.subclass((that, my) => {
 	my.initialize = function (spec) {
 		my.super(spec);
 		my.location = spec.locationHandler || hashSingleton();
@@ -42,7 +40,7 @@ const router = object.subclass(function (that, my) {
 		my.defaultParameters = {};
 
 		// Listen for URL changes and resolve URL when changed
-		my.location.changed.register(function () {
+		my.location.changed.register(() => {
 			my.resolveUrl();
 		});
 	};
@@ -145,9 +143,9 @@ const router = object.subclass(function (that, my) {
 	 * @returns {route}
 	 */
 	that.addRoute = function (routeSpec) {
-		routeSpec = routeSpec || {};
+		routeSpec ||= {};
 
-		var newRoute = route({
+		let newRoute = route({
 			pattern: routeSpec.pattern,
 			options: routeSpec,
 		});
@@ -175,9 +173,9 @@ const router = object.subclass(function (that, my) {
 	 * @returns {route} Matched route or null if not matched
 	 */
 	that.findRoute = function (predicate) {
-		var numRoutes = my.routeTable.length;
-		for (var routeIndex = 0; routeIndex < numRoutes; routeIndex++) {
-			var route = my.routeTable[routeIndex];
+		let numRoutes = my.routeTable.length;
+		for (let routeIndex = 0; routeIndex < numRoutes; routeIndex++) {
+			let route = my.routeTable[routeIndex];
 			if (predicate(route)) {
 				return route;
 			}
@@ -193,9 +191,9 @@ const router = object.subclass(function (that, my) {
 	 * @returns {route}
 	 */
 	that.getRouteByName = function (routeName) {
-		return that.findRoute(function (route) {
-			return route.name && route.name === routeName;
-		});
+		return that.findRoute(
+			(route) => route.name && route.name === routeName,
+		);
 	};
 
 	/**
@@ -204,7 +202,7 @@ const router = object.subclass(function (that, my) {
 	 * @param route
 	 */
 	that.removeRoute = function (route) {
-		var index = my.routeTable.indexOf(route);
+		let index = my.routeTable.indexOf(route);
 		if (index === -1) {
 			throw new Error("Route not in route table");
 		}
@@ -233,8 +231,9 @@ const router = object.subclass(function (that, my) {
 			throw new Error("Route pattern required");
 		}
 
-		var aRoute = that.addRoute(routeSpec);
-		aRoute.matched.register(function (result) {
+		let aRoute = that.addRoute(routeSpec);
+
+		aRoute.matched.register((result) => {
 			router.resolveUrl(result.getUrl());
 		});
 
@@ -248,7 +247,7 @@ const router = object.subclass(function (that, my) {
 	 * @returns {route}
 	 */
 	that.pipeNotFound = function (router) {
-		return that.routeNotFound.register(function (aRawUrl) {
+		return that.routeNotFound.register((aRawUrl) => {
 			router.resolveUrl(aRawUrl);
 		});
 	};
@@ -279,12 +278,12 @@ const router = object.subclass(function (that, my) {
 	 * @returns {string}
 	 */
 	that.linkTo = function (routeName, parameters, includeCurrentParameters) {
-		var route = that.getRouteByName(routeName);
+		let route = that.getRouteByName(routeName);
 		if (route) {
 			return my.location.linkToUrl(
 				that.expand({
 					routeName: route.name,
-					parameters: parameters,
+					parameters,
 					excludeCurrentParameters: !includeCurrentParameters,
 				}),
 			);
@@ -341,12 +340,12 @@ const router = object.subclass(function (that, my) {
 		parameters,
 		includeCurrentParameters,
 	) {
-		var route = that.getRouteByName(routeName);
+		let route = that.getRouteByName(routeName);
 		if (route) {
 			return my.location.setUrl(
 				that.expand({
 					routeName: route.name,
-					parameters: parameters,
+					parameters,
 					excludeCurrentParameters: !includeCurrentParameters,
 				}),
 			);
@@ -387,7 +386,7 @@ const router = object.subclass(function (that, my) {
 	 * @return {undefined}
 	 */
 	that.redirectToLocationPath = function (path) {
-		window.location.href = path.startsWith("/") ? path : "/" + path;
+		window.location.href = path.startsWith("/") ? path : `/${path}`;
 	};
 
 	/**
@@ -421,13 +420,13 @@ const router = object.subclass(function (that, my) {
 	 * @returns {url}
 	 */
 	that.expand = function (options) {
-		var routeName = options.routeName;
-		var suppliedParameters = options.parameters || {};
-		var excludeCurrentParameters =
+		let routeName = options.routeName;
+		let suppliedParameters = options.parameters || {};
+		let excludeCurrentParameters =
 			options.excludeCurrentParameters || false;
 
 		// Pick a template route
-		var templateRoute;
+		let templateRoute;
 		if (routeName) {
 			templateRoute = that.getRouteByName(routeName) || route();
 		} else if (my.lastMatch) {
@@ -437,13 +436,13 @@ const router = object.subclass(function (that, my) {
 		}
 
 		// Merge current parameters with supplied parameters
-		var currentParameters = !excludeCurrentParameters
+		let currentParameters = !excludeCurrentParameters
 			? that.getParameters()
 			: {};
-		var allParameters = merge(currentParameters, suppliedParameters);
+		let allParameters = merge(currentParameters, suppliedParameters);
 
 		// Fill with defaults if needed
-		Object.keys(my.defaultParameters).forEach(function (parameterName) {
+		Object.keys(my.defaultParameters).forEach((parameterName) => {
 			if (!(parameterName in allParameters)) {
 				allParameters[parameterName] =
 					typeof my.defaultParameters[parameterName] === "function"
@@ -453,7 +452,7 @@ const router = object.subclass(function (that, my) {
 		});
 
 		// Expand template route and construct URL
-		var aRawUrl = templateRoute.expand(allParameters);
+		let aRawUrl = templateRoute.expand(allParameters);
 		return url({ rawUrl: aRawUrl });
 	};
 
@@ -468,8 +467,8 @@ const router = object.subclass(function (that, my) {
 	that.linkToParameters = function (parameters, excludeCurrentParameters) {
 		return my.location.linkToUrl(
 			that.expand({
-				parameters: parameters,
-				excludeCurrentParameters: excludeCurrentParameters,
+				parameters,
+				excludeCurrentParameters,
 			}),
 		);
 	};
@@ -485,8 +484,8 @@ const router = object.subclass(function (that, my) {
 	that.setParameters = function (parameters, excludeCurrentParameters) {
 		that.redirectToUrl(
 			that.expand({
-				parameters: parameters,
-				excludeCurrentParameters: excludeCurrentParameters,
+				parameters,
+				excludeCurrentParameters,
 			}),
 		);
 	};
@@ -512,7 +511,7 @@ const router = object.subclass(function (that, my) {
 	 * @returns {*}
 	 */
 	that.getParameter = function (parameterName) {
-		var parameters = that.getParameters();
+		let parameters = that.getParameters();
 		return parameters[parameterName];
 	};
 
@@ -568,13 +567,14 @@ const router = object.subclass(function (that, my) {
 	 * @param {url} [aUrl] A URL or current url as default
 	 */
 	my.resolveUrl = function (aUrl) {
-		var currentUrl = aUrl === undefined ? my.location.getUrl() : aUrl;
+		let currentUrl = aUrl === undefined ? my.location.getUrl() : aUrl;
 
 		that.onResolveUrl.trigger(currentUrl);
 
-		var numMatched = 0;
-		my.routeTable.some(function (candidateRoute) {
-			var result = currentUrl.matchRoute(candidateRoute);
+		let numMatched = 0;
+
+		my.routeTable.some((candidateRoute) => {
+			let result = currentUrl.matchRoute(candidateRoute);
 			if (result.isMatch()) {
 				my.lastMatch = result;
 				numMatched++;
@@ -603,7 +603,7 @@ const router = object.subclass(function (that, my) {
 	 * @param {route} route
 	 */
 	my.addRoute = function (route) {
-		var routeIndex = my.routeTable.length;
+		let routeIndex = my.routeTable.length;
 		if (route.priority !== undefined) {
 			do {
 				--routeIndex;
@@ -628,11 +628,12 @@ const router = object.subclass(function (that, my) {
 	 * @returns {{}}
 	 */
 	function merge() {
-		var objects = Array.prototype.slice.call(arguments);
+		let objects = Array.prototype.slice.call(arguments);
 
-		var target = {};
-		objects.forEach(function (obj) {
-			Object.keys(obj).forEach(function (key) {
+		let target = {};
+
+		objects.forEach((obj) => {
+			Object.keys(obj).forEach((key) => {
 				target[key] = obj[key];
 			});
 		});

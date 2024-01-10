@@ -2,12 +2,12 @@ import url from "./router/url.js";
 import route from "./router/route.js";
 import router from "./router/router.js";
 
-var routerSingleton = router();
+let routerSingleton = router();
 
 export default {
-	url: url,
-	route: route,
-	router: router,
+	url,
+	route,
+	router,
 	getRouter: function () {
 		return routerSingleton;
 	},

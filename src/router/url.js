@@ -4,7 +4,7 @@ import { object } from "klassified";
  * Token/Char used to separate segments in URL paths.
  * @type {string}
  */
-var urlSeparator = "/";
+let urlSeparator = "/";
 
 /**
  * A `url` actually represents the fragment part of the actual url.
@@ -18,11 +18,11 @@ var urlSeparator = "/";
  * @param {string} rawUrl
  * @returns {url}
  */
-const url = object.subclass(function (that, my) {
-	var rawUrl;
-	var path;
-	var query;
-	var segments;
+const url = object.subclass((that, my) => {
+	let rawUrl;
+	let path;
+	let query;
+	let segments;
 
 	my.initialize = function (spec) {
 		my.super(spec);
@@ -102,9 +102,9 @@ url.build = function (path, query) {
 	}
 
 	if (query) {
-		var queryPart = decodeURIComponent(jQuery.param(query));
+		let queryPart = decodeURIComponent(jQuery.param(query));
 		if (queryPart) {
-			return url({ rawUrl: path + "?" + queryPart });
+			return url({ rawUrl: `${path}?${queryPart}` });
 		}
 	}
 
@@ -152,11 +152,11 @@ function parsePath(rawUrl) {
  */
 function parseQuery(rawUrl) {
 	// Extract query key/value(s) from a rawUrl and add them to `query` object.
-	var result = /[^?]*\?(.*)$/g.exec(rawUrl);
-	var query = {};
-	var pair;
+	let result = /[^?]*\?(.*)$/g.exec(rawUrl);
+	let query = {};
+	let pair;
 	if (result && result.length >= 2) {
-		result[1].split("&").forEach(function (each) {
+		result[1].split("&").forEach((each) => {
 			pair = each.split("=");
 			query[pair[0]] = pair[1];
 		});

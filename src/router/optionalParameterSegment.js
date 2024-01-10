@@ -7,7 +7,7 @@ import parameterSegment from "./parameterSegment.js";
  * @param my
  * @returns {parameter}
  */
-const optionalParameterSegment = parameterSegment.subclass(function (that, my) {
+const optionalParameterSegment = parameterSegment.subclass((that, my) => {
 	my.initialize = function (spec) {
 		my.super(spec);
 		my.defaultValue = my.options.defaults && my.options.defaults[my.name];
@@ -40,11 +40,11 @@ const optionalParameterSegment = parameterSegment.subclass(function (that, my) {
 	 * @returns {*}
 	 */
 	that.toString = function () {
-		return "optional(" + that.getName() + ")";
+		return `optional(${that.getName()})`;
 	};
 });
 
-optionalParameterSegment.class(function (that) {
+optionalParameterSegment.class((that) => {
 	/**
 	 * Match segment strings with a leading `?`.
 	 * @param {string} segmentString

@@ -10,7 +10,7 @@ import { object } from "klassified";
  * @param my
  * @returns {abstractSegment}
  */
-const abstractSegment = object.subclass(function (that, my) {
+const abstractSegment = object.subclass((that, my) => {
 	my.initialize = function (spec) {
 		my.super(spec);
 		my.segmentString = spec.segmentString;
@@ -70,7 +70,7 @@ const abstractSegment = object.subclass(function (that, my) {
 	};
 });
 
-abstractSegment.class(function (that) {
+abstractSegment.class((that) => {
 	that.match = function (segmentString) {
 		return false;
 	};

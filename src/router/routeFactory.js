@@ -7,7 +7,7 @@ import "./staticSegment.js";
  * Token/Char used to separate segments in route patterns.
  * @type {string}
  */
-var routePatternSeparator = "/";
+let routePatternSeparator = "/";
 
 /**
  * Creates a route from pattern. A pattern is a string with route segments
@@ -25,16 +25,16 @@ function routeFactory(pattern, options) {
 		return [];
 	}
 
-	options = options || {};
-	var segmentStrings = pattern.split(routePatternSeparator);
+	options ||= {};
+	let segmentStrings = pattern.split(routePatternSeparator);
 
-	var nonEmptySegmentStrings = segmentStrings
+	let nonEmptySegmentStrings = segmentStrings
 		.map(Function.prototype.call, String.prototype.trim)
 		.filter(Boolean);
 
-	var segmentArray = nonEmptySegmentStrings.map(function (segmentString) {
-		return segmentFactory(segmentString, options);
-	});
+	let segmentArray = nonEmptySegmentStrings.map((segmentString) =>
+		segmentFactory(segmentString, options),
+	);
 
 	return segmentArray;
 }
@@ -47,17 +47,17 @@ function routeFactory(pattern, options) {
  * @returns {abstractSegment}
  */
 function segmentFactory(segmentString, options) {
-	options = options || {};
+	options ||= {};
 
-	var segments = abstractSegment.allSubclasses();
+	let segments = abstractSegment.allSubclasses();
 
 	// Find segment type from string
-	for (var i = 0; i < segments.length; i++) {
-		var segment = segments[i];
+	for (let i = 0; i < segments.length; i++) {
+		let segment = segments[i];
 		if (segment.match(segmentString)) {
 			return segment({
-				segmentString: segmentString,
-				options: options,
+				segmentString,
+				options,
 			});
 		}
 	}
