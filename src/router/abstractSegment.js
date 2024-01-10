@@ -27,7 +27,7 @@ const abstractSegment = object.subclass((that, my) => {
 	 * @param {string} urlSegment
 	 * @returns {boolean}
 	 */
-	that.match = function (urlSegment) {
+	that.match = function (_urlSegment) {
 		return false;
 	};
 
@@ -37,7 +37,7 @@ const abstractSegment = object.subclass((that, my) => {
 	 * @param {string} urlSegment
 	 * @returns {*}
 	 */
-	that.getValue = function (urlSegment) {
+	that.getValue = function (_urlSegment) {
 		return my.segmentString;
 	};
 
@@ -71,7 +71,7 @@ const abstractSegment = object.subclass((that, my) => {
 });
 
 abstractSegment.class((that) => {
-	that.match = function (segmentString) {
+	that.match = function (_segmentString) {
 		return false;
 	};
 });

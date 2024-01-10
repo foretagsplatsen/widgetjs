@@ -8,7 +8,7 @@ import abstractSegment from "./abstractSegment.js";
  * @param [my]
  * @returns {segment}
  */
-const staticSegment = abstractSegment.subclass((that, my) => {
+const staticSegment = abstractSegment.subclass((that) => {
 	/**
 	 * Static segment match if URL and route segment
 	 * strings are identical.

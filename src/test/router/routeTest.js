@@ -1,6 +1,6 @@
 import router from "../../router.js";
 
-function assertMatch(url, route, message) {
+function assertMatch(url, route, _message) {
 	expect(
 		router
 			.url({ rawUrl: url })
@@ -9,7 +9,7 @@ function assertMatch(url, route, message) {
 	).toBeTruthy();
 }
 
-function assertNoMatch(url, route, message) {
+function assertNoMatch(url, route, _message) {
 	expect(
 		!router
 			.url({ rawUrl: url })

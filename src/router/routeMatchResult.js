@@ -103,6 +103,7 @@ const routeMatchResult = object.subclass((that, my) => {
 	// Private
 	//
 
+	// eslint-disable-next-line no-shadow -- we should fix that later
 	function mergeParameters(routeParameters, queryParameters) {
 		let allValues = {};
 

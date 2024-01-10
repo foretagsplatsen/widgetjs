@@ -65,7 +65,7 @@ const widget = object.subclass((that, my) => {
 	 * Hook evaluated at the end of widget initialization and
 	 * before any rendering.
 	 */
-	my.initializeSubwidgets = function (spec) {};
+	my.initializeSubwidgets = function (_spec) {};
 
 	my.postInitialize = function (spec) {
 		my.initializeSubwidgets(spec);
@@ -197,6 +197,7 @@ const widget = object.subclass((that, my) => {
 	that.triggerWillAttach = function () {
 		my.willAttach();
 
+		// eslint-disable-next-line no-shadow -- we should fix that later
 		children.forEach((widget) => {
 			widget.triggerWillAttach();
 		});
@@ -209,6 +210,7 @@ const widget = object.subclass((that, my) => {
 	that.triggerDidAttach = function () {
 		my.didAttach();
 
+		// eslint-disable-next-line no-shadow -- we should fix that later
 		children.forEach((widget) => {
 			widget.triggerDidAttach();
 		});
@@ -350,6 +352,7 @@ const widget = object.subclass((that, my) => {
 		}, that);
 	};
 
+	// eslint-disable-next-line no-shadow -- we should fix that later
 	that.registerChild = function (widget) {
 		children.push(widget);
 	};
@@ -380,7 +383,7 @@ const widget = object.subclass((that, my) => {
 	 *
 	 * @param {htmlCanvas} html
 	 */
-	that.renderContentOn = function (html) {
+	that.renderContentOn = function (_html) {
 		return my.subclassResponsibility();
 	};
 

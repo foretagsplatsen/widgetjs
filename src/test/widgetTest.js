@@ -2,7 +2,7 @@ import widget from "../widget.js";
 import htmlCanvas from "../htmlCanvas.js";
 import jQuery from "jquery";
 
-let widgetSubclass = widget.subclass((that, my) => {
+let widgetSubclass = widget.subclass((that) => {
 	that.renderContentOn = function (html) {
 		html.h1("Hello world");
 	};
@@ -135,7 +135,7 @@ describe("function", () => {
 	});
 
 	it("Remove", () => {
-		withWidget((aWidget, my) => {
+		withWidget((aWidget) => {
 			let id = `#${aWidget.id()}`;
 
 			expect(jQuery(id).get(0)).toBeTruthy();
@@ -368,6 +368,7 @@ describe("function", () => {
 	});
 
 	it("widgets can create an event", () => {
+		// eslint-disable-next-line no-shadow -- we should fix that later
 		withWidget((widget, my) => {
 			expect(widget.foo).toBeUndefined();
 			my.createEvent("foo");
@@ -377,6 +378,7 @@ describe("function", () => {
 	});
 
 	it("widgets can create events", () => {
+		// eslint-disable-next-line no-shadow -- we should fix that later
 		withWidget((widget, my) => {
 			expect(widget.foo).toBeUndefined();
 			expect(widget.bar).toBeUndefined();

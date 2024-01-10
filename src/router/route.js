@@ -99,6 +99,7 @@ const route = object.subclass((that, my) => {
 	 * @param {url} url
 	 * @returns {routeMatchResult}
 	 */
+	// eslint-disable-next-line no-shadow -- we should fix that later
 	that.matchUrl = function (url) {
 		let match = findMatch(url);
 		if (!match) {
@@ -216,6 +217,7 @@ const route = object.subclass((that, my) => {
 	 * @param {url} url
 	 * @returns {segment[]}
 	 */
+	// eslint-disable-next-line no-shadow -- we should fix that later
 	function findMatch(url) {
 		let urlSegments = url.getSegments();
 
@@ -289,6 +291,7 @@ const route = object.subclass((that, my) => {
 	 *
 	 * @returns {routeMatchResult}
 	 */
+	// eslint-disable-next-line no-shadow -- we should fix that later
 	function createMatchResult(match, url) {
 		let urlSegments = url.getSegments();
 

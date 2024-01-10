@@ -175,6 +175,7 @@ const router = object.subclass((that, my) => {
 	that.findRoute = function (predicate) {
 		let numRoutes = my.routeTable.length;
 		for (let routeIndex = 0; routeIndex < numRoutes; routeIndex++) {
+			// eslint-disable-next-line no-shadow -- we should fix that later
 			let route = my.routeTable[routeIndex];
 			if (predicate(route)) {
 				return route;
@@ -192,6 +193,7 @@ const router = object.subclass((that, my) => {
 	 */
 	that.getRouteByName = function (routeName) {
 		return that.findRoute(
+			// eslint-disable-next-line no-shadow -- we should fix that later
 			(route) => route.name && route.name === routeName,
 		);
 	};
@@ -201,6 +203,7 @@ const router = object.subclass((that, my) => {
 	 *
 	 * @param route
 	 */
+	// eslint-disable-next-line no-shadow -- we should fix that later
 	that.removeRoute = function (route) {
 		let index = my.routeTable.indexOf(route);
 		if (index === -1) {
@@ -226,6 +229,7 @@ const router = object.subclass((that, my) => {
 	 *
 	 * @returns {route}
 	 */
+	// eslint-disable-next-line no-shadow -- we should fix that later
 	that.pipeRoute = function (routeSpec, router) {
 		if (!routeSpec || !routeSpec.pattern) {
 			throw new Error("Route pattern required");
@@ -246,6 +250,7 @@ const router = object.subclass((that, my) => {
 	 * @param {router} router
 	 * @returns {route}
 	 */
+	// eslint-disable-next-line no-shadow -- we should fix that later
 	that.pipeNotFound = function (router) {
 		return that.routeNotFound.register((aRawUrl) => {
 			router.resolveUrl(aRawUrl);
@@ -278,6 +283,7 @@ const router = object.subclass((that, my) => {
 	 * @returns {string}
 	 */
 	that.linkTo = function (routeName, parameters, includeCurrentParameters) {
+		// eslint-disable-next-line no-shadow -- we should fix that later
 		let route = that.getRouteByName(routeName);
 		if (route) {
 			return my.location.linkToUrl(
@@ -340,6 +346,7 @@ const router = object.subclass((that, my) => {
 		parameters,
 		includeCurrentParameters,
 	) {
+		// eslint-disable-next-line no-shadow -- we should fix that later
 		let route = that.getRouteByName(routeName);
 		if (route) {
 			return my.location.setUrl(
@@ -602,6 +609,7 @@ const router = object.subclass((that, my) => {
 	 *
 	 * @param {route} route
 	 */
+	// eslint-disable-next-line no-shadow -- we should fix that later
 	my.addRoute = function (route) {
 		let routeIndex = my.routeTable.length;
 		if (route.priority !== undefined) {

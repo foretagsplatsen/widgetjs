@@ -90,12 +90,12 @@ export default class Widget2 {
 	 * of `_initializeSubwidgets()`). In particular, don't override
 	 * `constructor()`.
 	 */
-	_initialize(spec) {}
+	_initialize(_spec) {}
 
 	/**
 	 * Hook evaluated at the end of initialization.
 	 */
-	_initializeSubwidgets(spec) {}
+	_initializeSubwidgets(_spec) {}
 
 	//
 	// Public
@@ -370,7 +370,7 @@ export default class Widget2 {
 	 *
 	 * @param {htmlCanvas} html
 	 */
-	renderContentOn(html) {
+	renderContentOn(_html) {
 		throw new Error("Subclass responsibility");
 	}
 
