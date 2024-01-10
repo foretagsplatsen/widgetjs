@@ -56,10 +56,10 @@ import "jquery";
  * @param {{}} my
  * @returns {route}
  */
-const route = object.subclass(function (that, my) {
-	var segments;
-	var ignoreTrailingSegments;
-	var optionalSequences;
+const route = object.subclass((that, my) => {
+	let segments;
+	let ignoreTrailingSegments;
+	let optionalSequences;
 
 	my.initialize = function (spec) {
 		my.super();
@@ -99,13 +99,14 @@ const route = object.subclass(function (that, my) {
 	 * @param {url} url
 	 * @returns {routeMatchResult}
 	 */
+	// eslint-disable-next-line no-shadow -- we should fix that later
 	that.matchUrl = function (url) {
-		var match = findMatch(url);
+		let match = findMatch(url);
 		if (!match) {
 			return routeMatchResult.routeNoMatchResult;
 		}
 
-		var result = createMatchResult(match, url);
+		let result = createMatchResult(match, url);
 		my.events.trigger("matched", result);
 
 		return result;
@@ -120,12 +121,13 @@ const route = object.subclass(function (that, my) {
 	 * @returns {string} URL string
 	 */
 	that.expand = function (params) {
-		params = params || {};
+		params ||= {};
 
 		// Try to expand route into URL
-		var urlSegments = [];
-		segments.forEach(function (routeSegment) {
-			var urlSegment;
+		let urlSegments = [];
+
+		segments.forEach((routeSegment) => {
+			let urlSegment;
 			if (routeSegment.isParameter()) {
 				// Use supplied value for parameters
 				urlSegment = params[routeSegment.getName()];
@@ -147,9 +149,9 @@ const route = object.subclass(function (that, my) {
 			urlSegments.push(urlSegment);
 		});
 
-		var query = {};
+		let query = {};
 
-		Object.keys(params).forEach(function (param) {
+		Object.keys(params).forEach((param) => {
 			if (!that.hasParameter(param)) {
 				query[param] = params[param];
 				// Handle array param values
@@ -169,9 +171,9 @@ const route = object.subclass(function (that, my) {
 	 * @returns {boolean}
 	 */
 	that.hasParameter = function (name) {
-		return segments.some(function (segment) {
-			return segment.isParameter() && segment.getName() === name;
-		});
+		return segments.some(
+			(segment) => segment.isParameter() && segment.getName() === name,
+		);
 	};
 
 	/**
@@ -180,7 +182,7 @@ const route = object.subclass(function (that, my) {
 	 * @returns {string}
 	 */
 	that.toString = function () {
-		return "route(" + segments.join("/") + ")";
+		return `route(${segments.join("/")})`;
 	};
 
 	//
@@ -195,7 +197,7 @@ const route = object.subclass(function (that, my) {
 	 * @returns {boolean}
 	 */
 	function isMatch(urlSegments, sequence) {
-		sequence = sequence || segments;
+		sequence ||= segments;
 
 		// Can not match if different sizes
 		if (urlSegments.length !== sequence.length && !ignoreTrailingSegments) {
@@ -203,8 +205,8 @@ const route = object.subclass(function (that, my) {
 		}
 
 		// All routeSegments much match corresponding URL segment
-		return sequence.every(function (routeSegment, index) {
-			var urlSegment = urlSegments[index];
+		return sequence.every((routeSegment, index) => {
+			let urlSegment = urlSegments[index];
 			return urlSegment !== undefined && routeSegment.match(urlSegment);
 		});
 	}
@@ -215,8 +217,9 @@ const route = object.subclass(function (that, my) {
 	 * @param {url} url
 	 * @returns {segment[]}
 	 */
+	// eslint-disable-next-line no-shadow -- we should fix that later
 	function findMatch(url) {
-		var urlSegments = url.getSegments();
+		let urlSegments = url.getSegments();
 
 		// Try match url segments
 		if (isMatch(urlSegments)) {
@@ -224,7 +227,7 @@ const route = object.subclass(function (that, my) {
 		}
 
 		// then optional sequences
-		var sequenceIndex;
+		let sequenceIndex;
 		for (
 			sequenceIndex = 0;
 			sequenceIndex < optionalSequences.length;
@@ -243,8 +246,9 @@ const route = object.subclass(function (that, my) {
 	 */
 	function ensureOptionalSequences() {
 		// Find positions for optionals
-		var optionalPositions = [];
-		segments.forEach(function (segment, index) {
+		let optionalPositions = [];
+
+		segments.forEach((segment, index) => {
 			if (segment.isOptional()) {
 				optionalPositions.push(index);
 			}
@@ -252,22 +256,24 @@ const route = object.subclass(function (that, my) {
 
 		if (optionalPositions.length > 15) {
 			throw new Error(
-				'Too many optional arguments. "' +
-					optionalPositions.length +
-					'" optionals would generate  ' +
-					Math.pow(2, optionalPositions.length) +
-					" optional sequences.",
+				`Too many optional arguments. "${
+					optionalPositions.length
+				}" optionals would generate  ${Math.pow(
+					2,
+					optionalPositions.length,
+				)} optional sequences.`,
 			);
 		}
 
 		// Generate possible sequences
-		var possibleOptionalSequences = orderedSubsets(optionalPositions);
+		let possibleOptionalSequences = orderedSubsets(optionalPositions);
 
-		possibleOptionalSequences.forEach(function (sequence) {
+		possibleOptionalSequences.forEach((sequence) => {
 			// Clone segments array and remove optionals matching
 			// indexes in index sequence
-			var optionalSequence = segments.slice();
-			sequence.forEach(function (optionalIndex, numRemoved) {
+			let optionalSequence = segments.slice();
+
+			sequence.forEach((optionalIndex, numRemoved) => {
 				// Remove optional but take in to account that we have already
 				// removed {numRemoved} from permutation.
 				optionalSequence.splice(optionalIndex - numRemoved, 1);
@@ -285,16 +291,18 @@ const route = object.subclass(function (that, my) {
 	 *
 	 * @returns {routeMatchResult}
 	 */
+	// eslint-disable-next-line no-shadow -- we should fix that later
 	function createMatchResult(match, url) {
-		var urlSegments = url.getSegments();
+		let urlSegments = url.getSegments();
 
-		var parameterValues = {};
-		segments.forEach(function (routeSegment) {
+		let parameterValues = {};
+
+		segments.forEach((routeSegment) => {
 			if (!routeSegment.isParameter()) {
 				return;
 			}
 
-			var matchedIndex = match.indexOf(routeSegment);
+			let matchedIndex = match.indexOf(routeSegment);
 			if (matchedIndex >= 0) {
 				parameterValues[routeSegment.getName()] = routeSegment.getValue(
 					urlSegments[matchedIndex],
@@ -307,7 +315,7 @@ const route = object.subclass(function (that, my) {
 
 		return routeMatchResult({
 			route: that,
-			url: url,
+			url,
 			values: parameterValues,
 		});
 	}
@@ -324,14 +332,14 @@ const route = object.subclass(function (that, my) {
  * @returns {[[]]} Array with all subset arrays
  */
 function orderedSubsets(input) {
-	var results = [];
-	var result;
-	var mask;
-	var total = Math.pow(2, input.length);
+	let results = [];
+	let result;
+	let mask;
+	let total = Math.pow(2, input.length);
 
 	for (mask = 1; mask < total; mask++) {
 		result = [];
-		var i = input.length - 1;
+		let i = input.length - 1;
 		do {
 			if ((mask & (1 << i)) !== 0) {
 				result.unshift(input[i]);

@@ -90,12 +90,12 @@ export default class Widget2 {
 	 * of `_initializeSubwidgets()`). In particular, don't override
 	 * `constructor()`.
 	 */
-	_initialize(spec) {}
+	_initialize(_spec) {}
 
 	/**
 	 * Hook evaluated at the end of initialization.
 	 */
-	_initializeSubwidgets(spec) {}
+	_initializeSubwidgets(_spec) {}
 
 	//
 	// Public
@@ -180,7 +180,7 @@ export default class Widget2 {
 	 * See "renderOn".
 	 */
 	asJQuery() {
-		return jQuery("#" + this.getId());
+		return jQuery(`#${this.getId()}`);
 	}
 
 	/**
@@ -210,6 +210,7 @@ export default class Widget2 {
 	 */
 	triggerWillAttach() {
 		this._willAttach();
+
 		this._children.forEach((widget) => {
 			widget.triggerWillAttach();
 		});
@@ -369,7 +370,7 @@ export default class Widget2 {
 	 *
 	 * @param {htmlCanvas} html
 	 */
-	renderContentOn(html) {
+	renderContentOn(_html) {
 		throw new Error("Subclass responsibility");
 	}
 
@@ -405,6 +406,7 @@ export default class Widget2 {
 
 		this.willDetach();
 		this._willUpdate();
+
 		this._withAttachHooks(() => {
 			// clear content of root
 			this.asJQuery().empty();

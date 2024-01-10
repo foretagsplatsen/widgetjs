@@ -14,7 +14,7 @@ function parameterValidator(constraint) {
 
 	// Match against RegExp
 	if (constraint instanceof RegExp) {
-		var exp = new RegExp(constraint);
+		let exp = new RegExp(constraint);
 		return function (urlSegment) {
 			return exp.test(urlSegment);
 		};
@@ -22,11 +22,9 @@ function parameterValidator(constraint) {
 
 	// Match valid options in an array
 	if (Object.prototype.toString.call(constraint) === "[object Array]") {
-		var options = constraint.map(function (option) {
-			return option.toLowerCase();
-		});
+		let options = constraint.map((option) => option.toLowerCase());
 		return function (urlSegment) {
-			var val = urlSegment.toLowerCase();
+			let val = urlSegment.toLowerCase();
 			return options.indexOf(val) !== -1;
 		};
 	}
@@ -40,16 +38,18 @@ function parameterValidator(constraint) {
  * @param [my]
  * @returns {parameterSegment}
  */
-const parameterSegment = abstractSegment.subclass(function (that, my) {
+const parameterSegment = abstractSegment.subclass((that, my) => {
 	my.initialize = function (spec) {
 		my.super(spec);
 		my.name = my.segmentString.substr(1); // strip of the leading #
+
 		my.constraints =
 			(my.options.constraints &&
 				my.options.constraints[my.name] && [
 					my.options.constraints[my.name],
 				]) ||
 			[];
+
 		my.validators = my.constraints.map(parameterValidator).filter(Boolean);
 	};
 
@@ -102,9 +102,7 @@ const parameterSegment = abstractSegment.subclass(function (that, my) {
 	 * @returns {boolean}
 	 */
 	that.validate = function (urlSegment) {
-		return my.validators.every(function (validator) {
-			return validator(urlSegment);
-		});
+		return my.validators.every((validator) => validator(urlSegment));
 	};
 
 	/**
@@ -112,11 +110,11 @@ const parameterSegment = abstractSegment.subclass(function (that, my) {
 	 * @returns {*}
 	 */
 	that.toString = function () {
-		return "param(" + that.getName() + ")";
+		return `param(${that.getName()})`;
 	};
 });
 
-parameterSegment.class(function (that) {
+parameterSegment.class((that) => {
 	/**
 	 * Match segment strings with a leading `#`.
 	 * @param {string} segmentString

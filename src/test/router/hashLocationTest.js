@@ -4,13 +4,14 @@ import hashLocationModel from "../../router/hashLocation.js";
 // Helpers
 
 function delayedSteps() {
-	var steps = Array.prototype.slice.call(arguments);
+	let steps = Array.prototype.slice.call(arguments);
 
 	function next() {
 		if (steps.length === 0) {
 			return;
 		}
-		var fn = steps.shift();
+		let fn = steps.shift();
+
 		setTimeout(function () {
 			next(fn.apply(next, arguments));
 		}, 10);
@@ -25,11 +26,11 @@ function setHash(aHash) {
 	jQuery(window).trigger("hashchange");
 }
 
-var my;
-var hashLocation;
+let my;
+let hashLocation;
 
-describe("hashLocation", function () {
-	beforeEach(function () {
+describe("hashLocation", () => {
+	beforeEach(() => {
 		window.location.hash = "";
 
 		my = {};
@@ -37,7 +38,7 @@ describe("hashLocation", function () {
 		jasmine.clock().install();
 	});
 
-	afterEach(function () {
+	afterEach(() => {
 		if (hashLocation) {
 			hashLocation.stop();
 		}
@@ -45,13 +46,13 @@ describe("hashLocation", function () {
 		jasmine.clock().uninstall();
 	});
 
-	it("hash defaults", function () {
+	it("hash defaults", () => {
 		// Assert that defaults are correct
 		expect(my.currentHash).toBe(undefined);
 		expect(my.history.length).toBe(0);
 	});
 
-	it("start() initilize hash", function () {
+	it("start() initilize hash", () => {
 		// Arrange: set a location hash
 		window.location.hash = "#!/test";
 
@@ -64,7 +65,7 @@ describe("hashLocation", function () {
 		expect(my.history[0]).toBe(my.currentHash);
 	});
 
-	it("start() resets hash", function () {
+	it("start() resets hash", () => {
 		// Arrange: add some history
 		hashLocation.start();
 		setHash("#!/a");
@@ -78,19 +79,19 @@ describe("hashLocation", function () {
 		expect(my.history[0]).toBe(my.currentHash);
 	});
 
-	it("getUrl() returns location.hash minus hash-bang", function () {
+	it("getUrl() returns location.hash minus hash-bang", () => {
 		// Arrange: set a location hash
 		window.location.hash = "#!/test";
 
 		// Act: get current URL
 		hashLocation.start();
-		var currentUrl = hashLocation.getUrl();
+		let currentUrl = hashLocation.getUrl();
 
 		// Assert that URL is location hash minus hash-bang
 		expect(currentUrl.toString()).toBe("test");
 	});
 
-	it("setUrl() adds hash-bang", function () {
+	it("setUrl() adds hash-bang", () => {
 		// Act: set url
 		hashLocation.start();
 		hashLocation.setUrl("test");
@@ -99,17 +100,17 @@ describe("hashLocation", function () {
 		expect(my.currentHash).toBe("#!/test");
 	});
 
-	it("linkToUrl() return link for href:s", function () {
+	it("linkToUrl() return link for href:s", () => {
 		// Act: create link to URL
-		var link = hashLocation.linkToUrl("someurl");
+		let link = hashLocation.linkToUrl("someurl");
 
 		// Assert that URL have hash-bang
 		expect(link).toBe("#!/someurl");
 	});
 
-	it("setUrl() triggers change", function () {
-		var anotherHashLocation = hashLocationModel();
-		var spy = jasmine.createSpy("changed event");
+	it("setUrl() triggers change", () => {
+		let anotherHashLocation = hashLocationModel();
+		let spy = jasmine.createSpy("changed event");
 
 		// Arrange: listen for url changes
 		anotherHashLocation.changed.register(spy);
@@ -128,50 +129,51 @@ describe("hashLocation", function () {
 		anotherHashLocation.stop();
 	});
 
-	it("back()", function (callback) {
+	it("back()", (callback) => {
 		delayedSteps(
-			function () {
+			() => {
 				hashLocation.stop();
 				window.location.hash = ""; // start hash
 				hashLocation.start();
 			},
-			function () {
+			() => {
 				hashLocation.setUrl("a");
 			},
-			function () {
+			() => {
 				hashLocation.setUrl("b");
 			},
-			function () {
+			() => {
 				expect(hashLocation.getUrl().toString()).toBe("b");
 			},
-			function () {
+			() => {
 				hashLocation.back();
 			},
-			function () {
+			() => {
 				expect(hashLocation.getUrl().toString()).toBe("a");
 			},
-			function () {
+			() => {
 				hashLocation.back();
 			},
-			function () {
+			() => {
 				expect(hashLocation.getUrl().toString()).toBe("");
 			},
-			function () {
+			() => {
 				hashLocation.back();
 			},
-			function () {
+			() => {
 				expect(hashLocation.getUrl().toString()).toBe("");
 			},
-			function () {
+			() => {
 				hashLocation.back("fallback");
 			},
-			function () {
+			() => {
 				expect(hashLocation.getUrl().toString()).toBe("fallback");
 			},
-			function () {
+			() => {
 				callback();
 			},
 		);
+
 		jasmine.clock().tick(131);
 	});
 });

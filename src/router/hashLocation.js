@@ -7,12 +7,12 @@ import { object } from "klassified";
  * In modern browsers we use the "hashchange" event to listen for location changes. If not supported
  * we poll for changes using a timer.
  */
-var noHashChangeSupport = !("onhashchange" in window);
+let noHashChangeSupport = !("onhashchange" in window);
 
 /**
  * Num ms between each location change poll on browsers without "hashchange"
  */
-var pollInterval = 25;
+let pollInterval = 25;
 
 /**
  * Manages and listens for changes in the hash fragment of the URL.
@@ -30,8 +30,8 @@ var pollInterval = 25;
  * @param [my]
  * @returns {hashLocation}
  */
-const hashLocation = object.subclass(function (that, my) {
-	var pollTimerId = null;
+const hashLocation = object.subclass((that, my) => {
+	let pollTimerId = null;
 
 	my.currentHash = undefined; // last hash fragment
 	my.history = []; // history of visited hash fragments
@@ -56,7 +56,7 @@ const hashLocation = object.subclass(function (that, my) {
 	 * @param {url|string} aUrl
 	 */
 	that.setUrl = function (aUrl) {
-		var aHash = urlToHash(aUrl);
+		let aHash = urlToHash(aUrl);
 		setWindowHash(aHash);
 		setCurrentHash(aHash);
 	};
@@ -149,7 +149,7 @@ const hashLocation = object.subclass(function (that, my) {
 		if (typeof aUrl === "string") {
 			aUrl = url({ rawUrl: aUrl });
 		}
-		return "#!/" + aUrl.toString();
+		return `#!/${aUrl.toString()}`;
 	}
 
 	function urlFromHash(aHash) {
@@ -158,7 +158,7 @@ const hashLocation = object.subclass(function (that, my) {
 	}
 
 	function setCurrentHash(newHash) {
-		newHash = newHash || getWindowHash();
+		newHash ||= getWindowHash();
 
 		if (my.currentHash !== newHash) {
 			my.currentHash = newHash;
@@ -169,9 +169,9 @@ const hashLocation = object.subclass(function (that, my) {
 	}
 
 	function check() {
-		var windowHash = getWindowHash();
+		let windowHash = getWindowHash();
 
-		var urlChanged = my.currentHash !== windowHash;
+		let urlChanged = my.currentHash !== windowHash;
 		if (urlChanged) {
 			setCurrentHash(windowHash);
 		}
