@@ -467,7 +467,7 @@ describe("htmlCanvas", () => {
 	it("can render almost everything", () => {
 		withCanvas((html) => {
 			html.render(0); // toString()
-			html.render(3.14159265359); // toString()
+			html.render(3.141_592_653_59); // toString()
 			html.render("<div>test</div>"); // => DIV element
 			html.render({}); // as attributes but since it have no keys => nothing
 			html.render([]); // as array but since empty => nothing
