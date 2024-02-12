@@ -52,8 +52,7 @@ function segmentFactory(segmentString, options) {
 	let segments = abstractSegment.allSubclasses();
 
 	// Find segment type from string
-	for (let i = 0; i < segments.length; i++) {
-		let segment = segments[i];
+	for (let segment of segments) {
 		if (segment.match(segmentString)) {
 			return segment({
 				segmentString,

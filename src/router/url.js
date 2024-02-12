@@ -93,11 +93,7 @@ const url = object.subclass((that, my) => {
  * @returns {url}
  */
 url.build = function (path, query) {
-	if (
-		typeof path === "undefined" ||
-		path === null ||
-		typeof path !== "string"
-	) {
+	if (path === undefined || path === null || typeof path !== "string") {
 		throw "accepts only string paths";
 	}
 

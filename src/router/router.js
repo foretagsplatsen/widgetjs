@@ -443,9 +443,9 @@ const router = object.subclass((that, my) => {
 		}
 
 		// Merge current parameters with supplied parameters
-		let currentParameters = !excludeCurrentParameters
-			? that.getParameters()
-			: {};
+		let currentParameters = excludeCurrentParameters
+			? {}
+			: that.getParameters();
 		let allParameters = merge(currentParameters, suppliedParameters);
 
 		// Fill with defaults if needed

@@ -268,10 +268,10 @@ Array.prototype.appendToBrush = function (brush) {
  * @param {string|HTMLElement} child
  */
 TagBrushConstructor.prototype.appendChild = function (child) {
-	if (this.element.canHaveChildren !== false) {
-		this.element.appendChild(child);
-	} else {
+	if (this.element.canHaveChildren === false) {
 		this.element.text = this.element.text + child.innerHTML;
+	} else {
+		this.element.appendChild(child);
 	}
 };
 
@@ -343,8 +343,8 @@ TagBrushConstructor.prototype.getElement = function (object) {
  */
 TagBrushConstructor.prototype.render = function () {
 	let args = Array.prototype.slice.call(arguments);
-	for (let i = 0; i < args.length; i++) {
-		this.append(args[i]);
+	for (const arg of args) {
+		this.append(arg);
 	}
 	return this;
 };

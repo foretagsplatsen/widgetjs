@@ -154,7 +154,7 @@ const hashLocation = object.subclass((that, my) => {
 
 	function urlFromHash(aHash) {
 		// Remove hash/hash-bang and any leading /
-		return url({ rawUrl: aHash.replace(/^#!?[/]?/, "") });
+		return url({ rawUrl: aHash.replace(/^#!?\/?/, "") });
 	}
 
 	function setCurrentHash(newHash) {
