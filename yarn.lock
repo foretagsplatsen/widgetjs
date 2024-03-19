@@ -3069,9 +3069,10 @@ ws@>=8.14.2:
   resolved "https://registry.yarnpkg.com/ws/-/ws-8.16.0.tgz#d1cd774f36fbc07165066a60e40323eab6446fd4"
   integrity sha512-HS0c//TP7Ina87TfiPUz1rQzMhHrl/SG2guqRcTOIUYD2q8uhUdNHZYJUaQ8aTGPzCh+c6oawMKW35nFl1dxyQ==
 
-yaem@foretagsplatsen/yaem#v0.1.0:
-  version "0.1.0"
-  resolved "https://codeload.github.com/foretagsplatsen/yaem/tar.gz/63ec74b4e145cfe5eef4030f38b2f90a07688393"
+yaem@foretagsplatsen/yaem#1.0.0:
+  version "1.0.0"
+  uid "0a35de392ab213c83ab1fa47df2e9019a20a3749"
+  resolved "https://codeload.github.com/foretagsplatsen/yaem/tar.gz/0a35de392ab213c83ab1fa47df2e9019a20a3749"
 
 yallist@^4.0.0:
   version "4.0.0"
