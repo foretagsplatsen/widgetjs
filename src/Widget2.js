@@ -12,17 +12,17 @@ import { newId } from "./idGenerator.js";
  * @example
  *
  * class TitleWidget extends Widget {
- *   _initialize(spec) {
- *       this._title = spec.title || "Hello World";
+ *   constructor({ title }) {
+ *       this._title = title || "Hello World";
  *   }
  *
  *   renderContentOn(html) {
- *     html.h1(title);
+ *     html.h1(this._title);
  *   }
  *
  * };
  *
- * let helloWorldWidget = new TitleWidget({title: "Hello Widget!"});
+ * let helloWorldWidget = new TitleWidget({ title: "Hello Widget!" });
  *
  * $(document).ready(() => {
  *   helloWorldWidget.appendTo("BODY");
@@ -79,23 +79,7 @@ export default class Widget2 {
 		this._getParameters = this._router.getParameters;
 		this._getParameter = this._router.getParameter;
 		this._setParameters = this._router.setParameters;
-
-		this._initialize(...arguments);
-		this._initializeSubwidgets(...arguments);
 	}
-
-	/**
-	 * Hook evaluated at the beginning of initialization. Always
-	 * implement initialization code in overrides of this method (or
-	 * of `_initializeSubwidgets()`). In particular, don't override
-	 * `constructor()`.
-	 */
-	_initialize(_spec) {}
-
-	/**
-	 * Hook evaluated at the end of initialization.
-	 */
-	_initializeSubwidgets(_spec) {}
 
 	//
 	// Public
