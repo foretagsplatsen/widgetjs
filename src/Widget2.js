@@ -1,7 +1,7 @@
 import router from "./router.js";
 import { eventCategory } from "yaem";
 import htmlCanvas from "./htmlCanvas.js";
-import jQuery from "jquery";
+import jQuery from "./lib-wrappers/jquery.js";
 import { getCurrentWidget, withCurrentWidget } from "./currentWidget.js";
 import { newId } from "./idGenerator.js";
 

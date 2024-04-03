@@ -1,4 +1,4 @@
-import jQuery from "jquery";
+import jQuery from "../lib-wrappers/jquery.js";
 import { eventCategory } from "yaem";
 import url from "./url.js";
 import { object } from "klassified";
