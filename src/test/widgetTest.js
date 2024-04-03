@@ -1,6 +1,6 @@
 import widget from "../widget.js";
 import htmlCanvas from "../htmlCanvas.js";
-import jQuery from "jquery";
+import jQuery from "../lib-wrappers/jquery.js";
 
 let widgetSubclass = widget.subclass((that) => {
 	that.renderContentOn = function (html) {
