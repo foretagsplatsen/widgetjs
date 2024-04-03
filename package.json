@@ -37,8 +37,6 @@
     "klassified": "^4.0.0"
   },
   "scripts": {
-    "build": "webpack --config webpack.config.js",
-    "build-test": "webpack --config webpack.jasmine.config.js",
     "lint": "eslint --max-warnings 0 --format unix --report-unused-disable-directives .",
     "test": "jasmine-browser-runner runSpecs --config=jasmine-browser.json"
   },
@@ -48,8 +46,6 @@
     "jasmine": "^5.1.0",
     "jasmine-browser-runner": "^2.4.0",
     "jasmine-reporters": "^2.5.2",
-    "webpack": "^5.91.0",
-    "webpack-cli": "^5.1.4",
     "yaem": "foretagsplatsen/yaem#1.0.0"
   },
   "peerDependencies": {
