@@ -38,7 +38,8 @@
   },
   "scripts": {
     "lint": "eslint --max-warnings 0 --format unix --report-unused-disable-directives .",
-    "test": "jasmine-browser-runner runSpecs --config=jasmine-browser.json"
+    "test:run": "jasmine-browser-runner runSpecs --config=jasmine-browser.json",
+    "test:serve": "jasmine-browser-runner serve --config=jasmine-browser.json --port=8881"
   },
   "devDependencies": {
     "@foretagsplatsen/eslint-plugin": "^6.0.0",
