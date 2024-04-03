@@ -1,8 +1,18 @@
 {
   "srcDir": ".",
   "specDir": ".",
-  "specFiles": ["dist/jasmine.js"],
+  "specFiles": ["src/test/**/*Test.js"],
+  "esmFilenameExtension": ".js",
   "browser": {
     "name": "headlessChrome"
+  },
+  "importMap": {
+    "moduleRootDir": "node_modules",
+    "imports": {
+       "classnames":"classnames/index.js",
+      "jquery":"jquery/dist/jquery.js",
+      "klassified":"klassified/src/klassified.js",
+      "yaem":"yaem/index.js"
+    }
   }
 }
