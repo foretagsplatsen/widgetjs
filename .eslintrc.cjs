@@ -11,7 +11,7 @@ module.exports = {
 					// List of files exporting stuff which are not imported:
 					"src/widgetjs.js",
 					// List of files not exporting anything:
-					"**/.eslintrc.js",
+					"**/.eslintrc.cjs",
 					"src/router/optionalParameterSegment.js",
 					"src/router/staticSegment.js",
 				],
