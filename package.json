@@ -4,6 +4,7 @@
   "version": "8.0.1",
   "homepage": "http://github.com/foretagsplatsen/widgetjs",
   "main": "src/widgetjs.js",
+  "type": "module",
   "author": "Företagsplatsen A.B.",
   "contributors": [
     "Nicolas Petton <nicolas@petton.fr>",
