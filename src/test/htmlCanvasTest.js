@@ -2,7 +2,7 @@ import htmlCanvas from "../htmlCanvas.js";
 import jQuery from "../lib-wrappers/jquery.js";
 
 function withCanvas(callback) {
-	$("BODY").append('<div id="sandbox"></div>');
+	jQuery("BODY").append('<div id="sandbox"></div>');
 	let sandbox = jQuery("#sandbox");
 
 	let html = htmlCanvas(sandbox);
@@ -24,7 +24,7 @@ describe("htmlCanvas", () => {
 		expect(html).toBeTruthy();
 		expect(html.root).toBeTruthy();
 		expect(html.root.element).toBeTruthy();
-		expect($("BODY").is(html.root.element)).toBeTruthy();
+		expect(jQuery("BODY").is(html.root.element)).toBeTruthy();
 	});
 
 	it("throws exception if jQuery dont match element", () => {
@@ -266,7 +266,7 @@ describe("htmlCanvas", () => {
 		withCanvas((html) => {
 			// Arrange a div with10 sub span supplied to DIV as an array
 			html.div(
-				$.map([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], (num) =>
+				jQuery.map([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], (num) =>
 					html.span(num.toString()),
 				),
 			).id("test_div");

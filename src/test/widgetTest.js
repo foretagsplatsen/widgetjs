@@ -24,7 +24,7 @@ function withWidget(callback) {
 }
 
 function withCanvas(callback) {
-	$("BODY").append('<div id="sandbox"></div>');
+	jQuery("BODY").append('<div id="sandbox"></div>');
 	let sandbox = jQuery("#sandbox");
 
 	let html = htmlCanvas(sandbox);
