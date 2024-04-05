@@ -22,7 +22,6 @@ function delayedSteps() {
 
 function setHash(aHash) {
 	window.location.hash = aHash;
-	window.open(window.location, "_self", true);
 	jQuery(window).trigger("hashchange");
 }
 
