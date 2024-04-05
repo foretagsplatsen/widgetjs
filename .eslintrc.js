@@ -1,6 +1,11 @@
+/* eslint-env commonjs */
+
 module.exports = {
 	root: true,
 	extends: ["plugin:@foretagsplatsen/main"],
+	// workaround for plugin:@foretagsplatsen/main enabling many
+	// unwanted environments:
+	env: { amd: false, jquery: false, node: false, jasmine: false },
 	rules: {
 		"import/no-unused-modules": [
 			"error",

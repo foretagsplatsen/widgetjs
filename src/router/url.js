@@ -1,4 +1,5 @@
 import { object } from "klassified";
+import jQuery from "../lib-wrappers/jquery.js";
 
 /**
  * Token/Char used to separate segments in URL paths.
