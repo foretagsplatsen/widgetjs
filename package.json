@@ -35,7 +35,7 @@
   "dependencies": {
     "classnames": "^2.5.1",
     "jquery": "^3.5.0",
-    "klassified": "^4.0.0"
+    "klassified": "^4.0.1"
   },
   "scripts": {
     "lint": "eslint --max-warnings 0 --format unix --report-unused-disable-directives .",
