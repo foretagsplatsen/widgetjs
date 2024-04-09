@@ -77,10 +77,6 @@ const widget = object.subclass((that, my) => {
 	that.onAttach = my.events.createEvent();
 	that.onDetach = my.events.createEvent();
 
-	//
-	// Public
-	//
-
 	/**
 	 * Returns a unique id for the widget
 	 *
@@ -259,10 +255,6 @@ const widget = object.subclass((that, my) => {
 	that.unregister = my.events.unregister;
 	that.trigger = my.events.trigger;
 
-	//
-	// Protected
-	//
-
 	/**
 	 * Exposes the internal ID generator. Generates new unique IDs to be used
 	 * for sub-widgets, etc.
@@ -295,10 +287,6 @@ const widget = object.subclass((that, my) => {
 	my.getParameters = my.router.getParameters;
 	my.getParameter = my.router.getParameter;
 	my.setParameters = my.router.setParameters;
-
-	//
-	// Render
-	//
 
 	/**
 	 * Private rendering function.    This is the function

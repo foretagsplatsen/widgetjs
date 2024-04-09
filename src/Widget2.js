@@ -81,10 +81,6 @@ export default class Widget2 {
 		this._setParameters = this._router.setParameters;
 	}
 
-	//
-	// Public
-	//
-
 	/**
 	 * Returns a unique id for the widget
 	 *
@@ -248,10 +244,6 @@ export default class Widget2 {
 		names.forEach((name) => this._createEvent(name));
 	}
 
-	//
-	// Protected
-	//
-
 	/**
 	 * Exposes the internal ID generator. Generates new unique IDs to
 	 * be used for sub-widgets, etc.
@@ -266,10 +258,6 @@ export default class Widget2 {
 	 * Widget specific dispose.
 	 */
 	_dispose() {}
-
-	//
-	// Render
-	//
 
 	/**
 	 * Private rendering function.    This is the function
