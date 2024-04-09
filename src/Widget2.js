@@ -211,6 +211,110 @@ export default class Widget2 {
 	}
 
 	/**
+	 * Main entry point for rendering. For convenience "renderOn" will    wrap the content
+	 * rendered by "renderContentOn" in a root element (renderRootOn) that will be matched
+	 * by asJQuery.
+	 *
+	 * Usually concrete widgets override "renderContentOn" to render it content. Widgets
+	 * can override "renderOn" but must then make sure that it can be matched by "asJQuery".
+	 *
+	 * One way to do that is to make sure to have only one root element and setting the ID of
+	 * that element to the ID of the widget.
+	 *
+	 * @example
+	 *
+	 *        renderOn(html) {
+	 *			html.ul({id: that.getId()}
+	 *				html.li("BMW"),
+	 *				html.li("Toyota")
+	 *			);
+	 *		};
+	 *
+	 *
+	 * @param html
+	 */
+	renderOn(html) {
+		// Renders widget by wrapping `renderContentOn()` in a root element.
+		this._renderRootOn(html).render(this.renderContentOn.bind(this));
+	}
+
+	registerChild(widget) {
+		this._children.push(widget);
+	}
+
+	/**
+	 * Overridden in concrete widgets to render widget to canvas/DOM.
+	 *
+	 * @example
+	 *
+	 *        renderContentOn(html) {
+	 *			html.ul(
+	 *				html.li("BMW"),
+	 *				html.li("Toyota")
+	 *			);
+	 *		};
+	 *
+	 * @param {htmlCanvas} html
+	 */
+	renderContentOn(_html) {
+		throw new Error("Subclass responsibility");
+	}
+
+	/**
+	 * Re-renders the widget and replace it in the DOM
+	 */
+	update() {
+		if (this._inUpdateTransaction || !this.isRendered()) {
+			return;
+		}
+
+		this.willDetach();
+		this._willUpdate();
+
+		this._withAttachHooks(() => {
+			// clear content of root
+			this.asJQuery().empty();
+
+			// re-render content on root
+			let html = htmlCanvas(this.asJQuery());
+
+			this._withChildrenRegistration(() => {
+				this.renderContentOn(html);
+			});
+		});
+	}
+
+	withinTransaction(fn, onDone) {
+		if (this._inUpdateTransaction) {
+			fn();
+		} else {
+			try {
+				this._inUpdateTransaction = true;
+				fn();
+			} finally {
+				this._inUpdateTransaction = false;
+				if (onDone) {
+					onDone();
+				}
+			}
+		}
+	}
+
+	/**
+	 * Evaluate `fn`, ensuring that an update will be
+	 * performed after evaluating the function. Nested calls
+	 * to `withUpdate` or `update` will result in updating the
+	 * widget only once.
+	 */
+	withUpdate(fn) {
+		this.withinTransaction(fn, this.update.bind(this));
+	}
+
+	withNoUpdate(fn) {
+		this.withinTransaction(fn);
+	}
+
+	/**
 	 * Evaluate `fn`, calling `willAttach` before and `didAttach` after
 	 * the evaluation.
 	 */
@@ -271,34 +375,6 @@ export default class Widget2 {
 		});
 	}
 
-	/**
-	 * Main entry point for rendering. For convenience "renderOn" will    wrap the content
-	 * rendered by "renderContentOn" in a root element (renderRootOn) that will be matched
-	 * by asJQuery.
-	 *
-	 * Usually concrete widgets override "renderContentOn" to render it content. Widgets
-	 * can override "renderOn" but must then make sure that it can be matched by "asJQuery".
-	 *
-	 * One way to do that is to make sure to have only one root element and setting the ID of
-	 * that element to the ID of the widget.
-	 *
-	 * @example
-	 *
-	 *        renderOn(html) {
-	 *			html.ul({id: that.getId()}
-	 *				html.li("BMW"),
-	 *				html.li("Toyota")
-	 *			);
-	 *		};
-	 *
-	 *
-	 * @param html
-	 */
-	renderOn(html) {
-		// Renders widget by wrapping `renderContentOn()` in a root element.
-		this._renderRootOn(html).render(this.renderContentOn.bind(this));
-	}
-
 	_withChildrenRegistration(fn) {
 		let parent = getCurrentWidget();
 
@@ -312,10 +388,6 @@ export default class Widget2 {
 		}, this);
 	}
 
-	registerChild(widget) {
-		this._children.push(widget);
-	}
-
 	/**
 	 * Renders a wrapper element (by default a "widgetjs-widget" tag) and
 	 * sets the element ID to the ID of the widget so that it can be found by
@@ -326,24 +398,6 @@ export default class Widget2 {
 	 */
 	_renderRootOn(html) {
 		return html.tag("widgetjs-widget").id(this._id);
-	}
-
-	/**
-	 * Overridden in concrete widgets to render widget to canvas/DOM.
-	 *
-	 * @example
-	 *
-	 *        renderContentOn(html) {
-	 *			html.ul(
-	 *				html.li("BMW"),
-	 *				html.li("Toyota")
-	 *			);
-	 *		};
-	 *
-	 * @param {htmlCanvas} html
-	 */
-	renderContentOn(_html) {
-		throw new Error("Subclass responsibility");
 	}
 
 	/**
@@ -367,58 +421,4 @@ export default class Widget2 {
 	 * Hook evaluated before widget update.
 	 */
 	_willUpdate() {}
-
-	/**
-	 * Re-renders the widget and replace it in the DOM
-	 */
-	update() {
-		if (this._inUpdateTransaction || !this.isRendered()) {
-			return;
-		}
-
-		this.willDetach();
-		this._willUpdate();
-
-		this._withAttachHooks(() => {
-			// clear content of root
-			this.asJQuery().empty();
-
-			// re-render content on root
-			let html = htmlCanvas(this.asJQuery());
-
-			this._withChildrenRegistration(() => {
-				this.renderContentOn(html);
-			});
-		});
-	}
-
-	withinTransaction(fn, onDone) {
-		if (this._inUpdateTransaction) {
-			fn();
-		} else {
-			try {
-				this._inUpdateTransaction = true;
-				fn();
-			} finally {
-				this._inUpdateTransaction = false;
-				if (onDone) {
-					onDone();
-				}
-			}
-		}
-	}
-
-	/**
-	 * Evaluate `fn`, ensuring that an update will be
-	 * performed after evaluating the function. Nested calls
-	 * to `withUpdate` or `update` will result in updating the
-	 * widget only once.
-	 */
-	withUpdate(fn) {
-		this.withinTransaction(fn, this.update.bind(this));
-	}
-
-	withNoUpdate(fn) {
-		this.withinTransaction(fn);
-	}
 }
