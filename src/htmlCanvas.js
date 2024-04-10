@@ -1,5 +1,5 @@
-import jQuery from "./lib-wrappers/jquery.js";
-import classNames from "./lib-wrappers/classnames.js";
+import jQuery from "jquery";
+import classNames from "classnames";
 
 /**
  * @typedef {function} renderer

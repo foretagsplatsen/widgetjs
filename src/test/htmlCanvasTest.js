@@ -1,5 +1,5 @@
 import htmlCanvas from "../htmlCanvas.js";
-import jQuery from "../lib-wrappers/jquery.js";
+import jQuery from "jquery";
 
 function withCanvas(callback) {
 	jQuery("BODY").append('<div id="sandbox"></div>');
