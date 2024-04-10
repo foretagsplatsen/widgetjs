@@ -1,5 +1,6 @@
 import htmlCanvas from "../htmlCanvas.js";
 import jQuery from "jquery";
+import { describe, it, expect } from "@jest/globals";
 
 function withCanvas(callback) {
 	jQuery("BODY").append('<div id="sandbox"></div>');
@@ -30,10 +31,12 @@ describe("htmlCanvas", () => {
 	it("throws exception if jQuery dont match element", () => {
 		expect(() => {
 			htmlCanvas("#notfound");
-		}).toThrowError("htmlTagBrush requires an element");
+		}).toThrow("htmlTagBrush requires an element");
 	});
 
 	it("can render HTML tags", () => {
+		expect.assertions(2);
+
 		withCanvas((html) => {
 			// Arrange: a Hello World! H1
 			html.h1("Hello World!");
@@ -49,6 +52,8 @@ describe("htmlCanvas", () => {
 	});
 
 	it("standard attributes are supported", () => {
+		expect.assertions(2);
+
 		withCanvas((html) => {
 			// Arrange: a Google link
 			html.a("Google").id("test_id").href("http://www.google.se");
@@ -64,6 +69,8 @@ describe("htmlCanvas", () => {
 	});
 
 	it("render object literal attributes", () => {
+		expect.assertions(3);
+
 		withCanvas((html) => {
 			// Arrange: a div with attributes
 			html.div(
@@ -90,6 +97,8 @@ describe("htmlCanvas", () => {
 
 	describe("should omit an attribute", () => {
 		it("when value is html.omit()", () => {
+			expect.assertions(2);
+
 			withCanvas((html) => {
 				// Arrange: a div with attributes
 				html.div(
@@ -111,6 +120,8 @@ describe("htmlCanvas", () => {
 		});
 
 		it("when value is undefined", () => {
+			expect.assertions(1);
+
 			withCanvas((html) => {
 				let attributeName = "data-test";
 
@@ -121,6 +132,8 @@ describe("htmlCanvas", () => {
 		});
 
 		it("when value is null", () => {
+			expect.assertions(1);
+
 			withCanvas((html) => {
 				let attributeName = "data-test";
 
@@ -131,6 +144,8 @@ describe("htmlCanvas", () => {
 		});
 
 		it("when value if false", () => {
+			expect.assertions(1);
+
 			withCanvas((html) => {
 				let attributeName = "data-test";
 
@@ -141,6 +156,8 @@ describe("htmlCanvas", () => {
 		});
 
 		it("when value is the empty string", () => {
+			expect.assertions(1);
+
 			withCanvas((html) => {
 				let attributeName = "data-test";
 
@@ -152,6 +169,8 @@ describe("htmlCanvas", () => {
 	});
 
 	it("callbacks can be attached to events", () => {
+		expect.assertions(2);
+
 		withCanvas((html) => {
 			let clicked = false;
 
@@ -174,11 +193,13 @@ describe("htmlCanvas", () => {
 			// and click triggers callback
 			linkEl.click();
 
-			expect(clicked).toBe(true);
+			expect(clicked).toBeTrue();
 		});
 	});
 
 	it("callbacks can be attached using attributes", () => {
+		expect.assertions(2);
+
 		withCanvas((html) => {
 			let clicked = false;
 
@@ -197,11 +218,13 @@ describe("htmlCanvas", () => {
 			// and click triggers callback
 			linkEl.click();
 
-			expect(clicked).toBe(true);
+			expect(clicked).toBeTrue();
 		});
 	});
 
 	it("tags can be nested", () => {
+		expect.assertions(3);
+
 		withCanvas((html) => {
 			// Arrange: a inner and outer div with a span as inner child
 			html.div(
@@ -217,6 +240,8 @@ describe("htmlCanvas", () => {
 	});
 
 	it("can omit nested tags", () => {
+		expect.assertions(3);
+
 		withCanvas((html) => {
 			// Arrange: a inner and outer div with a span as inner child
 			// where the child is omitted
@@ -233,6 +258,8 @@ describe("htmlCanvas", () => {
 	});
 
 	it("parts can be assigned to variables", () => {
+		expect.assertions(2);
+
 		withCanvas((html) => {
 			// Arrange a button, assign to variable and then set class
 			let button = html.a("Home").id("test_button").href("/");
@@ -245,6 +272,8 @@ describe("htmlCanvas", () => {
 	});
 
 	it("render() can append objects to brush", () => {
+		expect.assertions(1);
+
 		withCanvas((html) => {
 			// Arrange: a DIV
 			let div = html.div().id("aDiv");
@@ -258,6 +287,8 @@ describe("htmlCanvas", () => {
 	});
 
 	it("can render arrays", () => {
+		expect.assertions(1);
+
 		withCanvas((html) => {
 			// Arrange a div with10 sub span supplied to DIV as an array
 			html.div(
@@ -267,11 +298,13 @@ describe("htmlCanvas", () => {
 			).id("test_div");
 
 			// Assert:
-			expect(jQuery("#test_div > SPAN").length).toBe(10);
+			expect(jQuery("#test_div > SPAN")).toHaveLength(10);
 		});
 	});
 
 	it("can render several objects using html.render", () => {
+		expect.assertions(1);
+
 		withCanvas((html) => {
 			// Arrange
 			html.div((html) => {
@@ -279,27 +312,31 @@ describe("htmlCanvas", () => {
 			}).id("test_div");
 
 			// Assert:
-			expect(jQuery("#test_div > SPAN").length).toBe(2);
+			expect(jQuery("#test_div > SPAN")).toHaveLength(2);
 		});
 	});
 
 	it("throws error if object to append is null or undefined", () => {
+		expect.assertions(2);
+
 		withCanvas((html) => {
 			expect(() => {
 				html.render(null);
-			}).toThrowError(
+			}).toThrow(
 				"Cannot read properties of null (reading 'appendToBrush')",
 			);
 
 			expect(() => {
 				html.render(undefined);
-			}).toThrowError(
+			}).toThrow(
 				"Cannot read properties of undefined (reading 'appendToBrush')",
 			);
 		});
 	});
 
 	it("can render with html function", () => {
+		expect.assertions(2);
+
 		withCanvas((html) => {
 			// Arrange a function that take a canvas as argument.
 			function htmlFn(html2) {
@@ -316,6 +353,8 @@ describe("htmlCanvas", () => {
 	});
 
 	it("delegates rendering to objects implementing appendToBrush()", () => {
+		expect.assertions(1);
+
 		withCanvas((html) => {
 			function appendableObject() {
 				let that = {};
@@ -336,6 +375,8 @@ describe("htmlCanvas", () => {
 	});
 
 	it("rendering html strings not allowed by default", () => {
+		expect.assertions(1);
+
 		withCanvas((html) => {
 			// Arrange:
 			let htmlString = '<div id="unescaped">foo</div>';
@@ -348,7 +389,9 @@ describe("htmlCanvas", () => {
 		});
 	});
 
-	it("rendering of strings is escaped ", () => {
+	it("rendering of strings is escaped", () => {
+		expect.assertions(1);
+
 		withCanvas((html) => {
 			// Arrange:
 			let htmlString = "<>&foo";
@@ -361,7 +404,9 @@ describe("htmlCanvas", () => {
 		});
 	});
 
-	it("rendering using `html()` does not escape ", () => {
+	it("rendering using `html()` does not escape", () => {
+		expect.assertions(1);
+
 		withCanvas((html) => {
 			// Arrange:
 			let htmlString = "<div>hello</div>";
@@ -375,6 +420,8 @@ describe("htmlCanvas", () => {
 	});
 
 	it("element() returns brush element", () => {
+		expect.assertions(1);
+
 		withCanvas((html) => {
 			// Arrange: a heading
 			let h1 = html.h1().id("aHeading");
@@ -385,6 +432,8 @@ describe("htmlCanvas", () => {
 	});
 
 	it("setAttribute() get/set style using key/value", () => {
+		expect.assertions(1);
+
 		withCanvas((html) => {
 			// Arrange: a heading with id
 			let h1 = html.h1().setAttribute("id", "aHeading");
@@ -395,6 +444,8 @@ describe("htmlCanvas", () => {
 	});
 
 	it("css() get/set style", () => {
+		expect.assertions(1);
+
 		withCanvas((html) => {
 			// Arrange: a div
 			let div = html.div();
@@ -406,6 +457,8 @@ describe("htmlCanvas", () => {
 	});
 
 	it("attr() get/set style", () => {
+		expect.assertions(1);
+
 		withCanvas((html) => {
 			// Arrange: a heading with id (set using map)
 			let h1 = html.h1().attr({ id: "aHeading" });
@@ -416,6 +469,8 @@ describe("htmlCanvas", () => {
 	});
 
 	it("addClass()/removeClass() add/remove class", () => {
+		expect.assertions(2);
+
 		withCanvas((html) => {
 			// Arrange: a heading
 			let h1 = html.h1().id("aHeading");
@@ -433,26 +488,32 @@ describe("htmlCanvas", () => {
 	});
 
 	it("addClass() with a complex argument", () => {
+		expect.assertions(1);
+
 		withCanvas((html) => {
 			let h1 = html.h1();
 
 			h1.addClass(["foo", { disabled: () => false }, ["bar"]]);
 
-			expect(h1.element.className).toEqual("foo disabled bar");
+			expect(h1.element.className).toBe("foo disabled bar");
 		});
 	});
 
 	it("removeClass() with a complex argument", () => {
+		expect.assertions(1);
+
 		withCanvas((html) => {
 			let h1 = html.h1({ class: "foo baz disabled bar" });
 
 			h1.removeClass(["foo", { disabled: () => false }, ["bar"]]);
 
-			expect(h1.element.className).toEqual("baz");
+			expect(h1.element.className).toBe("baz");
 		});
 	});
 
 	it("asJQuery() returns jQuery that match brush element", () => {
+		expect.assertions(1);
+
 		withCanvas((html) => {
 			// Arrange: a heading
 			let h1 = html.h1().id("aHeading");
@@ -464,6 +525,8 @@ describe("htmlCanvas", () => {
 
 	// TODO: allow or throw exception?
 	it("can render almost everything", () => {
+		expect.assertions(1);
+
 		withCanvas((html) => {
 			html.render(0); // toString()
 			html.render(3.141_592_653_59); // toString()
@@ -477,26 +540,30 @@ describe("htmlCanvas", () => {
 
 	describe("svg tags", () => {
 		it("can render an SVG element with svgTag", () => {
+			expect.assertions(1);
+
 			withCanvas((html) => {
 				let tag = html.svgTag("svg");
 
-				expect(tag.element.namespaceURI).toEqual(
+				expect(tag.element.namespaceURI).toBe(
 					"http://www.w3.org/2000/svg",
 				);
 			});
 		});
 
 		it("can render the svg-specific tags", () => {
+			expect.assertions(12);
+
 			withCanvas((html) => {
 				["svg", "circle", "path", "polygon", "rect", "text"].forEach(
 					(tagName) => {
 						let tag = html[tagName]();
 
-						expect(tag.element.namespaceURI).toEqual(
+						expect(tag.element.namespaceURI).toBe(
 							"http://www.w3.org/2000/svg",
 						);
 
-						expect(tag.element.tagName.toLowerCase()).toEqual(
+						expect(tag.element.tagName.toLowerCase()).toStrictEqual(
 							tagName,
 						);
 					},
@@ -565,28 +632,32 @@ describe("htmlCanvas", () => {
 			withCanvas((html) => {
 				let tag = html.div({ class: input });
 
-				expect(tag.element.className).toEqual(expectedOutput);
+				expect(tag.element.className).toStrictEqual(expectedOutput);
 			});
 		}
 	});
 
 	it("render() accepts a ref attribute to retrieve the DOM element", () => {
+		expect.assertions(1);
+
 		withCanvas((html) => {
 			let rootRef = {};
 
 			html.render({ ref: rootRef }, (html) => html.p("foo"));
 
-			expect(rootRef.current.innerHTML).toEqual("<p>foo</p>");
+			expect(rootRef.current.innerHTML).toBe("<p>foo</p>");
 		});
 	});
 
 	it("div() accepts a ref attribute to retrieve the DOM element", () => {
+		expect.assertions(1);
+
 		withCanvas((html) => {
 			let rootRef = {};
 
 			html.div({ ref: rootRef }, (html) => html.p("foo"));
 
-			expect(rootRef.current.outerHTML).toEqual("<div><p>foo</p></div>");
+			expect(rootRef.current.outerHTML).toBe("<div><p>foo</p></div>");
 		});
 	});
 });

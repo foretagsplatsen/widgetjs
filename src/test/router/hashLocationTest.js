@@ -1,5 +1,13 @@
 import jQuery from "jquery";
 import hashLocationModel from "../../router/hashLocation.js";
+import {
+	afterEach,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	jest,
+} from "@jest/globals";
 
 // Helpers
 
@@ -34,7 +42,7 @@ describe("hashLocation", () => {
 
 		my = {};
 		hashLocation = hashLocationModel({}, my);
-		jasmine.clock().install();
+		jest.useFakeTimers();
 	});
 
 	afterEach(() => {
@@ -42,13 +50,13 @@ describe("hashLocation", () => {
 			hashLocation.stop();
 		}
 		window.location.hash = "";
-		jasmine.clock().uninstall();
+		jest.useRealTimers();
 	});
 
 	it("hash defaults", () => {
 		// Assert that defaults are correct
-		expect(my.currentHash).toBe(undefined);
-		expect(my.history.length).toBe(0);
+		expect(my.currentHash).toBeUndefined();
+		expect(my.history).toHaveLength(0);
 	});
 
 	it("start() initilize hash", () => {
@@ -60,7 +68,7 @@ describe("hashLocation", () => {
 
 		// Assert that hash is current location and history is set
 		expect(my.currentHash).toBe("#!/test");
-		expect(my.history.length).toBe(1);
+		expect(my.history).toHaveLength(1);
 		expect(my.history[0]).toBe(my.currentHash);
 	});
 
@@ -74,7 +82,7 @@ describe("hashLocation", () => {
 		hashLocation.start();
 
 		// Assert that hash was reset,
-		expect(my.history.length).toBe(1);
+		expect(my.history).toHaveLength(1);
 		expect(my.history[0]).toBe(my.currentHash);
 	});
 
@@ -109,7 +117,7 @@ describe("hashLocation", () => {
 
 	it("setUrl() triggers change", () => {
 		let anotherHashLocation = hashLocationModel();
-		let spy = jasmine.createSpy("changed event");
+		let spy = jest.fn();
 
 		// Arrange: listen for url changes
 		anotherHashLocation.changed.register(spy);
@@ -129,6 +137,8 @@ describe("hashLocation", () => {
 	});
 
 	it("back()", (callback) => {
+		expect.assertions(5);
+
 		delayedSteps(
 			() => {
 				hashLocation.stop();
@@ -173,6 +183,6 @@ describe("hashLocation", () => {
 			},
 		);
 
-		jasmine.clock().tick(131);
+		jest.advanceTimersByTime(131);
 	});
 });

@@ -1,8 +1,9 @@
 import widget from "../widget.js";
 import htmlCanvas from "../htmlCanvas.js";
 import jQuery from "jquery";
+import { jest, describe, it, expect } from "@jest/globals";
 
-let widgetSubclass = widget.subclass((that) => {
+const widgetSubclass = widget.subclass((that) => {
 	that.renderContentOn = function (html) {
 		html.h1("Hello world");
 	};
@@ -37,9 +38,11 @@ function withCanvas(callback) {
 
 describe("function", () => {
 	it("widgets are assigned unique identifiers", () => {
+		expect.assertions(1000);
+
 		withWidget((aWidget) => {
 			for (let i = 0; i < 1000; i++) {
-				expect(widgetSubclass().id()).not.toEqual(aWidget.id());
+				expect(widgetSubclass().id()).not.toStrictEqual(aWidget.id());
 			}
 		});
 	});
@@ -51,6 +54,8 @@ describe("function", () => {
 	});
 
 	it("widgets supports events", () => {
+		expect.assertions(1);
+
 		// Arrange: a widget with a public method
 		// that triggers an event when executed.
 		let aWidget = (function () {
@@ -89,7 +94,7 @@ describe("function", () => {
 			return that;
 		})();
 
-		let spy = jasmine.createSpy("callback");
+		let spy = jest.fn();
 
 		// Assert: that callback is executed when
 		aWidget.anEvent.register(spy);
@@ -97,7 +102,7 @@ describe("function", () => {
 		// event is triggered
 		aWidget.aMethod();
 
-		expect(spy).toHaveBeenCalled();
+		expect(spy).toHaveBeenCalledWith();
 	});
 
 	it("linkTo() creates links to paths in app", () => {
@@ -116,13 +121,17 @@ describe("function", () => {
 		expect(window.location.hash).toBe(my.linkTo("foo/bar"));
 	});
 
-	it("Render", () => {
+	it("render", () => {
+		expect.assertions(1);
+
 		withWidget((aWidget) => {
 			expect(jQuery(`#${aWidget.id()}`).get(0)).toBeTruthy();
 		});
 	});
 
-	it("Update", () => {
+	it("update", () => {
+		expect.assertions(1);
+
 		withWidget((aWidget) => {
 			aWidget.renderContentOn = function (html) {
 				html.div().id("foo");
@@ -134,7 +143,9 @@ describe("function", () => {
 		});
 	});
 
-	it("Remove", () => {
+	it("remove", () => {
+		expect.assertions(2);
+
 		withWidget((aWidget) => {
 			let id = `#${aWidget.id()}`;
 
@@ -146,7 +157,9 @@ describe("function", () => {
 		});
 	});
 
-	it("Widgets can be appended a jQuery", () => {
+	it("widgets can be appended a jQuery", () => {
+		expect.assertions(1);
+
 		withCanvas((html) => {
 			// Arrange: a widget
 			let aWidget = (function () {
@@ -170,7 +183,9 @@ describe("function", () => {
 		});
 	});
 
-	it("Widgets can replace content of a jQuery", () => {
+	it("widgets can replace content of a jQuery", () => {
+		expect.assertions(2);
+
 		withCanvas((html) => {
 			// Arrange: a widget
 			let aWidget = (function () {
@@ -190,12 +205,14 @@ describe("function", () => {
 			aWidget.replace(divQuery);
 
 			// Assert: that widget was appended to DIV
-			expect(divQuery.children().length).toBe(1);
+			expect(divQuery.children()).toHaveLength(1);
 			expect(divQuery.children().get(0).id).toBe(aWidget.id());
 		});
 	});
 
-	it("Widgets can be appended to a HTML canvas", () => {
+	it("widgets can be appended to a HTML canvas", () => {
+		expect.assertions(1);
+
 		withCanvas((html) => {
 			// Arrange: a widget
 			let aWidget = (function () {
@@ -217,6 +234,8 @@ describe("function", () => {
 	});
 
 	it("isRendered()", () => {
+		expect.assertions(2);
+
 		withCanvas((html) => {
 			// Arrange: a widget
 			let aWidget = (function () {
@@ -241,6 +260,8 @@ describe("function", () => {
 	});
 
 	it("renderRoot() can be overridden in widget", () => {
+		expect.assertions(1);
+
 		withCanvas((html) => {
 			// Arrange: a widget that renders it"s root as
 			// form instead of DIV
@@ -266,6 +287,8 @@ describe("function", () => {
 	});
 
 	it("willAttach() and didAttach() are called upon rendering", () => {
+		expect.assertions(2);
+
 		withCanvas((html) => {
 			let aWidget = (function () {
 				let my = {};
@@ -295,6 +318,8 @@ describe("function", () => {
 	});
 
 	it("willUpdate() is not called when rendering", () => {
+		expect.assertions(1);
+
 		withCanvas((html) => {
 			let aWidget = (function () {
 				let my = {};
@@ -316,6 +341,8 @@ describe("function", () => {
 	});
 
 	it("willUpdate() is called when updating", () => {
+		expect.assertions(1);
+
 		withCanvas((html) => {
 			let aWidget = (function () {
 				let my = {};
@@ -338,39 +365,43 @@ describe("function", () => {
 	});
 
 	it("widgets initialize their subwidgets", () => {
-		let spy = jasmine.createSpy("init");
+		let spy = jest.fn();
 		let mySubclass = widget.subclass((that, my) => {
 			my.initializeSubwidgets = spy;
 		});
 		mySubclass();
 
-		expect(spy).toHaveBeenCalled();
+		expect(spy).toHaveBeenCalledWith({});
 	});
 
 	it("widgets initialize their subwidgets after themselves", () => {
-		// TODO: refactor when
-		// https://github.com/jasmine/jasmine/pull/1242 is merged
-		let init = jasmine.createSpy("init");
-		let initSub = jasmine.createSpy("init sub");
+		expect.assertions(2);
+
+		let init = jest.fn();
+		let initSub = jest.fn();
 
 		let mySubclass = widget.subclass((that, my) => {
 			my.initialize = init;
 
 			my.initializeSubwidgets = function () {
-				expect(init).toHaveBeenCalled();
+				expect(init).toHaveBeenCalledWith(expect.anything());
+
 				initSub();
 			};
 		});
 
 		mySubclass();
 
-		expect(initSub).toHaveBeenCalled();
+		expect(initSub).toHaveBeenCalledWith();
 	});
 
 	it("widgets can create an event", () => {
+		expect.assertions(2);
+
 		// eslint-disable-next-line no-shadow -- we should fix that later
 		withWidget((widget, my) => {
 			expect(widget.foo).toBeUndefined();
+
 			my.createEvent("foo");
 
 			expect(widget.foo).toBeTruthy();
@@ -378,10 +409,13 @@ describe("function", () => {
 	});
 
 	it("widgets can create events", () => {
+		expect.assertions(4);
+
 		// eslint-disable-next-line no-shadow -- we should fix that later
 		withWidget((widget, my) => {
 			expect(widget.foo).toBeUndefined();
 			expect(widget.bar).toBeUndefined();
+
 			my.createEvents("foo", "bar");
 
 			expect(widget.foo).toBeTruthy();
