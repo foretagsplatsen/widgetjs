@@ -191,7 +191,9 @@ describe("router", () => {
 		aRouter.addRoute({
 			pattern: "/user/#userid/order/#orderid",
 			action: function (userid, orderid) {
-				expect(userid === "john" && orderid === "1").toBeTruthy();
+				expect(userid).toEqual("john");
+				expect(orderid).toEqual("1");
+
 				this.unbind(); // clean-up
 				done(); // execute asserts
 			},
