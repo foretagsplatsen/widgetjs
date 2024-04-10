@@ -219,15 +219,10 @@ describe("htmlCanvas", () => {
 	it("can omit nested tags", () => {
 		withCanvas((html) => {
 			// Arrange: a inner and outer div with a span as inner child
-			// where the child is omited based on a flag
-			let hasSomeText = false;
-
+			// where the child is omitted
 			html.div(
 				{ id: "outer_div" },
-				html.div(
-					{ id: "inner_div" },
-					hasSomeText ? html.span("Some text") : html.omit(),
-				),
+				html.div({ id: "inner_div" }, html.omit()),
 			);
 
 			// Assert: that outer div rendered
