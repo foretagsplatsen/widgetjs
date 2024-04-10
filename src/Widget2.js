@@ -81,10 +81,6 @@ export default class Widget2 {
 		this._setParameters = this._router.setParameters;
 	}
 
-	//
-	// Public
-	//
-
 	/**
 	 * Returns a unique id for the widget
 	 *
@@ -215,75 +211,6 @@ export default class Widget2 {
 	}
 
 	/**
-	 * Evaluate `fn`, calling `willAttach` before and `didAttach` after
-	 * the evaluation.
-	 */
-	_withAttachHooks(fn) {
-		let inRenderingLoop = !!getCurrentWidget();
-
-		if (!inRenderingLoop) {
-			this.triggerWillAttach();
-		}
-
-		fn();
-
-		if (!inRenderingLoop) {
-			this.triggerDidAttach();
-		}
-	}
-
-	/**
-	 * Create and expose an event named `name`.
-	 */
-	_createEvent(name) {
-		this[name] = this._events.createEvent();
-	}
-
-	/**
-	 * Create and expose one event per string argument.
-	 */
-	_createEvents() {
-		let names = Array.prototype.slice.apply(arguments);
-
-		names.forEach((name) => this._createEvent(name));
-	}
-
-	//
-	// Protected
-	//
-
-	/**
-	 * Exposes the internal ID generator. Generates new unique IDs to
-	 * be used for sub-widgets, etc.
-	 *
-	 * @returns {String}
-	 */
-	_nextId() {
-		return newId();
-	}
-
-	/**
-	 * Widget specific dispose.
-	 */
-	_dispose() {}
-
-	//
-	// Render
-	//
-
-	/**
-	 * Private rendering function.    This is the function
-	 * internally called each time the widget is rendered, in
-	 * `appendTo`, `replace` and `update`.
-	 *
-	 */
-	_renderBasicOn(html) {
-		this._withChildrenRegistration(() => {
-			this.renderOn(html);
-		});
-	}
-
-	/**
 	 * Main entry point for rendering. For convenience "renderOn" will    wrap the content
 	 * rendered by "renderContentOn" in a root element (renderRootOn) that will be matched
 	 * by asJQuery.
@@ -311,33 +238,8 @@ export default class Widget2 {
 		this._renderRootOn(html).render(this.renderContentOn.bind(this));
 	}
 
-	_withChildrenRegistration(fn) {
-		let parent = getCurrentWidget();
-
-		if (parent) {
-			parent.registerChild(this);
-		}
-
-		withCurrentWidget(() => {
-			this._children = [];
-			fn();
-		}, this);
-	}
-
 	registerChild(widget) {
 		this._children.push(widget);
-	}
-
-	/**
-	 * Renders a wrapper element (by default a "widgetjs-widget" tag) and
-	 * sets the element ID to the ID of the widget so that it can be found by
-	 * "asJQuery" eg. when we re-render using "update".
-	 *
-	 * @param html
-	 * @returns {htmlBrush}
-	 */
-	_renderRootOn(html) {
-		return html.tag("widgetjs-widget").id(this._id);
 	}
 
 	/**
@@ -357,28 +259,6 @@ export default class Widget2 {
 	renderContentOn(_html) {
 		throw new Error("Subclass responsibility");
 	}
-
-	/**
-	 * Hook evaluated before the widget is attached (or reattached due
-	 * to an update of rendering) to the DOM.
-	 */
-	_willAttach() {}
-
-	/**
-	 * Hook evaluated each time the widget is attached (or
-	 * reattached due to an update of rendering) to the DOM.
-	 */
-	_didAttach() {}
-
-	/**
-	 * Hook evaluated when a widget is detached from the DOM.
-	 */
-	_willDetach() {}
-
-	/**
-	 * Hook evaluated before widget update.
-	 */
-	_willUpdate() {}
 
 	/**
 	 * Re-renders the widget and replace it in the DOM
@@ -433,4 +313,112 @@ export default class Widget2 {
 	withNoUpdate(fn) {
 		this.withinTransaction(fn);
 	}
+
+	/**
+	 * Evaluate `fn`, calling `willAttach` before and `didAttach` after
+	 * the evaluation.
+	 */
+	_withAttachHooks(fn) {
+		let inRenderingLoop = !!getCurrentWidget();
+
+		if (!inRenderingLoop) {
+			this.triggerWillAttach();
+		}
+
+		fn();
+
+		if (!inRenderingLoop) {
+			this.triggerDidAttach();
+		}
+	}
+
+	/**
+	 * Create and expose an event named `name`.
+	 */
+	_createEvent(name) {
+		this[name] = this._events.createEvent();
+	}
+
+	/**
+	 * Create and expose one event per string argument.
+	 */
+	_createEvents() {
+		let names = Array.prototype.slice.apply(arguments);
+
+		names.forEach((name) => this._createEvent(name));
+	}
+
+	/**
+	 * Exposes the internal ID generator. Generates new unique IDs to
+	 * be used for sub-widgets, etc.
+	 *
+	 * @returns {String}
+	 */
+	_nextId() {
+		return newId();
+	}
+
+	/**
+	 * Widget specific dispose.
+	 */
+	_dispose() {}
+
+	/**
+	 * Private rendering function.    This is the function
+	 * internally called each time the widget is rendered, in
+	 * `appendTo`, `replace` and `update`.
+	 *
+	 */
+	_renderBasicOn(html) {
+		this._withChildrenRegistration(() => {
+			this.renderOn(html);
+		});
+	}
+
+	_withChildrenRegistration(fn) {
+		let parent = getCurrentWidget();
+
+		if (parent) {
+			parent.registerChild(this);
+		}
+
+		withCurrentWidget(() => {
+			this._children = [];
+			fn();
+		}, this);
+	}
+
+	/**
+	 * Renders a wrapper element (by default a "widgetjs-widget" tag) and
+	 * sets the element ID to the ID of the widget so that it can be found by
+	 * "asJQuery" eg. when we re-render using "update".
+	 *
+	 * @param html
+	 * @returns {htmlBrush}
+	 */
+	_renderRootOn(html) {
+		return html.tag("widgetjs-widget").id(this._id);
+	}
+
+	/**
+	 * Hook evaluated before the widget is attached (or reattached due
+	 * to an update of rendering) to the DOM.
+	 */
+	_willAttach() {}
+
+	/**
+	 * Hook evaluated each time the widget is attached (or
+	 * reattached due to an update of rendering) to the DOM.
+	 */
+	_didAttach() {}
+
+	/**
+	 * Hook evaluated when a widget is detached from the DOM.
+	 */
+	_willDetach() {}
+
+	/**
+	 * Hook evaluated before widget update.
+	 */
+	_willUpdate() {}
 }
