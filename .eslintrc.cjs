@@ -6,7 +6,7 @@ module.exports = {
 	// workaround for plugin:@foretagsplatsen/main enabling many
 	// unwanted environments:
 	env: { amd: false, jquery: false, node: false, jasmine: false },
-	ignorePatterns: ["sample"],
+	ignorePatterns: ["sample", "coverage"],
 	rules: {
 		"import/no-unused-modules": [
 			"error",
@@ -18,6 +18,7 @@ module.exports = {
 					"src/widgetjs.js",
 					// List of files not exporting anything:
 					"**/.eslintrc.cjs",
+					"./babel.config.cjs",
 					"src/router/optionalParameterSegment.js",
 					"src/router/staticSegment.js",
 				],
