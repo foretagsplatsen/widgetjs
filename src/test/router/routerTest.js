@@ -133,7 +133,7 @@ describe("router", () => {
 		aRouter.resolveUrl("/user/");
 
 		// Assert that callback was executed
-		expect(spy).toHaveBeenCalled();
+		expect(spy).toHaveBeenCalledWith(jasmine.anything());
 	});
 
 	it("resolveUrl triggers routeMatched event", (done) => {
@@ -183,7 +183,7 @@ describe("router", () => {
 		aRouter.resolveUrl("/user/");
 
 		// Assert that callback was executed
-		expect(spy).toHaveBeenCalled();
+		expect(spy).toHaveBeenCalledWith(jasmine.anything());
 	});
 
 	it("resolveUrl pass values to action", (done) => {
@@ -354,7 +354,7 @@ describe("router", () => {
 		aRouter.resolveUrl("APathNotInDefaultRouterButInPipedRouter");
 
 		// Assert that second router matched the route
-		expect(spy).toHaveBeenCalled();
+		expect(spy).toHaveBeenCalledWith({});
 		anotherRouter.stop();
 	});
 
@@ -373,7 +373,7 @@ describe("router", () => {
 		aRouter.resolveUrl("/a/b/c");
 
 		// Assert that second router matched the route
-		expect(spy).toHaveBeenCalled();
+		expect(spy).toHaveBeenCalledTimes(1);
 		anotherRouter.stop();
 	});
 
