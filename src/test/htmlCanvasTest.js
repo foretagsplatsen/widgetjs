@@ -287,11 +287,15 @@ describe("htmlCanvas", () => {
 		withCanvas((html) => {
 			expect(() => {
 				html.render(null);
-			}).toThrowError();
+			}).toThrowError(
+				"Cannot read properties of null (reading 'appendToBrush')",
+			);
 
 			expect(() => {
 				html.render(undefined);
-			}).toThrowError();
+			}).toThrowError(
+				"Cannot read properties of undefined (reading 'appendToBrush')",
+			);
 		});
 	});
 
