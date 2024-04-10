@@ -133,7 +133,7 @@ describe("router", () => {
 		aRouter.resolveUrl("/user/");
 
 		// Assert that callback was executed
-		expect(spy).toHaveBeenCalled();
+		expect(spy).toHaveBeenCalledWith(jasmine.anything());
 	});
 
 	it("resolveUrl triggers routeMatched event", (done) => {
@@ -183,7 +183,7 @@ describe("router", () => {
 		aRouter.resolveUrl("/user/");
 
 		// Assert that callback was executed
-		expect(spy).toHaveBeenCalled();
+		expect(spy).toHaveBeenCalledWith(jasmine.anything());
 	});
 
 	it("resolveUrl pass values to action", (done) => {
@@ -191,7 +191,9 @@ describe("router", () => {
 		aRouter.addRoute({
 			pattern: "/user/#userid/order/#orderid",
 			action: function (userid, orderid) {
-				expect(userid === "john" && orderid === "1").toBeTruthy();
+				expect(userid).toEqual("john");
+				expect(orderid).toEqual("1");
+
 				this.unbind(); // clean-up
 				done(); // execute asserts
 			},
@@ -352,7 +354,7 @@ describe("router", () => {
 		aRouter.resolveUrl("APathNotInDefaultRouterButInPipedRouter");
 
 		// Assert that second router matched the route
-		expect(spy).toHaveBeenCalled();
+		expect(spy).toHaveBeenCalledWith({});
 		anotherRouter.stop();
 	});
 
@@ -371,7 +373,7 @@ describe("router", () => {
 		aRouter.resolveUrl("/a/b/c");
 
 		// Assert that second router matched the route
-		expect(spy).toHaveBeenCalled();
+		expect(spy).toHaveBeenCalledTimes(1);
 		anotherRouter.stop();
 	});
 

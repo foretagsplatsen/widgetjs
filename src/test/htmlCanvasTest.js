@@ -219,15 +219,10 @@ describe("htmlCanvas", () => {
 	it("can omit nested tags", () => {
 		withCanvas((html) => {
 			// Arrange: a inner and outer div with a span as inner child
-			// where the child is omited based on a flag
-			let hasSomeText = false;
-
+			// where the child is omitted
 			html.div(
 				{ id: "outer_div" },
-				html.div(
-					{ id: "inner_div" },
-					hasSomeText ? html.span("Some text") : html.omit(),
-				),
+				html.div({ id: "inner_div" }, html.omit()),
 			);
 
 			// Assert: that outer div rendered
@@ -292,11 +287,15 @@ describe("htmlCanvas", () => {
 		withCanvas((html) => {
 			expect(() => {
 				html.render(null);
-			}).toThrowError();
+			}).toThrowError(
+				"Cannot read properties of null (reading 'appendToBrush')",
+			);
 
 			expect(() => {
 				html.render(undefined);
-			}).toThrowError();
+			}).toThrowError(
+				"Cannot read properties of undefined (reading 'appendToBrush')",
+			);
 		});
 	});
 
