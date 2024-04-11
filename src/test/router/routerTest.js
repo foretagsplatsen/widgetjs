@@ -1,4 +1,12 @@
 import router from "../../router/router.js";
+import {
+	afterEach,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	jest,
+} from "@jest/globals";
 
 function delayedSteps() {
 	let steps = Array.prototype.slice.call(arguments);
@@ -26,23 +34,23 @@ describe("router", () => {
 
 		my = {};
 		aRouter = router({}, my);
-		jasmine.clock().install();
+		jest.useFakeTimers();
 	});
 
 	afterEach(() => {
 		aRouter.stop();
 		aRouter.clear();
 		aRouter = null;
-		jasmine.clock().uninstall();
+		jest.useRealTimers();
 	});
 
-	it("Router defaults", () => {
+	it("router defaults", () => {
 		// Assert that defaults are correct
-		expect(my.routeTable.length).toBe(0);
-		expect(my.lastMatch).toBe(undefined);
+		expect(my.routeTable).toHaveLength(0);
+		expect(my.lastMatch).toBeUndefined();
 	});
 
-	it("Router options", () => {
+	it("router options", () => {
 		// Arrange a router with options set
 		let anotherMy = {};
 
@@ -60,25 +68,25 @@ describe("router", () => {
 		expect(anotherMy.location.isFake).toBeTruthy();
 	});
 
-	it("Add route", () => {
+	it("add route", () => {
 		// Act: add a route
 		let route = aRouter.addRoute({ pattern: "/users/" });
 
 		// Assert that route was added to route table
-		expect(my.routeTable.length).toBe(1);
+		expect(my.routeTable).toHaveLength(1);
 		expect(my.routeTable[0]).toBe(route);
 	});
 
-	it("Remove route", () => {
+	it("remove route", () => {
 		// Act: add and remove route
 		let route = aRouter.addRoute({ pattern: "/users/" });
 		aRouter.removeRoute(route);
 
 		// Assert that route was removed from route table
-		expect(my.routeTable.length).toBe(0);
+		expect(my.routeTable).toHaveLength(0);
 	});
 
-	it("Named routes", () => {
+	it("named routes", () => {
 		// Arrange: a named route
 		let route = aRouter.addRoute({ name: "users", pattern: "/users/" });
 
@@ -89,7 +97,7 @@ describe("router", () => {
 		expect(namedRoute).toBe(route);
 	});
 
-	it("Add routes with priority", () => {
+	it("add routes with priority", () => {
 		// Act: add routes with different priorities
 		let invoiceRoute = aRouter.addRoute({ pattern: "/invoice/" });
 		let ticketRoute = aRouter.addRoute({ pattern: "/ticket/" });
@@ -101,7 +109,7 @@ describe("router", () => {
 		let userRoute = aRouter.addRoute({ pattern: "/user/", priority: 1 });
 
 		// Assert that route was added to route table in correct order
-		expect(my.routeTable.length).toBe(5);
+		expect(my.routeTable).toHaveLength(5);
 		expect(my.routeTable[0]).toBe(userRoute);
 		expect(my.routeTable[2]).toBe(orderRoute);
 		expect(my.routeTable[3]).toBe(invoiceRoute);
@@ -111,7 +119,7 @@ describe("router", () => {
 	it("resolveUrl executes route callback on match", () => {
 		// Arrange: setup a route
 		let userRoute = aRouter.addRoute({ pattern: "/user/" });
-		let spy = jasmine.createSpy("matched event");
+		let spy = jest.fn();
 
 		userRoute.on("matched", spy);
 
@@ -120,11 +128,11 @@ describe("router", () => {
 		aRouter.resolveUrl("/order/");
 
 		// Assert that callback was executed
-		expect(spy).toHaveBeenCalledTimes(1);
+		expect(spy).toHaveBeenCalledOnce();
 	});
 
 	it("resolveUrl triggers resolveUrl event", () => {
-		let spy = jasmine.createSpy("resolveUrl event");
+		let spy = jest.fn();
 
 		// listen for "resolveUrl event" on router
 		aRouter.on("resolveUrl", spy);
@@ -133,10 +141,12 @@ describe("router", () => {
 		aRouter.resolveUrl("/user/");
 
 		// Assert that callback was executed
-		expect(spy).toHaveBeenCalledWith(jasmine.anything());
+		expect(spy).toHaveBeenCalledWith(expect.anything());
 	});
 
 	it("resolveUrl triggers routeMatched event", (done) => {
+		expect.assertions(2);
+
 		// Arrange: setup a route
 		let userRoute = aRouter.addRoute({ pattern: "/user/" });
 
@@ -144,7 +154,7 @@ describe("router", () => {
 		aRouter.on("routeMatched", function (result) {
 			// Assert that callback was executed
 			expect(result).toBeTruthy();
-			expect(result.getRoute()).toEqual(userRoute);
+			expect(result.getRoute()).toStrictEqual(userRoute);
 
 			this.unbind(); // clean-up
 			done(); // execute asserts
@@ -155,12 +165,14 @@ describe("router", () => {
 	});
 
 	it("resolveUrl triggers routeNotFound event", (done) => {
+		expect.assertions(2);
+
 		// Arrange: setup no routes but
 		// a lister for "notFound event"
 		aRouter.on("routeNotFound", function (url) {
 			// Assert that callback was executed
 			expect(url).toBeTruthy();
-			expect(url.toString()).toEqual("/user/");
+			expect(url.toString()).toBe("/user/");
 
 			this.unbind(); // clean-up
 			done(); // execute asserts
@@ -171,7 +183,7 @@ describe("router", () => {
 	});
 
 	it("resolveUrl executes action on match", () => {
-		let spy = jasmine.createSpy("action");
+		let spy = jest.fn();
 
 		// Arrange: setup a route
 		aRouter.addRoute({
@@ -183,16 +195,18 @@ describe("router", () => {
 		aRouter.resolveUrl("/user/");
 
 		// Assert that callback was executed
-		expect(spy).toHaveBeenCalledWith(jasmine.anything());
+		expect(spy).toHaveBeenCalledWith({});
 	});
 
 	it("resolveUrl pass values to action", (done) => {
+		expect.assertions(2);
+
 		// Arrange a route that have two mandatory parameters
 		aRouter.addRoute({
 			pattern: "/user/#userid/order/#orderid",
 			action: function (userid, orderid) {
-				expect(userid).toEqual("john");
-				expect(orderid).toEqual("1");
+				expect(userid).toBe("john");
+				expect(orderid).toBe("1");
 
 				this.unbind(); // clean-up
 				done(); // execute asserts
@@ -204,12 +218,15 @@ describe("router", () => {
 	});
 
 	it("resolveUrl pass optional values to action", (done) => {
+		expect.assertions(2);
+
 		// Arrange a route that have two mandatory parameters
 		aRouter.addRoute({
 			pattern: "/user/?userid/order/?orderid",
 			action: function (userid, orderid) {
-				expect(userid).toBe(undefined);
+				expect(userid).toBeUndefined();
 				expect(orderid).toBe("1");
+
 				this.unbind(); // clean-up
 				done(); // execute asserts
 			},
@@ -220,6 +237,8 @@ describe("router", () => {
 	});
 
 	it("resolveUrl pass optional value defaults to action", (done) => {
+		expect.assertions(2);
+
 		// Arrange a route that have two optional parameters
 		// with defaukts
 		aRouter.addRoute({
@@ -231,6 +250,7 @@ describe("router", () => {
 			action: function (userid, orderid) {
 				expect(userid).toBe("bengan");
 				expect(orderid).toBe("1");
+
 				this.unbind(); // clean-up
 				done(); // execute asserts
 			},
@@ -241,6 +261,8 @@ describe("router", () => {
 	});
 
 	it("resolveUrl pass query as last argument to action", (done) => {
+		expect.assertions(3);
+
 		// Arrange a route that have one parameter
 		aRouter.addRoute({
 			pattern: "/user/#userid/order",
@@ -249,6 +271,7 @@ describe("router", () => {
 				expect(userid).toBe("john");
 				expect(query.filter).toBe("open");
 				expect(query.orderBy).toBe("date");
+
 				this.unbind(); // clean-up
 				done(); // execute asserts
 			},
@@ -259,6 +282,8 @@ describe("router", () => {
 	});
 
 	it("resolveUrl continues if fallThrough", (done) => {
+		expect.assertions(2);
+
 		// Arrange a 3 routes, where first have fallThrough
 		// set and the two other have not
 
@@ -267,6 +292,7 @@ describe("router", () => {
 			pattern: "/user/",
 			action: function () {
 				expect(true).toBeTruthy();
+
 				this.unbind(); // clean-up
 			},
 		});
@@ -275,6 +301,7 @@ describe("router", () => {
 			pattern: "/user/",
 			action: function () {
 				expect(true).toBeTruthy();
+
 				this.unbind(); // clean-up
 				done(); // execute asserts
 			},
@@ -284,6 +311,7 @@ describe("router", () => {
 			pattern: "/user/",
 			action: function () {
 				expect(true).toBeTruthy();
+
 				this.unbind(); // clean-up
 			},
 		});
@@ -292,8 +320,8 @@ describe("router", () => {
 		aRouter.resolveUrl("/user/");
 	});
 
-	it("Add route with constraints", () => {
-		let action = jasmine.createSpy("action");
+	it("add route with constraints", () => {
+		let action = jest.fn();
 
 		aRouter.addRoute({
 			pattern: "/user/#name/",
@@ -305,14 +333,14 @@ describe("router", () => {
 
 		aRouter.resolveUrl("/user/nicolas");
 
-		expect(action).toHaveBeenCalledWith("nicolas", jasmine.anything());
-		expect(action).toHaveBeenCalledTimes(1);
+		expect(action).toHaveBeenCalledWith("nicolas", expect.anything());
+		expect(action).toHaveBeenCalledOnce();
 
 		// resolve two URLs that do *not* match constraint
 		aRouter.resolveUrl("/user/john");
 		aRouter.resolveUrl("/user/james");
 
-		expect(action).toHaveBeenCalledTimes(1);
+		expect(action).toHaveBeenCalledOnce();
 	});
 
 	it("getUrl returns current location", () => {
@@ -339,10 +367,10 @@ describe("router", () => {
 		expect(window.location.hash).toBe("#!/");
 	});
 
-	it("Pipe notfound to another router", () => {
+	it("pipe notfound to another router", () => {
 		// Arrange another router with a route handler
 		let anotherRouter = router();
-		let spy = jasmine.createSpy("action");
+		let spy = jest.fn();
 
 		anotherRouter.addRoute({
 			pattern: "APathNotInDefaultRouterButInPipedRouter",
@@ -355,13 +383,14 @@ describe("router", () => {
 
 		// Assert that second router matched the route
 		expect(spy).toHaveBeenCalledWith({});
+
 		anotherRouter.stop();
 	});
 
-	it("Pipe route to another router", () => {
+	it("pipe route to another router", () => {
 		// Arrange another router with a route handler
 		let anotherRouter = router();
-		let spy = jasmine.createSpy("action");
+		let spy = jest.fn();
 
 		anotherRouter.addRoute({
 			pattern: "/a/b/#c",
@@ -373,11 +402,14 @@ describe("router", () => {
 		aRouter.resolveUrl("/a/b/c");
 
 		// Assert that second router matched the route
-		expect(spy).toHaveBeenCalledTimes(1);
+		expect(spy).toHaveBeenCalledOnce();
+
 		anotherRouter.stop();
 	});
 
 	it("back()", (done) => {
+		expect.assertions(5);
+
 		aRouter.stop();
 		window.location.hash = ""; // start path
 		aRouter.start();
@@ -419,10 +451,10 @@ describe("router", () => {
 			done,
 		);
 
-		jasmine.clock().tick(131);
+		jest.advanceTimersByTime(131);
 	});
 
-	it("Expand parameters for named route", () => {
+	it("expand parameters for named route", () => {
 		// Arrange: a named route
 		aRouter.addRoute({ name: "user", pattern: "/user/#userId" });
 
@@ -437,7 +469,7 @@ describe("router", () => {
 		expect(url.toString()).toBe("user/john?includeDetails=true");
 	});
 
-	it("Expand parameters for empty route", () => {
+	it("expand parameters for empty route", () => {
 		// Arrange: empty hash route
 		window.location.hash = ""; // start path
 
@@ -450,7 +482,7 @@ describe("router", () => {
 		expect(url.toString()).toBe("?userId=john&includeDetails=true");
 	});
 
-	it("Expand parameters for current route", () => {
+	it("expand parameters for current route", () => {
 		// Arrange: a named route
 		aRouter.addRoute({
 			name: "user",
@@ -472,7 +504,7 @@ describe("router", () => {
 		);
 	});
 
-	it("LinkTo with default parameters", () => {
+	it("linkTo with default parameters", () => {
 		// Arrange: a route with non optional parameter #foo
 		aRouter.addRoute({
 			name: "bar",
@@ -489,7 +521,7 @@ describe("router", () => {
 		expect(url.toString()).toBe("#!/default/bar");
 	});
 
-	it("GetParameters from current URL", () => {
+	it("getParameters from current URL", () => {
 		// Arrange: a named route
 		aRouter.addRoute({ name: "user", pattern: "/user/#userId" });
 
@@ -500,13 +532,13 @@ describe("router", () => {
 		let parameters = aRouter.getParameters();
 
 		// Assert that parameters contains both query and URL parameters
-		expect(parameters).toEqual({
+		expect(parameters).toStrictEqual({
 			userId: "john",
 			includeCompanies: "true",
 		});
 	});
 
-	it("GetParameter", () => {
+	it("getParameter", () => {
 		// Arrange: a named route
 		aRouter.addRoute({ name: "user", pattern: "/user/#userId" });
 
@@ -526,6 +558,8 @@ describe("router", () => {
 	});
 
 	it("setParameters()", (done) => {
+		expect.assertions(4);
+
 		aRouter.stop();
 		window.location.hash = ""; // start path
 		aRouter.start();
@@ -562,6 +596,6 @@ describe("router", () => {
 			done,
 		);
 
-		jasmine.clock().tick(131);
+		jest.advanceTimersByTime(131);
 	});
 });

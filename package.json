@@ -39,15 +39,19 @@
   },
   "scripts": {
     "lint": "eslint --max-warnings 0 --format unix --report-unused-disable-directives .",
-    "test:run": "jasmine-browser-runner runSpecs --config=jasmine-browser.json",
-    "test:serve": "jasmine-browser-runner serve --config=jasmine-browser.json --port=8881"
+    "test:run": "jest",
+    "test:serve": "majestic"
   },
   "devDependencies": {
+    "@babel/core": "^7.24.4",
+    "@babel/plugin-transform-modules-commonjs": "^7.24.1",
     "@foretagsplatsen/eslint-plugin": "^6.0.0",
+    "@jest/globals": "^29.7.0",
     "eslint": "^8.57.0",
-    "jasmine-core": "^5.1.2",
-    "jasmine-browser-runner": "^2.4.0",
-    "jasmine-reporters": "^2.5.2",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jest-extended": "^4.0.2",
+    "majestic": "^1.8.1",
     "yaem": "foretagsplatsen/yaem#1.0.0"
   },
   "peerDependencies": {
