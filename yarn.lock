@@ -361,10 +361,10 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.57.0.tgz#a5417ae8427873f1dd08b70b3574b453e67b5f7f"
   integrity sha512-Ys+3g2TaW7gADOJzPt83SJtCDhMjndcDMFVQ/Tj9iA1BfJzFKD9mAUXT3OenpuPHbI6P/myECxRJrofUsDx/5g==
 
-"@foretagsplatsen/eslint-plugin@^6.0.0":
-  version "6.0.0"
-  resolved "https://npm.pkg.github.com/download/@foretagsplatsen/eslint-plugin/6.0.0/a3895a1e48fae4be69c0975b5971754730ef3aef#a3895a1e48fae4be69c0975b5971754730ef3aef"
-  integrity sha512-ChiJ9evBiO7vLwhP03wKTqk2t2zb5v87Bvw5cJx2N5e0c9gb0hhJeh7wPbLGTF1Z94pWSS2EP4EMjPmEWvGCkg==
+"@foretagsplatsen/eslint-plugin@^7.0.0":
+  version "7.0.0"
+  resolved "https://npm.pkg.github.com/download/@foretagsplatsen/eslint-plugin/7.0.0/e759bf4d0dcd93ef121da1da76b85918c90f938e#e759bf4d0dcd93ef121da1da76b85918c90f938e"
+  integrity sha512-3fMOY7zlFGtIXCliScj/Vb3eiCBGns7l2A9fCBKn646wlSozIEWNiYomTSzUiKr8F8a3fGbuEvX8xGjOZuXx2w==
   dependencies:
     eslint-config-prettier "^9.1.0"
     eslint-import-resolver-exports "^1.0.0-beta.5"
@@ -373,7 +373,7 @@
     eslint-plugin-prettier "^5.0.1"
     eslint-plugin-promise "^6.1.1"
     eslint-plugin-sort-class-members "^1.19.0"
-    eslint-plugin-unicorn "^50.0.1"
+    eslint-plugin-unicorn "^52.0.0"
     prettier "^3.1.1"
 
 "@humanwhocodes/config-array@^0.11.14":
@@ -1556,10 +1556,10 @@ eslint-plugin-sort-class-members@^1.19.0:
   resolved "https://registry.yarnpkg.com/eslint-plugin-sort-class-members/-/eslint-plugin-sort-class-members-1.19.0.tgz#9ad7a674c4cb477fceaddb8162515372d381c733"
   integrity sha512-YayvASA1bavdPeRU9FMPnale2+Oi3aMcHGVC5EUm9b671oxm7ahvR+q8BfsU2aV+KAFezNfu47VPgdZK6gwYPw==
 
-eslint-plugin-unicorn@^50.0.1:
-  version "50.0.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-unicorn/-/eslint-plugin-unicorn-50.0.1.tgz#e539cdb02dfd893c603536264c4ed9505b70e3bf"
-  integrity sha512-KxenCZxqSYW0GWHH18okDlOQcpezcitm5aOSz6EnobyJ6BIByiPDviQRjJIUAjG/tMN11958MxaQ+qCoU6lfDA==
+eslint-plugin-unicorn@^52.0.0:
+  version "52.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-unicorn/-/eslint-plugin-unicorn-52.0.0.tgz#c7a559edd52e3932cf2b3a05c3b0efc604c1eeb8"
+  integrity sha512-1Yzm7/m+0R4djH0tjDjfVei/ju2w3AzUGjG6q8JnuNIL5xIwsflyCooW5sfBvQp2pMYQFSWWCFONsjCax1EHng==
   dependencies:
     "@babel/helper-validator-identifier" "^7.22.20"
     "@eslint-community/eslint-utils" "^4.4.0"
