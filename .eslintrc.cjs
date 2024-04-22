@@ -5,7 +5,9 @@ module.exports = {
 	extends: ["plugin:@foretagsplatsen/main"],
 	// workaround for plugin:@foretagsplatsen/main enabling many
 	// unwanted environments:
-	env: { amd: false, jquery: false, node: false, jasmine: false },
+	env: {
+		browser: true,
+	},
 	ignorePatterns: ["sample", "coverage"],
 	rules: {
 		"import/no-unused-modules": [
