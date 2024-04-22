@@ -19,13 +19,19 @@ module.exports = {
 				ignoreExports: [
 					// List of files exporting stuff which are not imported:
 					"src/widgetjs.js",
+					"./vitest.config.js",
 					// List of files not exporting anything:
 					"**/.eslintrc.cjs",
-					"./babel.config.cjs",
 					"src/router/optionalParameterSegment.js",
 					"src/router/staticSegment.js",
 				],
 			},
 		],
+	},
+	settings: {
+		"import/resolver": {
+			exports: {},
+			node: true,
+		},
 	},
 };

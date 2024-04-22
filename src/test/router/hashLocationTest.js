@@ -1,13 +1,6 @@
 import jQuery from "jquery";
 import hashLocationModel from "../../router/hashLocation.js";
-import {
-	afterEach,
-	beforeEach,
-	describe,
-	expect,
-	it,
-	jest,
-} from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Helpers
 
@@ -42,7 +35,7 @@ describe("hashLocation", () => {
 
 		my = {};
 		hashLocation = hashLocationModel({}, my);
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 	});
 
 	afterEach(() => {
@@ -50,7 +43,7 @@ describe("hashLocation", () => {
 			hashLocation.stop();
 		}
 		window.location.hash = "";
-		jest.useRealTimers();
+		vi.useRealTimers();
 	});
 
 	it("hash defaults", () => {
@@ -117,7 +110,7 @@ describe("hashLocation", () => {
 
 	it("setUrl() triggers change", () => {
 		let anotherHashLocation = hashLocationModel();
-		let spy = jest.fn();
+		let spy = vi.fn();
 
 		// Arrange: listen for url changes
 		anotherHashLocation.changed.register(spy);
@@ -184,6 +177,6 @@ describe("hashLocation", () => {
 				},
 			);
 
-			jest.advanceTimersByTime(131);
+			vi.advanceTimersByTime(131);
 		}));
 });
