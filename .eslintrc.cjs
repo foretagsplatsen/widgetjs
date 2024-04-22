@@ -7,6 +7,7 @@ module.exports = {
 	// unwanted environments:
 	env: {
 		browser: true,
+		es2024: true,
 	},
 	ignorePatterns: ["sample", "coverage"],
 	rules: {
