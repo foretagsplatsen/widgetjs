@@ -144,43 +144,45 @@ describe("router", () => {
 		expect(spy).toHaveBeenCalledWith(expect.anything());
 	});
 
-	it("resolveUrl triggers routeMatched event", (done) => {
-		expect.assertions(2);
+	it("resolveUrl triggers routeMatched event", () =>
+		new Promise((resolve) => {
+			expect.assertions(2);
 
-		// Arrange: setup a route
-		let userRoute = aRouter.addRoute({ pattern: "/user/" });
+			// Arrange: setup a route
+			let userRoute = aRouter.addRoute({ pattern: "/user/" });
 
-		// listen for "matched event" on router
-		aRouter.on("routeMatched", function (result) {
-			// Assert that callback was executed
-			expect(result).toBeTruthy();
-			expect(result.getRoute()).toStrictEqual(userRoute);
+			// listen for "matched event" on router
+			aRouter.on("routeMatched", function (result) {
+				// Assert that callback was executed
+				expect(result).toBeTruthy();
+				expect(result.getRoute()).toStrictEqual(userRoute);
 
-			this.unbind(); // clean-up
-			done(); // execute asserts
-		});
+				this.unbind(); // clean-up
+				resolve(); // execute asserts
+			});
 
-		// Act: resolve URL that match
-		aRouter.resolveUrl("/user/");
-	});
+			// Act: resolve URL that match
+			aRouter.resolveUrl("/user/");
+		}));
 
-	it("resolveUrl triggers routeNotFound event", (done) => {
-		expect.assertions(2);
+	it("resolveUrl triggers routeNotFound event", () =>
+		new Promise((resolve) => {
+			expect.assertions(2);
 
-		// Arrange: setup no routes but
-		// a lister for "notFound event"
-		aRouter.on("routeNotFound", function (url) {
-			// Assert that callback was executed
-			expect(url).toBeTruthy();
-			expect(url.toString()).toBe("/user/");
+			// Arrange: setup no routes but
+			// a lister for "notFound event"
+			aRouter.on("routeNotFound", function (url) {
+				// Assert that callback was executed
+				expect(url).toBeTruthy();
+				expect(url.toString()).toBe("/user/");
 
-			this.unbind(); // clean-up
-			done(); // execute asserts
-		});
+				this.unbind(); // clean-up
+				resolve(); // execute asserts
+			});
 
-		// Act: resolve URL:s that should not match
-		aRouter.resolveUrl("/user/");
-	});
+			// Act: resolve URL:s that should not match
+			aRouter.resolveUrl("/user/");
+		}));
 
 	it("resolveUrl executes action on match", () => {
 		let spy = jest.fn();
@@ -198,127 +200,132 @@ describe("router", () => {
 		expect(spy).toHaveBeenCalledWith({});
 	});
 
-	it("resolveUrl pass values to action", (done) => {
-		expect.assertions(2);
+	it("resolveUrl pass values to action", () =>
+		new Promise((resolve) => {
+			expect.assertions(2);
 
-		// Arrange a route that have two mandatory parameters
-		aRouter.addRoute({
-			pattern: "/user/#userid/order/#orderid",
-			action: function (userid, orderid) {
-				expect(userid).toBe("john");
-				expect(orderid).toBe("1");
+			// Arrange a route that have two mandatory parameters
+			aRouter.addRoute({
+				pattern: "/user/#userid/order/#orderid",
+				action: function (userid, orderid) {
+					expect(userid).toBe("john");
+					expect(orderid).toBe("1");
 
-				this.unbind(); // clean-up
-				done(); // execute asserts
-			},
-		});
+					this.unbind(); // clean-up
+					resolve(); // execute asserts
+				},
+			});
 
-		// Act: resolve a URL that match pattern
-		aRouter.resolveUrl("/user/john/order/1");
-	});
+			// Act: resolve a URL that match pattern
+			aRouter.resolveUrl("/user/john/order/1");
+		}));
 
-	it("resolveUrl pass optional values to action", (done) => {
-		expect.assertions(2);
+	it("resolveUrl pass optional values to action", () =>
+		new Promise((resolve) => {
+			expect.assertions(2);
 
-		// Arrange a route that have two mandatory parameters
-		aRouter.addRoute({
-			pattern: "/user/?userid/order/?orderid",
-			action: function (userid, orderid) {
-				expect(userid).toBeUndefined();
-				expect(orderid).toBe("1");
+			// Arrange a route that have two mandatory parameters
+			aRouter.addRoute({
+				pattern: "/user/?userid/order/?orderid",
+				action: function (userid, orderid) {
+					expect(userid).toBeUndefined();
+					expect(orderid).toBe("1");
 
-				this.unbind(); // clean-up
-				done(); // execute asserts
-			},
-		});
+					this.unbind(); // clean-up
+					resolve(); // execute asserts
+				},
+			});
 
-		// Act: resolve a URL that match pattern
-		aRouter.resolveUrl("/user/order/1");
-	});
+			// Act: resolve a URL that match pattern
+			aRouter.resolveUrl("/user/order/1");
+		}));
 
-	it("resolveUrl pass optional value defaults to action", (done) => {
-		expect.assertions(2);
+	it("resolveUrl pass optional value defaults to action", () =>
+		new Promise((resolve) => {
+			expect.assertions(2);
 
-		// Arrange a route that have two optional parameters
-		// with defaukts
-		aRouter.addRoute({
-			pattern: "/user/?userid/order/?orderid",
-			defaults: {
-				userid: "bengan",
-				orderid: "skor",
-			},
-			action: function (userid, orderid) {
-				expect(userid).toBe("bengan");
-				expect(orderid).toBe("1");
+			// Arrange a route that have two optional parameters
+			// with defaukts
+			aRouter.addRoute({
+				pattern: "/user/?userid/order/?orderid",
+				defaults: {
+					userid: "bengan",
+					orderid: "skor",
+				},
+				action: function (userid, orderid) {
+					expect(userid).toBe("bengan");
+					expect(orderid).toBe("1");
 
-				this.unbind(); // clean-up
-				done(); // execute asserts
-			},
-		});
+					this.unbind(); // clean-up
+					resolve(); // execute asserts
+				},
+			});
 
-		// Act: resolve a URL that match pattern
-		aRouter.resolveUrl("/user/order/1");
-	});
+			// Act: resolve a URL that match pattern
+			aRouter.resolveUrl("/user/order/1");
+		}));
 
-	it("resolveUrl pass query as last argument to action", (done) => {
-		expect.assertions(3);
+	it("resolveUrl pass query as last argument to action", () =>
+		new Promise((resolve) => {
+			expect.assertions(3);
 
-		// Arrange a route that have one parameter
-		aRouter.addRoute({
-			pattern: "/user/#userid/order",
-			action: function (userid, query) {
-				// Assert: that parameters and query was passed ok
-				expect(userid).toBe("john");
-				expect(query.filter).toBe("open");
-				expect(query.orderBy).toBe("date");
+			// Arrange a route that have one parameter
+			aRouter.addRoute({
+				pattern: "/user/#userid/order",
+				action: function (userid, query) {
+					// Assert: that parameters and query was passed ok
+					expect(userid).toBe("john");
+					expect(query.filter).toBe("open");
+					expect(query.orderBy).toBe("date");
 
-				this.unbind(); // clean-up
-				done(); // execute asserts
-			},
-		});
+					this.unbind(); // clean-up
+					resolve(); // execute asserts
+				},
+			});
 
-		// Act: resolve a URL that match pattern
-		aRouter.resolveUrl("/user/john/order/?filter=open&orderBy=date");
-	});
+			// Act: resolve a URL that match pattern
+			aRouter.resolveUrl("/user/john/order/?filter=open&orderBy=date");
+		}));
 
-	it("resolveUrl continues if fallThrough", (done) => {
-		expect.assertions(2);
+	it("resolveUrl continues if fallThrough", () =>
+		new Promise((resolve) => {
+			expect.assertions(2);
 
-		// Arrange a 3 routes, where first have fallThrough
-		// set and the two other have not
+			// Arrange a 3 routes, where first have fallThrough
+			// set and the two other have not
 
-		aRouter.addRoute({
-			fallThrough: true,
-			pattern: "/user/",
-			action: function () {
-				expect(true).toBeTruthy();
+			aRouter.addRoute({
+				fallThrough: true,
+				pattern: "/user/",
+				action: function () {
+					expect(true).toBeTruthy();
 
-				this.unbind(); // clean-up
-			},
-		});
+					this.unbind(); // clean-up
+				},
+			});
 
-		aRouter.addRoute({
-			pattern: "/user/",
-			action: function () {
-				expect(true).toBeTruthy();
+			aRouter.addRoute({
+				pattern: "/user/",
+				action: function () {
+					expect(true).toBeTruthy();
 
-				this.unbind(); // clean-up
-				done(); // execute asserts
-			},
-		});
+					this.unbind(); // clean-up
+					resolve(); // execute asserts
+				},
+			});
 
-		aRouter.addRoute({
-			pattern: "/user/",
-			action: function () {
-				expect(true).toBeTruthy();
+			aRouter.addRoute({
+				pattern: "/user/",
+				action: function () {
+					expect(true).toBeTruthy();
 
-				this.unbind(); // clean-up
-			},
-		});
+					this.unbind(); // clean-up
+				},
+			});
 
-		// Act: resolve a URL that match pattern
-		aRouter.resolveUrl("/user/");
-	});
+			// Act: resolve a URL that match pattern
+			aRouter.resolveUrl("/user/");
+		}));
 
 	it("add route with constraints", () => {
 		let action = jest.fn();
@@ -407,52 +414,53 @@ describe("router", () => {
 		anotherRouter.stop();
 	});
 
-	it("back()", (done) => {
-		expect.assertions(5);
+	it("back()", () =>
+		new Promise((resolve) => {
+			expect.assertions(5);
 
-		aRouter.stop();
-		window.location.hash = ""; // start path
-		aRouter.start();
+			aRouter.stop();
+			window.location.hash = ""; // start path
+			aRouter.start();
 
-		delayedSteps(
-			() => {
-				aRouter.redirectTo("a");
-			},
-			() => {
-				aRouter.redirectTo("b");
-			},
-			() => {
-				expect(aRouter.getUrl().toString()).toBe("b");
-			},
-			() => {
-				aRouter.back();
-			},
-			() => {
-				expect(aRouter.getUrl().toString()).toBe("a");
-			},
-			() => {
-				aRouter.back();
-			},
-			() => {
-				expect(aRouter.getUrl().toString()).toBe("");
-			},
-			() => {
-				aRouter.back();
-			},
-			() => {
-				expect(aRouter.getUrl().toString()).toBe("");
-			},
-			() => {
-				aRouter.back("fallback");
-			},
-			() => {
-				expect(aRouter.getUrl().toString()).toBe("fallback");
-			},
-			done,
-		);
+			delayedSteps(
+				() => {
+					aRouter.redirectTo("a");
+				},
+				() => {
+					aRouter.redirectTo("b");
+				},
+				() => {
+					expect(aRouter.getUrl().toString()).toBe("b");
+				},
+				() => {
+					aRouter.back();
+				},
+				() => {
+					expect(aRouter.getUrl().toString()).toBe("a");
+				},
+				() => {
+					aRouter.back();
+				},
+				() => {
+					expect(aRouter.getUrl().toString()).toBe("");
+				},
+				() => {
+					aRouter.back();
+				},
+				() => {
+					expect(aRouter.getUrl().toString()).toBe("");
+				},
+				() => {
+					aRouter.back("fallback");
+				},
+				() => {
+					expect(aRouter.getUrl().toString()).toBe("fallback");
+				},
+				resolve,
+			);
 
-		jest.advanceTimersByTime(131);
-	});
+			jest.advanceTimersByTime(131);
+		}));
 
 	it("expand parameters for named route", () => {
 		// Arrange: a named route
@@ -557,45 +565,48 @@ describe("router", () => {
 		expect(unknownParameter).toBeUndefined();
 	});
 
-	it("setParameters()", (done) => {
-		expect.assertions(4);
+	it("setParameters()", () =>
+		new Promise((resolve) => {
+			expect.assertions(4);
 
-		aRouter.stop();
-		window.location.hash = ""; // start path
-		aRouter.start();
+			aRouter.stop();
+			window.location.hash = ""; // start path
+			aRouter.start();
 
-		aRouter.addRoute({ pattern: "a/#value" });
+			aRouter.addRoute({ pattern: "a/#value" });
 
-		delayedSteps(
-			() => {
-				aRouter.redirectTo("a/b", { foo: "bar" });
-			},
-			() => {
-				expect(aRouter.getUrl().toString()).toBe("a/b?foo=bar");
-			},
-			() => {
-				aRouter.setParameters({ value: "hello" });
-			},
-			() => {
-				expect(aRouter.getUrl().toString()).toBe("a/hello?foo=bar");
-			},
-			() => {
-				aRouter.setParameters({ foo: "world" });
-			},
-			() => {
-				expect(aRouter.getUrl().toString()).toBe("a/hello?foo=world");
-			},
-			() => {
-				aRouter.setParameters({ extra: "fun" });
-			},
-			() => {
-				expect(aRouter.getUrl().toString()).toBe(
-					"a/hello?foo=world&extra=fun",
-				);
-			},
-			done,
-		);
+			delayedSteps(
+				() => {
+					aRouter.redirectTo("a/b", { foo: "bar" });
+				},
+				() => {
+					expect(aRouter.getUrl().toString()).toBe("a/b?foo=bar");
+				},
+				() => {
+					aRouter.setParameters({ value: "hello" });
+				},
+				() => {
+					expect(aRouter.getUrl().toString()).toBe("a/hello?foo=bar");
+				},
+				() => {
+					aRouter.setParameters({ foo: "world" });
+				},
+				() => {
+					expect(aRouter.getUrl().toString()).toBe(
+						"a/hello?foo=world",
+					);
+				},
+				() => {
+					aRouter.setParameters({ extra: "fun" });
+				},
+				() => {
+					expect(aRouter.getUrl().toString()).toBe(
+						"a/hello?foo=world&extra=fun",
+					);
+				},
+				resolve,
+			);
 
-		jest.advanceTimersByTime(131);
-	});
+			jest.advanceTimersByTime(131);
+		}));
 });

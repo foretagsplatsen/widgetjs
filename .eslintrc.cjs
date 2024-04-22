@@ -6,7 +6,8 @@ module.exports = {
 	// workaround for plugin:@foretagsplatsen/main enabling many
 	// unwanted environments:
 	env: {
-		browser: true,
+	    browser: true,
+            		es2024: true,
 	},
 	ignorePatterns: ["sample", "coverage"],
 	rules: {
