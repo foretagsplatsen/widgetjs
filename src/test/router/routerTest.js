@@ -1,12 +1,5 @@
 import router from "../../router/router.js";
-import {
-	afterEach,
-	beforeEach,
-	describe,
-	expect,
-	it,
-	jest,
-} from "@jest/globals";
+import { vi, afterEach, beforeEach, describe, expect, it } from "vitest";
 
 function delayedSteps() {
 	let steps = Array.prototype.slice.call(arguments);
@@ -34,14 +27,14 @@ describe("router", () => {
 
 		my = {};
 		aRouter = router({}, my);
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 	});
 
 	afterEach(() => {
 		aRouter.stop();
 		aRouter.clear();
 		aRouter = null;
-		jest.useRealTimers();
+		vi.useRealTimers();
 	});
 
 	it("router defaults", () => {
@@ -119,7 +112,7 @@ describe("router", () => {
 	it("resolveUrl executes route callback on match", () => {
 		// Arrange: setup a route
 		let userRoute = aRouter.addRoute({ pattern: "/user/" });
-		let spy = jest.fn();
+		let spy = vi.fn();
 
 		userRoute.on("matched", spy);
 
@@ -132,7 +125,7 @@ describe("router", () => {
 	});
 
 	it("resolveUrl triggers resolveUrl event", () => {
-		let spy = jest.fn();
+		let spy = vi.fn();
 
 		// listen for "resolveUrl event" on router
 		aRouter.on("resolveUrl", spy);
@@ -185,7 +178,7 @@ describe("router", () => {
 		}));
 
 	it("resolveUrl executes action on match", () => {
-		let spy = jest.fn();
+		let spy = vi.fn();
 
 		// Arrange: setup a route
 		aRouter.addRoute({
@@ -328,7 +321,7 @@ describe("router", () => {
 		}));
 
 	it("add route with constraints", () => {
-		let action = jest.fn();
+		let action = vi.fn();
 
 		aRouter.addRoute({
 			pattern: "/user/#name/",
@@ -377,7 +370,7 @@ describe("router", () => {
 	it("pipe notfound to another router", () => {
 		// Arrange another router with a route handler
 		let anotherRouter = router();
-		let spy = jest.fn();
+		let spy = vi.fn();
 
 		anotherRouter.addRoute({
 			pattern: "APathNotInDefaultRouterButInPipedRouter",
@@ -397,7 +390,7 @@ describe("router", () => {
 	it("pipe route to another router", () => {
 		// Arrange another router with a route handler
 		let anotherRouter = router();
-		let spy = jest.fn();
+		let spy = vi.fn();
 
 		anotherRouter.addRoute({
 			pattern: "/a/b/#c",
@@ -459,7 +452,7 @@ describe("router", () => {
 				resolve,
 			);
 
-			jest.advanceTimersByTime(131);
+			vi.advanceTimersByTime(131);
 		}));
 
 	it("expand parameters for named route", () => {
@@ -607,6 +600,6 @@ describe("router", () => {
 				resolve,
 			);
 
-			jest.advanceTimersByTime(131);
+			vi.advanceTimersByTime(131);
 		}));
 });

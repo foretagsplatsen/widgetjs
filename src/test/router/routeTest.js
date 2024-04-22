@@ -1,5 +1,5 @@
 import router from "../../router.js";
-import { describe, it, expect } from "@jest/globals";
+import { describe, it, expect } from "vitest";
 
 function assertMatch(url, route, _message) {
 	expect(
