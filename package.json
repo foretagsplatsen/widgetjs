@@ -38,7 +38,7 @@
     "klassified": "^4.0.1"
   },
   "scripts": {
-    "lint": "eslint --max-warnings 0 --format unix --report-unused-disable-directives .",
+    "lint": "eslint --ext js,cjs,mjs --max-warnings 0 --format unix --report-unused-disable-directives .",
     "test:run": "jest",
     "test:serve": "majestic"
   },
