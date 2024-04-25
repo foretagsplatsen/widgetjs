@@ -136,53 +136,54 @@ describe("hashLocation", () => {
 		anotherHashLocation.stop();
 	});
 
-	it("back()", (callback) => {
-		expect.assertions(5);
+	it("back()", () =>
+		new Promise((resolve) => {
+			expect.assertions(5);
 
-		delayedSteps(
-			() => {
-				hashLocation.stop();
-				window.location.hash = ""; // start hash
-				hashLocation.start();
-			},
-			() => {
-				hashLocation.setUrl("a");
-			},
-			() => {
-				hashLocation.setUrl("b");
-			},
-			() => {
-				expect(hashLocation.getUrl().toString()).toBe("b");
-			},
-			() => {
-				hashLocation.back();
-			},
-			() => {
-				expect(hashLocation.getUrl().toString()).toBe("a");
-			},
-			() => {
-				hashLocation.back();
-			},
-			() => {
-				expect(hashLocation.getUrl().toString()).toBe("");
-			},
-			() => {
-				hashLocation.back();
-			},
-			() => {
-				expect(hashLocation.getUrl().toString()).toBe("");
-			},
-			() => {
-				hashLocation.back("fallback");
-			},
-			() => {
-				expect(hashLocation.getUrl().toString()).toBe("fallback");
-			},
-			() => {
-				callback();
-			},
-		);
+			delayedSteps(
+				() => {
+					hashLocation.stop();
+					window.location.hash = ""; // start hash
+					hashLocation.start();
+				},
+				() => {
+					hashLocation.setUrl("a");
+				},
+				() => {
+					hashLocation.setUrl("b");
+				},
+				() => {
+					expect(hashLocation.getUrl().toString()).toBe("b");
+				},
+				() => {
+					hashLocation.back();
+				},
+				() => {
+					expect(hashLocation.getUrl().toString()).toBe("a");
+				},
+				() => {
+					hashLocation.back();
+				},
+				() => {
+					expect(hashLocation.getUrl().toString()).toBe("");
+				},
+				() => {
+					hashLocation.back();
+				},
+				() => {
+					expect(hashLocation.getUrl().toString()).toBe("");
+				},
+				() => {
+					hashLocation.back("fallback");
+				},
+				() => {
+					expect(hashLocation.getUrl().toString()).toBe("fallback");
+				},
+				() => {
+					resolve();
+				},
+			);
 
-		jest.advanceTimersByTime(131);
-	});
+			jest.advanceTimersByTime(131);
+		}));
 });
