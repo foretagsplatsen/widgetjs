@@ -1,6 +1,6 @@
 import htmlCanvas from "../htmlCanvas.js";
 import jQuery from "jquery";
-import { describe, it, expect } from "@jest/globals";
+import { describe, it, expect } from "vitest";
 
 function withCanvas(callback) {
 	jQuery("BODY").append('<div id="sandbox"></div>');
@@ -127,7 +127,7 @@ describe("htmlCanvas", () => {
 
 				let div = html.div({ [attributeName]: undefined });
 
-				expect(div.element.hasAttribute("data-test")).toBeFalse();
+				expect(div.element.hasAttribute("data-test")).toBe(false);
 			});
 		});
 
@@ -139,7 +139,7 @@ describe("htmlCanvas", () => {
 
 				let div = html.div({ [attributeName]: null });
 
-				expect(div.element.hasAttribute("data-test")).toBeFalse();
+				expect(div.element.hasAttribute("data-test")).toBe(false);
 			});
 		});
 
@@ -151,7 +151,7 @@ describe("htmlCanvas", () => {
 
 				let div = html.div({ [attributeName]: false });
 
-				expect(div.element.hasAttribute("data-test")).toBeFalse();
+				expect(div.element.hasAttribute("data-test")).toBe(false);
 			});
 		});
 
@@ -163,7 +163,7 @@ describe("htmlCanvas", () => {
 
 				let div = html.div({ [attributeName]: "" });
 
-				expect(div.element.hasAttribute("data-test")).toBeFalse();
+				expect(div.element.hasAttribute("data-test")).toBe(false);
 			});
 		});
 	});
@@ -193,7 +193,7 @@ describe("htmlCanvas", () => {
 			// and click triggers callback
 			linkEl.click();
 
-			expect(clicked).toBeTrue();
+			expect(clicked).toBe(true);
 		});
 	});
 
@@ -218,7 +218,7 @@ describe("htmlCanvas", () => {
 			// and click triggers callback
 			linkEl.click();
 
-			expect(clicked).toBeTrue();
+			expect(clicked).toBe(true);
 		});
 	});
 

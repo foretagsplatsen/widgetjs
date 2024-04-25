@@ -1,7 +1,7 @@
 import widget from "../widget.js";
 import htmlCanvas from "../htmlCanvas.js";
 import jQuery from "jquery";
-import { jest, describe, it, expect } from "@jest/globals";
+import { vi, describe, it, expect } from "vitest";
 
 const widgetSubclass = widget.subclass((that) => {
 	that.renderContentOn = function (html) {
@@ -94,7 +94,7 @@ describe("function", () => {
 			return that;
 		})();
 
-		let spy = jest.fn();
+		let spy = vi.fn();
 
 		// Assert: that callback is executed when
 		aWidget.anEvent.register(spy);
@@ -365,7 +365,7 @@ describe("function", () => {
 	});
 
 	it("widgets initialize their subwidgets", () => {
-		let spy = jest.fn();
+		let spy = vi.fn();
 		let mySubclass = widget.subclass((that, my) => {
 			my.initializeSubwidgets = spy;
 		});
@@ -377,8 +377,8 @@ describe("function", () => {
 	it("widgets initialize their subwidgets after themselves", () => {
 		expect.assertions(2);
 
-		let init = jest.fn();
-		let initSub = jest.fn();
+		let init = vi.fn();
+		let initSub = vi.fn();
 
 		let mySubclass = widget.subclass((that, my) => {
 			my.initialize = init;
