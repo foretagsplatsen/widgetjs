@@ -3,7 +3,9 @@
   "description": "A framework for building JavaScript applications with widgets.",
   "version": "8.0.2",
   "homepage": "http://github.com/foretagsplatsen/widgetjs",
-  "main": "src/widgetjs.js",
+  "exports": {
+    ".": "./src/widgetjs.js"
+  },
   "type": "module",
   "author": "Företagsplatsen A.B.",
   "contributors": [
@@ -38,16 +40,17 @@
     "klassified": "^4.0.1"
   },
   "scripts": {
-    "lint": "eslint --ext js,cjs,mjs --max-warnings 0 --format unix --report-unused-disable-directives .",
+    "lint": "eslint",
     "test:run": "vitest",
     "test:serve": "vitest --ui"
   },
   "devDependencies": {
-    "@foretagsplatsen/eslint-plugin": "^7.0.1",
+    "@foretagsplatsen/eslint-plugin": "^8.0.0",
     "@vitest/coverage-v8": "^1.6.0",
     "@vitest/ui": "^1.6.0",
-    "eslint": "^8.57.0",
+    "eslint": "^9.4.0",
     "eslint-import-resolver-exports": "^1.0.0-beta.5",
+    "globals": "^15.4.0",
     "jsdom": "^24.0.0",
     "vitest": "^1.6.0",
     "yaem": "foretagsplatsen/yaem#1.0.0"
