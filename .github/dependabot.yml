@@ -12,7 +12,7 @@ updates:
     registries: "*"
     open-pull-requests-limit: 1000 # we don't want to limit PRs
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "sunday"
       time: "19:00"
       timezone: "Europe/Paris"
