@@ -1,7 +1,7 @@
-import jQuery from "jquery";
 import { eventCategory } from "yaem";
-import url from "./url.js";
 import { object } from "klassified";
+import jQuery from "jquery";
+import url from "./url.js";
 
 /**
  * In modern browsers we use the "hashchange" event to listen for location changes. If not supported

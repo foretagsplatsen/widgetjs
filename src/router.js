@@ -1,6 +1,6 @@
-import url from "./router/url.js";
 import route from "./router/route.js";
 import router from "./router/router.js";
+import url from "./router/url.js";
 
 let routerSingleton = router();
 

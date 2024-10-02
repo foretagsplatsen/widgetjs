@@ -1,6 +1,6 @@
+import { describe, expect, it } from "vitest";
 import htmlCanvas from "../htmlCanvas.js";
 import jQuery from "jquery";
-import { describe, it, expect } from "vitest";
 
 function withCanvas(callback) {
 	jQuery("BODY").append('<div id="sandbox"></div>');

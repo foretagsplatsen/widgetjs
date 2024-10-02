@@ -1,11 +1,11 @@
-import { object } from "klassified";
-import widgetExtensions from "./widget-extensions.js";
-import router from "./router.js";
 import { eventCategory } from "yaem";
-import htmlCanvas from "./htmlCanvas.js";
-import jQuery from "jquery";
 import { getCurrentWidget, withCurrentWidget } from "./currentWidget.js";
 import { newId } from "./idGenerator.js";
+import { object } from "klassified";
+import htmlCanvas from "./htmlCanvas.js";
+import jQuery from "jquery";
+import router from "./router.js";
+import widgetExtensions from "./widget-extensions.js";
 
 /**
  * Base for all widgets. A widget can keep state in variables, contain logic and
