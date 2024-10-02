@@ -1,5 +1,5 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import router from "../../router/router.js";
-import { vi, afterEach, beforeEach, describe, expect, it } from "vitest";
 
 function delayedSteps() {
 	let steps = Array.prototype.slice.call(arguments);

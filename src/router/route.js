@@ -1,9 +1,9 @@
-import routeFactory from "./routeFactory.js";
+import "jquery";
 import { eventCategory } from "yaem";
+import { object } from "klassified";
+import routeFactory from "./routeFactory.js";
 import routeMatchResult from "./routeMatchResult.js";
 import url from "./url.js";
-import { object } from "klassified";
-import "jquery";
 
 /**
  * Routes represent the path for which an action should be taken (see `matched` event).

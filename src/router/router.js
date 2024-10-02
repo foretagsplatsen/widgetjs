@@ -1,9 +1,9 @@
+import "jquery";
 import { eventCategory } from "yaem";
+import { object } from "klassified";
+import hashLocation from "./hashLocation.js";
 import route from "./route.js";
 import url from "./url.js";
-import hashLocation from "./hashLocation.js";
-import { object } from "klassified";
-import "jquery";
 
 /**
  * Lazily creates a singleton instance of
@@ -278,7 +278,7 @@ const router = object.subclass((that, my) => {
 	 *
 	 * @param {string} routeName Name of route or path
 	 * @param {{}} [parameters]
-	 * @param {boolean} [includeCurrentParameters=false] Merge parameters with parameters in current match.
+	 * @param {boolean} [includeCurrentParameters] Merge parameters with parameters in current match.
 	 *
 	 * @returns {string}
 	 */
@@ -337,7 +337,7 @@ const router = object.subclass((that, my) => {
 	 *
 	 * @param {string} routeName
 	 * @param {{}} [parameters]
-	 * @param {boolean} [includeCurrentParameters=false] Merge parameters with parameters in current match.
+	 * @param {boolean} [includeCurrentParameters] Merge parameters with parameters in current match.
 	 *
 	 * @returns {string}
 	 */
@@ -421,8 +421,8 @@ const router = object.subclass((that, my) => {
 	 *
 	 * @param {{}} [options]
 	 * @param {string} [options.routeName] Name of route to link to. Default route from last match.
-	 * @param {{}} [options.parameters={}]
-	 * @param {boolean} [options.excludeCurrentParameters=false]
+	 * @param {{}} [options.parameters]
+	 * @param {boolean} [options.excludeCurrentParameters]
 	 *
 	 * @returns {url}
 	 */
@@ -466,8 +466,8 @@ const router = object.subclass((that, my) => {
 	/**
 	 * Constructs a link from supplied parameters.
 	 *
-	 * @param {{}} [parameters={}]
-	 * @param {boolean} [excludeCurrentParameters=false]
+	 * @param {{}} [parameters]
+	 * @param {boolean} [excludeCurrentParameters]
 	 *
 	 * @returns {string}
 	 */
@@ -483,8 +483,8 @@ const router = object.subclass((that, my) => {
 	/**
 	 * Constructs a link from supplied parameters.
 	 *
-	 * @param {{}} [parameters={}]
-	 * @param {boolean} [excludeCurrentParameters=false]
+	 * @param {{}} [parameters]
+	 * @param {boolean} [excludeCurrentParameters]
 	 *
 	 * @returns {string}
 	 */

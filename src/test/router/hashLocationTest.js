@@ -1,6 +1,6 @@
-import jQuery from "jquery";
-import hashLocationModel from "../../router/hashLocation.js";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import hashLocationModel from "../../router/hashLocation.js";
+import jQuery from "jquery";
 
 // Helpers
 

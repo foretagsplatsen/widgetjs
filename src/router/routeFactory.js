@@ -1,7 +1,7 @@
-import abstractSegment from "./abstractSegment.js";
-import "./parameterSegment.js";
 import "./optionalParameterSegment.js";
+import "./parameterSegment.js";
 import "./staticSegment.js";
+import abstractSegment from "./abstractSegment.js";
 
 /**
  * Token/Char used to separate segments in route patterns.
@@ -32,11 +32,9 @@ function routeFactory(pattern, options) {
 		.map(Function.prototype.call, String.prototype.trim)
 		.filter(Boolean);
 
-	let segmentArray = nonEmptySegmentStrings.map((segmentString) =>
+	return nonEmptySegmentStrings.map((segmentString) =>
 		segmentFactory(segmentString, options),
 	);
-
-	return segmentArray;
 }
 
 /**

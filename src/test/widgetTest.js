@@ -1,7 +1,7 @@
-import widget from "../widget.js";
+import { describe, expect, it, vi } from "vitest";
 import htmlCanvas from "../htmlCanvas.js";
 import jQuery from "jquery";
-import { vi, describe, it, expect } from "vitest";
+import widget from "../widget.js";
 
 const widgetSubclass = widget.subclass((that) => {
 	that.renderContentOn = function (html) {
