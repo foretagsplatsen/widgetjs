@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import hashLocationModel from "../../router/hashLocation.js";
+import hashLocationModel from "../../router/hashLocation.js"; // eslint-disable-line consistent-default-export-name/default-import-match-filename -- we should fix that
 import jQuery from "jquery";
 
 // Helpers
@@ -14,6 +14,7 @@ function delayedSteps() {
 		let fn = steps.shift();
 
 		setTimeout(function () {
+			// eslint-disable-next-line sonarjs/no-extra-arguments -- too afraid to fix that now :-)
 			next(fn.apply(next, arguments));
 		}, 10);
 	}

@@ -450,12 +450,12 @@ const router = object.subclass((that, my) => {
 
 		// Fill with defaults if needed
 		Object.keys(my.defaultParameters).forEach((parameterName) => {
-			if (!(parameterName in allParameters)) {
-				allParameters[parameterName] =
-					typeof my.defaultParameters[parameterName] === "function"
-						? my.defaultParameters[parameterName]()
-						: my.defaultParameters[parameterName];
-			}
+			if (parameterName in allParameters) return;
+
+			allParameters[parameterName] =
+				typeof my.defaultParameters[parameterName] === "function"
+					? my.defaultParameters[parameterName]()
+					: my.defaultParameters[parameterName];
 		});
 
 		// Expand template route and construct URL

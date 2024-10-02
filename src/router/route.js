@@ -152,12 +152,13 @@ const route = object.subclass((that, my) => {
 		let query = {};
 
 		Object.keys(params).forEach((param) => {
-			if (!that.hasParameter(param)) {
-				query[param] = params[param];
-				// Handle array param values
-				if (query[param] instanceof Array) {
-					query[param] = query[param].join(",");
-				}
+			if (that.hasParameter(param)) return;
+
+			query[param] = params[param];
+
+			// Handle array param values
+			if (query[param] instanceof Array) {
+				query[param] = query[param].join(",");
 			}
 		});
 
@@ -249,9 +250,9 @@ const route = object.subclass((that, my) => {
 		let optionalPositions = [];
 
 		segments.forEach((segment, index) => {
-			if (segment.isOptional()) {
-				optionalPositions.push(index);
-			}
+			if (!segment.isOptional()) return;
+
+			optionalPositions.push(index);
 		});
 
 		if (optionalPositions.length > 15) {

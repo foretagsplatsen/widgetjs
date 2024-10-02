@@ -11,6 +11,7 @@ function delayedSteps() {
 		let fn = steps.shift();
 
 		setTimeout(function () {
+			// eslint-disable-next-line sonarjs/no-extra-arguments -- too afraid to fix that now :-)
 			next(fn.apply(next, arguments));
 		}, 10);
 	}
