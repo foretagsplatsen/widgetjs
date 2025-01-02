@@ -86,7 +86,7 @@ const widget = object.subclass((that, my) => {
 		return id;
 	};
 
-	that.id = that.getId; // TODO: deprecated
+	that.id = that.getId;
 
 	/**
 	 * Performance tasks need for freeing/releasing/cleaning-up resources used by widget.

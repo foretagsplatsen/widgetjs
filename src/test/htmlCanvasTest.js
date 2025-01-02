@@ -56,7 +56,7 @@ describe("htmlCanvas", () => {
 
 		withCanvas((html) => {
 			// Arrange: a Google link
-			html.a("Google").id("test_id").href("http://www.google.se");
+			html.a("Google").id("test_id").href("https://www.google.se");
 
 			// Assert: that A was rendered
 			const linkEl = jQuery("#test_id");
@@ -64,7 +64,7 @@ describe("htmlCanvas", () => {
 			expect(linkEl.get(0)).toBeTruthy();
 
 			// and href was set
-			expect(linkEl.attr("href")).toBe("http://www.google.se");
+			expect(linkEl.attr("href")).toBe("https://www.google.se");
 		});
 	});
 
@@ -523,7 +523,6 @@ describe("htmlCanvas", () => {
 		});
 	});
 
-	// TODO: allow or throw exception?
 	it("can render almost everything", () => {
 		expect.assertions(1);
 
