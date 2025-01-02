@@ -12,7 +12,7 @@ function setCurrentWidget(widget) {
  * Set `widget` as the current widget while evaluating `fn`.
  */
 export function withCurrentWidget(fn, widget) {
-	let previousCurrent = getCurrentWidget();
+	const previousCurrent = getCurrentWidget();
 
 	try {
 		setCurrentWidget(widget);

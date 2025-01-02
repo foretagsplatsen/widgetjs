@@ -101,12 +101,12 @@ const route = object.subclass((that, my) => {
 	 */
 	// eslint-disable-next-line no-shadow -- we should fix that later
 	that.matchUrl = function (url) {
-		let match = findMatch(url);
+		const match = findMatch(url);
 		if (!match) {
 			return routeMatchResult.routeNoMatchResult;
 		}
 
-		let result = createMatchResult(match, url);
+		const result = createMatchResult(match, url);
 		my.events.trigger("matched", result);
 
 		return result;
@@ -124,7 +124,7 @@ const route = object.subclass((that, my) => {
 		params ||= {};
 
 		// Try to expand route into URL
-		let urlSegments = [];
+		const urlSegments = [];
 
 		segments.forEach((routeSegment) => {
 			let urlSegment;
@@ -149,7 +149,7 @@ const route = object.subclass((that, my) => {
 			urlSegments.push(urlSegment);
 		});
 
-		let query = {};
+		const query = {};
 
 		Object.keys(params).forEach((param) => {
 			if (that.hasParameter(param)) return;
@@ -207,7 +207,7 @@ const route = object.subclass((that, my) => {
 
 		// All routeSegments much match corresponding URL segment
 		return sequence.every((routeSegment, index) => {
-			let urlSegment = urlSegments[index];
+			const urlSegment = urlSegments[index];
 			return urlSegment !== undefined && routeSegment.match(urlSegment);
 		});
 	}
@@ -220,7 +220,7 @@ const route = object.subclass((that, my) => {
 	 */
 	// eslint-disable-next-line no-shadow -- we should fix that later
 	function findMatch(url) {
-		let urlSegments = url.getSegments();
+		const urlSegments = url.getSegments();
 
 		// Try match url segments
 		if (isMatch(urlSegments)) {
@@ -247,7 +247,7 @@ const route = object.subclass((that, my) => {
 	 */
 	function ensureOptionalSequences() {
 		// Find positions for optionals
-		let optionalPositions = [];
+		const optionalPositions = [];
 
 		segments.forEach((segment, index) => {
 			if (!segment.isOptional()) return;
@@ -267,12 +267,12 @@ const route = object.subclass((that, my) => {
 		}
 
 		// Generate possible sequences
-		let possibleOptionalSequences = orderedSubsets(optionalPositions);
+		const possibleOptionalSequences = orderedSubsets(optionalPositions);
 
 		possibleOptionalSequences.forEach((sequence) => {
 			// Clone segments array and remove optionals matching
 			// indexes in index sequence
-			let optionalSequence = segments.slice();
+			const optionalSequence = segments.slice();
 
 			sequence.forEach((optionalIndex, numRemoved) => {
 				// Remove optional but take in to account that we have already
@@ -294,16 +294,16 @@ const route = object.subclass((that, my) => {
 	 */
 	// eslint-disable-next-line no-shadow -- we should fix that later
 	function createMatchResult(match, url) {
-		let urlSegments = url.getSegments();
+		const urlSegments = url.getSegments();
 
-		let parameterValues = {};
+		const parameterValues = {};
 
 		segments.forEach((routeSegment) => {
 			if (!routeSegment.isParameter()) {
 				return;
 			}
 
-			let matchedIndex = match.indexOf(routeSegment);
+			const matchedIndex = match.indexOf(routeSegment);
 			if (matchedIndex >= 0) {
 				parameterValues[routeSegment.getName()] = routeSegment.getValue(
 					urlSegments[matchedIndex],
@@ -333,10 +333,10 @@ const route = object.subclass((that, my) => {
  * @returns {[[]]} Array with all subset arrays
  */
 function orderedSubsets(input) {
-	let results = [];
+	const results = [];
 	let result;
 	let mask;
-	let total = Math.pow(2, input.length);
+	const total = Math.pow(2, input.length);
 
 	for (mask = 1; mask < total; mask++) {
 		result = [];

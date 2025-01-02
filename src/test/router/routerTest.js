@@ -2,13 +2,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import router from "../../router/router.js";
 
 function delayedSteps() {
-	let steps = Array.prototype.slice.call(arguments);
+	const steps = Array.prototype.slice.call(arguments);
 
 	function next() {
 		if (steps.length === 0) {
 			return;
 		}
-		let fn = steps.shift();
+		const fn = steps.shift();
 
 		setTimeout(function () {
 			// eslint-disable-next-line sonarjs/no-extra-arguments -- too afraid to fix that now :-)
@@ -46,7 +46,7 @@ describe("router", () => {
 
 	it("router options", () => {
 		// Arrange a router with options set
-		let anotherMy = {};
+		const anotherMy = {};
 
 		router(
 			{
@@ -64,7 +64,7 @@ describe("router", () => {
 
 	it("add route", () => {
 		// Act: add a route
-		let route = aRouter.addRoute({ pattern: "/users/" });
+		const route = aRouter.addRoute({ pattern: "/users/" });
 
 		// Assert that route was added to route table
 		expect(my.routeTable).toHaveLength(1);
@@ -73,7 +73,7 @@ describe("router", () => {
 
 	it("remove route", () => {
 		// Act: add and remove route
-		let route = aRouter.addRoute({ pattern: "/users/" });
+		const route = aRouter.addRoute({ pattern: "/users/" });
 		aRouter.removeRoute(route);
 
 		// Assert that route was removed from route table
@@ -82,10 +82,10 @@ describe("router", () => {
 
 	it("named routes", () => {
 		// Arrange: a named route
-		let route = aRouter.addRoute({ name: "users", pattern: "/users/" });
+		const route = aRouter.addRoute({ name: "users", pattern: "/users/" });
 
 		// Act: lookup route by name
-		let namedRoute = aRouter.getRouteByName("users");
+		const namedRoute = aRouter.getRouteByName("users");
 
 		// Assert that route is found
 		expect(namedRoute).toBe(route);
@@ -93,14 +93,14 @@ describe("router", () => {
 
 	it("add routes with priority", () => {
 		// Act: add routes with different priorities
-		let invoiceRoute = aRouter.addRoute({ pattern: "/invoice/" });
-		let ticketRoute = aRouter.addRoute({ pattern: "/ticket/" });
+		const invoiceRoute = aRouter.addRoute({ pattern: "/invoice/" });
+		const ticketRoute = aRouter.addRoute({ pattern: "/ticket/" });
 		aRouter.addRoute({ pattern: "/customer/", priority: 2 });
-		let orderRoute = aRouter.addRoute({
+		const orderRoute = aRouter.addRoute({
 			pattern: "/order/",
 			priority: 2,
 		});
-		let userRoute = aRouter.addRoute({ pattern: "/user/", priority: 1 });
+		const userRoute = aRouter.addRoute({ pattern: "/user/", priority: 1 });
 
 		// Assert that route was added to route table in correct order
 		expect(my.routeTable).toHaveLength(5);
@@ -112,8 +112,8 @@ describe("router", () => {
 
 	it("resolveUrl executes route callback on match", () => {
 		// Arrange: setup a route
-		let userRoute = aRouter.addRoute({ pattern: "/user/" });
-		let spy = vi.fn();
+		const userRoute = aRouter.addRoute({ pattern: "/user/" });
+		const spy = vi.fn();
 
 		userRoute.on("matched", spy);
 
@@ -126,7 +126,7 @@ describe("router", () => {
 	});
 
 	it("resolveUrl triggers resolveUrl event", () => {
-		let spy = vi.fn();
+		const spy = vi.fn();
 
 		// listen for "resolveUrl event" on router
 		aRouter.on("resolveUrl", spy);
@@ -143,7 +143,7 @@ describe("router", () => {
 			expect.assertions(2);
 
 			// Arrange: setup a route
-			let userRoute = aRouter.addRoute({ pattern: "/user/" });
+			const userRoute = aRouter.addRoute({ pattern: "/user/" });
 
 			// listen for "matched event" on router
 			aRouter.on("routeMatched", function (result) {
@@ -179,7 +179,7 @@ describe("router", () => {
 		}));
 
 	it("resolveUrl executes action on match", () => {
-		let spy = vi.fn();
+		const spy = vi.fn();
 
 		// Arrange: setup a route
 		aRouter.addRoute({
@@ -322,7 +322,7 @@ describe("router", () => {
 		}));
 
 	it("add route with constraints", () => {
-		let action = vi.fn();
+		const action = vi.fn();
 
 		aRouter.addRoute({
 			pattern: "/user/#name/",
@@ -347,7 +347,7 @@ describe("router", () => {
 	it("getUrl returns current location", () => {
 		// Act: change hash and get url
 		window.location.hash = "#!/aPath";
-		let currentUrl = aRouter.getUrl();
+		const currentUrl = aRouter.getUrl();
 
 		// Assert correct url
 		expect(currentUrl.toString()).toBe("aPath");
@@ -370,8 +370,8 @@ describe("router", () => {
 
 	it("pipe notfound to another router", () => {
 		// Arrange another router with a route handler
-		let anotherRouter = router();
-		let spy = vi.fn();
+		const anotherRouter = router();
+		const spy = vi.fn();
 
 		anotherRouter.addRoute({
 			pattern: "APathNotInDefaultRouterButInPipedRouter",
@@ -390,8 +390,8 @@ describe("router", () => {
 
 	it("pipe route to another router", () => {
 		// Arrange another router with a route handler
-		let anotherRouter = router();
-		let spy = vi.fn();
+		const anotherRouter = router();
+		const spy = vi.fn();
 
 		anotherRouter.addRoute({
 			pattern: "/a/b/#c",
@@ -461,7 +461,7 @@ describe("router", () => {
 		aRouter.addRoute({ name: "user", pattern: "/user/#userId" });
 
 		// Act: get path from parameters
-		let url = aRouter.expand({
+		const url = aRouter.expand({
 			routeName: "user",
 			parameters: { userId: "john", includeDetails: true },
 		});
@@ -476,7 +476,7 @@ describe("router", () => {
 		window.location.hash = ""; // start path
 
 		// Act: get path from parameters
-		let url = aRouter.expand({
+		const url = aRouter.expand({
 			parameters: { userId: "john", includeDetails: true },
 		});
 
@@ -495,7 +495,7 @@ describe("router", () => {
 		aRouter.redirectTo("/user/john", { includeCompanies: true });
 
 		// Act: get path from parameters for current location
-		let url = aRouter.expand({
+		const url = aRouter.expand({
 			parameters: { includeDetails: true },
 		});
 
@@ -517,7 +517,7 @@ describe("router", () => {
 		aRouter.setDefaultParameter("foo", () => "default");
 
 		// Act: link to without mandatory parameter #foo
-		let url = aRouter.linkTo("bar");
+		const url = aRouter.linkTo("bar");
 
 		// Assert that foo is in second route as well
 		expect(url.toString()).toBe("#!/default/bar");
@@ -531,7 +531,7 @@ describe("router", () => {
 		aRouter.redirectTo("/user/john", { includeCompanies: true });
 
 		// Act: get parameters from URL
-		let parameters = aRouter.getParameters();
+		const parameters = aRouter.getParameters();
 
 		// Assert that parameters contains both query and URL parameters
 		expect(parameters).toStrictEqual({
@@ -548,10 +548,10 @@ describe("router", () => {
 		aRouter.redirectTo("/user/john", { includeCompanies: true });
 
 		// Act: get parameters from URL
-		let userIdParameter = aRouter.getParameter("userId");
-		let includeCompaniesParameter =
+		const userIdParameter = aRouter.getParameter("userId");
+		const includeCompaniesParameter =
 			aRouter.getParameter("includeCompanies");
-		let unknownParameter = aRouter.getParameter("unknown");
+		const unknownParameter = aRouter.getParameter("unknown");
 
 		// Assert that parameters contains both query and URL parameters
 		expect(userIdParameter).toBe("john");

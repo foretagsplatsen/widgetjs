@@ -5,13 +5,13 @@ import jQuery from "jquery";
 // Helpers
 
 function delayedSteps() {
-	let steps = Array.prototype.slice.call(arguments);
+	const steps = Array.prototype.slice.call(arguments);
 
 	function next() {
 		if (steps.length === 0) {
 			return;
 		}
-		let fn = steps.shift();
+		const fn = steps.shift();
 
 		setTimeout(function () {
 			// eslint-disable-next-line sonarjs/no-extra-arguments -- too afraid to fix that now :-)
@@ -86,7 +86,7 @@ describe("hashLocation", () => {
 
 		// Act: get current URL
 		hashLocation.start();
-		let currentUrl = hashLocation.getUrl();
+		const currentUrl = hashLocation.getUrl();
 
 		// Assert that URL is location hash minus hash-bang
 		expect(currentUrl.toString()).toBe("test");
@@ -103,15 +103,15 @@ describe("hashLocation", () => {
 
 	it("linkToUrl() return link for href:s", () => {
 		// Act: create link to URL
-		let link = hashLocation.linkToUrl("someurl");
+		const link = hashLocation.linkToUrl("someurl");
 
 		// Assert that URL have hash-bang
 		expect(link).toBe("#!/someurl");
 	});
 
 	it("setUrl() triggers change", () => {
-		let anotherHashLocation = hashLocationModel();
-		let spy = vi.fn();
+		const anotherHashLocation = hashLocationModel();
+		const spy = vi.fn();
 
 		// Arrange: listen for url changes
 		anotherHashLocation.changed.register(spy);

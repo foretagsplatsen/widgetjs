@@ -5,7 +5,7 @@ import jQuery from "jquery";
  * Token/Char used to separate segments in URL paths.
  * @type {string}
  */
-let urlSeparator = "/";
+const urlSeparator = "/";
 
 /**
  * A `url` actually represents the fragment part of the actual url.
@@ -99,7 +99,7 @@ url.build = function (path, query) {
 	}
 
 	if (query) {
-		let queryPart = decodeURIComponent(jQuery.param(query));
+		const queryPart = decodeURIComponent(jQuery.param(query));
 		if (queryPart) {
 			return url({ rawUrl: `${path}?${queryPart}` });
 		}
@@ -134,6 +134,7 @@ function parseSegments(path) {
  * @returns {string}
  */
 function parsePath(rawUrl) {
+	// eslint-disable-next-line sonarjs/slow-regex -- don't want to fix that now
 	return rawUrl.replace(/\?.*$/g, "");
 }
 
@@ -149,8 +150,9 @@ function parsePath(rawUrl) {
  */
 function parseQuery(rawUrl) {
 	// Extract query key/value(s) from a rawUrl and add them to `query` object.
-	let result = /[^?]*\?(.*)$/g.exec(rawUrl);
-	let query = {};
+	// eslint-disable-next-line sonarjs/slow-regex -- don't want to fix that now
+	const result = /[^?]*\?(.*)$/g.exec(rawUrl);
+	const query = {};
 	let pair;
 	if (result && result.length >= 2) {
 		result[1].split("&").forEach((each) => {

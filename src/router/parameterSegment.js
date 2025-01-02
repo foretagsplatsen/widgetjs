@@ -14,7 +14,7 @@ function parameterValidator(constraint) {
 
 	// Match against RegExp
 	if (constraint instanceof RegExp) {
-		let exp = new RegExp(constraint);
+		const exp = new RegExp(constraint);
 		return function (urlSegment) {
 			return exp.test(urlSegment);
 		};
@@ -22,9 +22,9 @@ function parameterValidator(constraint) {
 
 	// Match valid options in an array
 	if (Object.prototype.toString.call(constraint) === "[object Array]") {
-		let options = constraint.map((option) => option.toLowerCase());
+		const options = constraint.map((option) => option.toLowerCase());
 		return function (urlSegment) {
-			let val = urlSegment.toLowerCase();
+			const val = urlSegment.toLowerCase();
 			return options.indexOf(val) !== -1;
 		};
 	}

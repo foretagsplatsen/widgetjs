@@ -145,7 +145,7 @@ const router = object.subclass((that, my) => {
 	that.addRoute = function (routeSpec) {
 		routeSpec ||= {};
 
-		let newRoute = route({
+		const newRoute = route({
 			pattern: routeSpec.pattern,
 			options: routeSpec,
 		});
@@ -173,10 +173,10 @@ const router = object.subclass((that, my) => {
 	 * @returns {route} Matched route or null if not matched
 	 */
 	that.findRoute = function (predicate) {
-		let numRoutes = my.routeTable.length;
+		const numRoutes = my.routeTable.length;
 		for (let routeIndex = 0; routeIndex < numRoutes; routeIndex++) {
 			// eslint-disable-next-line no-shadow -- we should fix that later
-			let route = my.routeTable[routeIndex];
+			const route = my.routeTable[routeIndex];
 			if (predicate(route)) {
 				return route;
 			}
@@ -205,7 +205,7 @@ const router = object.subclass((that, my) => {
 	 */
 	// eslint-disable-next-line no-shadow -- we should fix that later
 	that.removeRoute = function (route) {
-		let index = my.routeTable.indexOf(route);
+		const index = my.routeTable.indexOf(route);
 		if (index === -1) {
 			throw new Error("Route not in route table");
 		}
@@ -235,7 +235,7 @@ const router = object.subclass((that, my) => {
 			throw new Error("Route pattern required");
 		}
 
-		let aRoute = that.addRoute(routeSpec);
+		const aRoute = that.addRoute(routeSpec);
 
 		aRoute.matched.register((result) => {
 			router.resolveUrl(result.getUrl());
@@ -284,7 +284,7 @@ const router = object.subclass((that, my) => {
 	 */
 	that.linkTo = function (routeName, parameters, includeCurrentParameters) {
 		// eslint-disable-next-line no-shadow -- we should fix that later
-		let route = that.getRouteByName(routeName);
+		const route = that.getRouteByName(routeName);
 		if (route) {
 			return my.location.linkToUrl(
 				that.expand({
@@ -347,7 +347,7 @@ const router = object.subclass((that, my) => {
 		includeCurrentParameters,
 	) {
 		// eslint-disable-next-line no-shadow -- we should fix that later
-		let route = that.getRouteByName(routeName);
+		const route = that.getRouteByName(routeName);
 		if (route) {
 			return my.location.setUrl(
 				that.expand({
@@ -427,9 +427,9 @@ const router = object.subclass((that, my) => {
 	 * @returns {url}
 	 */
 	that.expand = function (options) {
-		let routeName = options.routeName;
-		let suppliedParameters = options.parameters || {};
-		let excludeCurrentParameters =
+		const routeName = options.routeName;
+		const suppliedParameters = options.parameters || {};
+		const excludeCurrentParameters =
 			options.excludeCurrentParameters || false;
 
 		// Pick a template route
@@ -443,10 +443,10 @@ const router = object.subclass((that, my) => {
 		}
 
 		// Merge current parameters with supplied parameters
-		let currentParameters = excludeCurrentParameters
+		const currentParameters = excludeCurrentParameters
 			? {}
 			: that.getParameters();
-		let allParameters = merge(currentParameters, suppliedParameters);
+		const allParameters = merge(currentParameters, suppliedParameters);
 
 		// Fill with defaults if needed
 		Object.keys(my.defaultParameters).forEach((parameterName) => {
@@ -459,7 +459,7 @@ const router = object.subclass((that, my) => {
 		});
 
 		// Expand template route and construct URL
-		let aRawUrl = templateRoute.expand(allParameters);
+		const aRawUrl = templateRoute.expand(allParameters);
 		return url({ rawUrl: aRawUrl });
 	};
 
@@ -518,7 +518,7 @@ const router = object.subclass((that, my) => {
 	 * @returns {*}
 	 */
 	that.getParameter = function (parameterName) {
-		let parameters = that.getParameters();
+		const parameters = that.getParameters();
 		return parameters[parameterName];
 	};
 
@@ -574,14 +574,14 @@ const router = object.subclass((that, my) => {
 	 * @param {url} [aUrl] A URL or current url as default
 	 */
 	my.resolveUrl = function (aUrl) {
-		let currentUrl = aUrl === undefined ? my.location.getUrl() : aUrl;
+		const currentUrl = aUrl === undefined ? my.location.getUrl() : aUrl;
 
 		that.onResolveUrl.trigger(currentUrl);
 
 		let numMatched = 0;
 
 		my.routeTable.some((candidateRoute) => {
-			let result = currentUrl.matchRoute(candidateRoute);
+			const result = currentUrl.matchRoute(candidateRoute);
 			if (result.isMatch()) {
 				my.lastMatch = result;
 				numMatched++;
@@ -636,9 +636,9 @@ const router = object.subclass((that, my) => {
 	 * @returns {{}}
 	 */
 	function merge() {
-		let objects = Array.prototype.slice.call(arguments);
+		const objects = Array.prototype.slice.call(arguments);
 
-		let target = {};
+		const target = {};
 
 		objects.forEach((obj) => {
 			Object.keys(obj).forEach((key) => {

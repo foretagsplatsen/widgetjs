@@ -147,7 +147,7 @@ export default class Widget2 {
 	 */
 	replace(aJQuery) {
 		this._withAttachHooks(() => {
-			let canvas = htmlCanvas(aJQuery);
+			const canvas = htmlCanvas(aJQuery);
 			canvas.root.asJQuery().empty();
 			this._renderBasicOn(canvas);
 		});
@@ -276,7 +276,7 @@ export default class Widget2 {
 			this.asJQuery().empty();
 
 			// re-render content on root
-			let html = htmlCanvas(this.asJQuery());
+			const html = htmlCanvas(this.asJQuery());
 
 			this._withChildrenRegistration(() => {
 				this.renderContentOn(html);
@@ -319,7 +319,7 @@ export default class Widget2 {
 	 * the evaluation.
 	 */
 	_withAttachHooks(fn) {
-		let inRenderingLoop = !!getCurrentWidget();
+		const inRenderingLoop = !!getCurrentWidget();
 
 		if (!inRenderingLoop) {
 			this.triggerWillAttach();
@@ -343,7 +343,7 @@ export default class Widget2 {
 	 * Create and expose one event per string argument.
 	 */
 	_createEvents() {
-		let names = Array.prototype.slice.apply(arguments);
+		const names = Array.prototype.slice.apply(arguments);
 
 		names.forEach((name) => this._createEvent(name));
 	}
@@ -376,7 +376,7 @@ export default class Widget2 {
 	}
 
 	_withChildrenRegistration(fn) {
-		let parent = getCurrentWidget();
+		const parent = getCurrentWidget();
 
 		if (parent) {
 			parent.registerChild(this);
