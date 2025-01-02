@@ -7,7 +7,7 @@ import abstractSegment from "./abstractSegment.js";
  * Token/Char used to separate segments in route patterns.
  * @type {string}
  */
-let routePatternSeparator = "/";
+const routePatternSeparator = "/";
 
 /**
  * Creates a route from pattern. A pattern is a string with route segments
@@ -26,9 +26,9 @@ function routeFactory(pattern, options) {
 	}
 
 	options ||= {};
-	let segmentStrings = pattern.split(routePatternSeparator);
+	const segmentStrings = pattern.split(routePatternSeparator);
 
-	let nonEmptySegmentStrings = segmentStrings
+	const nonEmptySegmentStrings = segmentStrings
 		.map(Function.prototype.call, String.prototype.trim)
 		.filter(Boolean);
 
@@ -47,10 +47,10 @@ function routeFactory(pattern, options) {
 function segmentFactory(segmentString, options) {
 	options ||= {};
 
-	let segments = abstractSegment.allSubclasses();
+	const segments = abstractSegment.allSubclasses();
 
 	// Find segment type from string
-	for (let segment of segments) {
+	for (const segment of segments) {
 		if (segment.match(segmentString)) {
 			return segment({
 				segmentString,

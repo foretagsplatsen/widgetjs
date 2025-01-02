@@ -23,7 +23,7 @@ describe("route", () => {
 	// MATCH tests
 
 	it("empty route", () => {
-		let route = "";
+		const route = "";
 
 		assertMatch("", route, "Match empty");
 		assertMatch("/", route, "Match slash");
@@ -34,7 +34,7 @@ describe("route", () => {
 	});
 
 	it("slash route", () => {
-		let route = "/";
+		const route = "/";
 
 		assertMatch("", route, "Match empty");
 		assertMatch("/", route, "Match slash");
@@ -45,7 +45,7 @@ describe("route", () => {
 	});
 
 	it("static route", () => {
-		let route = "a/static/path";
+		const route = "a/static/path";
 
 		assertMatch("/a/static/path", route, "Match if all segments are equal");
 		assertMatch("a/static/path", route, "Ignore leading slash");
@@ -63,7 +63,7 @@ describe("route", () => {
 	});
 
 	it("route ignore trailing slash on pattern", () => {
-		let route = "a/static/path/"; // <-- ends with a slash
+		const route = "a/static/path/"; // <-- ends with a slash
 
 		assertMatch("/a/static/path", route, "Match if all segments are equal");
 		assertMatch("a/static/path", route, "Ignore leading slash");
@@ -81,7 +81,7 @@ describe("route", () => {
 	});
 
 	it("parameter route", () => {
-		let route = "a/#parameter/path"; //
+		const route = "a/#parameter/path"; //
 
 		assertMatch("/a/foo/path", route, "Match any segment value");
 		assertMatch("a/bar/path", route, "Ignore leading slash");
@@ -101,7 +101,7 @@ describe("route", () => {
 	});
 
 	it("multiple parameters route", () => {
-		let route = "#parameter/#parameter2"; //
+		const route = "#parameter/#parameter2"; //
 
 		assertMatch("foo/bar", route, "Match any segment values");
 		assertMatch("a/bar/", route, "Ignore leading slash");
@@ -120,7 +120,7 @@ describe("route", () => {
 	});
 
 	it("optional Parameter route", () => {
-		let route = "a/?parameter/path"; //
+		const route = "a/?parameter/path"; //
 
 		assertMatch("/a/foo/path", route, "Match any segment value");
 		assertMatch("/a/path", route, "Match URL without segment");
@@ -142,7 +142,7 @@ describe("route", () => {
 	});
 
 	it("multiple Optional Parameter route", () => {
-		let route = "?foo/world/?bar/hello";
+		const route = "?foo/world/?bar/hello";
 
 		assertMatch("/foo/world/bar/hello", route, "Match if all segments");
 		assertMatch("/world/bar/hello", route, "Match without first");
@@ -170,7 +170,7 @@ describe("route", () => {
 	});
 
 	it("mixed Optional and Mandatory Parameter route", () => {
-		let route = "?foo/#bar/?bro";
+		const route = "?foo/#bar/?bro";
 
 		assertMatch("/foo/bar/bro", route, "Match if all segments");
 		assertMatch("/foo/bar", route, "Match if two");
@@ -194,10 +194,10 @@ describe("route", () => {
 	// Parameter binding tests
 
 	it("route match result", () => {
-		let route = router.route({ pattern: "#a/#b" });
-		let url = router.url({ rawUrl: "hello/world" });
+		const route = router.route({ pattern: "#a/#b" });
+		const url = router.url({ rawUrl: "hello/world" });
 
-		let result = url.matchRoute(route);
+		const result = url.matchRoute(route);
 
 		expect(result.isMatch()).toBeTruthy();
 		expect(result.getRoute()).toStrictEqual(route);
@@ -208,10 +208,10 @@ describe("route", () => {
 	});
 
 	it("route match capture parameters", () => {
-		let result = router
+		const result = router
 			.url({ rawUrl: "/hello/world" })
 			.matchRoute(router.route({ pattern: "#foo/#bar" }));
-		let props = result.getRouteParameters();
+		const props = result.getRouteParameters();
 
 		expect(props).toBeTruthy();
 		expect(props.foo).toBe("hello");
@@ -219,10 +219,10 @@ describe("route", () => {
 	});
 
 	it("route match capture parameters mixed with statics", () => {
-		let result = router
+		const result = router
 			.url({ rawUrl: "/hello/static/world" })
 			.matchRoute(router.route({ pattern: "#foo/static/#bar" }));
-		let props = result.getRouteParameters();
+		const props = result.getRouteParameters();
 
 		expect(props).toBeTruthy();
 		expect(props.foo).toBe("hello");
@@ -230,10 +230,10 @@ describe("route", () => {
 	});
 
 	it("route parameter capture optional parameters", () => {
-		let result = router
+		const result = router
 			.url({ rawUrl: "/hello/world" })
 			.matchRoute(router.route({ pattern: "?foo/?bar" }));
-		let props = result.getRouteParameters();
+		const props = result.getRouteParameters();
 
 		expect(props).toBeTruthy();
 		expect(props.foo).toBe("hello");
@@ -241,7 +241,7 @@ describe("route", () => {
 	});
 
 	it("route parameter capture optional parameters mixed with parameters", () => {
-		let firstOptionalBothMatch = router
+		const firstOptionalBothMatch = router
 			.url({ rawUrl: "hello/world" })
 			.matchRoute(router.route({ pattern: "?foo/#bar" }))
 			.getRouteParameters();
@@ -251,7 +251,7 @@ describe("route", () => {
 			bar: "world",
 		});
 
-		let firstOptionalOneMatch = router
+		const firstOptionalOneMatch = router
 			.url({ rawUrl: "/world" })
 			.matchRoute(router.route({ pattern: "?foo/#bar" }))
 			.getRouteParameters();
@@ -261,7 +261,7 @@ describe("route", () => {
 			bar: "world",
 		});
 
-		let optionalInPath = router
+		const optionalInPath = router
 			.url({ rawUrl: "hello/world" })
 			.matchRoute(router.route({ pattern: "#foo/?bar/#bro" }))
 			.getRouteParameters();
@@ -272,7 +272,7 @@ describe("route", () => {
 			bro: "world",
 		});
 
-		let trailingOptionals = router
+		const trailingOptionals = router
 			.url({ rawUrl: "hello/world" })
 			.matchRoute(router.route({ pattern: "#foo/?bar/?bro" }))
 			.getRouteParameters();
@@ -285,7 +285,7 @@ describe("route", () => {
 	});
 
 	it("route parameter can have defaults", () => {
-		let route = router.route({
+		const route = router.route({
 			pattern: "?foo/?bar",
 			options: {
 				defaults: {
@@ -294,8 +294,8 @@ describe("route", () => {
 			},
 		});
 
-		let result = router.url({ rawUrl: "/hello" }).matchRoute(route);
-		let props = result.getRouteParameters();
+		const result = router.url({ rawUrl: "/hello" }).matchRoute(route);
+		const props = result.getRouteParameters();
 
 		expect(props).toBeTruthy();
 		expect(props.foo).toBe("hello");
@@ -305,7 +305,7 @@ describe("route", () => {
 	// Query
 
 	it("query", () => {
-		let query = router
+		const query = router
 			.url({ rawUrl: "hello/world?a=1&b=2&c=3" })
 			.getQuery();
 
@@ -315,34 +315,34 @@ describe("route", () => {
 	// Expand
 
 	it("expand parameters", () => {
-		let route = router.route({ pattern: "#a/test/#b" });
+		const route = router.route({ pattern: "#a/test/#b" });
 
-		let url = route.expand({ a: "hello", b: "world" });
+		const url = route.expand({ a: "hello", b: "world" });
 
 		expect(url).toBe("hello/test/world");
 	});
 
 	it("route parameter expansion can handle arrays", () => {
-		let route = router.route({
+		const route = router.route({
 			pattern: "foo/#bar",
 		});
 
-		let url = route.expand({ bar: ["a", "b"] });
+		const url = route.expand({ bar: ["a", "b"] });
 
 		expect(url).toBe("foo/a,b");
 	});
 
 	it("route optional parameter expansion can handle arrays", () => {
-		let route = router.route({
+		const route = router.route({
 			pattern: "foo",
 		});
-		let url = route.expand({ bar: ["a", "b"] });
+		const url = route.expand({ bar: ["a", "b"] });
 
 		expect(url).toBe("foo?bar=a,b");
 	});
 
 	it("expand optionals", () => {
-		let route = router.route({ pattern: "#a/?c/#b/?d" });
+		const route = router.route({ pattern: "#a/?c/#b/?d" });
 
 		expect(route.expand({ a: "hello", b: "world", d: "d" })).toBe(
 			"hello/world/d",
@@ -356,7 +356,7 @@ describe("route", () => {
 	});
 
 	it("expand extra parameters to the query string", () => {
-		let route = router.route({ pattern: "#a/#b" });
+		const route = router.route({ pattern: "#a/#b" });
 
 		expect(route.expand({ a: "hello", b: "world", c: "foo" })).toBe(
 			"hello/world?c=foo",
@@ -368,7 +368,7 @@ describe("route", () => {
 	});
 
 	it("expand throws not valid URL error", () => {
-		let route = router.route({ pattern: "#a/#b" });
+		const route = router.route({ pattern: "#a/#b" });
 
 		expect(() => {
 			route.expand({ a: "hello" });
@@ -378,7 +378,7 @@ describe("route", () => {
 	// Constraints
 
 	it("route with function constraint", () => {
-		let aRoute = router.route({
+		const aRoute = router.route({
 			pattern: "/hello/#foo/",
 			options: {
 				constraints: {
@@ -399,7 +399,7 @@ describe("route", () => {
 	});
 
 	it("route with array constraint", () => {
-		let aRoute = router.route({
+		const aRoute = router.route({
 			pattern: "hello/#foo",
 			options: {
 				constraints: {
@@ -418,7 +418,7 @@ describe("route", () => {
 	});
 
 	it("route with RegExp constraint", () => {
-		let aRoute = router.route({
+		const aRoute = router.route({
 			pattern: "hello/#foo",
 			options: {
 				constraints: {
@@ -437,7 +437,7 @@ describe("route", () => {
 	});
 
 	it("route with mixed constraints", () => {
-		let aRoute = router.route({
+		const aRoute = router.route({
 			pattern: "#a/#b/#c",
 			options: {
 				constraints: {
@@ -474,7 +474,7 @@ describe("route", () => {
 	});
 
 	it("route constraints on optional parameters", () => {
-		let aRoute = router.route({
+		const aRoute = router.route({
 			pattern: "?a/?b/?c",
 			options: {
 				constraints: {
@@ -545,7 +545,7 @@ describe("route", () => {
 	});
 
 	it("ignore trailing segments route option", () => {
-		let aRoute = router.route({
+		const aRoute = router.route({
 			pattern: "hello/#foo",
 			options: {
 				ignoreTrailingSegments: true,

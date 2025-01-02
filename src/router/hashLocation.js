@@ -7,12 +7,12 @@ import url from "./url.js";
  * In modern browsers we use the "hashchange" event to listen for location changes. If not supported
  * we poll for changes using a timer.
  */
-let noHashChangeSupport = !("onhashchange" in window);
+const noHashChangeSupport = !("onhashchange" in window);
 
 /**
  * Num ms between each location change poll on browsers without "hashchange"
  */
-let pollInterval = 25;
+const pollInterval = 25;
 
 /**
  * Manages and listens for changes in the hash fragment of the URL.
@@ -56,7 +56,7 @@ const hashLocation = object.subclass((that, my) => {
 	 * @param {url|string} aUrl
 	 */
 	that.setUrl = function (aUrl) {
-		let aHash = urlToHash(aUrl);
+		const aHash = urlToHash(aUrl);
 		setWindowHash(aHash);
 		setCurrentHash(aHash);
 	};
@@ -169,9 +169,9 @@ const hashLocation = object.subclass((that, my) => {
 	}
 
 	function check() {
-		let windowHash = getWindowHash();
+		const windowHash = getWindowHash();
 
-		let urlChanged = my.currentHash !== windowHash;
+		const urlChanged = my.currentHash !== windowHash;
 		if (urlChanged) {
 			setCurrentHash(windowHash);
 		}

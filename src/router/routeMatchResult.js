@@ -92,7 +92,7 @@ const routeMatchResult = object.subclass((that, my) => {
 	 * @returns {Array}
 	 */
 	that.getActionArguments = function () {
-		let actionArguments = Object.keys(routeParameters).map(
+		const actionArguments = Object.keys(routeParameters).map(
 			(parameterName) => routeParameters[parameterName],
 		);
 		actionArguments.push(url.getQuery());
@@ -105,10 +105,10 @@ const routeMatchResult = object.subclass((that, my) => {
 
 	// eslint-disable-next-line no-shadow -- we should fix that later
 	function mergeParameters(routeParameters, queryParameters) {
-		let allValues = {};
+		const allValues = {};
 
 		// Fill with route parameters
-		for (let parameterName in routeParameters) {
+		for (const parameterName in routeParameters) {
 			if (
 				Object.prototype.hasOwnProperty.call(
 					routeParameters,
@@ -120,7 +120,7 @@ const routeMatchResult = object.subclass((that, my) => {
 		}
 
 		// Fill with query parameters
-		for (let queryParameterName in queryParameters) {
+		for (const queryParameterName in queryParameters) {
 			if (
 				Object.prototype.hasOwnProperty.call(
 					queryParameters,
@@ -142,7 +142,7 @@ routeMatchResult.class((that) => {
 	 */
 	that.routeNoMatchResult = (function () {
 		/** @typedef {routeMatchResult} routeNoMatchResult */
-		let instance = that();
+		const instance = that();
 
 		instance.isMatch = function () {
 			return false;

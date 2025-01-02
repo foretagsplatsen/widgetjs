@@ -144,7 +144,7 @@ const widget = object.subclass((that, my) => {
 	 */
 	that.replace = function (aJQuery) {
 		my.withAttachHooks(() => {
-			let canvas = htmlCanvas(aJQuery);
+			const canvas = htmlCanvas(aJQuery);
 			canvas.root.asJQuery().empty();
 			renderBasicOn(canvas);
 		});
@@ -219,7 +219,7 @@ const widget = object.subclass((that, my) => {
 	 * the evaluation.
 	 */
 	my.withAttachHooks = function (fn) {
-		let inRendering = inRenderingLoop();
+		const inRendering = inRenderingLoop();
 		if (!inRendering) {
 			that.triggerWillAttach();
 		}
@@ -240,7 +240,7 @@ const widget = object.subclass((that, my) => {
 	 * Create and expose one event per string argument.
 	 */
 	my.createEvents = function () {
-		let names = Array.prototype.slice.apply(arguments);
+		const names = Array.prototype.slice.apply(arguments);
 		names.forEach(my.createEvent);
 	};
 
@@ -329,7 +329,7 @@ const widget = object.subclass((that, my) => {
 	};
 
 	my.withChildrenRegistration = function (fn) {
-		let parent = getCurrentWidget();
+		const parent = getCurrentWidget();
 		if (parent) {
 			parent.registerChild(that);
 		}
@@ -413,7 +413,7 @@ const widget = object.subclass((that, my) => {
 			that.asJQuery().empty();
 
 			// re-render content on root
-			let html = htmlCanvas(that.asJQuery());
+			const html = htmlCanvas(that.asJQuery());
 
 			my.withChildrenRegistration(() => {
 				that.renderContentOn(html);
@@ -453,7 +453,7 @@ const widget = object.subclass((that, my) => {
 
 	// Third party protected extensions** added to `my`.
 	// See widget-extensions.js
-	for (let extProperty in widgetExtensions) {
+	for (const extProperty in widgetExtensions) {
 		if (
 			Object.prototype.hasOwnProperty.call(widgetExtensions, extProperty)
 		) {
