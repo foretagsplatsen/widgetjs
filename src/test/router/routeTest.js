@@ -44,6 +44,7 @@ describe("route", () => {
 		assertNoMatch("value", route, "Don't match values");
 	});
 
+	// eslint-disable-next-line sonarjs/assertions-in-tests -- the expectation isn't visible to the rule but exists
 	it("static route", () => {
 		const route = "a/static/path";
 
@@ -62,6 +63,7 @@ describe("route", () => {
 		);
 	});
 
+	// eslint-disable-next-line sonarjs/assertions-in-tests -- the expectation isn't visible to the rule but exists
 	it("route ignore trailing slash on pattern", () => {
 		const route = "a/static/path/"; // <-- ends with a slash
 
@@ -80,6 +82,7 @@ describe("route", () => {
 		);
 	});
 
+	// eslint-disable-next-line sonarjs/assertions-in-tests -- the expectation isn't visible to the rule but exists
 	it("parameter route", () => {
 		const route = "a/#parameter/path"; //
 
@@ -100,6 +103,7 @@ describe("route", () => {
 		assertNoMatch("b/foo/path", route, "B does not match static a");
 	});
 
+	// eslint-disable-next-line sonarjs/assertions-in-tests -- the expectation isn't visible to the rule but exists
 	it("multiple parameters route", () => {
 		const route = "#parameter/#parameter2"; //
 
@@ -119,6 +123,7 @@ describe("route", () => {
 		);
 	});
 
+	// eslint-disable-next-line sonarjs/assertions-in-tests -- the expectation isn't visible to the rule but exists
 	it("optional Parameter route", () => {
 		const route = "a/?parameter/path"; //
 
@@ -141,6 +146,7 @@ describe("route", () => {
 		assertNoMatch("b/foo/path", route, "B does not match static a");
 	});
 
+	// eslint-disable-next-line sonarjs/assertions-in-tests -- the expectation isn't visible to the rule but exists
 	it("multiple Optional Parameter route", () => {
 		const route = "?foo/world/?bar/hello";
 
@@ -169,6 +175,7 @@ describe("route", () => {
 		);
 	});
 
+	// eslint-disable-next-line sonarjs/assertions-in-tests -- the expectation isn't visible to the rule but exists
 	it("mixed Optional and Mandatory Parameter route", () => {
 		const route = "?foo/#bar/?bro";
 

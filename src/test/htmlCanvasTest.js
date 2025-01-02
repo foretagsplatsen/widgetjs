@@ -571,6 +571,7 @@ describe("htmlCanvas", () => {
 		});
 	});
 
+	/* eslint-disable sonarjs/assertions-in-tests -- the expectation isn't visible to the rule but exists */
 	describe("class names", () => {
 		it("assign a single class name", () => {
 			expectClassNamesToBecomeCSSClass({
@@ -635,6 +636,7 @@ describe("htmlCanvas", () => {
 			});
 		}
 	});
+	/* eslint-enable sonarjs/assertions-in-tests */
 
 	it("render() accepts a ref attribute to retrieve the DOM element", () => {
 		expect.assertions(1);

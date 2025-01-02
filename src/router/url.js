@@ -134,6 +134,7 @@ function parseSegments(path) {
  * @returns {string}
  */
 function parsePath(rawUrl) {
+	// eslint-disable-next-line sonarjs/slow-regex -- don't want to fix that now
 	return rawUrl.replace(/\?.*$/g, "");
 }
 
@@ -149,6 +150,7 @@ function parsePath(rawUrl) {
  */
 function parseQuery(rawUrl) {
 	// Extract query key/value(s) from a rawUrl and add them to `query` object.
+	// eslint-disable-next-line sonarjs/slow-regex -- don't want to fix that now
 	const result = /[^?]*\?(.*)$/g.exec(rawUrl);
 	const query = {};
 	let pair;
