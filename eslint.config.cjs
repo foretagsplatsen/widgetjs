@@ -66,6 +66,7 @@ module.exports = [
 				},
 			],
 			"sonarjs/no-duplicate-string": "off",
+			"sonarjs/no-nested-functions": ["error", { threshold: 6 }],
 		},
 	},
 	{

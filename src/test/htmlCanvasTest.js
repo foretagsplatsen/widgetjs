@@ -4,9 +4,9 @@ import jQuery from "jquery";
 
 function withCanvas(callback) {
 	jQuery("BODY").append('<div id="sandbox"></div>');
-	let sandbox = jQuery("#sandbox");
+	const sandbox = jQuery("#sandbox");
 
-	let html = htmlCanvas(sandbox);
+	const html = htmlCanvas(sandbox);
 	callback(html);
 
 	sandbox.remove();
@@ -19,7 +19,7 @@ describe("htmlCanvas", () => {
 
 	it("can be created on a jQuery", () => {
 		// Arrange: a canvas on BODY
-		let html = htmlCanvas("BODY");
+		const html = htmlCanvas("BODY");
 
 		// Assert that:
 		expect(html).toBeTruthy();
@@ -42,7 +42,7 @@ describe("htmlCanvas", () => {
 			html.h1("Hello World!");
 
 			// Assert: that H1 was rendered
-			let h1El = jQuery("#sandbox > H1");
+			const h1El = jQuery("#sandbox > H1");
 
 			expect(h1El.get(0)).toBeTruthy();
 
@@ -56,15 +56,15 @@ describe("htmlCanvas", () => {
 
 		withCanvas((html) => {
 			// Arrange: a Google link
-			html.a("Google").id("test_id").href("http://www.google.se");
+			html.a("Google").id("test_id").href("https://www.google.se");
 
 			// Assert: that A was rendered
-			let linkEl = jQuery("#test_id");
+			const linkEl = jQuery("#test_id");
 
 			expect(linkEl.get(0)).toBeTruthy();
 
 			// and href was set
-			expect(linkEl.attr("href")).toBe("http://www.google.se");
+			expect(linkEl.attr("href")).toBe("https://www.google.se");
 		});
 	});
 
@@ -83,7 +83,7 @@ describe("htmlCanvas", () => {
 			);
 
 			// Assert: that DIV was rendered
-			let divEl = jQuery("#test_div");
+			const divEl = jQuery("#test_div");
 
 			expect(divEl.get(0)).toBeTruthy();
 
@@ -110,7 +110,7 @@ describe("htmlCanvas", () => {
 				);
 
 				// Assert: that DIV was rendered
-				let divEl = jQuery("#test_div");
+				const divEl = jQuery("#test_div");
 
 				expect(divEl.get(0)).toBeTruthy();
 
@@ -123,9 +123,9 @@ describe("htmlCanvas", () => {
 			expect.assertions(1);
 
 			withCanvas((html) => {
-				let attributeName = "data-test";
+				const attributeName = "data-test";
 
-				let div = html.div({ [attributeName]: undefined });
+				const div = html.div({ [attributeName]: undefined });
 
 				expect(div.element.hasAttribute("data-test")).toBe(false);
 			});
@@ -135,9 +135,9 @@ describe("htmlCanvas", () => {
 			expect.assertions(1);
 
 			withCanvas((html) => {
-				let attributeName = "data-test";
+				const attributeName = "data-test";
 
-				let div = html.div({ [attributeName]: null });
+				const div = html.div({ [attributeName]: null });
 
 				expect(div.element.hasAttribute("data-test")).toBe(false);
 			});
@@ -147,9 +147,9 @@ describe("htmlCanvas", () => {
 			expect.assertions(1);
 
 			withCanvas((html) => {
-				let attributeName = "data-test";
+				const attributeName = "data-test";
 
-				let div = html.div({ [attributeName]: false });
+				const div = html.div({ [attributeName]: false });
 
 				expect(div.element.hasAttribute("data-test")).toBe(false);
 			});
@@ -159,9 +159,9 @@ describe("htmlCanvas", () => {
 			expect.assertions(1);
 
 			withCanvas((html) => {
-				let attributeName = "data-test";
+				const attributeName = "data-test";
 
-				let div = html.div({ [attributeName]: "" });
+				const div = html.div({ [attributeName]: "" });
 
 				expect(div.element.hasAttribute("data-test")).toBe(false);
 			});
@@ -186,7 +186,7 @@ describe("htmlCanvas", () => {
 			);
 
 			// Assert: that link was rendered
-			let linkEl = jQuery("#test_link");
+			const linkEl = jQuery("#test_link");
 
 			expect(linkEl.get(0)).toBeTruthy();
 
@@ -211,7 +211,7 @@ describe("htmlCanvas", () => {
 				});
 
 			// Assert: that link was rendered
-			let linkEl = jQuery("#test_link");
+			const linkEl = jQuery("#test_link");
 
 			expect(linkEl.get(0)).toBeTruthy();
 
@@ -262,7 +262,7 @@ describe("htmlCanvas", () => {
 
 		withCanvas((html) => {
 			// Arrange a button, assign to variable and then set class
-			let button = html.a("Home").id("test_button").href("/");
+			const button = html.a("Home").id("test_button").href("/");
 			button.addClass("button");
 
 			// Assert:
@@ -276,7 +276,7 @@ describe("htmlCanvas", () => {
 
 		withCanvas((html) => {
 			// Arrange: a DIV
-			let div = html.div().id("aDiv");
+			const div = html.div().id("aDiv");
 
 			// Act: render a SPAN in it
 			div.render(html.span("test").addClass("aSpan"));
@@ -357,7 +357,7 @@ describe("htmlCanvas", () => {
 
 		withCanvas((html) => {
 			function appendableObject() {
-				let that = {};
+				const that = {};
 
 				that.appendToBrush = (aTagBrush) => {
 					aTagBrush.render("content");
@@ -379,7 +379,7 @@ describe("htmlCanvas", () => {
 
 		withCanvas((html) => {
 			// Arrange:
-			let htmlString = '<div id="unescaped">foo</div>';
+			const htmlString = '<div id="unescaped">foo</div>';
 
 			// Act: render the string
 			html.render(htmlString);
@@ -394,7 +394,7 @@ describe("htmlCanvas", () => {
 
 		withCanvas((html) => {
 			// Arrange:
-			let htmlString = "<>&foo";
+			const htmlString = "<>&foo";
 
 			// Act: render the string
 			html.render(htmlString);
@@ -409,7 +409,7 @@ describe("htmlCanvas", () => {
 
 		withCanvas((html) => {
 			// Arrange:
-			let htmlString = "<div>hello</div>";
+			const htmlString = "<div>hello</div>";
 
 			// Act: render the string
 			html.div({ id: "not-escaped" }).html(htmlString);
@@ -424,7 +424,7 @@ describe("htmlCanvas", () => {
 
 		withCanvas((html) => {
 			// Arrange: a heading
-			let h1 = html.h1().id("aHeading");
+			const h1 = html.h1().id("aHeading");
 
 			// Assert
 			expect(h1.element).toBe(jQuery("#aHeading").get(0));
@@ -436,7 +436,7 @@ describe("htmlCanvas", () => {
 
 		withCanvas((html) => {
 			// Arrange: a heading with id
-			let h1 = html.h1().setAttribute("id", "aHeading");
+			const h1 = html.h1().setAttribute("id", "aHeading");
 
 			// Assert: id set
 			expect(h1.asJQuery().attr("id")).toBe("aHeading");
@@ -448,7 +448,7 @@ describe("htmlCanvas", () => {
 
 		withCanvas((html) => {
 			// Arrange: a div
-			let div = html.div();
+			const div = html.div();
 
 			div.css("width", "100px");
 
@@ -461,7 +461,7 @@ describe("htmlCanvas", () => {
 
 		withCanvas((html) => {
 			// Arrange: a heading with id (set using map)
-			let h1 = html.h1().attr({ id: "aHeading" });
+			const h1 = html.h1().attr({ id: "aHeading" });
 
 			// Assert: that id is set
 			expect(h1.asJQuery().attr("id")).toBe("aHeading");
@@ -473,7 +473,7 @@ describe("htmlCanvas", () => {
 
 		withCanvas((html) => {
 			// Arrange: a heading
-			let h1 = html.h1().id("aHeading");
+			const h1 = html.h1().id("aHeading");
 
 			// addClass()
 			h1.addClass("foo");
@@ -491,7 +491,7 @@ describe("htmlCanvas", () => {
 		expect.assertions(1);
 
 		withCanvas((html) => {
-			let h1 = html.h1();
+			const h1 = html.h1();
 
 			h1.addClass(["foo", { disabled: () => false }, ["bar"]]);
 
@@ -503,7 +503,7 @@ describe("htmlCanvas", () => {
 		expect.assertions(1);
 
 		withCanvas((html) => {
-			let h1 = html.h1({ class: "foo baz disabled bar" });
+			const h1 = html.h1({ class: "foo baz disabled bar" });
 
 			h1.removeClass(["foo", { disabled: () => false }, ["bar"]]);
 
@@ -516,14 +516,13 @@ describe("htmlCanvas", () => {
 
 		withCanvas((html) => {
 			// Arrange: a heading
-			let h1 = html.h1().id("aHeading");
+			const h1 = html.h1().id("aHeading");
 
 			// Assert
 			expect(h1.asJQuery().get(0)).toBe(jQuery("#aHeading").get(0));
 		});
 	});
 
-	// TODO: allow or throw exception?
 	it("can render almost everything", () => {
 		expect.assertions(1);
 
@@ -543,7 +542,7 @@ describe("htmlCanvas", () => {
 			expect.assertions(1);
 
 			withCanvas((html) => {
-				let tag = html.svgTag("svg");
+				const tag = html.svgTag("svg");
 
 				expect(tag.element.namespaceURI).toBe(
 					"http://www.w3.org/2000/svg",
@@ -557,7 +556,7 @@ describe("htmlCanvas", () => {
 			withCanvas((html) => {
 				["svg", "circle", "path", "polygon", "rect", "text"].forEach(
 					(tagName) => {
-						let tag = html[tagName]();
+						const tag = html[tagName]();
 
 						expect(tag.element.namespaceURI).toBe(
 							"http://www.w3.org/2000/svg",
@@ -572,6 +571,7 @@ describe("htmlCanvas", () => {
 		});
 	});
 
+	/* eslint-disable sonarjs/assertions-in-tests -- the expectation isn't visible to the rule but exists */
 	describe("class names", () => {
 		it("assign a single class name", () => {
 			expectClassNamesToBecomeCSSClass({
@@ -630,18 +630,19 @@ describe("htmlCanvas", () => {
 
 		function expectClassNamesToBecomeCSSClass({ input, expectedOutput }) {
 			withCanvas((html) => {
-				let tag = html.div({ class: input });
+				const tag = html.div({ class: input });
 
 				expect(tag.element.className).toStrictEqual(expectedOutput);
 			});
 		}
 	});
+	/* eslint-enable sonarjs/assertions-in-tests */
 
 	it("render() accepts a ref attribute to retrieve the DOM element", () => {
 		expect.assertions(1);
 
 		withCanvas((html) => {
-			let rootRef = {};
+			const rootRef = {};
 
 			html.render({ ref: rootRef }, (html) => html.p("foo"));
 
@@ -653,7 +654,7 @@ describe("htmlCanvas", () => {
 		expect.assertions(1);
 
 		withCanvas((html) => {
-			let rootRef = {};
+			const rootRef = {};
 
 			html.div({ ref: rootRef }, (html) => html.p("foo"));
 

@@ -11,9 +11,9 @@ const widgetSubclass = widget.subclass((that) => {
 
 function withWidget(callback) {
 	// create a widget
-	let my = {};
+	const my = {};
 
-	let aWidget = widgetSubclass({}, my);
+	const aWidget = widgetSubclass({}, my);
 
 	aWidget.appendTo(jQuery("body"));
 
@@ -26,9 +26,9 @@ function withWidget(callback) {
 
 function withCanvas(callback) {
 	jQuery("BODY").append('<div id="sandbox"></div>');
-	let sandbox = jQuery("#sandbox");
+	const sandbox = jQuery("#sandbox");
 
-	let html = htmlCanvas(sandbox);
+	const html = htmlCanvas(sandbox);
 	callback(html);
 
 	sandbox.remove();
@@ -48,7 +48,7 @@ describe("function", () => {
 	});
 
 	it("widgets identifier set from spec", () => {
-		let aWidget = widgetSubclass({ id: "anId" });
+		const aWidget = widgetSubclass({ id: "anId" });
 
 		expect(aWidget.id()).toBe("anId");
 	});
@@ -58,9 +58,9 @@ describe("function", () => {
 
 		// Arrange: a widget with a public method
 		// that triggers an event when executed.
-		let aWidget = (function () {
-			let my = {};
-			let that = widgetSubclass({}, my);
+		const aWidget = (function () {
+			const my = {};
+			const that = widgetSubclass({}, my);
 
 			that.aMethod = function () {
 				that.trigger("anEvent");
@@ -81,9 +81,9 @@ describe("function", () => {
 	it("widgets supports event methods", () => {
 		// Arrange: a widget with a public method
 		// that triggers an event when executed.
-		let aWidget = (function () {
-			let my = {};
-			let that = widgetSubclass({}, my);
+		const aWidget = (function () {
+			const my = {};
+			const that = widgetSubclass({}, my);
 
 			that.anEvent = my.events.createEvent("anEvent");
 
@@ -94,7 +94,7 @@ describe("function", () => {
 			return that;
 		})();
 
-		let spy = vi.fn();
+		const spy = vi.fn();
 
 		// Assert: that callback is executed when
 		aWidget.anEvent.register(spy);
@@ -106,14 +106,14 @@ describe("function", () => {
 	});
 
 	it("linkTo() creates links to paths in app", () => {
-		let my = {}; // reference to protected methods using "my";
+		const my = {}; // reference to protected methods using "my";
 		widgetSubclass({}, my);
 
 		expect(my.linkTo("foo/bar")).toBe("#!/foo/bar");
 	});
 
 	it("redirectTo() redirects to paths in app", () => {
-		let my = {}; // reference to protected methods using "my";
+		const my = {}; // reference to protected methods using "my";
 		widgetSubclass({}, my);
 
 		my.redirectTo("foo/bar");
@@ -147,7 +147,7 @@ describe("function", () => {
 		expect.assertions(2);
 
 		withWidget((aWidget) => {
-			let id = `#${aWidget.id()}`;
+			const id = `#${aWidget.id()}`;
 
 			expect(jQuery(id).get(0)).toBeTruthy();
 
@@ -162,8 +162,8 @@ describe("function", () => {
 
 		withCanvas((html) => {
 			// Arrange: a widget
-			let aWidget = (function () {
-				let that = widgetSubclass();
+			const aWidget = (function () {
+				const that = widgetSubclass();
 
 				that.renderContentOn = function (html) {
 					html.div("div").addClass("aDiv");
@@ -173,7 +173,10 @@ describe("function", () => {
 			})();
 
 			// and a DIV with existing content
-			let divQuery = html.div(html.span("content")).id("aDiv").asJQuery();
+			const divQuery = html
+				.div(html.span("content"))
+				.id("aDiv")
+				.asJQuery();
 
 			// Act: append widget to DIV
 			aWidget.appendTo(divQuery);
@@ -188,8 +191,8 @@ describe("function", () => {
 
 		withCanvas((html) => {
 			// Arrange: a widget
-			let aWidget = (function () {
-				let that = widgetSubclass();
+			const aWidget = (function () {
+				const that = widgetSubclass();
 
 				that.renderContentOn = function (html) {
 					html.div("div").addClass("aDiv");
@@ -199,7 +202,10 @@ describe("function", () => {
 			})();
 
 			// and a DIV with existing content
-			let divQuery = html.div(html.span("content")).id("aDiv").asJQuery();
+			const divQuery = html
+				.div(html.span("content"))
+				.id("aDiv")
+				.asJQuery();
 
 			// Act: replace content with jQuery
 			aWidget.replace(divQuery);
@@ -215,8 +221,8 @@ describe("function", () => {
 
 		withCanvas((html) => {
 			// Arrange: a widget
-			let aWidget = (function () {
-				let that = widgetSubclass();
+			const aWidget = (function () {
+				const that = widgetSubclass();
 
 				that.renderContentOn = function (html) {
 					html.div("div").addClass("aDiv");
@@ -238,8 +244,8 @@ describe("function", () => {
 
 		withCanvas((html) => {
 			// Arrange: a widget
-			let aWidget = (function () {
-				let that = widgetSubclass();
+			const aWidget = (function () {
+				const that = widgetSubclass();
 
 				that.renderContentOn = function (html) {
 					html.div("div").addClass("aDiv");
@@ -265,9 +271,9 @@ describe("function", () => {
 		withCanvas((html) => {
 			// Arrange: a widget that renders it"s root as
 			// form instead of DIV
-			let aWidget = (function () {
-				let my = {};
-				let that = widgetSubclass({}, my);
+			const aWidget = (function () {
+				const my = {};
+				const that = widgetSubclass({}, my);
 
 				my.renderRootOn = function (html) {
 					return html.form().id(that.id());
@@ -290,9 +296,9 @@ describe("function", () => {
 		expect.assertions(2);
 
 		withCanvas((html) => {
-			let aWidget = (function () {
-				let my = {};
-				let that = widgetSubclass({}, my);
+			const aWidget = (function () {
+				const my = {};
+				const that = widgetSubclass({}, my);
 
 				that.willAttachCalled = false;
 				that.didAttachCalled = false;
@@ -321,9 +327,9 @@ describe("function", () => {
 		expect.assertions(1);
 
 		withCanvas((html) => {
-			let aWidget = (function () {
-				let my = {};
-				let that = widgetSubclass({}, my);
+			const aWidget = (function () {
+				const my = {};
+				const that = widgetSubclass({}, my);
 
 				that.willUpdateCalled = false;
 
@@ -344,9 +350,9 @@ describe("function", () => {
 		expect.assertions(1);
 
 		withCanvas((html) => {
-			let aWidget = (function () {
-				let my = {};
-				let that = widgetSubclass({}, my);
+			const aWidget = (function () {
+				const my = {};
+				const that = widgetSubclass({}, my);
 
 				that.willUpdateCalled = false;
 
@@ -365,8 +371,8 @@ describe("function", () => {
 	});
 
 	it("widgets initialize their subwidgets", () => {
-		let spy = vi.fn();
-		let mySubclass = widget.subclass((that, my) => {
+		const spy = vi.fn();
+		const mySubclass = widget.subclass((that, my) => {
 			my.initializeSubwidgets = spy;
 		});
 		mySubclass();
@@ -377,10 +383,10 @@ describe("function", () => {
 	it("widgets initialize their subwidgets after themselves", () => {
 		expect.assertions(2);
 
-		let init = vi.fn();
-		let initSub = vi.fn();
+		const init = vi.fn();
+		const initSub = vi.fn();
 
-		let mySubclass = widget.subclass((that, my) => {
+		const mySubclass = widget.subclass((that, my) => {
 			my.initialize = init;
 
 			my.initializeSubwidgets = function () {
