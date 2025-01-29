@@ -22,6 +22,21 @@ describe("Widget", () => {
 
 			expect(widget.isRendered()).toBeTruthy();
 		});
+
+		it("returns true if the widget is attached to the DOM under a special shadow host", () => {
+			const host = document.createElement("div");
+			host.setAttribute("widgetjs-shadow", "document");
+
+			document.body.appendChild(host);
+
+			const shadowRoot = host.attachShadow({ mode: "open" });
+
+			const widget = makeWidget();
+
+			htmlCanvas(jQuery(shadowRoot)).render(widget);
+
+			expect(widget.isRendered()).toBeTruthy();
+		});
 	});
 });
 

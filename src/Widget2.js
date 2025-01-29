@@ -160,7 +160,20 @@ export default class Widget2 {
 	 * See "renderOn".
 	 */
 	asJQuery() {
-		return jQuery(`#${this.getId()}`);
+		const elementQuery = `#${this.getId()}`;
+		const element = jQuery(elementQuery);
+
+		if (element.length !== 0) return element;
+
+		const documentShadowRoot = jQuery(`[widgetjs-shadow="document"]`);
+
+		if (
+			documentShadowRoot.length !== 1 ||
+			!documentShadowRoot[0].shadowRoot
+		)
+			return element;
+
+		return jQuery(elementQuery, documentShadowRoot[0].shadowRoot);
 	}
 
 	/**
