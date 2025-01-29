@@ -253,6 +253,31 @@ describe("function", () => {
 				expect(aWidget.isRendered()).toBeTruthy();
 			});
 		});
+
+		it("returns true if the widget is attached to the DOM under a special shadow host", () => {
+			expect.assertions(1);
+
+			const aWidget = (function () {
+				const that = widgetSubclass();
+
+				that.renderContentOn = function (html) {
+					html.div("div");
+				};
+
+				return that;
+			})();
+
+			const host = document.createElement("div");
+			host.setAttribute("widgetjs-shadow", "document");
+
+			document.body.appendChild(host);
+
+			const shadowRoot = host.attachShadow({ mode: "open" });
+
+			htmlCanvas(jQuery(shadowRoot)).render(aWidget);
+
+			expect(aWidget.isRendered()).toBeTruthy();
+		});
 	});
 
 	it("renderRoot() can be overridden in widget", () => {
