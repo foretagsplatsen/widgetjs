@@ -217,9 +217,9 @@ describe("function", () => {
 
 	describe("isRendered()", () => {
 		it("returns false before render", () => {
-			expect.assertions(2);
+			expect.assertions(1);
 
-			withCanvas((html) => {
+			withCanvas(() => {
 				const aWidget = (function () {
 					const that = widgetSubclass();
 
@@ -231,6 +231,22 @@ describe("function", () => {
 				})();
 
 				expect(aWidget.isRendered()).toBeFalsy();
+			});
+		});
+
+		it("returns true after render", () => {
+			expect.assertions(1);
+
+			withCanvas((html) => {
+				const aWidget = (function () {
+					const that = widgetSubclass();
+
+					that.renderContentOn = function (html) {
+						html.div("div").addClass("aDiv");
+					};
+
+					return that;
+				})();
 
 				html.render(aWidget);
 
