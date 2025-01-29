@@ -215,25 +215,27 @@ describe("function", () => {
 		});
 	});
 
-	it("isRendered()", () => {
-		expect.assertions(2);
+	describe("isRendered()", () => {
+		it("returns false before render", () => {
+			expect.assertions(2);
 
-		withCanvas((html) => {
-			const aWidget = (function () {
-				const that = widgetSubclass();
+			withCanvas((html) => {
+				const aWidget = (function () {
+					const that = widgetSubclass();
 
-				that.renderContentOn = function (html) {
-					html.div("div").addClass("aDiv");
-				};
+					that.renderContentOn = function (html) {
+						html.div("div").addClass("aDiv");
+					};
 
-				return that;
-			})();
+					return that;
+				})();
 
-			expect(aWidget.isRendered()).toBeFalsy();
+				expect(aWidget.isRendered()).toBeFalsy();
 
-			html.render(aWidget);
+				html.render(aWidget);
 
-			expect(aWidget.isRendered()).toBeTruthy();
+				expect(aWidget.isRendered()).toBeTruthy();
+			});
 		});
 	});
 
