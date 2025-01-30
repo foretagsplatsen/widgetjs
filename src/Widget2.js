@@ -165,7 +165,7 @@ export default class Widget2 {
 
 		if (element.length !== 0) return element;
 
-		const documentShadowRoot = jQuery(`[widgetjs-shadow="document"]`);
+		const documentShadowRoot = jQuery('[widgetjs-shadow="document"]');
 
 		if (
 			documentShadowRoot.length !== 1 ||
