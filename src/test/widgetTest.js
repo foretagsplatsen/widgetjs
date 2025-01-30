@@ -10,17 +10,14 @@ const widgetSubclass = widget.subclass((that) => {
 });
 
 function withWidget(callback) {
-	// create a widget
 	const my = {};
 
 	const aWidget = widgetSubclass({}, my);
 
 	aWidget.appendTo(jQuery("body"));
 
-	// execute test
 	callback(aWidget, my);
 
-	// clean-up : remove widget
 	aWidget.asJQuery().remove();
 }
 
@@ -33,8 +30,6 @@ function withCanvas(callback) {
 
 	sandbox.remove();
 }
-
-// actual tests
 
 describe("function", () => {
 	it("widgets are assigned unique identifiers", () => {
@@ -56,8 +51,6 @@ describe("function", () => {
 	it("widgets supports events", () => {
 		expect.assertions(1);
 
-		// Arrange: a widget with a public method
-		// that triggers an event when executed.
 		const aWidget = (function () {
 			const my = {};
 			const that = widgetSubclass({}, my);
@@ -69,18 +62,14 @@ describe("function", () => {
 			return that;
 		})();
 
-		// Assert: that callback is executed when
 		aWidget.register("anEvent", () => {
 			expect(true).toBeTruthy();
 		});
 
-		// event is triggered
 		aWidget.aMethod();
 	});
 
 	it("widgets supports event methods", () => {
-		// Arrange: a widget with a public method
-		// that triggers an event when executed.
 		const aWidget = (function () {
 			const my = {};
 			const that = widgetSubclass({}, my);
@@ -96,24 +85,22 @@ describe("function", () => {
 
 		const spy = vi.fn();
 
-		// Assert: that callback is executed when
 		aWidget.anEvent.register(spy);
 
-		// event is triggered
 		aWidget.aMethod();
 
 		expect(spy).toHaveBeenCalledWith();
 	});
 
 	it("linkTo() creates links to paths in app", () => {
-		const my = {}; // reference to protected methods using "my";
+		const my = {};
 		widgetSubclass({}, my);
 
 		expect(my.linkTo("foo/bar")).toBe("#!/foo/bar");
 	});
 
 	it("redirectTo() redirects to paths in app", () => {
-		const my = {}; // reference to protected methods using "my";
+		const my = {};
 		widgetSubclass({}, my);
 
 		my.redirectTo("foo/bar");
@@ -161,7 +148,6 @@ describe("function", () => {
 		expect.assertions(1);
 
 		withCanvas((html) => {
-			// Arrange: a widget
 			const aWidget = (function () {
 				const that = widgetSubclass();
 
@@ -172,16 +158,13 @@ describe("function", () => {
 				return that;
 			})();
 
-			// and a DIV with existing content
 			const divQuery = html
 				.div(html.span("content"))
 				.id("aDiv")
 				.asJQuery();
 
-			// Act: append widget to DIV
 			aWidget.appendTo(divQuery);
 
-			// Assert: that widget was appended last to DIV
 			expect(divQuery.children().get(1).id).toBe(aWidget.id());
 		});
 	});
@@ -190,7 +173,6 @@ describe("function", () => {
 		expect.assertions(2);
 
 		withCanvas((html) => {
-			// Arrange: a widget
 			const aWidget = (function () {
 				const that = widgetSubclass();
 
@@ -201,16 +183,13 @@ describe("function", () => {
 				return that;
 			})();
 
-			// and a DIV with existing content
 			const divQuery = html
 				.div(html.span("content"))
 				.id("aDiv")
 				.asJQuery();
 
-			// Act: replace content with jQuery
 			aWidget.replace(divQuery);
 
-			// Assert: that widget was appended to DIV
 			expect(divQuery.children()).toHaveLength(1);
 			expect(divQuery.children().get(0).id).toBe(aWidget.id());
 		});
@@ -220,7 +199,6 @@ describe("function", () => {
 		expect.assertions(1);
 
 		withCanvas((html) => {
-			// Arrange: a widget
 			const aWidget = (function () {
 				const that = widgetSubclass();
 
@@ -231,36 +209,77 @@ describe("function", () => {
 				return that;
 			})();
 
-			// Act: append widget to canvas
 			html.render(aWidget);
 
-			// Assert: that widget was rendered in canvas
 			expect(html.root.asJQuery().find(".aDiv").get(0)).toBeTruthy();
 		});
 	});
 
-	it("isRendered()", () => {
-		expect.assertions(2);
+	describe("isRendered()", () => {
+		it("returns false before render", () => {
+			expect.assertions(1);
 
-		withCanvas((html) => {
-			// Arrange: a widget
+			withCanvas(() => {
+				const aWidget = (function () {
+					const that = widgetSubclass();
+
+					that.renderContentOn = function (html) {
+						html.div("div").addClass("aDiv");
+					};
+
+					return that;
+				})();
+
+				expect(aWidget.isRendered()).toBeFalsy();
+			});
+		});
+
+		it("returns true after render", () => {
+			// Make sure the function passed to `withCanvas()` is
+			// called:
+			expect.assertions(1);
+
+			withCanvas((html) => {
+				const aWidget = (function () {
+					const that = widgetSubclass();
+
+					that.renderContentOn = function (html) {
+						html.div("div").addClass("aDiv");
+					};
+
+					return that;
+				})();
+
+				html.render(aWidget);
+
+				expect(aWidget.isRendered()).toBeTruthy();
+			});
+		});
+
+		it("returns true if the widget is attached to the DOM under a special shadow host", () => {
+			// Make sure the function passed to `withCanvas()` is
+			// called:
+			expect.assertions(1);
+
 			const aWidget = (function () {
 				const that = widgetSubclass();
 
 				that.renderContentOn = function (html) {
-					html.div("div").addClass("aDiv");
+					html.div("div");
 				};
 
 				return that;
 			})();
 
-			// Assert: false before render
-			expect(!aWidget.isRendered()).toBeTruthy();
+			const host = document.createElement("div");
+			host.setAttribute("widgetjs-shadow", "document");
 
-			// Act: render widget
-			html.render(aWidget);
+			document.body.appendChild(host);
 
-			// Assert: true ehrn rendered
+			const shadowRoot = host.attachShadow({ mode: "open" });
+
+			htmlCanvas(jQuery(shadowRoot)).render(aWidget);
+
 			expect(aWidget.isRendered()).toBeTruthy();
 		});
 	});
@@ -269,8 +288,6 @@ describe("function", () => {
 		expect.assertions(1);
 
 		withCanvas((html) => {
-			// Arrange: a widget that renders it"s root as
-			// form instead of DIV
 			const aWidget = (function () {
 				const my = {};
 				const that = widgetSubclass({}, my);
@@ -282,10 +299,8 @@ describe("function", () => {
 				return that;
 			})();
 
-			// Act: render widget
 			html.render(aWidget);
 
-			// Assert: that form is rendered with id
 			expect(html.root.asJQuery().find("FORM").get(0).id).toBe(
 				aWidget.id(),
 			);
@@ -314,10 +329,8 @@ describe("function", () => {
 				return that;
 			})();
 
-			// Act: render widget
 			html.render(aWidget);
 
-			// Assert: that form is rendered with id
 			expect(aWidget.willAttachCalled).toBeTruthy();
 			expect(aWidget.didAttachCalled).toBeTruthy();
 		});

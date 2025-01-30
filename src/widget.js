@@ -159,7 +159,20 @@ const widget = object.subclass((that, my) => {
 	 * @returns {*}
 	 */
 	that.asJQuery = function () {
-		return jQuery(`#${that.getId()}`);
+		const elementQuery = `#${that.getId()}`;
+		const element = jQuery(elementQuery);
+
+		if (element.length !== 0) return element;
+
+		const documentShadowRoot = jQuery(`[widgetjs-shadow="document"]`);
+
+		if (
+			documentShadowRoot.length !== 1 ||
+			!documentShadowRoot[0].shadowRoot
+		)
+			return element;
+
+		return jQuery(elementQuery, documentShadowRoot[0].shadowRoot);
 	};
 
 	/**
