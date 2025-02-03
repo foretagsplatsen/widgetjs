@@ -49,7 +49,7 @@
     "eslint": "^9.19.0",
     "eslint-import-resolver-exports": "^1.0.0-beta.5",
     "globals": "^15.14.0",
-    "happy-dom": "^16.7.3",
+    "happy-dom": "^16.8.1",
     "vitest": "^3.0.4",
     "yaem": "foretagsplatsen/yaem#1.0.0"
   },
